@@ -1,0 +1,10 @@
+{
+  "fiery": {
+    "id": "fiery",
+    "name": "炽焰",
+    "name_en": "Fiery",
+    "tier": "Bronze",
+    "description": "你的灼烧物品有+1/+2/+3/+4灼烧。",
+    "image": "images/炽焰.jpg"
+  }
+}

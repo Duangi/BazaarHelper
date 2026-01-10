@@ -1,0 +1,329 @@
+{
+  "id": "cg7qahkd8235k1zhoobpgsqhv",
+  "name": "吐司机",
+  "url": "https://bazaardb.gg/card/cg7qahkd8235k1zhoobpgsqhv/%E5%90%90%E5%8F%B8%E6%9C%BA",
+  "page_title": "吐司机 - Item - The Bazaar",
+  "meta": {
+    "viewport": "width=device-width, initial-scale=1",
+    "description": "吐司机: See 12 enchantments, 2 hidden abilities. Offered by 15 merchants. Every 6.0 sec.: 造成[1/2/3/4]灼烧 Multicast: 2 Passive: 使用相邻食物时，此物品的灼烧提高[+1/+2/+3/+4]（限本场战斗）。 Patch 10.0.",
+    "og:title": "吐司机",
+    "og:description": "吐司机: See 12 enchantments, 2 hidden abilities. Offered by 15 merchants. Every 6.0 sec.: 造成[1/2/3/4]灼烧 Multicast: 2 Passive: 使用相邻食物时，此物品的灼烧提高[+1/+2/+3/+4]（限本场战斗）。 Patch 10.0.",
+    "og:url": "https://bazaardb.gg/card/cg7qahkd8235k1zhoobpgsqhv/%E5%90%90%E5%8F%B8%E6%9C%BA",
+    "og:site_name": "Bazaar DB",
+    "og:image": "https://i.bazaardb.gg/v0/z10.0/item/8d82d9e47f88a95dc20a2cc87e134eab3aea3a68@256.webp/square?v=2&sig=yCUETm0hfoZ9wBVAM18VDY4Ivxg%3D",
+    "twitter:card": "summary",
+    "twitter:title": "吐司机",
+    "twitter:description": "吐司机: See 12 enchantments, 2 hidden abilities. Offered by 15 merchants. Every 6.0 sec.: 造成[1/2/3/4]灼烧 Multicast: 2 Passive: 使用相邻食物时，此物品的灼烧提高[+1/+2/+3/+4]（限本场战斗）。 Patch 10.0.",
+    "twitter:image": "https://i.bazaardb.gg/v0/z10.0/item/8d82d9e47f88a95dc20a2cc87e134eab3aea3a68@256.webp/square?v=2&sig=yCUETm0hfoZ9wBVAM18VDY4Ivxg%3D"
+  },
+  "title": "吐司机",
+  "images": [
+    {
+      "url": "https://i.bazaardb.gg/v0/z10.0/item/8d82d9e47f88a95dc20a2cc87e134eab3aea3a68@256.webp/square?v=2&sig=yCUETm0hfoZ9wBVAM18VDY4Ivxg%3D",
+      "local_path": "images\\吐司机.jpg",
+      "alt": "吐司机"
+    }
+  ],
+  "enchantments": [
+    {
+      "id": "heavy",
+      "name": "沉重❯",
+      "description": "减速一件物品1秒"
+    },
+    {
+      "id": "golden",
+      "name": "黄金❯",
+      "description": "此物品的价值翻倍。"
+    },
+    {
+      "id": "icy",
+      "name": "寒冰❯",
+      "description": "冻结一件物品0.5秒"
+    },
+    {
+      "id": "turbo",
+      "name": "疾速❯",
+      "description": "加速一件物品1秒"
+    },
+    {
+      "id": "shielded",
+      "name": "护盾❯",
+      "description": "获得护盾，等量于此物品灼烧的5倍"
+    },
+    {
+      "id": "restorative",
+      "name": "回复❯",
+      "description": "获得治疗，等量于此物品灼烧的5倍"
+    },
+    {
+      "id": "toxic",
+      "name": "毒性蔓延❯",
+      "description": "造成剧毒，等量于此物品灼烧"
+    },
+    {
+      "id": "fiery",
+      "name": "炽焰❯",
+      "description": "此物品的灼烧翻倍。"
+    },
+    {
+      "id": "shiny",
+      "name": "闪亮❯",
+      "description": "此物品+1多重触发。"
+    },
+    {
+      "id": "deadly",
+      "name": "致命❯",
+      "description": "此物品+50%暴击率。"
+    },
+    {
+      "id": "radiant",
+      "name": "辉耀❯",
+      "description": "此物品免疫冻结、减速和摧毁。"
+    },
+    {
+      "id": "obsidian",
+      "name": "黑曜石+Weapon❯",
+      "description": "造成伤害，等量于此物品灼烧的5倍"
+    }
+  ],
+  "tables": [
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "CooldownMax",
+        "6s",
+        "6s",
+        "6s",
+        "6s"
+      ],
+      [
+        "Multicast",
+        "2",
+        "2",
+        "2",
+        "2"
+      ],
+      [
+        "BurnApplyAmount",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      [
+        "Custom_0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      [
+        "SellPrice",
+        "2",
+        "4",
+        "8",
+        "16"
+      ],
+      [
+        "BuyPrice",
+        "4",
+        "8",
+        "16",
+        "32"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "SlowTargets",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "SlowAmount",
+        "1s",
+        "1s",
+        "1s",
+        "1s"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "FreezeTargets",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "FreezeAmount",
+        "0.5s",
+        "0.5s",
+        "0.5s",
+        "0.5s"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "HasteTargets",
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      [
+        "HasteAmount",
+        "1s",
+        "1s",
+        "1s",
+        "1s"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "ShieldApplyAmount",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "HealAmount",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "PoisonApplyAmount",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "PercentSlowReduction",
+        "100",
+        "100",
+        "100",
+        "100"
+      ],
+      [
+        "PercentFreezeReduction",
+        "100",
+        "100",
+        "100",
+        "100"
+      ],
+      [
+        "DestroyImmunity",
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    ],
+    [
+      [
+        "Attribute",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond"
+      ],
+      [
+        "DamageAmount",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ]
+  ],
+  "structured_data": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "All",
+        "item": "https://bazaardb.gg/?c=all"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Items",
+        "item": "https://bazaardb.gg/?c=items"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "吐司机",
+        "item": "https://bazaardb.gg/card/cg7qahkd8235k1zhoobpgsqhv/%E5%90%90%E5%8F%B8%E6%9C%BA"
+      }
+    ]
+  }
+}

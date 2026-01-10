@@ -1,0 +1,37 @@
+{
+  "44OZVKOBQIZTQ39IR867Y62CP": {
+    "name": "Fire Elemental",
+    "name_zh": "火灵",
+    "skills": [
+      {
+        "id": "skill-fire-1",
+        "name": "火焰技能",
+        "name_en": "Fire Skill",
+        "tier": "Bronze",
+        "description": "请填写技能描述",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "item-fire-1",
+        "name": "火焰物品1",
+        "name_en": "Fire Item 1",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "请填写物品描述",
+        "image": ""
+      },
+      {
+        "id": "item-fire-2", 
+        "name": "火焰物品2",
+        "name_en": "Fire Item 2",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "请填写物品描述",
+        "image": ""
+      }
+    ],
+    "image": ""
+  }
+}

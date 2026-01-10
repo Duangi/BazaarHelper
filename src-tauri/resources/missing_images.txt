@@ -1,0 +1,202 @@
+=== 图片匹配统计 ===
+
+物品: 861 / 912
+遭遇战: 29 / 73
+技能: 0 / 71
+遭遇战物品: 325 / 345
+
+总共缺失: 186 个
+
+【物品】
+[DEBUG] Speedrunner
+蓝色小圆猪 R
+叉车
+绿色小圆猪 A
+[DEBUG] Decharge Test
+磨刀器
+[LARGE ITEM TEMPLATE]
+VIP 通行证
+Small Package
+丝绸围巾
+Large Package
+Walk-In Freezer
+黄色小圆猪 L
+Nanobot Green
+橙色小圆猪 L
+[DEBUG] Repeatable Quest
+[DEBUG] Fortune Cookie
+蓝色小圆猪 A
+不死灵药
+Coupon
+Assembly Line
+集成式 HUD
+Focused Core
+飞猪
+橙色小圆猪 A
+锁匣
+[DEBUG] Gland
+Augment Reagents
+Artificial Heart
+蓝色小圆猪 L
+[DEBUG] Recycling Bin
+黄色小圆猪 A
+红色小圆猪 R
+Nanobot Orange
+Nanobot Red
+[DEBUG] Peacewrought
+黄色小圆猪 R
+医疗包
+断路器 DJ
+失落神祇
+祖特笛
+红色小圆猪 A
+橙色小圆猪 R
+绿色小圆猪 R
+红色小圆猪 L
+Nanobot Blue
+[SMALL ITEM TEMPLATE]
+毒液注射
+[MEDIUM ITEM TEMPLATE]
+Compass
+[DEBUG] Nested Reference Modifier
+
+【遭遇战】
+Coconut Crab 2
+Monster_Battle_Player_Template_47
+Monster_Battle_Player_Template_40
+Monster_Battle_Player_Template_32
+Giant Mosquito Monster
+Monster_Battle_Player_Template_36
+Monster_Battle_Player_Template_35
+Coconut Crab Monster
+流浪暗礁
+绿洲守护神
+Monster_Battle_Player_Template_43
+载宝海龟
+血礁船长
+Monster_Battle_Player_Template_46
+赏金猎人
+地狱飞艇
+Kyver Nest Monster
+Covetous Thief Monster
+Monster_Battle_Player_Template_39
+Tempest Flamedancer
+Monster_Battle_Player_Template_37
+快乐杰克南瓜
+Monster_Battle_Player_Template_31
+垃圾魔像
+Preening Duelist Monster
+Training Dummy
+宇宙鹏鸟
+Monster_Battle_Player_Template_38
+血礁奇兵
+地狱大魔神
+戈尔贡贵妇
+地狱使者
+Monster_Battle_Player_Template_45
+Monster_Battle_Player_Template_33
+Monster_Battle_Player_Template_6
+拟形怪
+Monster_Battle_Player_Template_48
+暴走破碎机
+霜猴勇士
+舞火大师
+Monster_Battle_Player_Template_34
+BattlePlayer 1
+怪奇以太匠
+菲罗斯汗
+
+【技能】
+盾击
+Poison Tyrant
+硬壳
+凶风
+盾击
+盾击
+不择手段
+盾击
+繁荣昌盛
+疾速
+盾击
+盾击
+硬壳
+厚皮
+炽焰重生
+Wild Strength
+杂耍
+无尽水源
+上膛工具
+盾击
+狂怒一击
+暂避风头
+全副武装
+防线强化
+盾击
+伏击
+引火者
+受训
+扒手
+坚定不移
+暴雪
+盾击
+烈焰舞者
+盾击
+杂耍
+修理时间
+等价交换
+Dual Wield
+盾击
+临修工匠
+麻痹突袭
+光说不练
+好战
+宇宙风
+盾击
+突击专注
+弹药储存箱
+权力掮客
+复仇
+石化凝视
+自适应军备
+虚荣
+灼烧狂怒
+盾击
+盾击
+盾击
+盾击
+盾击
+霜寒专精
+铁锈
+雪暴
+烈焰爆发
+盾击
+钻石獠牙
+军备竞赛
+恐慌
+暗做手脚
+迎头痛击
+恐慌
+一发入魂
+龙性狂焰
+
+【遭遇战物品】
+Genie Lamp
+Magnus' Femur
+Spare Change
+Spare Change
+Spare Change
+Spare Change
+Spare Change
+Spare Change
+Tommoo Gun
+Tommoo Gun
+Powder Horn
+Medium Package
+Spare Change
+Powder Horn
+Spare Change
+Powder Horn
+Spare Change
+Spare Change
+教团
+Thieves Guild Medallion

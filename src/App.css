@@ -1,0 +1,316 @@
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* 颜色坐标原点 */
+  --haste-rgb: 0, 236, 195;
+  --damage-rgb: 245, 80, 61;
+  --slow-rgb: 203, 159, 110;
+  --heal-rgb: 142, 234, 49;
+  --poison-rgb: 14, 190, 79;
+  --ammo-rgb: 255, 142, 0;
+  --freeze-rgb: 63, 200, 247;
+  --shield-rgb: 244, 207, 32;
+  --lifesteal-rgb: 157, 74, 111;
+  --golden-rgb: 255, 205, 25;
+  --burn-rgb: 255, 159, 69;
+  --tag-rgb: 152, 168, 254;
+
+  /* 显式定义所有颜色变量 */
+  --c-haste: rgb(var(--haste-rgb));
+  --c-damage: rgb(var(--damage-rgb));
+  --c-slow: rgb(var(--slow-rgb));
+  --c-heal: rgb(var(--heal-rgb));
+  --c-poison: rgb(var(--poison-rgb));
+  --c-ammo: rgb(var(--ammo-rgb));
+  --c-freeze: rgb(var(--freeze-rgb));
+  --c-shield: rgb(var(--shield-rgb));
+  --c-lifesteal: rgb(var(--lifesteal-rgb));
+  --c-golden: rgb(var(--golden-rgb));
+  --c-burn: rgb(var(--burn-rgb));
+  --c-tag: rgb(var(--tag-rgb));
+}
+
+html, body, #root {
+  background: transparent !important;
+  height: 100%; width: 100%; overflow: hidden;
+  font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+}
+
+.overlay {
+  position: fixed; top: 0; right: 0;
+  background: rgba(41, 37, 33, 0.85); /* 还原酒馆褐色背景 */
+  display: flex; flex-direction: column;
+  height: 100vh !important; width: 100% !important;
+}
+
+/* 顶部收起按钮 */
+.collapse-btn {
+  background: rgba(30, 28, 25, 0.95);
+  color: var(--c-golden);
+  height: 45px;
+  min-height: 45px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; /* 增大字号 */
+  cursor: pointer; font-weight: 800;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-bar {
+  display: flex; background: rgba(30, 28, 25, 1);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.nav-item {
+  padding: 14px 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px; font-weight: bold;
+  text-align: center; flex: 1; cursor: pointer;
+}
+
+.nav-item.active {
+  color: var(--c-golden);
+  border-bottom: 3px solid var(--c-golden);
+}
+
+.scroll-area {
+  flex-grow: 1; overflow-y: auto;
+  padding: 15px; scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+.items {
+  display: flex; flex-direction: column; gap: 20px;
+  align-items: flex-start; padding-bottom: 150px;
+}
+
+.content-wrap {
+  display: inline-flex; gap: 15px; align-items: flex-start;
+  padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 左侧区域 */
+.left-section {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100px; gap: 8px; flex-shrink: 0;
+  position: relative;
+}
+
+.left-image {
+  width: 96px; height: 96px; border-radius: 8px;
+  overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.left-image img { width: 100%; height: 100%; object-fit: contain; }
+
+.item-name {
+  color: #fff;
+  font-size: 16px; /* 增大字号 */
+  font-weight: 900;
+  text-align: center; line-height: 1.2;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* 右侧表格 */
+.effect-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.effect-cell {
+  padding: 12px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.5;
+  /* 移除全局颜色设置，由内部元素控制 */
+}
+
+/* 附魔类型标签 */
+.effect-label {
+  white-space: nowrap;
+  font-weight: 800;
+  margin-right: 12px; /* 增加类型和描述之间的间距 */
+  padding-left: 8px;
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+
+/* 附魔描述文字 */
+.effect-desc {
+  color: #ffffff; /* 确保描述永远是白色 */
+  flex: 1;
+}
+
+/* 搜索框容器 */
+.search-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  border-color: var(--c-golden);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* 怪物卡片 */
+.monster-card {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.monster-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.monster-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px;
+}
+
+.monster-header > div {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--c-golden);
+  text-shadow: 1px 1px 3px #000;
+}
+
+.monster-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mini-cell {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px 14px;
+  border-radius: 6px;
+  border-left: 3px solid var(--c-tag);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-cell strong {
+  color: var(--c-tag);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.mini-cell span,
+.mini-cell p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.mini-cell.skill-cell {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  border-left-color: var(--c-tag);
+}
+
+.mini-cell.item-border {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  border-left-color: var(--c-golden);
+}
+
+.mini-cell.item-border strong {
+  color: var(--c-golden);
+}
+
+.mini-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.empty-tip {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  text-align: center;
+  padding: 40px;
+}
+
+/* 置顶按钮 */
+.pin-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  opacity: 0.7;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.pin-btn:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.8);
+  border-color: var(--c-golden);
+  transform: scale(1.1);
+}
+
+.pin-btn.pinned {
+  background: rgba(255, 205, 25, 0.2);
+  border-color: var(--c-golden);
+  color: var(--c-golden);
+  opacity: 1;
+}
+
+.content-wrap {
+  position: relative;
+}

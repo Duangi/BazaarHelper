@@ -1,0 +1,5340 @@
+{
+  "退休人员": {
+    "name": "Retiree",
+    "name_zh": "退休人员",
+    "skills": [
+      {
+        "id": "bdfc207a-3089-42da-888c-05666480b7f7",
+        "name": "极度舒适",
+        "name_en": "Extreme Comfort",
+        "tier": "Bronze",
+        "description": "获得治疗或提高生命再生时，己方护盾物品的护盾提高3 » 6 » 9（限本场战斗）。",
+        "image": "images/极度舒适.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "855cf2a5-930b-43db-b388-9f814f80a4fb",
+        "name": "猪猪存钱罐",
+        "name_en": "Piggy Bank",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，获得等于其价值的零钱。每小时开始时，花费2金币，就能令价值提高1。",
+        "image": "images/猪猪存钱罐.jpg"
+      },
+      {
+        "id": "96e51b95-eaab-40ea-9a89-381727ce2434",
+        "name": "多肉植物",
+        "name_en": "Succulents",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "治疗1生命值",
+        "image": "images/多肉植物.jpg"
+      },
+      {
+        "id": "26621cbf-809d-4522-ad24-34443af96f27",
+        "name": "高尔夫球杆",
+        "name_en": "Golf Clubs",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成50伤害。\\n 触发治疗时，此物品伤害提高10 » 20 » 30 » 40（限本场战斗）。",
+        "image": "images/高尔夫球杆.jpg"
+      },
+      {
+        "id": "843ddc82-9d87-4995-b81c-bf31ae45fd30",
+        "name": "果篮",
+        "name_en": "Bushel",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "治疗40生命值",
+        "image": "images/果篮.jpg"
+      },
+      {
+        "id": "09132149-783d-4d5a-900c-31135bffab44",
+        "name": "绷带",
+        "name_en": "Bandages",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "治疗10生命值。获得10护盾。",
+        "image": "images/绷带.jpg"
+      },
+      {
+        "id": "da766a09-0352-4966-829f-20bda8da48d7",
+        "name": "医疗包",
+        "name_en": "Med Kit",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "出售此物品时，最左侧治疗物品的治疗量提高5 » 10 » 20 » 40。",
+        "image": "images/医疗包.jpg"
+      }
+    ],
+    "image": "images/退休人员.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/94fbe93931dfe064c9931ef32044a2633ffd3c51@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/97e93533bd767b19542d509f87838b8d8a0087d3@400.webp?v=2"
+  },
+  "阿海克萨": {
+    "name": "Ahexa",
+    "name_zh": "阿海克萨",
+    "skills": [],
+    "items": [
+      {
+        "id": "2434460c-af35-4dde-a69f-1f8781c807d2",
+        "name": "加密货币",
+        "name_en": "Crypto",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "每小时开始时，此物品的价值随机设定在0到5 » 10 » 20 » 40之间。",
+        "image": "images/加密货币.jpg"
+      },
+      {
+        "id": "8451b8d1-2b0f-433f-bf88-36054ff4525f",
+        "name": "快速注射系统",
+        "name_en": "Rapid Injection System",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "对自己触发剧毒时，造成3 » 6 » 9剧毒。使用相邻物品时，对自己造成3 » 6 » 9剧毒，并令生命再生量提高2 » 4 » 6（限本场战斗）。",
+        "image": "images/快速注射系统.jpg"
+      },
+      {
+        "id": "552247e1-74f8-4414-88bb-1b868f3f296d",
+        "name": "太阳能农场",
+        "name_en": "Solar Farm",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "加速其他物品1 » 2秒。生命再生量提高10 » 20（限本场战斗）。触发灼烧时，为此物品充能2秒。",
+        "image": "images/太阳能农场.jpg"
+      },
+      {
+        "id": "020a0ec0-21e6-41af-899f-063573ba9ca5",
+        "name": "病毒",
+        "name_en": "Virus",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "布阵区上每有一个病毒，就对自己造成1 » 2 » 3 » 4剧毒。将每位玩家布阵区上另一件非传奇小型物品转化为病毒",
+        "image": "images/病毒.jpg"
+      },
+      {
+        "id": "2434460c-af35-4dde-a69f-1f8781c807d2",
+        "name": "加密货币",
+        "name_en": "Crypto",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "每小时开始时，此物品的价值随机设定在0到5 » 10 » 20 » 40之间。",
+        "image": "images/加密货币.jpg"
+      }
+    ],
+    "image": "images/阿海克萨.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9b1d817ebe61de01db371e1a257f5f504ac99570@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/760720e2c11db1f157e0adc4325ddc753dc6b78d@400.webp?v=2"
+  },
+  "产品演示员": {
+    "name": "Product Demonstrator",
+    "name_zh": "产品演示员",
+    "skills": [
+      {
+        "id": "bb684bf0-db43-41a3-bb13-0515702d5340",
+        "name": "产品展示台",
+        "name_en": "Product Showcase",
+        "tier": "Bronze",
+        "description": "你的一件物品弹药耗尽时，为其相邻的物品充能1 » 2秒。",
+        "image": "images/产品展示台.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "10ff0767-2cf5-49f5-ae5d-bea93d1d3672",
+        "name": "紧急弹射按钮",
+        "name_en": "Eject Button",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "载具和无人机停止飞行。有物品停止飞行时，获得10 » 20 » 30护盾。每场战斗己方生命值首次降至一半时，使用此物品。",
+        "image": "images/紧急弹射按钮.jpg"
+      },
+      {
+        "id": "5756ecfd-c374-4602-8bc9-cd0d99e1ab70",
+        "name": "寒冰炸弹",
+        "name_en": "Ice Bomb",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "冻结1 » 2 » 3件物品0.5秒。此物品停止飞行。弹药量:1。此物品开始飞行时，为其装填。",
+        "image": "images/寒冰炸弹.jpg"
+      },
+      {
+        "id": "b5f82e87-ffb1-4cc6-a3b3-7193b5f8862a",
+        "name": "扑翼机",
+        "name_en": "Ornithopter",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "一件相邻物品开始飞行。飞行武器+5 » +10 » +15 » +20伤害。",
+        "image": "images/扑翼机.jpg"
+      },
+      {
+        "id": "78e3ec16-b331-4aa7-a54c-13b2f5345e59",
+        "name": "燃烧炸弹",
+        "name_en": "Fire Bomb",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成6 » 8 » 10 » 12灼烧。此物品停止飞行。弹药量:1。此物品开始飞行时，为其装填。",
+        "image": "images/燃烧炸弹.jpg"
+      },
+      {
+        "id": "31dfbc9c-1231-4781-a0a9-a7e3cd458fa8",
+        "name": "纸飞机",
+        "name_en": "Paper Airplane",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "此物品开始或停止飞行",
+        "image": "images/纸飞机.jpg"
+      },
+      {
+        "id": "3e563d2a-87e7-4e9a-bfa2-3268b27b7447",
+        "name": "火药",
+        "name_en": "Gunpowder",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧的弹药物品最大弹药量提高1。",
+        "image": "images/火药.jpg"
+      }
+    ],
+    "image": "images/产品演示员.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5d8b15b92ff9f5ada9352827f0914469d3a048df@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/50120d28f59e64e3507134a6a3a969799a93a82d@400.webp?v=2"
+  },
+  "飞车暴徒": {
+    "name": "Hoverbike Hooligan",
+    "name_zh": "飞车暴徒",
+    "skills": [
+      {
+        "id": "881306fe-f658-4400-a856-5095665863ae",
+        "name": "炮手",
+        "name_en": "Gunner",
+        "tier": "Bronze",
+        "description": "己方物品+1 » +2 » +3最大弹药量。",
+        "image": "images/炮手.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "3e563d2a-87e7-4e9a-bfa2-3268b27b7447",
+        "name": "火药",
+        "name_en": "Gunpowder",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的弹药物品最大弹药量提高1。",
+        "image": "images/火药.jpg"
+      },
+      {
+        "id": "7bff4c56-752c-47f3-89d0-e85aa917319f",
+        "name": "激光手枪",
+        "name_en": "Laser Pistol",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成15 » 30 » 45 » 60伤害",
+        "image": "images/激光手枪.jpg"
+      },
+      {
+        "id": "f0608f5b-5c6a-4c71-8cc4-f8abbdd951c9",
+        "name": "冲锋枪",
+        "name_en": "SMG",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成10伤害。弹药量:6»8»10»12",
+        "image": "images/冲锋枪.jpg"
+      },
+      {
+        "id": "b89ae3b6-6383-47a3-94fe-2571d30a564a",
+        "name": "流星索",
+        "name_en": "Bolas",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成20 » 40 » 60 » 80伤害。减速一件物品2 » 3 » 4 » 5秒。弹药量:2",
+        "image": "images/流星索.jpg"
+      },
+      {
+        "id": "fc2f0122-129b-41e8-942e-a6a10a1c5962",
+        "name": "弱点探测器",
+        "name_en": "Weakpoint Detector",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "武器伤害提高+20（限本场战斗）",
+        "image": "images/弱点探测器.jpg"
+      },
+      {
+        "id": "44710a21-395d-4f78-bdaf-e562c544ae91",
+        "name": "抓钩",
+        "name_en": "Grappling Hook",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成24伤害",
+        "image": "images/抓钩.jpg"
+      },
+      {
+        "id": "0022c409-c839-41e8-8022-65a407457dfe",
+        "name": "鹰之护符",
+        "name_en": "Eagle Talisman",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧的物品暴击率提高5% » 10% » 20%。",
+        "image": "images/鹰之护符.jpg"
+      }
+    ],
+    "image": "images/飞车暴徒.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/264ce593944ba1909e0fc72ca6037d59ab9dc7fc@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/53c3255c4f9df7429a5c604bc440bd20cebc51d3@400.webp?v=2"
+  },
+  "虚空骑士": {
+    "name": "Void Knight",
+    "name_zh": "虚空骑士",
+    "skills": [
+      {
+        "id": "313357f1-9548-4baa-bd5f-65c309a49afc",
+        "name": "催眠吸取",
+        "name_en": "Hypnotic Drain",
+        "tier": "Bronze",
+        "description": "使用带有吸血的武器时，冻结一件更小的物品2秒。",
+        "image": "images/催眠吸取.jpg"
+      },
+      {
+        "id": "83729182-3227-4f5f-9d05-257d2a344434",
+        "name": "绝望净化",
+        "name_en": "Desperate Cleanse",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至一半时，移除己方物品的减速和冻结效果，并净化一半的灼烧与剧毒效果。",
+        "image": "images/绝望净化.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "447c40e6-7aec-4391-8be7-df4952815d40",
+        "name": "蓝宝石",
+        "name_en": "Sapphire",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "冻结2件物品1秒",
+        "image": "images/蓝宝石.jpg"
+      },
+      {
+        "id": "6f70e0cf-8349-4f14-a121-6c9065dc514c",
+        "name": "暗影斗篷",
+        "name_en": "Shadowed Cloak",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "使用此物品右侧的物品时，使之加速1秒。如果此物品是武器，就再令伤害提高+1（限本场战斗）。",
+        "image": "images/暗影斗篷.jpg"
+      },
+      {
+        "id": "0c710f33-d0fd-40c8-aa2d-34fc20f23140",
+        "name": "镰刀",
+        "name_en": "Scythe",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成伤害，等量于一位敌人最大生命值的三分之一",
+        "image": "images/镰刀.jpg"
+      },
+      {
+        "id": "86f9a35d-73d6-456c-b56d-ddb6adc64175",
+        "name": "凡躯之缚",
+        "name_en": "Mortal Coil",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成50 » 100伤害。此物品左侧的武器获得吸血。吸血",
+        "image": "images/凡躯之缚.jpg"
+      },
+      {
+        "id": "a0345f93-0c0a-44fa-a7e4-2135acb16bcc",
+        "name": "符文巨斧",
+        "name_en": "Runic Great Axe",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成50 » 75 » 125伤害。吸血武器+50% » +75% » +100%暴击率。吸血",
+        "image": "images/符文巨斧.jpg"
+      }
+    ],
+    "image": "images/虚空骑士.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1179afe622b9d1304f21038ca7fc2b5554eb9f9a@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a6378705c899f4c14e67d837f1205a5803437721@400.webp?v=2"
+  },
+  "柯玛兹": {
+    "name": "Qomatz",
+    "name_zh": "柯玛兹",
+    "skills": [
+      {
+        "id": "c2085128-ce92-4bd4-bcb8-04f921c876e7",
+        "name": "远古复仇",
+        "name_en": "Ancient Vengeance",
+        "tier": "Bronze",
+        "description": "敌人使用武器时，为一件神器充能1秒。",
+        "image": "images/远古复仇.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "c45a7c22-ae24-4246-bb6c-a83324a8546c",
+        "name": "宇宙炫羽",
+        "name_en": "Cosmic Plumage",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "一件物品开始飞行，且飞行物品暴击率提高+1000%（限本场战斗）",
+        "image": "images/宇宙炫羽.jpg"
+      },
+      {
+        "id": "d66bcc8c-a817-4b0c-bda1-eb13b28acb2b",
+        "name": "利爪",
+        "name_en": "Claws",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/利爪.jpg"
+      },
+      {
+        "id": "b8a86c12-6b43-475d-8748-1676f45655bb",
+        "name": "蛇首手杖",
+        "name_en": "Viper Cane",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成10伤害 触发剧毒或提高生命再生量时，己方武器伤害提高+4 » +8 » +12（限本场战斗）。",
+        "image": "images/蛇首手杖.jpg"
+      },
+      {
+        "id": "2c79dcd7-3205-4d41-85e9-daecb8d1c7c5",
+        "name": "蛇怪之牙",
+        "name_en": "Basilisk Fang",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成20伤害",
+        "image": "images/蛇怪之牙.jpg"
+      },
+      {
+        "id": "85605c06-1990-4803-8ec5-ac49cefa5adc",
+        "name": "魔法石",
+        "name_en": "Philosopher's Stone",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "生命再生量提高1（限本场战斗）转化原料时，此物品的生命再生量永久提升+2 » +3 » +4 » +5。购买此物品时，获得一份催化剂。",
+        "image": "images/魔法石.jpg"
+      },
+      {
+        "id": "41581a59-fd9b-42c6-a97e-9b5587b9cbdf",
+        "name": "以太能量导体",
+        "name_en": "Ethergy Conduit",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "触发剧毒或使用神器时，己方物品暴击率提高+2% » +4%（限本场战斗）。造成暴击时，为己方神器充能1秒。",
+        "image": "images/以太能量导体.jpg"
+      }
+    ],
+    "image": "images/柯玛兹.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/de08ce8432424c64ba54b7a03cce118690ad997a@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/502394921888cbef18187a34e5012db83f34fb2a@400.webp?v=2"
+  },
+  "碧心守护神": {
+    "name": "Greenheart Guardian",
+    "name_zh": "碧心守护神",
+    "skills": [
+      {
+        "id": "999a0b6e-acda-4e3f-89c5-3facff742381",
+        "name": "守护神之怒",
+        "name_en": "Guardian's Fury",
+        "tier": "Bronze",
+        "description": "拥有护盾时，己方武器的冷却时间缩短5% » 10% » 15%。",
+        "image": "images/守护神之怒.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "1ce6ea48-4049-4e66-b792-d360ae9ffedf",
+        "name": "罂粟花田",
+        "name_en": "Poppy Field",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "使用武器时，造成1剧毒。",
+        "image": "images/罂粟花田.jpg"
+      },
+      {
+        "id": "c553a41a-1e8a-48c5-8b04-df60451b7795",
+        "name": "翡翠",
+        "name_en": "Emerald",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "其他剧毒物品+3剧毒。",
+        "image": "images/翡翠.jpg"
+      },
+      {
+        "id": "d536d891-e898-4438-a39a-248fd31ff3c3",
+        "name": "守护神之壳",
+        "name_en": "Guardian Shell",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "获得40 » 60 » 80护盾。触发剧毒时，为此物品充能2秒。",
+        "image": "images/守护神之壳.jpg"
+      }
+    ],
+    "image": "images/碧心守护神.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b65eec425ff2cfe2fa81263e42822dfb18edd686@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ef4a350a8a015b26edc114b213a1105d0c2a7366@400.webp?v=2"
+  },
+  "神话典守": {
+    "name": "Mythkeeper",
+    "name_zh": "神话典守",
+    "skills": [
+      {
+        "id": "a7aad3d4-d447-485f-b343-8ca4c6cf8246",
+        "name": "虹吸护盾",
+        "name_en": "Siphoned Shield",
+        "tier": "Bronze",
+        "description": "护盾物品 + 护盾值，增幅等于敌人所受剧毒的100% » 200%。",
+        "image": "images/虹吸护盾.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "8a0aad5c-caff-4963-b8e9-861bc5ace1ce",
+        "name": "魔杖",
+        "name_en": "Wand",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "为其他非武器物品充能1 » 2秒",
+        "image": "images/魔杖.jpg"
+      },
+      {
+        "id": "c9930f2d-507e-4187-8889-b55bbd88ea18",
+        "name": "长袍",
+        "name_en": "Robe",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "获得50护盾。使用非护盾物品时，为此物品充能1秒。",
+        "image": "images/长袍.jpg"
+      },
+      {
+        "id": "f76338d5-e09b-4319-8914-c35043d464fc",
+        "name": "祖特笛",
+        "name_en": "Zoot Flute",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "减速2 » 3件物品2秒。相邻物品+25% » +50%暴击率。造成暴击时，为此物品充能2秒。",
+        "image": "images/祖特笛.jpg"
+      },
+      {
+        "id": "5896f017-16f1-4274-94ae-2809284b99d9",
+        "name": "失落神祇",
+        "name_en": "Forgotten God",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成4剧毒。相邻物品触发减速时，此物品获得4 » 8 » 12剧毒（限本场战斗）。",
+        "image": "images/失落神祇.jpg"
+      },
+      {
+        "id": "95640018-a5d3-4119-8c4f-5509e161c689",
+        "name": "熏香",
+        "name_en": "Incense",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "减速2件物品4秒",
+        "image": "images/熏香.jpg"
+      },
+      {
+        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
+        "name": "灵质",
+        "name_en": "Ectoplasm",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成30剧毒",
+        "image": "images/灵质.jpg"
+      },
+      {
+        "id": "4e7b6813-338f-43f2-a47b-5ccde7d50007",
+        "name": "真菌孢子",
+        "name_en": "Fungal Spores",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "剧毒物品的剧毒提高+2 » +3 » +4 » +5（限本场战斗）",
+        "image": "images/真菌孢子.jpg"
+      },
+      {
+        "id": "2230803d-e409-42a6-8f0c-8fc83f343699",
+        "name": "毒液注射",
+        "name_en": "Venomous Dose",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "对双方玩家都造成2 » 4 » 6 » 8。剧毒生命再生量提高，增幅等于此物品的剧毒（限本场战斗）",
+        "image": "images/毒液注射.jpg"
+      }
+    ],
+    "image": "images/神话典守.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a91b8fab999f5fe0abd39df3a42a408f5d2be7bc@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f1f6a32aef1568af4a62ed43611ae8bd6b81dabf@400.webp?v=2"
+  },
+  "蛮猪战士": {
+    "name": "Boarrior",
+    "name_zh": "蛮猪战士",
+    "skills": [
+      {
+        "id": "272e93ee-c6a1-48d1-b293-7300393ed0a7",
+        "name": "前向护盾",
+        "name_en": "Frontal Shielding",
+        "tier": "Bronze",
+        "description": "最左侧的护盾物品+20 » +30 » +40 » +50护盾。",
+        "image": "images/前向护盾.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "aa97a75d-3bdf-4f1b-bc2b-457375e31e0f",
+        "name": "獠牙头盔",
+        "name_en": "Tusked Helm",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成10伤害。获得10护盾。Multicast: 2",
+        "image": "images/獠牙头盔.jpg"
+      },
+      {
+        "id": "529a7e95-b350-4fd6-96fd-fef80d4c1462",
+        "name": "古董剑",
+        "name_en": "Old Sword",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成5伤害",
+        "image": "images/古董剑.jpg"
+      },
+      {
+        "id": "349fc81f-2b3a-4d39-beaa-6a0d5105a19a",
+        "name": "手斧",
+        "name_en": "Hatchet",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成6 » 12 » 24 » 48伤害",
+        "image": "images/手斧.jpg"
+      },
+      {
+        "id": "9d289951-bda7-4f74-a5cf-dbe350c0cae5",
+        "name": "木桨",
+        "name_en": "Lumboars",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成10伤害。武器伤害提高5 » 10 » 15 » 20（限本场战斗）。Multicast: 2",
+        "image": "images/木桨.jpg"
+      },
+      {
+        "id": "a00ae05c-4be5-4ed7-b731-2ab443c652fd",
+        "name": "神庙探险券",
+        "name_en": "Temple Expedition Ticket",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "第9天可使用此物品，开启神庙探险。",
+        "image": "images/神庙探险券.jpg"
+      },
+      {
+        "id": "dc3bf5cb-45fa-46c7-9a0e-3f3bfb01697d",
+        "name": "磨刀石",
+        "name_en": "Sharpening Stone",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧的武器伤害提高4 » 8 » 16 » 32。",
+        "image": "images/磨刀石.jpg"
+      }
+    ],
+    "image": "images/蛮猪战士.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/49779d1f1fdc018ccd76b80798bb17be4c0193dd@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fc6a092a78e79d87661cf90d2e4758e505d3abb3@400.webp?v=2"
+  },
+  "领班": {
+    "name": "Foreman",
+    "name_zh": "领班",
+    "skills": [
+      {
+        "id": "91f1e8ac-bdce-4666-85a2-79f9ed33d89a",
+        "name": "炫技机械师",
+        "name_en": "Flashy Mechanic",
+        "tier": "Bronze",
+        "description": "使用工具时，与之相邻的物品暴击率提高3% » 6% » 9%。",
+        "image": "images/炫技机械师.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "f07fc136-5917-4915-a9d5-2246cb290b0d",
+        "name": "克里斯军刀",
+        "name_en": "Chris Army Knife",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成20伤害 获得20护盾",
+        "image": "images/克里斯军刀.jpg"
+      },
+      {
+        "id": "33c9b825-946c-45f8-a0f3-8c0f493dbc45",
+        "name": "电动砂光机",
+        "name_en": "Power Sander",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "加速此物品右侧的物品2 » 3 » 4 » 5秒  减速此物品左侧的物品1秒",
+        "image": "images/电动砂光机.jpg"
+      },
+      {
+        "id": "a7ceeecc-d802-4bbf-9521-afe89db4af45",
+        "name": "起重机",
+        "name_en": "Crane",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "使用相邻的大型物品时，此物品伤害提高+30% » +60%（限本场战斗）。使用相邻的中型物品时，此物品伤害提高+20% » +40%（限本场战斗）。",
+        "image": "images/起重机.jpg"
+      },
+      {
+        "id": "74d0780a-4d98-478e-b136-f1810bc88346",
+        "name": "叉车",
+        "name_en": "Forklift",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "使用相邻物品时，为此物品充能1 » 2秒。 每拥有另一件工具、服饰、科技、武器、射线、神器、地产、载具或伙伴，此物品就+150 » +300伤害。",
+        "image": "images/叉车.jpg"
+      },
+      {
+        "id": "ca77281c-f912-4db3-86ce-64842a4ccdaa",
+        "name": "齿轮",
+        "name_en": "Cog",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "加速一件相邻物品1 » 2 » 3 » 4秒",
+        "image": "images/齿轮.jpg"
+      }
+    ],
+    "image": "images/领班.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5265dde5702137430686010d886a621ca43a527a@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5fffc42b99b1a0fc5bb4844f8138b73e31769597@400.webp?v=2"
+  },
+  "动物饲养员": {
+    "name": "Zookeeper",
+    "name_zh": "动物饲养员",
+    "skills": [
+      {
+        "id": "9d7509c8-5a83-4909-9744-bc42f9b90254",
+        "name": "恶毒友谊",
+        "name_en": "Toxic Friendship",
+        "tier": "Bronze",
+        "description": "使用伙伴时，造成2 » 4剧毒。",
+        "image": "images/恶毒友谊.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "504df9e0-0e99-4037-99b4-be79bfdeb1ac",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "1ff59248-bf6c-49e1-9c45-59989df19693",
+        "name": "巨龙崽崽",
+        "name_en": "Dragon Whelp",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成5伤害 造成灼烧，等量于此物品伤害 此物品开始飞行",
+        "image": "images/巨龙崽崽.jpg"
+      },
+      {
+        "id": "d903dda8-9c30-4325-a727-c885ad972025",
+        "name": "铁钩",
+        "name_en": "Crook",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "每拥有一件中型物品，己方中型武器就+8 » +16 » +24伤害。",
+        "image": "images/铁钩.jpg"
+      },
+      {
+        "id": "8019736a-bb1e-4cbd-a3f8-2bfa9b943b6f",
+        "name": "水蛭",
+        "name_en": "Leeches",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成20伤害 触发剧毒时，此物品伤害提高10 » 20 » 30 » 40（限本场战斗）。",
+        "image": "images/水蛭.jpg"
+      },
+      {
+        "id": "41dea658-7e38-471a-aa20-e018734526f0",
+        "name": "火蜥幼兽",
+        "name_en": "Salamander Pup",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成4 » 6 » 8 » 10灼烧 出售此物品时，最左侧灼烧物品的灼烧提高+2 » +4 » +8 » +16。",
+        "image": "images/火蜥幼兽.jpg"
+      },
+      {
+        "id": "014d9c98-e823-443c-98a3-6367ab81c956",
+        "name": "驯化蜘蛛",
+        "name_en": "Trained Spider",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成2剧毒",
+        "image": "images/驯化蜘蛛.jpg"
+      },
+      {
+        "id": "d2d0fa9b-6270-4dfa-a3c2-aff2101b71d5",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      }
+    ],
+    "image": "images/动物饲养员.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f7abb08d0281f73253a6ad991ab0cee62d1c37e@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/10814d3f839d9352bd22650d2aa46118b534892c@400.webp?v=2"
+  },
+  "怨念和服": {
+    "name": "Haunted Kimono",
+    "name_zh": "怨念和服",
+    "skills": [
+      {
+        "id": "a5fd4748-c87a-4153-b312-2bb103e49d9d",
+        "name": "鬼魅飘飞",
+        "name_en": "Haunting Flight",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，1 » 2 » 3件小型物品开始飞行。",
+        "image": "images/鬼魅飘飞.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "aff2d8f4-528a-4229-8175-8901fcadcb70",
+        "name": "丝绸围巾",
+        "name_en": "Silk Scarf",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "获得75护盾",
+        "image": "images/丝绸围巾.jpg"
+      },
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      }
+    ],
+    "image": "images/怨念和服.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7af0accb6147e300aebd364e6b3fbd1d0f87a885@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/421f53fe2a324af4e4229f768bad5174b42565ec@400.webp?v=2"
+  },
+  "": {
+    "name": "",
+    "name_zh": "",
+    "skills": [],
+    "items": [],
+    "image": "images/.jpg",
+    "background_url": "",
+    "character_url": ""
+  },
+  "獠牙英格狼": {
+    "name": "Fanged Inglet",
+    "name_zh": "獠牙英格狼",
+    "skills": [
+      {
+        "id": "8ac782cd-c2fe-490f-bef4-ad741f62e9fe",
+        "name": "致命眼光",
+        "name_en": "Deadly Eye",
+        "tier": "Bronze",
+        "description": "相邻武器+5% » +10% » +15% » +20%暴击率。",
+        "image": "images/致命眼光.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "733ac52d-6227-41c6-b82a-227469bfa687",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "e89d70b4-6bdc-4ee0-9286-18a0a0b781b7",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      }
+    ],
+    "image": "images/獠牙英格狼.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/446ebfd5529b5eab6a9c2a1bba743e87ab3ac1f7@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a635a2b649cb1800f3c62ca47e6d010c1ba8d30a@400.webp?v=2"
+  },
+  "火灵": {
+    "name": "Pyro",
+    "name_zh": "火灵",
+    "skills": [
+      {
+        "id": "fiery",
+        "name": "炽焰",
+        "name_en": "Fiery",
+        "tier": "Bronze",
+        "description": "你的灼烧物品有+1/+2/+3/+4灼烧。",
+        "image": "images/炽焰.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "3d212e22-12eb-427e-ab96-e7baf1229a7b",
+        "name": "打火机",
+        "name_en": "Lighter",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成5灼烧",
+        "image": "images/打火机.jpg"
+      },
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      }
+    ],
+    "image": "images/火灵.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/518c4b846c394ca256b673ec0c1bbefec81bc2b2@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f8685bd8ee4db9767ce1f25d2dc39659a2952b0@400.webp?v=2"
+  },
+  "9AF5FE85-C06F-4227-906C-E5F8DF83A0FD": {
+    "name": "Cloudtop Officer",
+    "name_zh": "云顶军官",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "0591d8b4-2632-4c41-9f73-48896237256d",
+        "name": "气压步枪",
+        "name_en": "Air-Pressure Rifle",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成75伤害",
+        "image": "images/气压步枪.jpg"
+      },
+      {
+        "id": "809d6638-4e8e-4b14-867a-c6feccbeae9d",
+        "name": "海拔计",
+        "name_en": "Altimeter",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "为相邻物品充能1500秒",
+        "image": "images/海拔计.jpg"
+      },
+      {
+        "id": "7cc657b3-6a37-427a-b14e-7e12c3a2277a",
+        "name": "作战气球",
+        "name_en": "Battle Balloon",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "一件物品开始飞行",
+        "image": "images/作战气球.jpg"
+      },
+      {
+        "id": "e1f77ca7-8c4c-4e40-8a42-fd125f6104ae",
+        "name": "螺旋桨",
+        "name_en": "Propeller",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "一件物品开始飞行",
+        "image": "images/螺旋桨.jpg"
+      },
+      {
+        "id": "4bb19ca8-9729-423d-8e15-6053314b51df",
+        "name": "系绳",
+        "name_en": "Tethers",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "使1件物品停止飞行",
+        "image": "images/系绳.jpg"
+      }
+    ],
+    "image": "images/云顶军官.jpg"
+  },
+  "53C31151-AD92-4181-9720-D0825EEA866B": {
+    "name": "Viper Tyrant",
+    "name_zh": "毒蛇暴君",
+    "skills": [
+      {
+        "id": "b89ebdeb-1954-47c8-97fe-8cc3008f2a25",
+        "name": "Poison Tyrant",
+        "name_en": "Poison Tyrant",
+        "tier": "Bronze",
+        "description": "触发剧毒时，生命再生量提高1（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "638a6b50-7803-4da5-9514-ca0627fd7b5f",
+        "name": "腺体",
+        "name_en": "Gland",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，生命再生量提高4。",
+        "image": "images/腺体.jpg"
+      },
+      {
+        "id": "562d768a-6aaf-4704-be8b-4dc9e6311b11",
+        "name": "提取物",
+        "name_en": "Extract",
+        "tier": "Bronze",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。",
+        "image": "images/提取物.jpg"
+      },
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "2c79dcd7-3205-4d41-85e9-daecb8d1c7c5",
+        "name": "蛇怪之牙",
+        "name_en": "Basilisk Fang",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "造成20伤害",
+        "image": "images/蛇怪之牙.jpg"
+      },
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "c0eb01d3-5f8e-4271-8045-ec283a47bcaa",
+        "name": "铜蛇艾德",
+        "name_en": "Copper Ed",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成1剧毒",
+        "image": "images/铜蛇艾德.jpg"
+      },
+      {
+        "id": "19199531-1aff-47ce-bdfc-1188cb3efec2",
+        "name": "剧毒药水",
+        "name_en": "Runic Potion",
+        "tier": "Bronze",
+        "socket": "Socket_7",
+        "description": "加速吸血武器1秒",
+        "image": "images/剧毒药水.jpg"
+      },
+      {
+        "id": "562d768a-6aaf-4704-be8b-4dc9e6311b11",
+        "name": "提取物",
+        "name_en": "Extract",
+        "tier": "Bronze",
+        "socket": "Socket_8",
+        "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。",
+        "image": "images/提取物.jpg"
+      },
+      {
+        "id": "638a6b50-7803-4da5-9514-ca0627fd7b5f",
+        "name": "腺体",
+        "name_en": "Gland",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "出售此物品时，生命再生量提高4。",
+        "image": "images/腺体.jpg"
+      }
+    ],
+    "image": "images/毒蛇暴君.jpg"
+  },
+  "709E1DCE-7E91-4612-B010-D107A6800158": {
+    "name": "Coconut Crab 2",
+    "name_zh": "Coconut Crab 2",
+    "skills": [
+      {
+        "id": "050ff26a-59ec-4666-89b0-b0630a75149a",
+        "name": "硬壳",
+        "name_en": "Hard Shell",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至一半时，获得护盾，等量于最大生命值的20%。[0]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "9ad15f24-4def-4d82-8545-d73794cfbaf2",
+        "name": "椰子",
+        "name_en": "Coconut",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最大生命值提高20。",
+        "image": "images/椰子.jpg"
+      },
+      {
+        "id": "95ff786e-b6bf-4bad-9d5c-6b2b41e9f0c3",
+        "name": "碾骨爪",
+        "name_en": "Crusher Claw",
+        "tier": "Bronze",
+        "socket": "Socket_3",
+        "description": "造成伤害，等量于己方物品中最高的护盾值",
+        "image": "images/碾骨爪.jpg"
+      },
+      {
+        "id": "40814ac2-ee63-4482-8f3b-d2242750fbd8",
+        "name": "珊瑚护甲",
+        "name_en": "Coral Armor",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "获得50护盾",
+        "image": "images/珊瑚护甲.jpg"
+      },
+      {
+        "id": "9ad15f24-4def-4d82-8545-d73794cfbaf2",
+        "name": "椰子",
+        "name_en": "Coconut",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "出售此物品时，最大生命值提高20。",
+        "image": "images/椰子.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "16038F84-3CEC-4CCD-B58B-2CE974442142": {
+    "name": "Lord of the Wastes",
+    "name_zh": "废土领主",
+    "skills": [
+      {
+        "id": "c9c884fd-849e-4541-b770-4658c2e6e609",
+        "name": "凶风",
+        "name_en": "Foreboding Winds",
+        "tier": "Gold",
+        "description": "武器造成的暴击伤害翻倍。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "8391a75d-56e7-4206-a16e-62dbd986925f",
+        "name": "靴里剑",
+        "name_en": "Shoe Blade",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成60伤害",
+        "image": "images/靴里剑.jpg"
+      },
+      {
+        "id": "25545684-3fd5-4adf-abcc-0e2bb6c500c1",
+        "name": "摆锤",
+        "name_en": "Pendulum",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "使用相邻物品时，为另一件相邻物品充能1秒。",
+        "image": "images/摆锤.jpg"
+      },
+      {
+        "id": "a4475e25-4562-4228-9e36-99ae0986b23c",
+        "name": "盗龙轿辇",
+        "name_en": "Palanquin",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "己方物品++50%暴击率。",
+        "image": "images/盗龙轿辇.jpg"
+      },
+      {
+        "id": "ac92c118-c073-465c-8d89-abafa0dcb144",
+        "name": "Genie Lamp",
+        "name_en": "Genie Lamp",
+        "tier": "Diamond",
+        "socket": "Socket_6",
+        "description": "",
+        "image": ""
+      },
+      {
+        "id": "fd95b873-24a4-4af6-8b08-296f24a3576c",
+        "name": "魔法飞毯",
+        "name_en": "Magic Carpet",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "造成150伤害",
+        "image": "images/魔法飞毯.jpg"
+      },
+      {
+        "id": "01f6e150-ba23-429c-a43b-2508f63fc798",
+        "name": "没药",
+        "name_en": "Myrrh",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "生命再生量提高5（限本场战斗）",
+        "image": "images/没药.jpg"
+      }
+    ],
+    "image": "images/废土领主.jpg"
+  },
+  "0AF10A6E-4EA8-4F76-B3F7-C0364CE6D42B": {
+    "name": "Monster_Battle_Player_Template_47",
+    "name_zh": "Monster_Battle_Player_Template_47",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "70EAF194-D60A-4605-AAC2-41F84EA84C46": {
+    "name": "Monster_Battle_Player_Template_40",
+    "name_zh": "Monster_Battle_Player_Template_40",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "EA736D32-738C-4CCA-902C-1B3A5DC67205": {
+    "name": "Stew",
+    "name_zh": "史都",
+    "skills": [
+      {
+        "id": "c1ffec09-0567-47fe-b80e-4f55f62ee7fd",
+        "name": "不择手段",
+        "name_en": "Anything to Win",
+        "tier": "Gold",
+        "description": "每场战斗首次使用非灼烧或非剧毒物品时，为灼烧和剧毒物品充能1000秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "8ff7ebb6-a783-403a-ae29-7e89d0c90040",
+        "name": "咖喱",
+        "name_en": "Curry",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成4灼烧",
+        "image": "images/咖喱.jpg"
+      },
+      {
+        "id": "e6d331a7-c0e3-4619-9eee-c7c5023969bb",
+        "name": "黑胡椒",
+        "name_en": "Black Pepper",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "造成1灼烧",
+        "image": "images/黑胡椒.jpg"
+      },
+      {
+        "id": "b91bfce3-8b58-44a3-8250-ca91c3100598",
+        "name": "烤箱手套",
+        "name_en": "Oven Mitts",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "加速2件物品20秒",
+        "image": "images/烤箱手套.jpg"
+      },
+      {
+        "id": "ad02d867-252b-45b5-9625-4480807caeff",
+        "name": "坩埚",
+        "name_en": "Cauldron",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "此物品每拥有一个类型，就造成5%灼烧",
+        "image": "images/坩埚.jpg"
+      },
+      {
+        "id": "b91bfce3-8b58-44a3-8250-ca91c3100598",
+        "name": "烤箱手套",
+        "name_en": "Oven Mitts",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "加速2件物品20秒",
+        "image": "images/烤箱手套.jpg"
+      },
+      {
+        "id": "c0455f22-2fb9-4ce6-a65f-e874e3d86ff0",
+        "name": "辣酱",
+        "name_en": "Hot Sauce",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "每有一份相邻的食物，此物品就+1多重触发。",
+        "image": "images/辣酱.jpg"
+      }
+    ],
+    "image": "images/史都.jpg"
+  },
+  "55823D26-5FA0-46CA-9D3D-50BBBFF5068B": {
+    "name": "Monster_Battle_Player_Template_32",
+    "name_zh": "Monster_Battle_Player_Template_32",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "8CF3C8CC-2D9E-4F10-B133-711E0FEC7039": {
+    "name": "Awakened District",
+    "name_zh": "觉醒街区",
+    "skills": [
+      {
+        "id": "3c42764f-2a89-4fa2-b901-ca2ec127c411",
+        "name": "繁荣昌盛",
+        "name_en": "Prosperity",
+        "tier": "Diamond",
+        "description": "护盾物品 + 护盾值，增幅等于己方物品的价值。[1]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "530b642b-4a31-4cc4-a7ae-ea22d607ad4d",
+        "name": "景观楼",
+        "name_en": "Landscraper",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "获得1护盾",
+        "image": "images/景观楼.jpg"
+      },
+      {
+        "id": "d154b0ed-4fe3-4abe-a08c-fbc622a64500",
+        "name": "街区之魂",
+        "name_en": "Soul of the District",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "获得护盾，等量于当前生命值",
+        "image": "images/街区之魂.jpg"
+      },
+      {
+        "id": "40d8b44a-8e2f-4081-8163-043d76ddbafa",
+        "name": "摩空大楼",
+        "name_en": "Spacescraper",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "获得护盾，等量于己方物品价值的2倍",
+        "image": "images/摩空大楼.jpg"
+      },
+      {
+        "id": "d7a66bfb-963f-4c13-8c2b-0bef35a650c8",
+        "name": "露台",
+        "name_en": "Balcony",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "此物品左侧的地产在战斗中价值翻倍，且其冷却时间缩短10%。",
+        "image": "images/露台.jpg"
+      }
+    ],
+    "image": "images/觉醒街区.jpg"
+  },
+  "DD985314-939F-4388-86DC-50EF8E7C25B7": {
+    "name": "Giant Mosquito Monster",
+    "name_zh": "Giant Mosquito Monster",
+    "skills": [
+      {
+        "id": "d5b180a2-9dfa-43e3-bfb9-3e15dac0398e",
+        "name": "疾速",
+        "name_en": "Rush",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，加速一件武器3秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Bronze",
+        "socket": "Socket_3",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "5a162b5d-4802-4f56-a30e-19b3c8ef677c",
+        "name": "毒刺",
+        "name_en": "Stinger",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成10伤害",
+        "image": "images/毒刺.jpg"
+      },
+      {
+        "id": "26ddca65-5309-4600-88f7-1eb5ffbb5788",
+        "name": "琥珀",
+        "name_en": "Amber",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "减速1件物品1秒",
+        "image": "images/琥珀.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Bronze",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "55902C8F-01AF-4234-BC56-852113C85AC9": {
+    "name": "Monster_Battle_Player_Template_36",
+    "name_zh": "Monster_Battle_Player_Template_36",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "867110C7-92F5-49D9-A074-2D687548E47E": {
+    "name": "Monster_Battle_Player_Template_35",
+    "name_zh": "Monster_Battle_Player_Template_35",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "2E9ED78C-6070-4802-9E98-E1090FE5BD78": {
+    "name": "Coconut Crab Monster",
+    "name_zh": "Coconut Crab Monster",
+    "skills": [
+      {
+        "id": "050ff26a-59ec-4666-89b0-b0630a75149a",
+        "name": "硬壳",
+        "name_en": "Hard Shell",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至一半时，获得护盾，等量于最大生命值的20%。[0]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "9ad15f24-4def-4d82-8545-d73794cfbaf2",
+        "name": "椰子",
+        "name_en": "Coconut",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "出售此物品时，最大生命值提高20。",
+        "image": "images/椰子.jpg"
+      },
+      {
+        "id": "95ff786e-b6bf-4bad-9d5c-6b2b41e9f0c3",
+        "name": "碾骨爪",
+        "name_en": "Crusher Claw",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "造成伤害，等量于己方物品中最高的护盾值",
+        "image": "images/碾骨爪.jpg"
+      },
+      {
+        "id": "eda51b14-8420-4da4-ba82-89513e5deaa2",
+        "name": "海螺壳",
+        "name_en": "Sea Shell",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "每拥有一件水系物品，就获得5%护盾",
+        "image": "images/海螺壳.jpg"
+      },
+      {
+        "id": "9ad15f24-4def-4d82-8545-d73794cfbaf2",
+        "name": "椰子",
+        "name_en": "Coconut",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "出售此物品时，最大生命值提高20。",
+        "image": "images/椰子.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "1177568A-757F-469F-9438-8F3BFEACD93F": {
+    "name": "Wandering Shoal",
+    "name_zh": "流浪暗礁",
+    "skills": [
+      {
+        "id": "7ab9d9a7-09b2-4dab-b821-eaaf0fb84523",
+        "name": "厚皮",
+        "name_en": "Thick Hide",
+        "tier": "Bronze",
+        "description": "触发减速时，为一件物品充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "c6ab4982-da6c-4a1a-934d-820c45014646",
+        "name": "电鳗",
+        "name_en": "Electric Eels",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成1伤害",
+        "image": "images/电鳗.jpg"
+      },
+      {
+        "id": "b325d26f-0625-406c-89d4-30e011b30b9e",
+        "name": "毒须鲶",
+        "name_en": "Catfish",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "造成6剧毒",
+        "image": "images/毒须鲶.jpg"
+      },
+      {
+        "id": "b4ccf465-fbf6-4fd4-b4ed-515594ed8722",
+        "name": "水母",
+        "name_en": "Jellyfish",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "造成9剧毒",
+        "image": "images/水母.jpg"
+      },
+      {
+        "id": "840b6bc5-4786-40bc-b864-cc5c2b78641a",
+        "name": "食人鱼",
+        "name_en": "Piranha",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/食人鱼.jpg"
+      },
+      {
+        "id": "26ddca65-5309-4600-88f7-1eb5ffbb5788",
+        "name": "琥珀",
+        "name_en": "Amber",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "减速2件物品1秒",
+        "image": "images/琥珀.jpg"
+      },
+      {
+        "id": "88e65c34-6865-4222-8eec-c18d48b2aa8d",
+        "name": "水草",
+        "name_en": "Seaweed",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "治疗10生命值",
+        "image": "images/水草.jpg"
+      },
+      {
+        "id": "91766035-9d5c-49df-b6b1-25ff7328af5b",
+        "name": "河豚",
+        "name_en": "Pufferfish",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成20剧毒",
+        "image": "images/河豚.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "A859BD39-A384-43E8-9299-08A73C6810A6": {
+    "name": "Radiant Corsair",
+    "name_zh": "辉耀海盗",
+    "skills": [
+      {
+        "id": "09c59ebf-d2f9-4862-9c30-396b9ddfdd89",
+        "name": "炽焰重生",
+        "name_en": "Fiery Rebirth",
+        "tier": "Bronze",
+        "description": "每场战斗即将首次落败时，治疗至生命值全满。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "44710a21-395d-4f78-bdaf-e562c544ae91",
+        "name": "抓钩",
+        "name_en": "Grappling Hook",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成24伤害",
+        "image": "images/抓钩.jpg"
+      },
+      {
+        "id": "20d85338-b625-4b9a-95a7-8a60805e061f",
+        "name": "锚",
+        "name_en": "Anchor",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "造成伤害，等量于一位敌人最大生命值的20%",
+        "image": "images/锚.jpg"
+      },
+      {
+        "id": "a043f66d-2320-46f6-8bac-131afeb770d2",
+        "name": "侦察望远镜",
+        "name_en": "Spyglass",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "相邻物品+1%暴击率。",
+        "image": "images/侦察望远镜.jpg"
+      },
+      {
+        "id": "36211e0c-1806-4234-b661-3c05e2625a0a",
+        "name": "灯塔",
+        "name_en": "Lighthouse",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "减速1件物品6秒",
+        "image": "images/灯塔.jpg"
+      }
+    ],
+    "image": "images/辉耀海盗.jpg"
+  },
+  "EA63DAE1-1D9C-4422-8C2A-96260B787DD1": {
+    "name": "Trash Titan",
+    "name_zh": "垃圾泰坦",
+    "skills": [
+      {
+        "id": "d071e4de-f87f-41b5-b02d-d622e35c0b4d",
+        "name": "杂耍",
+        "name_en": "Juggler",
+        "tier": "Gold",
+        "description": "使用小型物品时，为一件大型物品充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "3d766165-a7f8-4286-8d37-976d5e101522",
+        "name": "废品场弹射机",
+        "name_en": "Junkyard Catapult",
+        "tier": "Diamond",
+        "socket": "Socket_1",
+        "description": "造成100伤害",
+        "image": "images/废品场弹射机.jpg"
+      },
+      {
+        "id": "694a08fe-e8ff-4a45-9693-4c68f11a1f8b",
+        "name": "催化剂",
+        "name_en": "Catalyst",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "出售此物品时，转化你最左侧的物品。",
+        "image": "images/催化剂.jpg"
+      },
+      {
+        "id": "c553a41a-1e8a-48c5-8b04-df60451b7795",
+        "name": "翡翠",
+        "name_en": "Emerald",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "其他剧毒物品+3剧毒。",
+        "image": "images/翡翠.jpg"
+      },
+      {
+        "id": "0b4d7632-b3b4-42ce-a5fc-3fafb8f1c409",
+        "name": "毒芹",
+        "name_en": "Hemlock",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "造成3剧毒",
+        "image": "images/毒芹.jpg"
+      },
+      {
+        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
+        "name": "灵质",
+        "name_en": "Ectoplasm",
+        "tier": "Diamond",
+        "socket": "Socket_7",
+        "description": "造成30剧毒",
+        "image": "images/灵质.jpg"
+      },
+      {
+        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
+        "name": "灵质",
+        "name_en": "Ectoplasm",
+        "tier": "Diamond",
+        "socket": "Socket_8",
+        "description": "造成30剧毒",
+        "image": "images/灵质.jpg"
+      },
+      {
+        "id": "6b02f653-a294-443e-8b85-2be47b6a1c12",
+        "name": "毒蜥",
+        "name_en": "Venomander",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "造成1剧毒",
+        "image": "images/毒蜥.jpg"
+      }
+    ],
+    "image": "images/垃圾泰坦.jpg"
+  },
+  "E18B8358-920D-48D7-B90C-37E455135991": {
+    "name": "Oasis Guardian",
+    "name_zh": "绿洲守护神",
+    "skills": [
+      {
+        "id": "a59bc243-7c8b-447a-8ab7-968f662b1c50",
+        "name": "无尽水源",
+        "name_en": "Waters of Infinity",
+        "tier": "Bronze",
+        "description": "每拥有一件非武器物品，就+5%生命再生量。[0]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f08af933-8712-44fe-9542-338e0fec0a45",
+        "name": "衔尾蛇雕像",
+        "name_en": "Ouroboros Statue",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成8剧毒",
+        "image": "images/衔尾蛇雕像.jpg"
+      },
+      {
+        "id": "6b02f653-a294-443e-8b85-2be47b6a1c12",
+        "name": "毒蜥",
+        "name_en": "Venomander",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "造成1剧毒",
+        "image": "images/毒蜥.jpg"
+      },
+      {
+        "id": "f42936ef-6efd-478a-9ed2-fd759df65f97",
+        "name": "昏睡药水",
+        "name_en": "Sleeping Potion",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "减速最慢的敌人物品4秒",
+        "image": "images/昏睡药水.jpg"
+      },
+      {
+        "id": "95640018-a5d3-4119-8c4f-5509e161c689",
+        "name": "熏香",
+        "name_en": "Incense",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "减速2件物品4秒",
+        "image": "images/熏香.jpg"
+      },
+      {
+        "id": "da049bef-7176-4226-b078-dac37a503835",
+        "name": "Magnus' Femur",
+        "name_en": "Magnus' Femur",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "造成300伤害",
+        "image": ""
+      },
+      {
+        "id": "0bf49a3b-e610-4f2b-8420-1a8a7d48e70a",
+        "name": "颠茄",
+        "name_en": "Nightshade",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成6剧毒",
+        "image": "images/颠茄.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "8C211464-5961-449B-B5E9-B222C601E3C1": {
+    "name": "Master Alchemist",
+    "name_zh": "炼金大师",
+    "skills": [
+      {
+        "id": "fb409226-bf38-4275-b775-7fab879a1d6f",
+        "name": "上膛工具",
+        "name_en": "Retool",
+        "tier": "Gold",
+        "description": "使用工具时，装填一件相邻物品。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "57842875-bc49-4ec9-af82-29c2dbed4087",
+        "name": "研钵与研杵",
+        "name_en": "Mortar & Pestle",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "吸血武器伤害提高+20（限本场战斗）",
+        "image": "images/研钵与研杵.jpg"
+      },
+      {
+        "id": "cb519fbf-1f2c-4dd1-ba9b-3dc031fd7cbe",
+        "name": "折射棱镜",
+        "name_en": "Refractor",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成20伤害",
+        "image": "images/折射棱镜.jpg"
+      },
+      {
+        "id": "2974e199-fa53-4d40-87a6-0ec6722a4aef",
+        "name": "彩虹药水",
+        "name_en": "Rainbow Potion",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "造成9灼烧。\n \n 造成9剧毒",
+        "image": "images/彩虹药水.jpg"
+      },
+      {
+        "id": "ad02d867-252b-45b5-9625-4480807caeff",
+        "name": "坩埚",
+        "name_en": "Cauldron",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "此物品每拥有一个类型，就造成5%灼烧",
+        "image": "images/坩埚.jpg"
+      },
+      {
+        "id": "2974e199-fa53-4d40-87a6-0ec6722a4aef",
+        "name": "彩虹药水",
+        "name_en": "Rainbow Potion",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "造成9灼烧。\n \n 造成9剧毒",
+        "image": "images/彩虹药水.jpg"
+      },
+      {
+        "id": "d1788cd1-cd70-4391-a0d9-c50fc9e08d9a",
+        "name": "风暴瓶",
+        "name_en": "Weather Glass",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成1灼烧",
+        "image": "images/风暴瓶.jpg"
+      }
+    ],
+    "image": "images/炼金大师.jpg"
+  },
+  "B5409AD0-EDB2-49EB-8DEE-6D4EC238E10E": {
+    "name": "Monster_Battle_Player_Template_43",
+    "name_zh": "Monster_Battle_Player_Template_43",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "E07396B2-A71E-46E7-B32B-D9568585DD93": {
+    "name": "Viper",
+    "name_zh": "毒蛇",
+    "skills": [
+      {
+        "id": "239aeabb-0b0c-484d-a761-ee68ede3223c",
+        "name": "狂怒一击",
+        "name_en": "Lash Out Skill",
+        "tier": "Bronze",
+        "description": "每场战斗开始时，造成3剧毒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "638a6b50-7803-4da5-9514-ca0627fd7b5f",
+        "name": "腺体",
+        "name_en": "Gland",
+        "tier": "Bronze",
+        "socket": "Socket_3",
+        "description": "出售此物品时，生命再生量提高2。",
+        "image": "images/腺体.jpg"
+      },
+      {
+        "id": "638a6b50-7803-4da5-9514-ca0627fd7b5f",
+        "name": "腺体",
+        "name_en": "Gland",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "出售此物品时，生命再生量提高2。",
+        "image": "images/腺体.jpg"
+      }
+    ],
+    "image": "images/毒蛇.jpg"
+  },
+  "23274E3A-C38D-4AFF-92B6-599103256CEE": {
+    "name": "Treasure Turtle",
+    "name_zh": "载宝海龟",
+    "skills": [
+      {
+        "id": "369a6704-2727-4cea-be27-01b76c82df45",
+        "name": "暂避风头",
+        "name_en": "Hunker Down",
+        "tier": "Gold",
+        "description": "沙尘暴开始时，你在余下的战斗中受到的伤害减少50%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Diamond",
+        "socket": "Socket_0",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "88e65c34-6865-4222-8eec-c18d48b2aa8d",
+        "name": "水草",
+        "name_en": "Seaweed",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "治疗10生命值",
+        "image": "images/水草.jpg"
+      },
+      {
+        "id": "eda51b14-8420-4da4-ba82-89513e5deaa2",
+        "name": "海螺壳",
+        "name_en": "Sea Shell",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "每拥有一件水系物品，就获得5%护盾",
+        "image": "images/海螺壳.jpg"
+      },
+      {
+        "id": "f16f5464-02f0-4b00-9f7b-d7e7b65a1e80",
+        "name": "龟壳",
+        "name_en": "Turtle Shell",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "获得15护盾",
+        "image": "images/龟壳.jpg"
+      },
+      {
+        "id": "b325d26f-0625-406c-89d4-30e011b30b9e",
+        "name": "毒须鲶",
+        "name_en": "Catfish",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "造成6剧毒",
+        "image": "images/毒须鲶.jpg"
+      },
+      {
+        "id": "1312cf29-3dbb-446f-88b2-0d4999e68d78",
+        "name": "珍珠",
+        "name_en": "Pearl",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "护盾",
+        "image": "images/珍珠.jpg"
+      },
+      {
+        "id": "46b1261c-a04c-4a35-8a9e-6763a5d85c43",
+        "name": "拍立蚌",
+        "name_en": "Clamera",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "减速一件物品1秒",
+        "image": "images/拍立蚌.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "FDCB435F-D6C4-4657-81B5-1888E8EEFE5A": {
+    "name": "Bloodreef Captain",
+    "name_zh": "血礁船长",
+    "skills": [
+      {
+        "id": "3849770c-59df-4471-b0b0-f02713be8bb0",
+        "name": "全副武装",
+        "name_en": "Full Arsenal",
+        "tier": "Gold",
+        "description": "如果拥有载具，己方物品的冷却时间缩短2%；如果拥有武器，缩短2%；如果拥有工具，缩短2%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "6870c295-6a4d-4175-b378-c961df9933de",
+        "name": "船长之舵",
+        "name_en": "Captain's Wheel",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "如果拥有载具或大型物品，此物品的冷却时间就减半。",
+        "image": "images/船长之舵.jpg"
+      },
+      {
+        "id": "4a30e8b0-f1d1-44c0-b2a7-0a8d12c1e297",
+        "name": "鸦巢",
+        "name_en": "Crow's Nest",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "相邻武器+60%暴击率。",
+        "image": "images/鸦巢.jpg"
+      },
+      {
+        "id": "13f852ba-1d3d-4c1a-b6db-79072e0b19d0",
+        "name": "燃烧响炮",
+        "name_en": "Pop Snappers",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "造成6灼烧",
+        "image": "images/燃烧响炮.jpg"
+      },
+      {
+        "id": "bbf63b5c-57c3-4412-beb5-18bfec2372e6",
+        "name": "鹦鹉皮特",
+        "name_en": "Pesky Pete",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "造成1灼烧",
+        "image": "images/鹦鹉皮特.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "B40AE00E-F6DF-4920-90A4-A49EA53FBDB5": {
+    "name": "Roaming Isle",
+    "name_zh": "流浪岛屿",
+    "skills": [
+      {
+        "id": "7b6a982f-7196-4d3e-8674-825fddba80d2",
+        "name": "防线强化",
+        "name_en": "Shored Up",
+        "tier": "Bronze",
+        "description": "触发治疗或提高生命再生时，为一件护盾物品充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "4da45ad1-6793-458c-9c72-d03fa273ebfd",
+        "name": "热带岛屿",
+        "name_en": "Tropical Island",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "触发减速时，生命再生量提高5（限本场战斗）。",
+        "image": "images/热带岛屿.jpg"
+      },
+      {
+        "id": "eda51b14-8420-4da4-ba82-89513e5deaa2",
+        "name": "海螺壳",
+        "name_en": "Sea Shell",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "每拥有一件水系物品，就获得5%护盾",
+        "image": "images/海螺壳.jpg"
+      },
+      {
+        "id": "0abf14a3-8a87-4c87-a7a9-793a3fa3d4db",
+        "name": "宠物石",
+        "name_en": "Pet Rock",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "如果这是你唯一的伙伴，就令己方物品的暴击率+20%。",
+        "image": "images/宠物石.jpg"
+      },
+      {
+        "id": "b325d26f-0625-406c-89d4-30e011b30b9e",
+        "name": "毒须鲶",
+        "name_en": "Catfish",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "造成6剧毒",
+        "image": "images/毒须鲶.jpg"
+      },
+      {
+        "id": "b4ccf465-fbf6-4fd4-b4ed-515594ed8722",
+        "name": "水母",
+        "name_en": "Jellyfish",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成9剧毒",
+        "image": "images/水母.jpg"
+      },
+      {
+        "id": "88e65c34-6865-4222-8eec-c18d48b2aa8d",
+        "name": "水草",
+        "name_en": "Seaweed",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "治疗10生命值",
+        "image": "images/水草.jpg"
+      },
+      {
+        "id": "88e65c34-6865-4222-8eec-c18d48b2aa8d",
+        "name": "水草",
+        "name_en": "Seaweed",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "治疗10生命值",
+        "image": "images/水草.jpg"
+      },
+      {
+        "id": "46b1261c-a04c-4a35-8a9e-6763a5d85c43",
+        "name": "拍立蚌",
+        "name_en": "Clamera",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "减速一件物品1秒",
+        "image": "images/拍立蚌.jpg"
+      }
+    ],
+    "image": "images/流浪岛屿.jpg"
+  },
+  "B236A2B6-3BBB-4F3E-B505-BA67605312DE": {
+    "name": "Monster_Battle_Player_Template_46",
+    "name_zh": "Monster_Battle_Player_Template_46",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "622B8E58-B073-4C75-9D57-322D0F16435D": {
+    "name": "Bounty Hunters",
+    "name_zh": "赏金猎人",
+    "skills": [
+      {
+        "id": "dfe40f90-61de-46dc-b807-0da587140e9d",
+        "name": "伏击",
+        "name_en": "Ambush",
+        "tier": "Diamond",
+        "description": "每场战斗开始时，造成伤害，等量于一位敌人最大生命值的30%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成24伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "4b823c6b-3e35-47a2-9b65-177e911aca1a",
+        "name": "投掷捕兽网",
+        "name_en": "Thrown Net",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "敌人每拥有一件武器或伙伴，此物品就+1多重触发。",
+        "image": "images/投掷捕兽网.jpg"
+      },
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "造成24伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "1b955b8d-0ea6-4437-935c-d588be5898c1",
+        "name": "弯刀",
+        "name_en": "Cutlass",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/弯刀.jpg"
+      },
+      {
+        "id": "8b994da7-7aa3-40cd-aafd-c84f0913d0c9",
+        "name": "通缉海报",
+        "name_en": "Wanted Poster",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "击败英雄时，获得10经验值。如果使用此物品赢得战斗，则额外获得12经验值。",
+        "image": "images/通缉海报.jpg"
+      },
+      {
+        "id": "c5362859-48d7-4f5e-84ed-f8430b84a8ae",
+        "name": "闪光弹",
+        "name_en": "Flashbang",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "减速敌人所有物品2秒",
+        "image": "images/闪光弹.jpg"
+      },
+      {
+        "id": "7f706346-b364-4791-a104-ed6fe03e87e1",
+        "name": "打破镣铐",
+        "name_en": "Broken Shackles",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "武器伤害提高8（限本场战斗）",
+        "image": "images/打破镣铐.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "F8CF1723-AA0C-4019-8C59-842CECDA1C93": {
+    "name": "Infernal Frigate",
+    "name_zh": "地狱飞艇",
+    "skills": [
+      {
+        "id": "ffceb0c7-7913-4339-8013-f1bcc67cca9c",
+        "name": "引火者",
+        "name_en": "Firestarter",
+        "tier": "Bronze",
+        "description": "每场战斗开始时，造成1灼烧。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "73ca1d2f-f4d3-42c4-8980-0255f5ecd472",
+        "name": "抛石机",
+        "name_en": "Trebuchet",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成15伤害",
+        "image": "images/抛石机.jpg"
+      },
+      {
+        "id": "2a1ae50b-6d0d-48a8-9f68-b804e8793030",
+        "name": "火箭发射器",
+        "name_en": "Rocket Launcher",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成12伤害",
+        "image": "images/火箭发射器.jpg"
+      },
+      {
+        "id": "13f852ba-1d3d-4c1a-b6db-79072e0b19d0",
+        "name": "燃烧响炮",
+        "name_en": "Pop Snappers",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成6灼烧",
+        "image": "images/燃烧响炮.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "使用相邻物品时，造成2灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "13f852ba-1d3d-4c1a-b6db-79072e0b19d0",
+        "name": "燃烧响炮",
+        "name_en": "Pop Snappers",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成6灼烧",
+        "image": "images/燃烧响炮.jpg"
+      },
+      {
+        "id": "55ef5f5c-0ffc-4598-a6bd-66d8235da56a",
+        "name": "推进器",
+        "name_en": "Thrusters",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "每场战斗开始时，此物品左侧的物品开始飞行。",
+        "image": "images/推进器.jpg"
+      },
+      {
+        "id": "55ef5f5c-0ffc-4598-a6bd-66d8235da56a",
+        "name": "推进器",
+        "name_en": "Thrusters",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "每场战斗开始时，此物品左侧的物品开始飞行。",
+        "image": "images/推进器.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "FC5AA4C0-8D87-457B-BC3C-2EBF0B07D12D": {
+    "name": "Kyver Nest Monster",
+    "name_zh": "Kyver Nest Monster",
+    "skills": [
+      {
+        "id": "0526054f-98da-4e95-be68-d25b26bb0fe3",
+        "name": "受训",
+        "name_en": "Trained (Monster skill)",
+        "tier": "Bronze",
+        "description": "触发减速时，一件武器的伤害提高+5（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Bronze",
+        "socket": "Socket_3",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "5a162b5d-4802-4f56-a30e-19b3c8ef677c",
+        "name": "毒刺",
+        "name_en": "Stinger",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "造成5伤害",
+        "image": "images/毒刺.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "924C56D7-1A5E-4E57-A6B2-BB0C2362980E": {
+    "name": "Covetous Thief Monster",
+    "name_zh": "Covetous Thief Monster",
+    "skills": [
+      {
+        "id": "c5936035-d32a-4d82-8dfc-44deb993b5ea",
+        "name": "扒手",
+        "name_en": "Pickpocket",
+        "tier": "Bronze",
+        "description": "每场战斗开始时，获得1金币。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "905f9340-4272-4f82-88e4-4a2f79f1be96",
+        "name": "伪装",
+        "name_en": "Disguise",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "其他英雄的物品+30%暴击率。",
+        "image": "images/伪装.jpg"
+      },
+      {
+        "id": "6f70e0cf-8349-4f14-a121-6c9065dc514c",
+        "name": "暗影斗篷",
+        "name_en": "Shadowed Cloak",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "使用此物品右侧的物品时，使之加速1秒。如果此物品是武器，就再令伤害提高+1（限本场战斗）。",
+        "image": "images/暗影斗篷.jpg"
+      },
+      {
+        "id": "5e17cfc3-25c0-4a74-8a33-07ee972e6f6e",
+        "name": "藏刃匕首",
+        "name_en": "Concealed Dagger",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成30伤害",
+        "image": "images/藏刃匕首.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "6C87BE29-E82D-4CE1-AC79-8A642B8E0C4F": {
+    "name": "Lord Arken",
+    "name_zh": "阿肯大人",
+    "skills": [
+      {
+        "id": "56450d16-bc69-43fd-bb89-4aff071cda29",
+        "name": "坚定不移",
+        "name_en": "Unwavering",
+        "tier": "Gold",
+        "description": "使用物品时，获得20护盾。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "55ef5f5c-0ffc-4598-a6bd-66d8235da56a",
+        "name": "推进器",
+        "name_en": "Thrusters",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "每场战斗开始时，此物品左侧的物品开始飞行。",
+        "image": "images/推进器.jpg"
+      },
+      {
+        "id": "6e576444-85ce-4922-84e1-8ad88c5b83f1",
+        "name": "加特林机枪",
+        "name_en": "Gatling Gun",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "造成10伤害",
+        "image": "images/加特林机枪.jpg"
+      },
+      {
+        "id": "c600d27d-0df0-4f05-a2ab-4a64a0d9fa32",
+        "name": "蚀光舰",
+        "name_en": "The Eclipse",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "使用己方所有其他物品",
+        "image": "images/蚀光舰.jpg"
+      },
+      {
+        "id": "b769eef3-b324-4704-91fd-3a971c6f47b4",
+        "name": "电池",
+        "name_en": "Battery",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "为此物品左侧的物品充能3000秒",
+        "image": "images/电池.jpg"
+      },
+      {
+        "id": "6e576444-85ce-4922-84e1-8ad88c5b83f1",
+        "name": "加特林机枪",
+        "name_en": "Gatling Gun",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "造成10伤害",
+        "image": "images/加特林机枪.jpg"
+      },
+      {
+        "id": "55ef5f5c-0ffc-4598-a6bd-66d8235da56a",
+        "name": "推进器",
+        "name_en": "Thrusters",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "每场战斗开始时，此物品左侧的物品开始飞行。",
+        "image": "images/推进器.jpg"
+      }
+    ],
+    "image": "images/阿肯大人.jpg"
+  },
+  "E873DBD7-86AA-4FEC-9206-28591346939A": {
+    "name": "Frost Street Champion",
+    "name_zh": "霜猴霸王",
+    "skills": [
+      {
+        "id": "b2e947ce-a8d9-46e0-8249-22a6a97fbffc",
+        "name": "暴雪",
+        "name_en": "Blizzard",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，冻结所有非武器物品1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7326c177-d5c8-4e27-b8b4-acf565745019",
+        "name": "冰山",
+        "name_en": "Iceberg",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "敌人使用物品时，使其冻结0.5秒。",
+        "image": "images/冰山.jpg"
+      },
+      {
+        "id": "bfb765fc-764c-4e16-aa17-0e10efda4b5b",
+        "name": "液氮锤",
+        "name_en": "Nitrogen Hammer",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "造成200伤害",
+        "image": "images/液氮锤.jpg"
+      },
+      {
+        "id": "447c40e6-7aec-4391-8be7-df4952815d40",
+        "name": "蓝宝石",
+        "name_en": "Sapphire",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "冻结2件物品1秒",
+        "image": "images/蓝宝石.jpg"
+      },
+      {
+        "id": "53b62ecb-bcbc-4a86-bd6f-027467970109",
+        "name": "冻结殴打",
+        "name_en": "Frozen Bludgeon",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成60伤害",
+        "image": "images/冻结殴打.jpg"
+      },
+      {
+        "id": "28db3caa-7727-4d1c-9758-df42975e4811",
+        "name": "霜冻药水",
+        "name_en": "Frost Potion",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "冻结2件物品1秒",
+        "image": "images/霜冻药水.jpg"
+      },
+      {
+        "id": "9f478d9d-cc98-4ff2-926a-5eeb09bd044c",
+        "name": "雪花",
+        "name_en": "Snowflake",
+        "tier": "Diamond",
+        "socket": "Socket_9",
+        "description": "出售此物品时，最左侧的小型或中型冻结物品+500冻结持续时间。",
+        "image": "images/雪花.jpg"
+      }
+    ],
+    "image": "images/霜猴霸王.jpg"
+  },
+  "80A6CD15-2213-493F-904F-FB6CE7C60270": {
+    "name": "Monster_Battle_Player_Template_39",
+    "name_zh": "Monster_Battle_Player_Template_39",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "0A70A9AB-4508-4FF4-984E-9A20F0B3D517": {
+    "name": "Tempest Flamedancer",
+    "name_zh": "Tempest Flamedancer",
+    "skills": [
+      {
+        "id": "19b74e9a-6723-4e94-a955-2c39ca48dbd0",
+        "name": "烈焰舞者",
+        "name_en": "Flamedancer Skill",
+        "tier": "Bronze",
+        "description": "灼烧物品+10%暴击率。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "可出售换得金币",
+        "image": ""
+      }
+    ],
+    "image": ""
+  },
+  "B3F9A83F-772B-4286-BF21-CD2D86A13B58": {
+    "name": "Outlands Dervish",
+    "name_zh": "荒原旋舞者",
+    "skills": [],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "8391a75d-56e7-4206-a16e-62dbd986925f",
+        "name": "靴里剑",
+        "name_en": "Shoe Blade",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成40伤害",
+        "image": "images/靴里剑.jpg"
+      },
+      {
+        "id": "af24dea0-6cc9-49dc-acec-d90313b46b72",
+        "name": "发条匕首",
+        "name_en": "Clockwork Blades",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成40伤害",
+        "image": "images/发条匕首.jpg"
+      },
+      {
+        "id": "af24dea0-6cc9-49dc-acec-d90313b46b72",
+        "name": "发条匕首",
+        "name_en": "Clockwork Blades",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成40伤害",
+        "image": "images/发条匕首.jpg"
+      },
+      {
+        "id": "8391a75d-56e7-4206-a16e-62dbd986925f",
+        "name": "靴里剑",
+        "name_en": "Shoe Blade",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成40伤害",
+        "image": "images/靴里剑.jpg"
+      },
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "可出售换得金币",
+        "image": ""
+      }
+    ],
+    "image": "images/荒原旋舞者.jpg"
+  },
+  "3A2F9A4B-F573-46D4-A2ED-1ED0088DA55B": {
+    "name": "Monster_Battle_Player_Template_37",
+    "name_zh": "Monster_Battle_Player_Template_37",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "337C2AF9-4815-4C14-B537-159F5FC80BE3": {
+    "name": "Trash Titan",
+    "name_zh": "垃圾泰坦",
+    "skills": [
+      {
+        "id": "d071e4de-f87f-41b5-b02d-d622e35c0b4d",
+        "name": "杂耍",
+        "name_en": "Juggler",
+        "tier": "Gold",
+        "description": "使用小型物品时，为一件大型物品充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "c553a41a-1e8a-48c5-8b04-df60451b7795",
+        "name": "翡翠",
+        "name_en": "Emerald",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "其他剧毒物品+3剧毒。",
+        "image": "images/翡翠.jpg"
+      },
+      {
+        "id": "694a08fe-e8ff-4a45-9693-4c68f11a1f8b",
+        "name": "催化剂",
+        "name_en": "Catalyst",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "出售此物品时，转化你最左侧的物品。",
+        "image": "images/催化剂.jpg"
+      },
+      {
+        "id": "f7241086-8b2d-4882-80c9-a0ddb46910ad",
+        "name": "废品场长枪",
+        "name_en": "Junkyard Lance",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "每拥有一件小型物品（包括储存箱），就造成100伤害",
+        "image": "images/废品场长枪.jpg"
+      },
+      {
+        "id": "0b4d7632-b3b4-42ce-a5fc-3fafb8f1c409",
+        "name": "毒芹",
+        "name_en": "Hemlock",
+        "tier": "Bronze",
+        "socket": "Socket_6",
+        "description": "造成2剧毒",
+        "image": "images/毒芹.jpg"
+      },
+      {
+        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
+        "name": "灵质",
+        "name_en": "Ectoplasm",
+        "tier": "Diamond",
+        "socket": "Socket_7",
+        "description": "造成30剧毒",
+        "image": "images/灵质.jpg"
+      },
+      {
+        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
+        "name": "灵质",
+        "name_en": "Ectoplasm",
+        "tier": "Diamond",
+        "socket": "Socket_8",
+        "description": "造成30剧毒",
+        "image": "images/灵质.jpg"
+      },
+      {
+        "id": "6b02f653-a294-443e-8b85-2be47b6a1c12",
+        "name": "毒蜥",
+        "name_en": "Venomander",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "造成1剧毒",
+        "image": "images/毒蜥.jpg"
+      }
+    ],
+    "image": "images/垃圾泰坦.jpg"
+  },
+  "7719B6D8-7977-4D49-88A2-DA29A19AD235": {
+    "name": "Boilerroom Brawler",
+    "name_zh": "锅炉斗士",
+    "skills": [
+      {
+        "id": "b76a00ad-8034-4ad8-9f55-9fdc279cf60e",
+        "name": "修理时间",
+        "name_en": "Time to Tinker",
+        "tier": "Bronze",
+        "description": "每场战斗前3次触发加速时，获得50护盾。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Bronze",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "f8dd1239-f4a3-4bca-b975-2125906e7fcb",
+        "name": "锤子",
+        "name_en": "Hammer",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成1伤害",
+        "image": "images/锤子.jpg"
+      },
+      {
+        "id": "27e2ea0b-4e39-4826-be29-9f5505d5938a",
+        "name": "扳手",
+        "name_en": "Wrench",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "此物品飞行时，伤害翻倍。",
+        "image": "images/扳手.jpg"
+      },
+      {
+        "id": "4cf73614-52fd-4c59-8002-bbff087951ba",
+        "name": "工具箱",
+        "name_en": "Toolbox",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "加速此物品右侧的工具2秒",
+        "image": "images/工具箱.jpg"
+      },
+      {
+        "id": "189c31f3-1641-4e05-bf78-800e71ffc0e7",
+        "name": "瑞士军刀",
+        "name_en": "Multitool",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "加速1件物品1秒",
+        "image": "images/瑞士军刀.jpg"
+      },
+      {
+        "id": "54040bca-14e5-4f6d-bfa8-b67658adda0b",
+        "name": "能量药水",
+        "name_en": "Energy Potion",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "加速其他物品1秒",
+        "image": "images/能量药水.jpg"
+      },
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Bronze",
+        "socket": "Socket_8",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      }
+    ],
+    "image": "images/锅炉斗士.jpg"
+  },
+  "6D946FE1-13CC-4141-BC89-84981C4EF77F": {
+    "name": "Joyful Jack",
+    "name_zh": "快乐杰克南瓜",
+    "skills": [
+      {
+        "id": "dd9d1ad7-8c28-46da-9f98-aaa2cc55cd00",
+        "name": "等价交换",
+        "name_en": "Equivalent Exchange",
+        "tier": "Bronze",
+        "description": "触发治疗或提高生命再生时，为一件剧毒物品充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "562d768a-6aaf-4704-be8b-4dc9e6311b11",
+        "name": "提取物",
+        "name_en": "Extract",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧剧毒物品的剧毒提高+4。",
+        "image": "images/提取物.jpg"
+      },
+      {
+        "id": "1afb5eef-e964-4767-b9a6-8d1a76cef645",
+        "name": "黑玫瑰",
+        "name_en": "Black Rose",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "生命再生量提高3（限本场战斗）",
+        "image": "images/黑玫瑰.jpg"
+      },
+      {
+        "id": "1ce6ea48-4049-4e66-b792-d360ae9ffedf",
+        "name": "罂粟花田",
+        "name_en": "Poppy Field",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "使用武器时，造成1剧毒。",
+        "image": "images/罂粟花田.jpg"
+      },
+      {
+        "id": "96e51b95-eaab-40ea-9a89-381727ce2434",
+        "name": "多肉植物",
+        "name_en": "Succulents",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "治疗1生命值",
+        "image": "images/多肉植物.jpg"
+      },
+      {
+        "id": "843ddc82-9d87-4995-b81c-bf31ae45fd30",
+        "name": "果篮",
+        "name_en": "Bushel",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "治疗40生命值",
+        "image": "images/果篮.jpg"
+      },
+      {
+        "id": "96e51b95-eaab-40ea-9a89-381727ce2434",
+        "name": "多肉植物",
+        "name_en": "Succulents",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "治疗1生命值",
+        "image": "images/多肉植物.jpg"
+      },
+      {
+        "id": "562d768a-6aaf-4704-be8b-4dc9e6311b11",
+        "name": "提取物",
+        "name_en": "Extract",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "出售此物品时，最左侧剧毒物品的剧毒提高+4。",
+        "image": "images/提取物.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "0A633DEF-7135-408C-BCC7-785F5172EE34": {
+    "name": "Mr. Moo",
+    "name_zh": "黑牛先生",
+    "skills": [
+      {
+        "id": "4a443bdd-f949-4fb5-9ccd-a710f74d2311",
+        "name": "Dual Wield",
+        "name_en": "Dual Wield",
+        "tier": "Gold",
+        "description": "如果正好有2件武器，那么己方物品+0%暴击率。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "使用相邻物品时，造成2灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "使用相邻物品时，造成2灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Diamond",
+        "socket": "Socket_2",
+        "description": "使用相邻物品时，造成3灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "347a3f68-b4bc-49c4-856d-534b14b47459",
+        "name": "Tommoo Gun",
+        "name_en": "Tommoo Gun",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "造成伤害，等量于此物品弹药数量",
+        "image": ""
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Diamond",
+        "socket": "Socket_4",
+        "description": "使用相邻物品时，造成3灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Diamond",
+        "socket": "Socket_5",
+        "description": "使用相邻物品时，造成3灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "347a3f68-b4bc-49c4-856d-534b14b47459",
+        "name": "Tommoo Gun",
+        "name_en": "Tommoo Gun",
+        "tier": "Diamond",
+        "socket": "Socket_6",
+        "description": "造成伤害，等量于此物品弹药数量",
+        "image": ""
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Diamond",
+        "socket": "Socket_7",
+        "description": "使用相邻物品时，造成3灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "使用相邻物品时，造成2灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      },
+      {
+        "id": "14b297c5-db65-492d-aad7-9ffe101cae5f",
+        "name": "燃烧子弹",
+        "name_en": "Incendiary Rounds",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "使用相邻物品时，造成2灼烧。",
+        "image": "images/燃烧子弹.jpg"
+      }
+    ],
+    "image": "images/黑牛先生.jpg"
+  },
+  "B88974F2-E953-4C66-A231-7337FD409C53": {
+    "name": "Monster_Battle_Player_Template_31",
+    "name_zh": "Monster_Battle_Player_Template_31",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "D34242A2-02B0-4361-9402-E216CB12D165": {
+    "name": "Trash Golem",
+    "name_zh": "垃圾魔像",
+    "skills": [
+      {
+        "id": "03968f2d-5f40-464a-bf1f-9475836157cd",
+        "name": "临修工匠",
+        "name_en": "Jury Rigger",
+        "tier": "Bronze",
+        "description": "使用弹药物品时，为其左侧的物品装填1弹药。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "3d766165-a7f8-4286-8d37-976d5e101522",
+        "name": "废品场弹射机",
+        "name_en": "Junkyard Catapult",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成50伤害",
+        "image": "images/废品场弹射机.jpg"
+      },
+      {
+        "id": "a35ea0aa-ff0f-4366-b3dd-561cae7ed725",
+        "name": "等离子手雷",
+        "name_en": "Plasma Grenade",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "对双方玩家都造成1灼烧",
+        "image": "images/等离子手雷.jpg"
+      },
+      {
+        "id": "2fcdf96f-e1c4-45cd-8efd-0b8352267483",
+        "name": "手雷",
+        "name_en": "Grenade",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "造成50伤害",
+        "image": "images/手雷.jpg"
+      },
+      {
+        "id": "19199531-1aff-47ce-bdfc-1188cb3efec2",
+        "name": "剧毒药水",
+        "name_en": "Runic Potion",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "加速吸血武器1秒",
+        "image": "images/剧毒药水.jpg"
+      },
+      {
+        "id": "2974e199-fa53-4d40-87a6-0ec6722a4aef",
+        "name": "彩虹药水",
+        "name_en": "Rainbow Potion",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成9灼烧。\n \n 造成9剧毒",
+        "image": "images/彩虹药水.jpg"
+      },
+      {
+        "id": "e6a183ce-0ea9-4981-bbfb-95be32b93de2",
+        "name": "葡萄弹",
+        "name_en": "Grapeshot",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成30伤害",
+        "image": "images/葡萄弹.jpg"
+      },
+      {
+        "id": "5b4ff0c0-ca13-4606-9db3-4219d33ab2a0",
+        "name": "火药桶",
+        "name_en": "Powder Keg",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成伤害，等量于一位敌人最大生命值的30%，随后摧毁此物品",
+        "image": "images/火药桶.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "FD181D89-0706-4220-BB95-637AF574B61B": {
+    "name": "Dire Mosquito",
+    "name_zh": "恶蚊",
+    "skills": [
+      {
+        "id": "b7938579-8bc3-4bbf-b002-ffa1870acd50",
+        "name": "麻痹突袭",
+        "name_en": "Paralyzing Rush",
+        "tier": "Bronze",
+        "description": "触发减速时，加速一件武器1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短2%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短2%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "26ddca65-5309-4600-88f7-1eb5ffbb5788",
+        "name": "琥珀",
+        "name_en": "Amber",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "减速1件物品3秒",
+        "image": "images/琥珀.jpg"
+      },
+      {
+        "id": "ffcc9b4e-24f2-479b-ab80-7bfbaec664f2",
+        "name": "口器",
+        "name_en": "Proboscis",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "触发减速时，造成8伤害。",
+        "image": "images/口器.jpg"
+      },
+      {
+        "id": "9bdc7dad-5016-4743-9b44-1e20b03a1961",
+        "name": "神经毒素",
+        "name_en": "Neural Toxin",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "使用相邻武器时，减速一件物品1秒。",
+        "image": "images/神经毒素.jpg"
+      },
+      {
+        "id": "5a162b5d-4802-4f56-a30e-19b3c8ef677c",
+        "name": "毒刺",
+        "name_en": "Stinger",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成20伤害",
+        "image": "images/毒刺.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短2%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短2%。",
+        "image": "images/虫翅.jpg"
+      }
+    ],
+    "image": "images/恶蚊.jpg"
+  },
+  "A0B78419-E252-4BDC-8861-4325ECBEADD0": {
+    "name": "Preening Duelist Monster",
+    "name_zh": "Preening Duelist Monster",
+    "skills": [
+      {
+        "id": "64727f7e-adfd-4f25-aa4e-1f127b9d5b70",
+        "name": "光说不练",
+        "name_en": "All Talk",
+        "tier": "Bronze",
+        "description": "己方生命值高于一半时，己方武器+0伤害。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "3e563d2a-87e7-4e9a-bfa2-3268b27b7447",
+        "name": "火药",
+        "name_en": "Gunpowder",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧的弹药物品最大弹药量提高1。",
+        "image": "images/火药.jpg"
+      },
+      {
+        "id": "03e4c71d-5317-4c35-a0fb-5348356edc03",
+        "name": "Powder Horn",
+        "name_en": "Powder Horn",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "为此物品右侧的物品装填2发弹药",
+        "image": ""
+      },
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成16伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "55377bdf-359b-495c-895c-c7852511c915",
+        "name": "炮弹",
+        "name_en": "Cannonball",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "相邻物品+1最大弹药量。",
+        "image": "images/炮弹.jpg"
+      },
+      {
+        "id": "65527be1-b100-4a4c-98d1-4f8975368b5b",
+        "name": "刺刀手枪",
+        "name_en": "Pistol Sword",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "造成24伤害",
+        "image": "images/刺刀手枪.jpg"
+      },
+      {
+        "id": "e13d521c-b960-4072-83db-fe4af598dd57",
+        "name": "投掷飞刀",
+        "name_en": "Throwing Knives",
+        "tier": "Bronze",
+        "socket": "Socket_7",
+        "description": "造成1伤害",
+        "image": "images/投掷飞刀.jpg"
+      },
+      {
+        "id": "3e563d2a-87e7-4e9a-bfa2-3268b27b7447",
+        "name": "火药",
+        "name_en": "Gunpowder",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "出售此物品时，最左侧的弹药物品最大弹药量提高1。",
+        "image": "images/火药.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "626224F6-4AEA-458F-8947-86A4798DE419": {
+    "name": "Dire Inglet",
+    "name_zh": "英格恐狼",
+    "skills": [
+      {
+        "id": "238deeac-0b94-4396-bd16-e7081a700594",
+        "name": "好战",
+        "name_en": "Aggressive",
+        "tier": "Bronze",
+        "description": "使用武器时，该武器暴击率提高+3%（限本场战斗）。",
+        "image": "images/好战.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "bb1d1891-5ee5-42d9-92f5-b531d84dc467",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "7f706346-b364-4791-a104-ed6fe03e87e1",
+        "name": "打破镣铐",
+        "name_en": "Broken Shackles",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "武器伤害提高8（限本场战斗）",
+        "image": "images/打破镣铐.jpg"
+      },
+      {
+        "id": "d66bcc8c-a817-4b0c-bda1-eb13b28acb2b",
+        "name": "利爪",
+        "name_en": "Claws",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/利爪.jpg"
+      },
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "d66bcc8c-a817-4b0c-bda1-eb13b28acb2b",
+        "name": "利爪",
+        "name_en": "Claws",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/利爪.jpg"
+      },
+      {
+        "id": "0022c409-c839-41e8-8022-65a407457dfe",
+        "name": "鹰之护符",
+        "name_en": "Eagle Talisman",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧的物品暴击率提高5% » 10% » 20%。",
+        "image": "images/鹰之护符.jpg"
+      },
+      {
+        "id": "d38b45f6-4001-4727-a86f-4a5afc021329",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      }
+    ],
+    "image": "images/626224F6-4AEA-458F-8947-86A4798DE419.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fd6a935782dd2f5783a4ca1821d504091e2907dd@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f8c47b50839d67b2e6335be59b478aa85f0b782b@400.webp?v=2"
+  },
+  "29549218-4198-44F1-8EBC-E118DD693DDB": {
+    "name": "Training Dummy",
+    "name_zh": "Training Dummy",
+    "skills": [],
+    "items": [
+      {
+        "id": "35b7a978-275b-48f0-8e3d-9be2391c6a78",
+        "name": "Medium Package",
+        "name_en": "Medium Package",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "法莱会回来取包裹",
+        "image": ""
+      }
+    ],
+    "image": ""
+  },
+  "E38C6E90-E0B3-495F-9D18-9FACF49A336F": {
+    "name": "Cosmic Roc",
+    "name_zh": "宇宙鹏鸟",
+    "skills": [
+      {
+        "id": "870ed8e7-9c1f-4be0-b84c-00ebcf475a74",
+        "name": "宇宙风",
+        "name_en": "Cosmic Wind",
+        "tier": "Gold",
+        "description": "造成暴击时，加速一件物品15秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "55f11b65-77fa-4d70-9250-8a40d03961ad",
+        "name": "羽毛",
+        "name_en": "Feather",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "出售此物品时，己方物品的冷却时间缩短3%。",
+        "image": "images/羽毛.jpg"
+      },
+      {
+        "id": "39f47d29-2ef3-4057-bb60-33acd3dd12a2",
+        "name": "宇宙护符",
+        "name_en": "Cosmic Amulet",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "加速一件物品2秒",
+        "image": "images/宇宙护符.jpg"
+      },
+      {
+        "id": "c45a7c22-ae24-4246-bb6c-a83324a8546c",
+        "name": "宇宙炫羽",
+        "name_en": "Cosmic Plumage",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "一件物品开始飞行，且飞行物品暴击率提高+1000%（限本场战斗）",
+        "image": "images/宇宙炫羽.jpg"
+      },
+      {
+        "id": "d66bcc8c-a817-4b0c-bda1-eb13b28acb2b",
+        "name": "利爪",
+        "name_en": "Claws",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/利爪.jpg"
+      },
+      {
+        "id": "d66bcc8c-a817-4b0c-bda1-eb13b28acb2b",
+        "name": "利爪",
+        "name_en": "Claws",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/利爪.jpg"
+      },
+      {
+        "id": "c45a7c22-ae24-4246-bb6c-a83324a8546c",
+        "name": "宇宙炫羽",
+        "name_en": "Cosmic Plumage",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "一件物品开始飞行，且飞行物品暴击率提高+1000%（限本场战斗）",
+        "image": "images/宇宙炫羽.jpg"
+      },
+      {
+        "id": "01f6e150-ba23-429c-a43b-2508f63fc798",
+        "name": "没药",
+        "name_en": "Myrrh",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "生命再生量提高3（限本场战斗）",
+        "image": "images/没药.jpg"
+      },
+      {
+        "id": "55f11b65-77fa-4d70-9250-8a40d03961ad",
+        "name": "羽毛",
+        "name_en": "Feather",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "出售此物品时，己方物品的冷却时间缩短3%。",
+        "image": "images/羽毛.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "8E823884-A27D-46CD-BDDC-9815A224AAE4": {
+    "name": "Monster_Battle_Player_Template_38",
+    "name_zh": "Monster_Battle_Player_Template_38",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "518BD4B2-97F4-44F9-8B74-933962339751": {
+    "name": "Boss Harrow",
+    "name_zh": "哈洛大哥",
+    "skills": [
+      {
+        "id": "08adc2fd-986c-4e8f-914e-fda9703ace3d",
+        "name": "突击专注",
+        "name_en": "Assault Focus",
+        "tier": "Bronze",
+        "description": "任意非武器物品被使用时，使其减速1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "fc2f0122-129b-41e8-942e-a6a10a1c5962",
+        "name": "弱点探测器",
+        "name_en": "Weakpoint Detector",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "武器伤害提高+20（限本场战斗）",
+        "image": "images/弱点探测器.jpg"
+      },
+      {
+        "id": "f43844fe-cefa-40c7-ba86-e601c3596064",
+        "name": "符文双射弓",
+        "name_en": "Runic Double Bow",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "造成30伤害",
+        "image": "images/符文双射弓.jpg"
+      },
+      {
+        "id": "6146cacd-202c-489f-88c0-f77ef3e0fda6",
+        "name": "刺刀",
+        "name_en": "Bayonet",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "使用此物品左侧的武器时，造成15伤害。",
+        "image": "images/刺刀.jpg"
+      },
+      {
+        "id": "44710a21-395d-4f78-bdaf-e562c544ae91",
+        "name": "抓钩",
+        "name_en": "Grappling Hook",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成18伤害",
+        "image": "images/抓钩.jpg"
+      },
+      {
+        "id": "e041875b-2949-4c56-8e01-ac50dbb06af6",
+        "name": "十手",
+        "name_en": "Jitte",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成2伤害",
+        "image": "images/十手.jpg"
+      },
+      {
+        "id": "54f957f2-9522-486b-a7c6-bb234f74846c",
+        "name": "武士刀",
+        "name_en": "Katana",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成10伤害",
+        "image": "images/武士刀.jpg"
+      },
+      {
+        "id": "6146cacd-202c-489f-88c0-f77ef3e0fda6",
+        "name": "刺刀",
+        "name_en": "Bayonet",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "使用此物品左侧的武器时，造成15伤害。",
+        "image": "images/刺刀.jpg"
+      }
+    ],
+    "image": "images/哈洛大哥.jpg"
+  },
+  "C4488147-71E7-4383-95D7-F96910221060": {
+    "name": "Bloodreef Raider",
+    "name_zh": "血礁奇兵",
+    "skills": [
+      {
+        "id": "52f43602-8404-4a38-9d16-b1845489851c",
+        "name": "弹药储存箱",
+        "name_en": "Ammo Stash",
+        "tier": "Silver",
+        "description": "最左侧的弹药物品+2最大弹药量。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "4a30e8b0-f1d1-44c0-b2a7-0a8d12c1e297",
+        "name": "鸦巢",
+        "name_en": "Crow's Nest",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "相邻武器+60%暴击率。",
+        "image": "images/鸦巢.jpg"
+      },
+      {
+        "id": "03e4c71d-5317-4c35-a0fb-5348356edc03",
+        "name": "Powder Horn",
+        "name_en": "Powder Horn",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "为此物品右侧的物品装填2发弹药",
+        "image": ""
+      },
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "造成16伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "55377bdf-359b-495c-895c-c7852511c915",
+        "name": "炮弹",
+        "name_en": "Cannonball",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "相邻物品+1最大弹药量。",
+        "image": "images/炮弹.jpg"
+      },
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "可出售换得金币",
+        "image": ""
+      }
+    ],
+    "image": ""
+  },
+  "ECB2508B-07B1-4712-A82A-FB47C433ED6A": {
+    "name": "Loan Shark",
+    "name_zh": "放贷鲨",
+    "skills": [
+      {
+        "id": "09c4c894-0397-47e5-9635-7b1f4c49527a",
+        "name": "权力掮客",
+        "name_en": "Power Broker",
+        "tier": "Silver",
+        "description": "武器 + 伤害，增幅等于收入的1倍。[1]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "2834ede9-01e9-4b68-8f1f-70f83187c78f",
+        "name": "鳐鲨",
+        "name_en": "Sharkray",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成40伤害",
+        "image": "images/鳐鲨.jpg"
+      },
+      {
+        "id": "edd857da-ac11-4640-bc1a-217ef8385f72",
+        "name": "鲨齿爪",
+        "name_en": "Sharkclaws",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成20伤害",
+        "image": "images/鲨齿爪.jpg"
+      },
+      {
+        "id": "edd857da-ac11-4640-bc1a-217ef8385f72",
+        "name": "鲨齿爪",
+        "name_en": "Sharkclaws",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成20伤害",
+        "image": "images/鲨齿爪.jpg"
+      },
+      {
+        "id": "c926fac8-f9ba-4430-a01a-a71a32c501c7",
+        "name": "自动取款机",
+        "name_en": "ATM",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "获得护盾，等量于收入的4倍",
+        "image": "images/自动取款机.jpg"
+      },
+      {
+        "id": "8f61677c-aa75-4275-b8b4-3cbaca1fdcbf",
+        "name": "财源炮",
+        "name_en": "Cash Cannon",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成1伤害",
+        "image": "images/财源炮.jpg"
+      }
+    ],
+    "image": "images/放贷鲨.jpg"
+  },
+  "54030DD4-8051-4C21-ABCD-9205DF585EA5": {
+    "name": "Infernal",
+    "name_zh": "地狱大魔神",
+    "skills": [
+      {
+        "id": "9dacb0ad-a016-40ff-a54a-24d807c0988f",
+        "name": "复仇",
+        "name_en": "Vengeance",
+        "tier": "Bronze",
+        "description": "最左侧与最右侧物品的冷却时间都缩短0%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "造成10灼烧",
+        "image": "images/火爪.jpg"
+      },
+      {
+        "id": "8535493a-67ae-4248-a34d-176549948686",
+        "name": "岩浆核心",
+        "name_en": "Magma Core",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "每场战斗开始时，造成9灼烧。",
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "3c9c0a73-ea2e-4ff2-be75-fd4363f72d37",
+        "name": "地狱巨剑",
+        "name_en": "Infernal Greatsword",
+        "tier": "Diamond",
+        "socket": "Socket_3",
+        "description": "造成2伤害",
+        "image": "images/地狱巨剑.jpg"
+      },
+      {
+        "id": "8535493a-67ae-4248-a34d-176549948686",
+        "name": "岩浆核心",
+        "name_en": "Magma Core",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "每场战斗开始时，造成9灼烧。",
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "37222f02-3767-44ef-a8ed-000c90d3330e",
+        "name": "红宝石",
+        "name_en": "Ruby",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成3灼烧",
+        "image": "images/红宝石.jpg"
+      },
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "造成10灼烧",
+        "image": "images/火爪.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "20061BE9-0823-41C8-AFAE-60F49073058F": {
+    "name": "Gorgon Noble",
+    "name_zh": "戈尔贡贵妇",
+    "skills": [
+      {
+        "id": "b21d98f7-d677-4598-8b53-5bfd8301d26a",
+        "name": "石化凝视",
+        "name_en": "Petrifying Gaze",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至一半时，冻结所有敌人物品1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "08bb5055-bd8d-4f86-bff6-24f8cb47f509",
+        "name": "血瓶",
+        "name_en": "Vial of Blood",
+        "tier": "Bronze",
+        "socket": "Socket_1",
+        "description": "出售此物品时，经验值提高0。",
+        "image": "images/血瓶.jpg"
+      },
+      {
+        "id": "1afb5eef-e964-4767-b9a6-8d1a76cef645",
+        "name": "黑玫瑰",
+        "name_en": "Black Rose",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "生命再生量提高2（限本场战斗）",
+        "image": "images/黑玫瑰.jpg"
+      },
+      {
+        "id": "af24dea0-6cc9-49dc-acec-d90313b46b72",
+        "name": "发条匕首",
+        "name_en": "Clockwork Blades",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成40伤害",
+        "image": "images/发条匕首.jpg"
+      },
+      {
+        "id": "0bf49a3b-e610-4f2b-8420-1a8a7d48e70a",
+        "name": "颠茄",
+        "name_en": "Nightshade",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成4剧毒",
+        "image": "images/颠茄.jpg"
+      },
+      {
+        "id": "014d9c98-e823-443c-98a3-6367ab81c956",
+        "name": "驯化蜘蛛",
+        "name_en": "Trained Spider",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成2剧毒",
+        "image": "images/驯化蜘蛛.jpg"
+      },
+      {
+        "id": "08bb5055-bd8d-4f86-bff6-24f8cb47f509",
+        "name": "血瓶",
+        "name_en": "Vial of Blood",
+        "tier": "Bronze",
+        "socket": "Socket_8",
+        "description": "出售此物品时，经验值提高0。",
+        "image": "images/血瓶.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "616CE451-B85D-478A-82A8-8A28105994F5": {
+    "name": "Hulking Experiment",
+    "name_zh": "庞大实验体",
+    "skills": [
+      {
+        "id": "53aa52ea-b2b7-4b8a-8109-4f67fb4a3e29",
+        "name": "自适应军备",
+        "name_en": "Adaptive Ordinance",
+        "tier": "Gold",
+        "description": "物品弹药耗尽时，生命再生量提高20（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "3718910f-3b43-4c4b-8904-d1dbfce56c13",
+        "name": "炼金炉",
+        "name_en": "Athanor",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "装填相邻物品",
+        "image": "images/炼金炉.jpg"
+      },
+      {
+        "id": "df87dc00-f0fe-4e47-b864-ad6b4bfea81a",
+        "name": "瓶装闪电",
+        "name_en": "Bottled Lightning",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成25伤害",
+        "image": "images/瓶装闪电.jpg"
+      },
+      {
+        "id": "54040bca-14e5-4f6d-bfa8-b67658adda0b",
+        "name": "能量药水",
+        "name_en": "Energy Potion",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "加速其他物品2秒",
+        "image": "images/能量药水.jpg"
+      },
+      {
+        "id": "cf3a7956-f400-42e1-bae1-d3678d76fd01",
+        "name": "火焰药水",
+        "name_en": "Fire Potion",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成8灼烧",
+        "image": "images/火焰药水.jpg"
+      },
+      {
+        "id": "2974e199-fa53-4d40-87a6-0ec6722a4aef",
+        "name": "彩虹药水",
+        "name_en": "Rainbow Potion",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成9灼烧。\n \n 造成9剧毒",
+        "image": "images/彩虹药水.jpg"
+      },
+      {
+        "id": "19199531-1aff-47ce-bdfc-1188cb3efec2",
+        "name": "剧毒药水",
+        "name_en": "Runic Potion",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "加速吸血武器1秒",
+        "image": "images/剧毒药水.jpg"
+      },
+      {
+        "id": "19199531-1aff-47ce-bdfc-1188cb3efec2",
+        "name": "剧毒药水",
+        "name_en": "Runic Potion",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "加速吸血武器1秒",
+        "image": "images/剧毒药水.jpg"
+      },
+      {
+        "id": "2974e199-fa53-4d40-87a6-0ec6722a4aef",
+        "name": "彩虹药水",
+        "name_en": "Rainbow Potion",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "造成9灼烧。\n \n 造成9剧毒",
+        "image": "images/彩虹药水.jpg"
+      }
+    ],
+    "image": "images/庞大实验体.jpg"
+  },
+  "F57B2A63-E4A2-4D9A-88B3-B1C3A3CF36D7": {
+    "name": "Elite Duelist",
+    "name_zh": "精英决斗者",
+    "skills": [
+      {
+        "id": "49faa193-089a-47a1-97e7-1982eb5f2769",
+        "name": "虚荣",
+        "name_en": "Big Ego",
+        "tier": "Bronze",
+        "description": "武器拥有吸血效果。",
+        "image": "images/虚荣.jpg"
+      },
+      {
+        "id": "6586d2ab-4bfd-4796-989e-d9c1a323806e",
+        "name": "力量",
+        "name_en": "Strength",
+        "tier": "Bronze",
+        "description": "武器造成+10 » +15 » +20 » +25伤害。",
+        "image": "images/力量.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成24伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "03e4c71d-5317-4c35-a0fb-5348356edc03",
+        "name": "火药角",
+        "name_en": "Powder Horn",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "为此物品右侧的物品装填2发弹药",
+        "image": "images/火药角.jpg"
+      },
+      {
+        "id": "92e7ab18-a035-43c7-a53c-965aeecbe357",
+        "name": "左轮手枪",
+        "name_en": "Revolver",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成24伤害",
+        "image": "images/左轮手枪.jpg"
+      },
+      {
+        "id": "8391a75d-56e7-4206-a16e-62dbd986925f",
+        "name": "靴里剑",
+        "name_en": "Shoe Blade",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成60伤害",
+        "image": "images/靴里剑.jpg"
+      },
+      {
+        "id": "9e5e3d9e-ad05-4340-9071-4fccecb79695",
+        "name": "蝶剑",
+        "name_en": "Butterfly Swords",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成10伤害",
+        "image": "images/蝶剑.jpg"
+      },
+      {
+        "id": "9e5e3d9e-ad05-4340-9071-4fccecb79695",
+        "name": "蝶剑",
+        "name_en": "Butterfly Swords",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成10伤害",
+        "image": "images/蝶剑.jpg"
+      },
+      {
+        "id": "c05828f1-39e6-47aa-9041-216dfa60d83d",
+        "name": "香料",
+        "name_en": "Spices",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "武器伤害提高，增幅等于最弱武器的伤害值（限本场战斗）。[0]",
+        "image": "images/香料.jpg"
+      },
+      {
+        "id": "2aab9da1-bfd1-4f3f-8cda-69f3c909158b",
+        "name": "枪套",
+        "name_en": "Holsters",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "每场战斗开始时，加速小型物品1秒。",
+        "image": "images/枪套.jpg"
+      },
+      {
+        "id": "1b955b8d-0ea6-4437-935c-d588be5898c1",
+        "name": "弯刀",
+        "name_en": "Cutlass",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/弯刀.jpg"
+      }
+    ],
+    "image": "images/F57B2A63-E4A2-4D9A-88B3-B1C3A3CF36D7.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30fbbf59170e684b867528cb8b7a534f46fb4592@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/72b9872f966fafc18c2193f708d8127def5f15be@400.webp?v=2"
+  },
+  "3F3D11C5-B943-45D1-80B3-A567130708F0": {
+    "name": "Infernal Envoy",
+    "name_zh": "地狱使者",
+    "skills": [
+      {
+        "id": "d675442d-7d59-4f13-9209-6e1a4ae7a1fc",
+        "name": "灼烧狂怒",
+        "name_en": "Burning Rage",
+        "tier": "Bronze",
+        "description": "触发灼烧时，己方武器伤害提高+5（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Bronze",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成1灼烧",
+        "image": "images/火爪.jpg"
+      },
+      {
+        "id": "7e2634eb-9489-4462-8fe4-1c5b8c07adc2",
+        "name": "日光矛",
+        "name_en": "Sunlight Spear",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成伤害，等量于双方玩家生命再生量与灼烧的总和",
+        "image": "images/日光矛.jpg"
+      },
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "造成1灼烧",
+        "image": "images/火爪.jpg"
+      },
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Bronze",
+        "socket": "Socket_8",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "D2FDF346-78AE-4694-8C9D-45285F09D408": {
+    "name": "Monster_Battle_Player_Template_45",
+    "name_zh": "Monster_Battle_Player_Template_45",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "B41BD40F-C380-4342-BFA2-3DBF772D956D": {
+    "name": "Monster_Battle_Player_Template_33",
+    "name_zh": "Monster_Battle_Player_Template_33",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "5B3DA8F1-5834-4A8D-967F-F98E8989B26F": {
+    "name": "Monster_Battle_Player_Template_6",
+    "name_zh": "Monster_Battle_Player_Template_6",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "可出售换得金币",
+        "image": ""
+      },
+      {
+        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
+        "name": "Spare Change",
+        "name_en": "Spare Change",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "可出售换得金币",
+        "image": ""
+      }
+    ],
+    "image": ""
+  },
+  "7F6CECB6-3F07-4606-8D62-21C0B5E4E369": {
+    "name": "Mimic",
+    "name_zh": "拟形怪",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [],
+    "image": ""
+  },
+  "479AD0EC-51A9-4D26-BA63-8062D3814619": {
+    "name": "Monster_Battle_Player_Template_48",
+    "name_zh": "Monster_Battle_Player_Template_48",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "B54DBAD3-BC06-481A-BA99-A2421C047665": {
+    "name": "Volkas Enforcer",
+    "name_zh": "沃卡斯打手",
+    "skills": [
+      {
+        "id": "e2b02661-62c8-42da-be35-3b15eebdb31d",
+        "name": "霜寒专精",
+        "name_en": "Cryomastery",
+        "tier": "Bronze",
+        "description": "每场战斗前0次触发护盾时，冻结一件物品1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "e5c4c116-32ca-4856-83d2-721e0e751b2e",
+        "name": "冰能球",
+        "name_en": "Cryosphere",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "冻结双方玩家的非核心物品1秒",
+        "image": "images/冰能球.jpg"
+      },
+      {
+        "id": "1179ed38-2357-4718-a0c7-c30d56493d08",
+        "name": "寒冰特服",
+        "name_en": "Cryosleeve",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "冻结此物品以及相邻物品75秒",
+        "image": "images/寒冰特服.jpg"
+      },
+      {
+        "id": "428de0f0-bf0d-4da6-9abe-dde8f2174aa9",
+        "name": "秒表",
+        "name_en": "Stopwatch",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "冻结双方玩家的物品1秒",
+        "image": "images/秒表.jpg"
+      },
+      {
+        "id": "4bb254dc-4b02-4c4b-8198-a310bdb122e4",
+        "name": "破冰尖镐",
+        "name_en": "Icebreaker",
+        "tier": "Gold",
+        "socket": "Socket_5",
+        "description": "造成200伤害",
+        "image": "images/破冰尖镐.jpg"
+      },
+      {
+        "id": "a8664dac-7a88-4af0-990e-afe7217e123f",
+        "name": "小冰镐",
+        "name_en": "Ice Pick",
+        "tier": "Diamond",
+        "socket": "Socket_7",
+        "description": "造成45伤害",
+        "image": "images/小冰镐.jpg"
+      },
+      {
+        "id": "28db3caa-7727-4d1c-9758-df42975e4811",
+        "name": "霜冻药水",
+        "name_en": "Frost Potion",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "冻结1件物品1秒",
+        "image": "images/霜冻药水.jpg"
+      },
+      {
+        "id": "e21985a8-fe05-4142-ab65-93c110545ec3",
+        "name": "冰锥",
+        "name_en": "Icicle",
+        "tier": "Diamond",
+        "socket": "Socket_9",
+        "description": "每场战斗开始时，冻结一件物品6秒。",
+        "image": "images/冰锥.jpg"
+      }
+    ],
+    "image": "images/沃卡斯打手.jpg"
+  },
+  "B6CA5C91-632D-4093-87F9-CBD0D649740E": {
+    "name": "Rogue Scrapper",
+    "name_zh": "暴走破碎机",
+    "skills": [
+      {
+        "id": "7e422fe3-2b98-4bbf-b53d-7cb90db84259",
+        "name": "铁锈",
+        "name_en": "Rust",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，减速一件物品3秒。",
+        "image": "images/铁锈.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "8bbfd341-660f-4b9f-9c95-2e40c7d05c1f",
+        "name": "机能棒",
+        "name_en": "Gearnola Bar",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "出售工具或科技物品时，此物品的最大生命值增益再+10 » +20 » +30 » +40。出售此物品时，最大生命值提高10。",
+        "image": "images/机能棒.jpg"
+      },
+      {
+        "id": "bede53aa-8d47-4d6c-b302-2e684e8c3fcf",
+        "name": "废品场大棒",
+        "name_en": "Junkyard Club",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成60伤害",
+        "image": "images/废品场大棒.jpg"
+      },
+      {
+        "id": "51696368-e409-4771-8baf-22c6da533cd8",
+        "name": "废品场维修机器人",
+        "name_en": "Junkyard Repairbot",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "治疗60生命值",
+        "image": "images/废品场维修机器人.jpg"
+      },
+      {
+        "id": "1bdbc6f6-2690-445a-877e-90dbbd5e4658",
+        "name": "尖刺铁丝网",
+        "name_en": "Barbed Wire",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成30伤害",
+        "image": "images/尖刺铁丝网.jpg"
+      },
+      {
+        "id": "da766a09-0352-4966-829f-20bda8da48d7",
+        "name": "医疗包",
+        "name_en": "Med Kit",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "出售此物品时，最左侧治疗物品的治疗量提高5 » 10 » 20 » 40。",
+        "image": "images/医疗包.jpg"
+      }
+    ],
+    "image": "images/B6CA5C91-632D-4093-87F9-CBD0D649740E.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/85f994c6bee93f235a7759c14ebad0939c48f72b@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cccf18eb23c69165b12cb410d8a7d2da7976b8c4@400.webp?v=2"
+  },
+  "E6782454-5C72-47F3-AC43-140F0CC7EB8F": {
+    "name": "Frost Street Challenger",
+    "name_zh": "霜猴勇士",
+    "skills": [
+      {
+        "id": "e7cc942b-96c5-4b90-a916-b3db0ee4bfe7",
+        "name": "雪暴",
+        "name_en": "Snowstorm",
+        "tier": "Bronze",
+        "description": "触发冻结时，一件武器伤害提高+10（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "e21985a8-fe05-4142-ab65-93c110545ec3",
+        "name": "冰锥",
+        "name_en": "Icicle",
+        "tier": "Bronze",
+        "socket": "Socket_1",
+        "description": "每场战斗开始时，冻结一件物品3秒。",
+        "image": "images/冰锥.jpg"
+      },
+      {
+        "id": "34fcf624-ccba-42a8-b4fc-837e0002a163",
+        "name": "壶铃",
+        "name_en": "Weights",
+        "tier": "Bronze",
+        "socket": "Socket_2",
+        "description": "武器伤害提高+10（限本场战斗）",
+        "image": "images/壶铃.jpg"
+      },
+      {
+        "id": "b02a2b57-da9c-4ad6-88ac-219b3bfec103",
+        "name": "手斧",
+        "name_en": "Handaxe",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "武器+9伤害。",
+        "image": "images/手斧.jpg"
+      },
+      {
+        "id": "53b62ecb-bcbc-4a86-bd6f-027467970109",
+        "name": "冻结殴打",
+        "name_en": "Frozen Bludgeon",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成40伤害",
+        "image": "images/冻结殴打.jpg"
+      },
+      {
+        "id": "4b823c6b-3e35-47a2-9b65-177e911aca1a",
+        "name": "投掷捕兽网",
+        "name_en": "Thrown Net",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "敌人每拥有一件武器或伙伴，此物品就+1多重触发。",
+        "image": "images/投掷捕兽网.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "04747408-DE0E-4944-B79D-23CA41008619": {
+    "name": "Flame Juggler",
+    "name_zh": "舞火大师",
+    "skills": [
+      {
+        "id": "ee178ba8-666d-426f-8499-1bd611a91802",
+        "name": "烈焰爆发",
+        "name_en": "Burst of Flame",
+        "tier": "Bronze",
+        "description": "每场战斗敌方生命值首次降至一半时，造成10灼烧。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Bronze",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "3d212e22-12eb-427e-ab96-e7baf1229a7b",
+        "name": "打火机",
+        "name_en": "Lighter",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成5灼烧",
+        "image": "images/打火机.jpg"
+      },
+      {
+        "id": "8535493a-67ae-4248-a34d-176549948686",
+        "name": "岩浆核心",
+        "name_en": "Magma Core",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "每场战斗开始时，造成9灼烧。",
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "8535493a-67ae-4248-a34d-176549948686",
+        "name": "岩浆核心",
+        "name_en": "Magma Core",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "每场战斗开始时，造成9灼烧。",
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "8535493a-67ae-4248-a34d-176549948686",
+        "name": "岩浆核心",
+        "name_en": "Magma Core",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "每场战斗开始时，造成9灼烧。",
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Bronze",
+        "socket": "Socket_7",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1。",
+        "image": "images/余烬.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "8EF44226-7C66-417E-9F31-4CC636A68866": {
+    "name": "Monster_Battle_Player_Template_34",
+    "name_zh": "Monster_Battle_Player_Template_34",
+    "skills": [
+      {
+        "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+        "name": "盾击",
+        "name_en": "Shield Bash",
+        "tier": "Bronze",
+        "description": "每场战斗中敌人前0次使用非武器物品时，为一件武器充能1秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "7cbc8056-482b-4ccf-887a-ddb2702c856c",
+        "name": "獠牙",
+        "name_en": "Fang",
+        "tier": "Bronze",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/獠牙.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "EE37EA07-E024-447C-B89F-88B9940C19AF": {
+    "name": "Sabretooth",
+    "name_zh": "剑齿虎",
+    "skills": [
+      {
+        "id": "20db8a31-f74d-40d2-a5a5-db28e3261bea",
+        "name": "钻石獠牙",
+        "name_en": "Diamond Fangs",
+        "tier": "Gold",
+        "description": "小型钻石级物品的冷却时间缩短40%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_8",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "name": "兽皮",
+        "name_en": "Pelt",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "可出售换得金币",
+        "image": "images/兽皮.jpg"
+      }
+    ],
+    "image": "images/剑齿虎.jpg"
+  },
+  "50A31EA0-ED74-484A-B04B-30F6FE273958": {
+    "name": "Octopus",
+    "name_zh": "章鱼",
+    "skills": [
+      {
+        "id": "1c4c5aaa-6aa2-4329-a55a-ac75e987ee95",
+        "name": "军备竞赛",
+        "name_en": "Arms Race",
+        "tier": "Bronze",
+        "description": "每拥有一件武器，己方物品+5%%暴击率。[1]",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "82d41afc-d1a9-41ee-a03d-fd9305bef8b5",
+        "name": "章鱼",
+        "name_en": "Octopus",
+        "tier": "Diamond",
+        "socket": "Socket_4",
+        "description": "造成8伤害",
+        "image": "images/章鱼.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_8",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      },
+      {
+        "id": "97d8654e-532b-4960-8f5b-5822562d3450",
+        "name": "迷你弯刀",
+        "name_en": "Tiny Cutlass",
+        "tier": "Gold",
+        "socket": "Socket_9",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/迷你弯刀.jpg"
+      }
+    ],
+    "image": "images/章鱼.jpg"
+  },
+  "5A882CDB-C8DF-497B-86D5-B27BA95225ED": {
+    "name": "BattlePlayer 1",
+    "name_zh": "BattlePlayer 1",
+    "skills": [
+      {
+        "id": "eea71cd9-2688-4c4d-99e7-6eee44cf47a2",
+        "name": "恐慌",
+        "name_en": "Panic",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至50%时，装填1件物品，并为1件弹药物品充能99秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "bf1594cc-7f65-4236-b95f-ed2f521739de",
+        "name": "教团",
+        "name_en": "The Cult",
+        "tier": "Bronze",
+        "socket": "Socket_3",
+        "description": "",
+        "image": ""
+      },
+      {
+        "id": "529a7e95-b350-4fd6-96fd-fef80d4c1462",
+        "name": "古董剑",
+        "name_en": "Old Sword",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "造成5伤害",
+        "image": "images/古董剑.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "4C1A67F6-F9B4-4A46-8481-D252A24544E7": {
+    "name": "Eccentric Etherwright",
+    "name_zh": "怪奇以太匠",
+    "skills": [
+      {
+        "id": "59925178-7f16-47f9-8995-8b13b8d9157d",
+        "name": "暗做手脚",
+        "name_en": "Rigged",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，加速己方物品1秒。",
+        "image": "images/暗做手脚.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "5cd94f8e-3129-4764-ae12-332217a8c6ed",
+        "name": "神庙探险券",
+        "name_en": "Temple Expedition Ticket",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "第9天可使用此物品，开启神庙探险。",
+        "image": "images/神庙探险券.jpg"
+      },
+      {
+        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
+        "name": "废料",
+        "name_en": "Scrap",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "出售此物品时，最左侧的护盾物品+4护盾。",
+        "image": "images/废料.jpg"
+      },
+      {
+        "id": "85f59c88-c391-4a03-8c3b-f312518e81de",
+        "name": "力场",
+        "name_en": "Force Field",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "获得30护盾",
+        "image": "images/力场.jpg"
+      },
+      {
+        "id": "f8b41c46-8adc-4e84-835a-831e2e3d84d1",
+        "name": "护目镜",
+        "name_en": "Goggles",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "获得20 » 40 » 60 » 80护盾。触发加速时，相邻物品暴击率提高+2% » +4% » +6% » +8%（限本场战斗）。",
+        "image": "images/护目镜.jpg"
+      },
+      {
+        "id": "1bdbc6f6-2690-445a-877e-90dbbd5e4658",
+        "name": "尖刺铁丝网",
+        "name_en": "Barbed Wire",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成30伤害",
+        "image": "images/尖刺铁丝网.jpg"
+      }
+    ],
+    "image": "images/4C1A67F6-F9B4-4A46-8481-D252A24544E7.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/15a237c0a01fab9f122e617cd6aece6f781d2353@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e6806cf540b83658fd1dffda15efdcae002ea99e@400.webp?v=2"
+  },
+  "67F30669-0E12-4D59-82FC-6B033FA064C3": {
+    "name": "Thug",
+    "name_zh": "暴徒",
+    "skills": [
+      {
+        "id": "e8770458-220a-45bd-bfef-d6045b152d29",
+        "name": "迎头痛击",
+        "name_en": "Bonk",
+        "tier": "Gold",
+        "description": "敌方物品的冷却时间延长1000秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "1e48bd28-cd41-49e9-9e22-b44da30ef6be",
+        "name": "Thieves Guild Medallion",
+        "name_en": "Thieves Guild Medallion",
+        "tier": "Diamond",
+        "socket": "Socket_0",
+        "description": "",
+        "image": ""
+      },
+      {
+        "id": "20d85338-b625-4b9a-95a7-8a60805e061f",
+        "name": "锚",
+        "name_en": "Anchor",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成伤害，等量于一位敌人最大生命值的0%",
+        "image": "images/锚.jpg"
+      },
+      {
+        "id": "d022cc12-8fe2-442c-af6e-165eb97ed055",
+        "name": "临时大棒",
+        "name_en": "Improvised Bludgeon",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成40伤害",
+        "image": "images/临时大棒.jpg"
+      },
+      {
+        "id": "c05828f1-39e6-47aa-9041-216dfa60d83d",
+        "name": "香料",
+        "name_en": "Spices",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "武器伤害提高，增幅等于最弱武器的伤害值（限本场战斗）。[0]",
+        "image": "images/香料.jpg"
+      },
+      {
+        "id": "bede53aa-8d47-4d6c-b302-2e684e8c3fcf",
+        "name": "废品场大棒",
+        "name_en": "Junkyard Club",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "造成60伤害",
+        "image": "images/废品场大棒.jpg"
+      }
+    ],
+    "image": "images/暴徒.jpg"
+  },
+  "F0D347B0-2E9A-46DA-9D82-45B65244B0F4": {
+    "name": "Dabbling Apprentice",
+    "name_zh": "初学学徒",
+    "skills": [
+      {
+        "id": "eea71cd9-2688-4c4d-99e7-6eee44cf47a2",
+        "name": "恐慌",
+        "name_en": "Panic",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至50%时，装填1件物品，并为1件弹药物品充能99秒。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "ef20ec33-7990-41b8-8d8e-47514b503612",
+        "name": "铅块",
+        "name_en": "Chunk of Lead",
+        "tier": "Bronze",
+        "socket": "Socket_2",
+        "description": "此物品在非战斗状态下转化时，获得一份金块。",
+        "image": "images/铅块.jpg"
+      },
+      {
+        "id": "df87dc00-f0fe-4e47-b864-ad6b4bfea81a",
+        "name": "瓶装闪电",
+        "name_en": "Bottled Lightning",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成25伤害",
+        "image": "images/瓶装闪电.jpg"
+      },
+      {
+        "id": "e574a4ba-f984-446c-ae5b-75d75cd4b857",
+        "name": "塔兹迪亚匕首",
+        "name_en": "Tazidian Dagger",
+        "tier": "Bronze",
+        "socket": "Socket_4",
+        "description": "造成5伤害",
+        "image": "images/塔兹迪亚匕首.jpg"
+      },
+      {
+        "id": "cf3a7956-f400-42e1-bae1-d3678d76fd01",
+        "name": "火焰药水",
+        "name_en": "Fire Potion",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成8灼烧",
+        "image": "images/火焰药水.jpg"
+      },
+      {
+        "id": "ef20ec33-7990-41b8-8d8e-47514b503612",
+        "name": "铅块",
+        "name_en": "Chunk of Lead",
+        "tier": "Bronze",
+        "socket": "Socket_6",
+        "description": "此物品在非战斗状态下转化时，获得一份金块。",
+        "image": "images/铅块.jpg"
+      }
+    ],
+    "image": "images/初学学徒.jpg"
+  },
+  "C2FD54DF-9CD2-4F61-AE6E-9B6C8CF87785": {
+    "name": "Ferros Khan",
+    "name_zh": "菲罗斯汗",
+    "skills": [
+      {
+        "id": "f9628cc5-fdf8-49cf-8807-d7b85f457aa8",
+        "name": "一发入魂",
+        "name_en": "One Shot, One Kill",
+        "tier": "Bronze",
+        "description": "如果只拥有一件武器，就使之造成三倍伤害，但冷却时间延长50%。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "6f70e0cf-8349-4f14-a121-6c9065dc514c",
+        "name": "暗影斗篷",
+        "name_en": "Shadowed Cloak",
+        "tier": "Gold",
+        "socket": "Socket_0",
+        "description": "使用此物品右侧的物品时，使之加速3秒。如果此物品是武器，就再令伤害提高+3（限本场战斗）。",
+        "image": "images/暗影斗篷.jpg"
+      },
+      {
+        "id": "fc8eb8ad-f5bd-495b-a157-e813dbe748bf",
+        "name": "狙击步枪",
+        "name_en": "Sniper Rifle",
+        "tier": "Gold",
+        "socket": "Socket_2",
+        "description": "造成100伤害",
+        "image": "images/狙击步枪.jpg"
+      },
+      {
+        "id": "02fa39ce-6cc0-4ad2-bd35-5c70a47354d6",
+        "name": "消音器",
+        "name_en": "Silencer",
+        "tier": "Gold",
+        "socket": "Socket_4",
+        "description": "此物品左侧的武器伤害提高+50。",
+        "image": "images/消音器.jpg"
+      },
+      {
+        "id": "35ca6175-1317-4f32-b953-dbe6c9acd8cd",
+        "name": "木桶",
+        "name_en": "Barrel",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "获得15护盾",
+        "image": "images/木桶.jpg"
+      },
+      {
+        "id": "905f9340-4272-4f82-88e4-4a2f79f1be96",
+        "name": "伪装",
+        "name_en": "Disguise",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "其他英雄的物品+30%暴击率。",
+        "image": "images/伪装.jpg"
+      },
+      {
+        "id": "54040bca-14e5-4f6d-bfa8-b67658adda0b",
+        "name": "能量药水",
+        "name_en": "Energy Potion",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "加速其他物品1秒",
+        "image": "images/能量药水.jpg"
+      }
+    ],
+    "image": ""
+  },
+  "58BA322D-A76C-4106-B91C-37EA207353A0": {
+    "name": "Dragon",
+    "name_zh": "巨龙",
+    "skills": [
+      {
+        "id": "72010bea-fadf-4f64-9cba-d34bfd014388",
+        "name": "龙性狂焰",
+        "name_en": "Draconic Rage",
+        "tier": "Diamond",
+        "description": "使用中型物品时，一件灼烧物品的灼烧提高+9（限本场战斗）。",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "292115b4-a145-476e-b3a7-0fe199b5c1af",
+        "name": "巨龙翼",
+        "name_en": "Dragon Wing",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "获得40护盾",
+        "image": "images/巨龙翼.jpg"
+      },
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Gold",
+        "socket": "Socket_1",
+        "description": "造成10灼烧",
+        "image": "images/火爪.jpg"
+      },
+      {
+        "id": "3b32361e-2ddc-47b6-bcce-0ac560cb407b",
+        "name": "巨龙牙",
+        "name_en": "Dragon Tooth",
+        "tier": "Gold",
+        "socket": "Socket_3",
+        "description": "造成10伤害",
+        "image": "images/巨龙牙.jpg"
+      },
+      {
+        "id": "2f4625b6-42e1-42e8-9f50-82edf038fac1",
+        "name": "巨龙心",
+        "name_en": "Dragon Heart",
+        "tier": "Diamond",
+        "socket": "Socket_4",
+        "description": "一件物品的灼烧翻倍（限本场战斗）",
+        "image": "images/巨龙心.jpg"
+      },
+      {
+        "id": "3b32361e-2ddc-47b6-bcce-0ac560cb407b",
+        "name": "巨龙牙",
+        "name_en": "Dragon Tooth",
+        "tier": "Gold",
+        "socket": "Socket_6",
+        "description": "造成10伤害",
+        "image": "images/巨龙牙.jpg"
+      },
+      {
+        "id": "e3070870-881c-497d-879f-2d91e962e0e2",
+        "name": "火爪",
+        "name_en": "Fire Claw",
+        "tier": "Gold",
+        "socket": "Socket_7",
+        "description": "造成10灼烧",
+        "image": "images/火爪.jpg"
+      },
+      {
+        "id": "292115b4-a145-476e-b3a7-0fe199b5c1af",
+        "name": "巨龙翼",
+        "name_en": "Dragon Wing",
+        "tier": "Silver",
+        "socket": "Socket_9",
+        "description": "获得40护盾",
+        "image": "images/巨龙翼.jpg"
+      }
+    ],
+    "image": "images/巨龙.jpg"
+  }
+}

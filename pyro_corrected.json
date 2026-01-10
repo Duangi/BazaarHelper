@@ -1,0 +1,46 @@
+{
+  "44OZVKOBQIZTQ39IR867Y62CP": {
+    "name": "Pyro",
+    "name_zh": "火灵",
+    "skills": [
+      {
+        "id": "skill-fiery-1",
+        "name": "炽焰",
+        "name_en": "Fiery",
+        "tier": "Bronze",
+        "description": "灼烧物品+1 » +2 » +3 » +4灼烧",
+        "image": ""
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成5灼烧",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "3d212e22-12eb-427e-ab96-e7baf1229a7b",
+        "name": "打火机",
+        "name_en": "Lighter",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "为相邻物品充能1秒",
+        "image": "images/打火机.jpg"
+      },
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders", 
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成5灼烧",
+        "image": "images/余烬.jpg"
+      }
+    ],
+    "image": ""
+  }
+}

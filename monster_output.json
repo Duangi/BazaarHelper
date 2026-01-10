@@ -1,0 +1,46 @@
+{
+  "火灵": {
+    "name": "Pyro",
+    "name_zh": "火灵",
+    "skills": [
+      {
+        "id": "fiery",
+        "name": "炽焰",
+        "name_en": "Fiery",
+        "tier": "Bronze",
+        "description": "灼烧物品+1 » +2 » +3 » +4灼烧。",
+        "image": "images/炽焰.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1 » +2 » +4 » +8。",
+        "image": "images/余烬.jpg"
+      },
+      {
+        "id": "3d212e22-12eb-427e-ab96-e7baf1229a7b",
+        "name": "打火机",
+        "name_en": "Lighter",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成3 » 5 » 7 » 9灼烧",
+        "image": "images/打火机.jpg"
+      },
+      {
+        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
+        "name": "余烬",
+        "name_en": "Cinders",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "出售此物品时，最左侧灼烧物品的灼烧提高+1 » +2 » +4 » +8。",
+        "image": "images/余烬.jpg"
+      }
+    ],
+    "image": "images/火灵.jpg"
+  }
+}
