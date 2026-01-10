@@ -1,7 +1,113 @@
-# Tauri + React + Typescript
+# The Bazaar Helper
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+一个为 The Bazaar 游戏设计的悬浮窗辅助工具，帮助你快速查看物品附魔信息。
 
-## Recommended IDE Setup
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+---
+
+## ✨ 功能特性
+
+- 🎮 **游戏悬浮窗** - 始终置顶的透明窗口，不遮挡游戏画面
+- 📑 **多标签切换** - 查看手牌、仓库物品信息
+- 🎨 **附魔标签** - 彩色显示毒、燃烧、冰冻等附魔效果
+- 🔍 **怪物搜索** - 快速搜索怪物技能和掉落信息
+- 📌 **置顶物品** - 重要物品可以置顶显示
+- 🔄 **自动更新** - 启动时自动检查并安装新版本
+
+---
+
+## 📦 下载安装
+
+1. 前往 [Releases](https://github.com/Duangi/BazaarHelper/releases) 页面
+2. 下载最新版本的 `BazaarHelper_x.x.x_x64-setup.exe`
+3. 运行安装程序
+4. 启动 **The Bazaar Helper**
+
+**系统要求：** Windows 10/11 (64位)
+
+---
+
+## 🎮 使用说明
+
+### 1️⃣ 启动程序
+
+运行 `BazaarHelper.exe`，悬浮窗会自动显示在游戏上方。
+
+### 2️⃣ 查看物品附魔
+
+程序会自动识别游戏中的物品信息：
+
+- **手牌标签** - 显示你当前手牌中所有物品的附魔详情
+- **仓库标签** - 显示仓库中所有物品的附魔详情
+- 每个物品卡片会显示：
+  - 物品名称（中文）
+  - 物品图片
+  - 所有附魔效果及详细说明
+
+### 3️⃣ 搜索怪物信息
+
+由于无法自动获取怪物信息，我们提供了搜索功能：
+
+- 切换到 **怪物** 标签
+- 在搜索框中输入怪物名称
+- 查看怪物的技能和掉落物品
+
+### 4️⃣ 置顶重要物品
+
+- 点击物品卡片上的 📌 图标可以置顶该物品
+- 置顶的物品会始终显示在列表顶部
+- 再次点击可以取消置顶
+
+### 5️⃣ 窗口操作
+
+- **移动窗口** - 拖动标题栏
+- **最小化** - 点击最小化按钮，只保留标题栏
+- **关闭程序** - 点击 × 按钮
+
+---
+
+## 🔄 自动更新
+
+程序启动时会自动检查更新：
+
+- 如果有新版本，会弹出更新提示
+- 点击"立即更新"按钮，程序会自动下载并安装
+- 安装完成后会自动重启到新版本
+
+---
+
+## 💡 使用小贴士
+
+1. **开箱即用** - 无需任何配置，启动后自动工作
+2. **实时同步** - 游戏中的物品变化会实时反映在悬浮窗中
+3. **搜索技巧** - 怪物搜索支持模糊匹配，输入部分名称即可
+4. **窗口大小** - 首次使用时可以拖动窗口边缘调整大小，程序会记住你的偏好
+
+---
+
+## 📞 问题反馈
+
+如果遇到任何问题或有建议，欢迎联系：
+
+**QQ: 309349894**
+
+---
+
+## 📝 更新日志
+
+### v0.1.0（首个版本）
+- ✅ 手牌和仓库物品附魔信息显示
+- ✅ 怪物搜索功能
+- ✅ 物品置顶功能
+- ✅ 自动更新支持
+- ✅ 中文本地化
+
+---
+
+<div align="center">
+
+**为 The Bazaar 玩家用心制作**
+
+</div>
