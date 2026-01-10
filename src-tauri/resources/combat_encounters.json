@@ -1,4 +1,111 @@
 {
+  "巨蚊": {
+    "name": "Giant Mosquito",
+    "name_zh": "巨蚊",
+    "skills": [
+      {
+        "id": "30f56620-3c47-4124-af71-519190dca5bd",
+        "name": "受训",
+        "name_en": "Trained",
+        "tier": "Bronze",
+        "description": "触发减速时，一件武器的伤害提高+5 » +10 » +15 » +20（限本场战斗）。",
+        "image": "images/受训.jpg"
+      },
+      {
+        "id": "f833102c-cb00-49b1-b6d3-0c565cc22809",
+        "name": "疾速",
+        "name_en": "Rush",
+        "tier": "Bronze",
+        "description": "每场战斗首次使用物品时，加速一件武器3秒。",
+        "image": "images/疾速.jpg"
+      },
+      {
+        "id": "fccf585f-b53c-4a0b-a984-7101e7eb22b6",
+        "name": "敏锐眼光",
+        "name_en": "Keen Eye",
+        "tier": "Bronze",
+        "description": "己方物品+4% » +8% » +12% » +16%暴击率。",
+        "image": "images/敏锐眼光.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      },
+      {
+        "id": "5a162b5d-4802-4f56-a30e-19b3c8ef677c",
+        "name": "毒刺",
+        "name_en": "Stinger",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成10伤害",
+        "image": "images/毒刺.jpg"
+      },
+      {
+        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
+        "name": "毒液",
+        "name_en": "Venom",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "使用此物品左侧的物品时，造成3剧毒。",
+        "image": "images/毒液.jpg"
+      },
+      {
+        "id": "ffcc9b4e-24f2-479b-ab80-7bfbaec664f2",
+        "name": "口器",
+        "name_en": "Proboscis",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "触发减速时，造成8伤害。",
+        "image": "images/口器.jpg"
+      },
+      {
+        "id": "26ddca65-5309-4600-88f7-1eb5ffbb5788",
+        "name": "琥珀",
+        "name_en": "Amber",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "减速1件物品1秒",
+        "image": "images/琥珀.jpg"
+      },
+      {
+        "id": "f7172454-64f0-41be-954f-be57c70c3c3e",
+        "name": "飞蛾粉末",
+        "name_en": "Mothmeal",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "减速一件物品1 » 2 » 3 » 4秒.此物品转化时，为其赋予沉重附魔（如适用）。",
+        "image": "images/飞蛾粉末.jpg"
+      },
+      {
+        "id": "61ddd1bd-9b9c-4a31-93bc-4fbcd148fc64",
+        "name": "飞行药水",
+        "name_en": "Flying Potion",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "加速其他飞行物品1秒。使2 » 3 » 4件物品开始飞行。弹药量:1",
+        "image": "images/飞行药水.jpg"
+      },
+      {
+        "id": "4826832f-f3a5-4c40-b8fa-737f002074fa",
+        "name": "虫翅",
+        "name_en": "Insect Wing",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "出售此物品时，最左侧物品的冷却时间缩短0%。",
+        "image": "images/虫翅.jpg"
+      }
+    ],
+    "image": "images/巨蚊.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d151ba8963e4b8f0e225a4e9331dfcc314829251@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b9cb066014969aec16b4967a0cb419dea60febe8@400.webp?v=2"
+  },
   "退休人员": {
     "name": "Retiree",
     "name_zh": "退休人员",

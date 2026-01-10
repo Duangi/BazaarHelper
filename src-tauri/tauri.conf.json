@@ -46,7 +46,7 @@
   "plugins": {
     "updater": {
       "active": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU4NTM0NTY0NUI3N0E1RkMKUldUOHBYZGJaRVZUNkYxeXdjNk5QUkk3VmtsbUJTdWp4c3dDeGxpNHpkd3NsY1g0RE1QMXowTlMK",
+      "pubkey": "untrusted comment: minisign public key: DA97286364BCD3FA\nRWT607xkYyiX2qxQktO4lT9z7xbAWyc4rlDjaW6LCUQgfrXiRWrbygut",
       "endpoints": [
         "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
       ],
