@@ -8,7 +8,7 @@ on:
 jobs:
   publish:
     permissions:
-      contents: write
+      contents: write # 必须开启写入权限
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}".TrimStart('v')
-          echo "Syncing version to $version"
+          echo "同步版本号至: $version"
           $pkg = Get-Content package.json | ConvertFrom-Json
           $pkg.version = $version
           $pkg | ConvertTo-Json | Out-File package.json -Encoding utf8
@@ -50,37 +50,52 @@ jobs:
           releaseDraft: true
           prerelease: false
 
-      # 步骤 2：暴力补签逻辑 (核心修复)
+      # 步骤 2：暴力补签逻辑 (完全复刻你本地成功的命令)
       - name: Force Sign and Update JSON
         shell: pwsh
         run: |
           $version = "${{ steps.tauri_build.outputs.appVersion }}"
           $bundlePath = "src-tauri/target/release/bundle/nsis"
           
-          # 找到那个生成的安装包
+          # 1. 找到生成的安装包
           $exeFile = Get-ChildItem -Path "$bundlePath/*.exe" -Recurse | Where-Object { $_.Name -like "*setup.exe" } | Select-Object -First 1
           echo "目标安装包: $($exeFile.FullName)"
 
-          # 检查签名是否存在，不存在则手动调用 npx 签名
+          # 2. 检查签名是否存在
           $sigFile = Get-ChildItem -Path "$bundlePath/*.sig" -Recurse | Select-Object -First 1
           if ($null -eq $sigFile) {
-            echo "⚠️  自动签名未生成，正在尝试手动补签..."
-            # 这里强制使用环境变量
-            $env:TAURI_SIGNING_PRIVATE_KEY = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
+            echo "⚠️ 自动签名未生成，正在执行手动补签..."
+            
+            # --- 核心黑科技：在虚拟机里重建私钥文件 ---
+            $tempKeyPath = "src-tauri/temp.key"
+            $privateKeyContent = @"
+            ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+            "@
+            $privateKeyContent | Out-File -FilePath $tempKeyPath -Encoding ascii
+            
+            # 设置密码环境变量
             $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}"
-            npx tauri signer sign $exeFile.FullName
+            
+            # 执行你本地测试成功的那个命令
+            npx tauri signer sign "$($exeFile.FullName)" --private-key-path "$tempKeyPath"
+            
+            # 删掉临时文件
+            Remove-Item $tempKeyPath
+            
+            # 重新获取签名文件
             $sigFile = Get-ChildItem -Path "$bundlePath/*.sig" -Recurse | Select-Object -First 1
           }
 
           if ($null -eq $sigFile) {
-            Write-Error "❌ 即使手动补签也失败了，请检查 Secrets 配置。"
+            Write-Error "❌ 即使补签也失败了，请确认 Secrets 内容是否完整。"
             exit 1
           }
 
-          # 读取签名内容并更新 update.json
+          # 读取签名内容
           $signature = Get-Content -Path $sigFile.FullName
-          echo "✅ 成功获取签名: $signature"
+          echo "✅ 签名抓取成功"
 
+          # 3. 构造新的 update.json
           $updateData = @{
               version = $version
               notes = "Bazaar Helper v$version 自动发布"
@@ -100,5 +115,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add update.json
-          git commit -m "chore: release v${{ github.ref_name }} and update JSON"
+          git commit -m "chore: 自动更新 update.json 版本"
           git push origin main --force
