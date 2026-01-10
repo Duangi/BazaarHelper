@@ -3,7 +3,7 @@ name: "Release"
 on:
   push:
     tags:
-      - 'v*' # 推送 v0.4.3 这种标签触发
+      - 'v*' 
 
 jobs:
   publish:
@@ -13,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- 缓存优化：提速核心 ---
+      # --- 极速缓存：第二次构建起步提速 2-3 倍 ---
       - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm' # 缓存 node_modules
+          cache: 'npm'
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -27,7 +27,7 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-      # ------------------------
+      # ---------------------------------------
 
       # 1. 自动同步版本号
       - name: Sync version
@@ -41,20 +41,27 @@ jobs:
           $conf.version = $version
           $conf | ConvertTo-Json -Depth 10 | Out-File src-tauri/tauri.conf.json -Encoding utf8
 
-      # 2. 提前还原私钥文件 (使用绝对路径)
-      - name: Restore Private Key
+      # 2. 【核心动作】：用 $env 方式准备私钥物理文件
+      - name: Prepare Private Key
         shell: pwsh
         run: |
+          # A. 将 Secret 里的 Base64 还原为真实的 .key 文件
           $base64Secret = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
           $rawKeyBytes = [System.Convert]::FromBase64String($base64Secret)
+          
+          # B. 建立绝对路径
           $absKeyPath = "${{ github.workspace }}\src-tauri\tauri.key"
           [System.IO.File]::WriteAllBytes($absKeyPath, $rawKeyBytes)
-          echo "✅ 私钥文件已准备就绪: $absKeyPath"
+          
+          # C. 【关键】使用 GITHUB_ENV 将路径传给后续所有步骤
+          echo "TAURI_SIGNING_PRIVATE_KEY=$absKeyPath" >> $env:GITHUB_ENV
+          echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}" >> $env:GITHUB_ENV
+          echo "✅ 路径已注入环境变量: $absKeyPath"
 
       - name: install frontend dependencies
         run: npm install
 
-      # 3. 运行构建 (重点：这里不传私钥变量，防止构建崩溃)
+      # 3. 运行构建（它现在会自动读取上一步注入的 $env 路径）
       - uses: tauri-apps/tauri-action@v0
         id: tauri_build
         env:
@@ -65,25 +72,15 @@ jobs:
           releaseDraft: true
           prerelease: false
 
-      # 4. 强制补签逻辑 (使用你本地测试成功的命令)
-      - name: Manual Force Sign
+      # 4. 生成并提交 update.json
+      - name: Update update.json
         shell: pwsh
         run: |
           $version = "${{ steps.tauri_build.outputs.appVersion }}"
-          $exeFile = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis/*.exe" -Recurse | Where-Object { $_.Name -like "*setup.exe" } | Select-Object -First 1
+          $sigFile = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis/*.sig" -Recurse | Select-Object -First 1
+          if ($null -eq $sigFile) { Write-Error "未找到签名文件"; exit 1 }
           
-          echo "目标安装包: $($exeFile.FullName)"
-          
-          # 设置密码并执行你本地成功的签名命令
-          $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}"
-          npx tauri signer sign "$($exeFile.FullName)" --private-key-path "${{ github.workspace }}\src-tauri\tauri.key"
-          
-          # 检查签名文件
-          $sigFile = "$($exeFile.FullName).sig"
-          if (Test-Path $sigFile) { echo "✅ 签名补全成功！" } else { Write-Error "❌ 签名失败"; exit 1 }
-
-          # 5. 构造 update.json
-          $signature = Get-Content -Path $sigFile
+          $signature = Get-Content -Path $sigFile.FullName
           $updateData = @{
               version = $version
               notes = "Bazaar Helper v$version 自动发布"
@@ -96,15 +93,11 @@ jobs:
               }
           }
           $updateData | ConvertTo-Json -Depth 10 | Out-File "update.json" -Encoding utf8
-          
-          # 清理私钥
-          Remove-Item "${{ github.workspace }}\src-tauri\tauri.key"
 
-      # 5. 提交 JSON 并推送到 main
       - name: Push update.json
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add update.json
-          git commit -m "chore: 自动更新版本 [skip ci]"
+          git commit -m "chore: 自动更新版本元数据 [skip ci]"
           git push origin main --force
