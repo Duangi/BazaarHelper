@@ -3,7 +3,7 @@ name: "Release"
 on:
   push:
     tags:
-      - 'v*' # 触发条件：推送 v0.3.0 这种标签
+      - 'v*' # 推送 v0.3.5 这种标签时触发
 
 jobs:
   publish:
@@ -21,7 +21,7 @@ jobs:
       - name: install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # 1. 自动同步版本号（无需手动改 package.json）
+      # 1. 自动同步版本号
       - name: Sync version from tag
         shell: pwsh
         run: |
@@ -37,26 +37,20 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
-      # 2. 运行 Tauri 构建
+      # 2. 执行编译
       - uses: tauri-apps/tauri-action@v0
         id: tauri_build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v__VERSION__
           releaseName: "Bazaar Helper v__VERSION__"
           releaseDraft: true
           prerelease: false
 
-      # 3. 核心修复逻辑：补签 + 自动生成 update.json
+      # 3. 核心修复逻辑：补签 + 生成 update.json (复刻你本地成功的命令)
       - name: Force Sign and Update JSON
         shell: pwsh
-        env:
-          # 获取 Secret 里的两行私钥文本
-          PRIVATE_KEY_TEXT: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: |
           $version = "${{ steps.tauri_build.outputs.appVersion }}"
           $bundlePath = "src-tauri/target/release/bundle/nsis"
@@ -65,27 +59,28 @@ jobs:
           $exeFile = Get-ChildItem -Path "$bundlePath/*.exe" -Recurse | Where-Object { $_.Name -like "*setup.exe" } | Select-Object -First 1
           echo "目标安装包: $($exeFile.FullName)"
 
-          # 强制补签
-          echo "⚠️  正在生成签名..."
-          $tempKeyPath = "src-tauri/temp.key"
-          # 使用 Node.js 确保私钥文件写入格式 100% 正确（处理换行符）
-          node -e "fs.writeFileSync('$tempKeyPath', process.env.PRIVATE_KEY_TEXT)"
-          
-          $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "$env:PRIVATE_KEY_PASSWORD"
+          # --- 步骤 A：把 Secret 里的单行字符串还原为物理私钥文件 ---
+          $base64Secret = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
+          $rawKeyBytes = [System.Convert]::FromBase64String($base64Secret)
+          $tempKeyPath = "src-tauri/tauri.key"
+          [System.IO.File]::WriteAllBytes($tempKeyPath, $rawKeyBytes)
+          echo "✅ 临时私钥文件已生成"
+
+          # --- 步骤 B：设置空密码并签名 ---
+          $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = ""
           npx tauri signer sign "$($exeFile.FullName)" --private-key-path "$tempKeyPath"
           
-          # 检查签名结果
+          # 检查签名是否生成
           $sigFile = Get-ChildItem -Path "$bundlePath/*.sig" -Recurse | Select-Object -First 1
-          if ($null -eq $sigFile) { Write-Error "❌ 补签失败"; exit 1 }
+          if ($null -eq $sigFile) { Write-Error "❌ 补签失败！"; exit 1 }
           
           $signature = Get-Content -Path $sigFile.FullName
-          echo "✅ 成功获取签名"
+          echo "✅ 成功获取签名内容"
 
-          # 构造 update.json 
-          # 注意：URL 必须对应你 Release 页面生成的文件名格式
+          # 4. 构造并保存 update.json
           $updateData = @{
               version = $version
-              notes = "Bazaar Helper v$version 自动发布"
+              notes = "Bazaar Helper v$version 正式版发布"
               pub_date = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
               platforms = @{
                   "windows-x86_64" = @{
@@ -98,11 +93,11 @@ jobs:
           if (Test-Path $tempKeyPath) { Remove-Item $tempKeyPath }
           echo "✅ update.json 处理完成"
 
-      # 4. 把更新后的 update.json 强行推回仓库
+      # 4. 把更新后的 update.json 推回仓库
       - name: Commit and push update.json
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add update.json
-          git commit -m "chore: 自动更新版本元数据 [skip ci]"
+          git commit -m "chore: 自动更新版本元数据"
           git push origin main --force
