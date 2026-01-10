@@ -75,6 +75,9 @@ fn search_monsters(query: String, state: State<'_, DbState>) -> Result<Vec<Monst
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(DbState {
             items: Arc::new(RwLock::new(HashMap::new())),
             monsters: Arc::new(RwLock::new(HashMap::new())),
@@ -273,5 +276,6 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![search_monsters])
         .run(tauri::generate_context!())
-        .expect("Error");
+        .expect("Error")
+        ;
 }

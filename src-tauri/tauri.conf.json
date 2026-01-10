@@ -31,6 +31,7 @@
   "bundle": {
     "active": true,
     "targets": "nsis",
+    
     "resources": [
       "resources/**/*"
     ],
@@ -41,5 +42,14 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNEODkwOTJCMzE3NzQ5QjgKUldTNFNYY3hLd21KUFhUWEpERnhGSEprRUVOWjgyeVd4NC8rWFEyOUZQeW0vOUJwcVVmMVBsb2sK",
+      "endpoints": [
+        "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
+      ]
+    }
   }
 }

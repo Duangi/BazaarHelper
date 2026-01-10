@@ -1,0 +1,71 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+      - 'v*' # 当你推送 v0.1.1 这种标签时触发
+
+jobs:
+  publish:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install frontend dependencies
+        run: npm install
+
+      # 核心步骤：运行 Tauri 构建
+      - uses: tauri-apps/tauri-action@v0
+        id: tauri_build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: v__VERSION__
+          releaseName: "Bazaar Helper v__VERSION__"
+          releaseBody: "自动生成的更新包"
+          releaseDraft: true
+          prerelease: false
+
+      # 自动更新 update.json 的黑科技步骤
+      - name: Update update.json
+        shell: pwsh
+        run: |
+          $version = "${{ steps.tauri_build.outputs.appVersion }}"
+          # 找到刚才生成的 .sig 文件并读取内容
+          $sigPath = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis/*.exe.sig" | Select-Object -First 1
+          $signature = Get-Content -Path $sigPath.FullName
+          
+          # 构造新的 JSON 内容 (根据你的格式)
+          $updateData = @{
+              version = $version
+              notes = "新版本 v$version 自动发布"
+              pub_date = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
+              platforms = @{
+                  "windows-x86_64" = @{
+                      signature = $signature
+                      url = "https://github.com/Duangi/BazaarHelper/releases/download/v$version/BazaarHelper_$($version)_x64-setup.exe"
+                  }
+              }
+          }
+          
+          $updateData | ConvertTo-Json -Depth 10 | Out-File "update.json" -Encoding utf8
+          
+      - name: Commit and push update.json
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add update.json
+          git commit -m "chore: 自动更新 update.json 版本至 ${{ steps.tauri_build.outputs.appVersion }}"
+          git push origin main

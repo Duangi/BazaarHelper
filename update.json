@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "notes": "第一版测试版发布：支持手牌、仓库物品的附魔信息查看。怪物查询、自动同步功能。",
+  "pub_date": "2026-01-10T22:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "这里填 .sig 文件里的内容",
+      "url": "https://github.com/Duangi/BazaarHelper/releases/download/v0.1.0/BazaarHelper_0.1.0_x64-setup.exe"
+    }
+  }
+}

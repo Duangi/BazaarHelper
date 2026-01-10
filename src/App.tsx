@@ -4,6 +4,8 @@ import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import "./App.css";
+import { check } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
 
 // --- 接口定义 ---
 interface Enchantment { 
@@ -68,6 +70,13 @@ export default function App() {
   const [pinnedItems, setPinnedItems] = useState<Map<string, number>>(new Map()); // 存储置顶物品ID和置顶时间戳
   const [pinnedCounter, setPinnedCounter] = useState(0); // 置顶计数器，用于确定置顶顺序
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  
+  // 更新检查相关状态
+  const [showUpdateScreen, setShowUpdateScreen] = useState(true); // 是否显示更新检查界面
+  const [updateAvailable, setUpdateAvailable] = useState(false); // 是否有可用更新
+  const [updateVersion, setUpdateVersion] = useState(""); // 更新版本号
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(true); // 是否正在检查更新
+  const [updateMsg, setUpdateMsg] = useState("正在检查更新..."); // 更新进度消息
 
   // 置顶/取消置顶功能
   const togglePin = (itemId: string) => {
@@ -83,6 +92,75 @@ export default function App() {
     });
   };
 
+  // --- 更新逻辑开始 ---
+  const checkForUpdates = async () => {
+    try {
+      setIsCheckingUpdate(true);
+      setUpdateMsg("正在检查更新...");
+      const update = await check(); // 检查是否有新版本
+      
+      console.log("检查更新结果:", update);
+      
+      if (update && update.available) {
+        // 如果有新版本，设置状态让用户手动点击更新
+        setUpdateAvailable(true);
+        setUpdateVersion(update.version);
+        setUpdateMsg(`发现新版本 v${update.version}`);
+        setIsCheckingUpdate(false);
+      } else {
+        // 没有更新，2秒后自动进入overlay
+        setUpdateMsg("当前已是最新版本");
+        setIsCheckingUpdate(false);
+        setTimeout(() => {
+          setShowUpdateScreen(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("检查更新失败:", error);
+      // 检查失败也当作最新版本，直接进入应用
+      setUpdateMsg("当前已是最新版本");
+      setIsCheckingUpdate(false);
+      setTimeout(() => {
+        setShowUpdateScreen(false);
+      }, 2000);
+    }
+  };
+  
+  // 执行更新下载和安装
+  const performUpdate = async () => {
+    try {
+      setUpdateMsg("正在准备下载...");
+      const update = await check();
+      
+      if (update?.available) {
+        await update.downloadAndInstall((event) => {
+          switch (event.event) {
+            case 'Started':
+              setUpdateMsg("开始下载更新包...");
+              console.log('开始下载...');
+              break;
+            case 'Progress':
+              const downloaded = event.data.chunkLength; 
+              setUpdateMsg(`正在下载: 已完成 ${downloaded} 字节`);
+              console.log(`已下载: ${downloaded} 字节`);
+              break;
+            case 'Finished':
+              setUpdateMsg("下载完成，正在重启应用...");
+              console.log('下载完成，准备安装');
+              break;
+          }
+        });
+        await relaunch();
+      }
+    } catch (error) {
+      console.error("更新失败:", error);
+      setUpdateMsg("更新失败，3秒后进入应用...");
+      setTimeout(() => {
+        setShowUpdateScreen(false);
+      }, 3000);
+    }
+  };
+  // --- 更新逻辑结束 ---
   // 获取排序后的物品列表（手牌和仓库）
   const getSortedItems = (items: ItemData[]) => {
     return [...items].sort((a, b) => {
@@ -109,6 +187,11 @@ export default function App() {
       return convertFileSrc(fullPath);
     } catch { return ""; }
   };
+  // 检查更新
+  useEffect(() => {
+    // 立即检查更新
+    checkForUpdates();
+  }, []);
 
   useEffect(() => {
     console.log("设置事件监听器...");
@@ -172,7 +255,7 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  // 4. 窗口定位与尺寸控制 (贴边、去阴影、Y=0)
+  // 4. 窗口定位与尺寸控制 (更新界面居中、overlay贴边)
   useEffect(() => {
     const syncLayout = async () => {
       const monitor = await currentMonitor();
@@ -182,18 +265,33 @@ export default function App() {
       
       if (appWindow.setShadow) await appWindow.setShadow(false);
 
-      const currentWidth = expandedWidth;
-      const currentHeight = isCollapsed ? 45 : (monitor.size.height / scale) - 200;
-      const targetX = (monitor.size.width / scale) - currentWidth;
+      if (showUpdateScreen) {
+        // 更新检查界面：居中显示，固定大小
+        const updateWidth = 500;
+        const updateHeight = 350;
+        const centerX = (monitor.size.width / scale - updateWidth) / 2;
+        const centerY = (monitor.size.height / scale - updateHeight) / 2;
+        
+        try {
+          await appWindow.setSize(new LogicalSize(updateWidth, updateHeight));
+          await appWindow.setPosition(new LogicalPosition(centerX, centerY));
+          await appWindow.setAlwaysOnTop(true);
+        } catch (e) { console.error(e); }
+      } else {
+        // overlay界面：右侧贴边
+        const currentWidth = expandedWidth;
+        const currentHeight = isCollapsed ? 45 : (monitor.size.height / scale) - 200;
+        const targetX = (monitor.size.width / scale) - currentWidth;
 
-      try {
-        await appWindow.setSize(new LogicalSize(currentWidth, currentHeight));
-        await appWindow.setPosition(new LogicalPosition(targetX, 0)); // 严格贴顶
-        await appWindow.setAlwaysOnTop(true);
-      } catch (e) { console.error(e); }
+        try {
+          await appWindow.setSize(new LogicalSize(currentWidth, currentHeight));
+          await appWindow.setPosition(new LogicalPosition(targetX, 0));
+          await appWindow.setAlwaysOnTop(true);
+        } catch (e) { console.error(e); }
+      }
     };
     syncLayout();
-  }, [expandedWidth, isCollapsed, syncData, activeTab, manualMonsters]);
+  }, [showUpdateScreen, expandedWidth, isCollapsed]);
 
   // 手动调整宽度逻辑
   const handleResize = (e: React.MouseEvent) => {
@@ -212,6 +310,29 @@ export default function App() {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
   };
+
+  // 更新检查界面
+  if (showUpdateScreen) {
+    return (
+      <div className="update-screen">
+        <div className="update-content">
+          <h1>BazaarHelper</h1>
+          <div className="update-message">{updateMsg}</div>
+          {updateAvailable && !isCheckingUpdate && (
+            <button className="update-btn" onClick={performUpdate}>
+              立即更新到 v{updateVersion}
+            </button>
+          )}
+          {updateAvailable && !isCheckingUpdate && (
+            <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
+              跳过更新，进入应用
+            </button>
+          )}
+          {isCheckingUpdate && <div className="spinner"></div>}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`overlay ${isCollapsed ? 'collapsed' : 'expanded'}`}>

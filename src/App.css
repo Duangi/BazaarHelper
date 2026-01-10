@@ -314,3 +314,85 @@ html, body, #root {
 .content-wrap {
   position: relative;
 }
+
+/* 更新检查界面样式 */
+.update-screen {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+}
+
+.update-content {
+  text-align: center;
+  padding: 40px;
+  background: rgba(30, 25, 20, 0.7);
+  border-radius: 12px;
+  border: 2px solid var(--c-golden);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  width: 400px;
+  min-height: 250px;
+}
+
+.update-content h1 {
+  color: var(--c-golden);
+  font-size: 32px;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 8px rgba(255, 205, 25, 0.5);
+}
+
+.update-message {
+  color: #e8e8e8;
+  font-size: 16px;
+  margin-bottom: 30px;
+  min-height: 24px;
+}
+
+.update-btn, .skip-btn {
+  padding: 12px 24px;
+  margin: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.update-btn {
+  background: linear-gradient(135deg, var(--c-golden), rgb(220, 170, 0));
+  color: #1a1410;
+  box-shadow: 0 4px 12px rgba(255, 205, 25, 0.4);
+}
+
+.update-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 205, 25, 0.6);
+}
+
+.skip-btn {
+  background: rgba(150, 150, 150, 0.3);
+  color: #d0d0d0;
+  border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+.skip-btn:hover {
+  background: rgba(170, 170, 170, 0.4);
+}
+
+.spinner {
+  margin: 20px auto 0;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 205, 25, 0.2);
+  border-top-color: var(--c-golden);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
