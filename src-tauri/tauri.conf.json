@@ -1,59 +1,60 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "BazaarHelper",
-  "version": "0.1.0",
-  "identifier": "com.duang.BazaarHelper",
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
-  },
-  "app": {
-  "windows": [
-    {
-      "title": "The Bazaar Helper",
-      "resizable": false,
-      "alwaysOnTop": true,
-      "decorations": false,
-      "transparent": true,
-      "visible": true
-    }
-  ],
-    "security": {
-      "assetProtocol": {
-        "enable": true,
-        "scope": ["**"] 
-      },
-      "csp": null
-    }
-  },
-  "bundle": {
-    "active": true,
-    "createUpdaterArtifacts": true,
-    "targets": "nsis",
-    
-    "resources": [
-      "resources/**/*"
-    ],
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
-  },
-  "plugins": {
-    "updater": {
-      "active": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVCQTdCMjhDRDM1MEQwNjkKUldScDBGRFRqTEtuNjFZVzBSS0tFUDFtYVY4djcrYzlVem14aVUxZDZCSk9pcVR0cnhGVzJYeksK",
-      "endpoints": [
-        "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
-      ],
-      "windows": {
-        "installMode": "passive"
-      }
-    }
-  }
+    "$schema":  "https://schema.tauri.app/config/2",
+    "productName":  "BazaarHelper",
+    "version":  "0.5.0",
+    "identifier":  "com.duang.BazaarHelper",
+    "build":  {
+                  "beforeDevCommand":  "npm run dev",
+                  "devUrl":  "http://localhost:1420",
+                  "beforeBuildCommand":  "npm run build",
+                  "frontendDist":  "../dist"
+              },
+    "app":  {
+                "windows":  [
+                                {
+                                    "title":  "The Bazaar Helper",
+                                    "resizable":  false,
+                                    "alwaysOnTop":  true,
+                                    "decorations":  false,
+                                    "transparent":  true,
+                                    "visible":  true
+                                }
+                            ],
+                "security":  {
+                                 "assetProtocol":  {
+                                                       "enable":  true,
+                                                       "scope":  [
+                                                                     "**"
+                                                                 ]
+                                                   },
+                                 "csp":  null
+                             }
+            },
+    "bundle":  {
+                   "active":  true,
+                   "createUpdaterArtifacts":  true,
+                   "targets":  "nsis",
+                   "resources":  [
+                                     "resources/**/*"
+                                 ],
+                   "icon":  [
+                                "icons/32x32.png",
+                                "icons/128x128.png",
+                                "icons/128x128@2x.png",
+                                "icons/icon.icns",
+                                "icons/icon.ico"
+                            ]
+               },
+    "plugins":  {
+                    "updater":  {
+                                    "active":  true,
+                                    "pubkey":  "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVCQTdCMjhDRDM1MEQwNjkKUldScDBGRFRqTEtuNjFZVzBSS0tFUDFtYVY4djcrYzlVem14aVUxZDZCSk9pcVR0cnhGVzJYeksK",
+                                    "endpoints":  [
+                                                      "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
+                                                  ],
+                                    "windows":  {
+                                                    "installMode":  "passive"
+                                                }
+                                }
+                }
 }
