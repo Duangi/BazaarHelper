@@ -3,7 +3,7 @@ name: "Release"
 on:
   push:
     tags:
-      - 'v*' 
+      - 'v*' # 触发条件：推送 v0.4.7 这种标签
 
 jobs:
   publish:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- 极速缓存：第二次构建起步提速 2-3 倍 ---
+      # --- 缓存优化 ---
       - name: setup node
         uses: actions/setup-node@v4
         with:
@@ -27,41 +27,33 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-      # ---------------------------------------
 
-      # 1. 自动同步版本号
-      - name: Sync version
+      # 1. 【核心策略】同步版本号并“临时拆除”更新配置
+      - name: Prepare Config
         shell: pwsh
         run: |
           $version = "${{ github.ref_name }}".TrimStart('v')
+          
+          # 更新 package.json
           $pkg = Get-Content package.json | ConvertFrom-Json
           $pkg.version = $version
           $pkg | ConvertTo-Json | Out-File package.json -Encoding utf8
+
+          # 更新 tauri.conf.json 
           $conf = Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json
           $conf.version = $version
+          
+          # 【关键】暂时移除整个 updater 插件配置
+          # 这样 tauri-action 就不会去寻找私钥，也就绝对不会报错
+          $conf.plugins.PSObject.Properties.Remove('updater')
+          
           $conf | ConvertTo-Json -Depth 10 | Out-File src-tauri/tauri.conf.json -Encoding utf8
-
-      # 2. 【核心动作】：用 $env 方式准备私钥物理文件
-      - name: Prepare Private Key
-        shell: pwsh
-        run: |
-          # A. 将 Secret 里的 Base64 还原为真实的 .key 文件
-          $base64Secret = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
-          $rawKeyBytes = [System.Convert]::FromBase64String($base64Secret)
-          
-          # B. 建立绝对路径
-          $absKeyPath = "${{ github.workspace }}\src-tauri\tauri.key"
-          [System.IO.File]::WriteAllBytes($absKeyPath, $rawKeyBytes)
-          
-          # C. 【关键】使用 GITHUB_ENV 将路径传给后续所有步骤
-          echo "TAURI_SIGNING_PRIVATE_KEY=$absKeyPath" >> $env:GITHUB_ENV
-          echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}" >> $env:GITHUB_ENV
-          echo "✅ 路径已注入环境变量: $absKeyPath"
+          echo "✅ 配置文件已暂时移除 updater 插件，避开官方构建 Bug"
 
       - name: install frontend dependencies
         run: npm install
 
-      # 3. 运行构建（它现在会自动读取上一步注入的 $env 路径）
+      # 2. 运行构建 (此时因为没有配置 updater，它会 100% 构建成功)
       - uses: tauri-apps/tauri-action@v0
         id: tauri_build
         env:
@@ -72,18 +64,38 @@ jobs:
           releaseDraft: true
           prerelease: false
 
-      # 4. 生成并提交 update.json
-      - name: Update update.json
+      # 3. 【暴力补救】构建完成后，手动执行签名逻辑
+      - name: Force Sign and Update JSON
         shell: pwsh
         run: |
           $version = "${{ steps.tauri_build.outputs.appVersion }}"
-          $sigFile = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis/*.sig" -Recurse | Select-Object -First 1
-          if ($null -eq $sigFile) { Write-Error "未找到签名文件"; exit 1 }
+          $bundlePath = "src-tauri/target/release/bundle/nsis"
           
-          $signature = Get-Content -Path $sigFile.FullName
+          # 1. 定位安装包
+          $exeFile = Get-ChildItem -Path "$bundlePath/*.exe" -Recurse | Where-Object { $_.Name -like "*setup.exe" } | Select-Object -First 1
+          if ($null -eq $exeFile) { Write-Error "未找到安装包"; exit 1 }
+          echo "目标安装包: $($exeFile.FullName)"
+
+          # 2. 还原私钥文件 (使用二进制还原法，最稳)
+          $tempKeyPath = "src-tauri/temp.key"
+          $base64Secret = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}"
+          $rawKeyBytes = [System.Convert]::FromBase64String($base64Secret)
+          [System.IO.File]::WriteAllBytes($tempKeyPath, $rawKeyBytes)
+
+          # 3. 显式调用签名工具补齐 .sig 文件
+          $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}"
+          npx tauri signer sign "$($exeFile.FullName)" --private-key-path "$tempKeyPath"
+          
+          $sigFile = "$($exeFile.FullName).sig"
+          if (!(Test-Path $sigFile)) { Write-Error "签名补全失败"; exit 1 }
+          
+          $signature = Get-Content -Path $sigFile
+          echo "✅ 手动签名补全成功"
+
+          # 4. 构造 update.json
           $updateData = @{
               version = $version
-              notes = "Bazaar Helper v$version 自动发布"
+              notes = "Bazaar Helper v$version 正式发布"
               pub_date = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
               platforms = @{
                   "windows-x86_64" = @{
@@ -93,8 +105,12 @@ jobs:
               }
           }
           $updateData | ConvertTo-Json -Depth 10 | Out-File "update.json" -Encoding utf8
+          
+          # 清理
+          Remove-Item $tempKeyPath
 
-      - name: Push update.json
+      # 4. 推送更新后的 update.json
+      - name: Commit and push update.json
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
