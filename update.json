@@ -4,7 +4,7 @@
   "pub_date": "2026-01-10T22:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "这里填 .sig 文件里的内容",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOHBYZGJaRVZUNkRENkRtSkZ6RHF4RDlxSktWTGdNbmhjRUtLbkw5QjRzSHRaT3JvM0ZlbnJxY1cvc01uYmsycDJ1NjJpS0lrdk5XTVlFRWlyTGRNK1Z1TmIxN2oxMEFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY4MDYxMTIzCWZpbGU6QmF6YWFySGVscGVyXzAuMS4wX3g2NC1zZXR1cC5leGUKRW4vZTA2bm5BejJMT1VrOVI5aWZtKzhQSHVSbG5nWVo2ZTRBNDQ3M0poNFI3YjNpNFVHdUNFbEdEUWhsczNwKzE4ajVpbFpTMC9DdndUVFkvWXU1Q0E9PQo=",
       "url": "https://github.com/Duangi/BazaarHelper/releases/download/v0.1.0/BazaarHelper_0.1.0_x64-setup.exe"
     }
   }

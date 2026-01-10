@@ -46,10 +46,13 @@
   "plugins": {
     "updater": {
       "active": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNEODkwOTJCMzE3NzQ5QjgKUldTNFNYY3hLd21KUFhUWEpERnhGSEprRUVOWjgyeVd4NC8rWFEyOUZQeW0vOUJwcVVmMVBsb2sK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU4NTM0NTY0NUI3N0E1RkMKUldUOHBYZGJaRVZUNkYxeXdjNk5QUkk3VmtsbUJTdWp4c3dDeGxpNHpkd3NsY1g0RE1QMXowTlMK",
       "endpoints": [
         "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
-      ]
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }
