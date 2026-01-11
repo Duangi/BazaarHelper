@@ -66,6 +66,45 @@ html, body, #root {
   border-bottom: 2px solid rgba(0, 0, 0, 0.3);
 }
 
+/* 更新通知按钮 */
+.update-notification {
+  padding: 8px;
+  background: rgba(30, 28, 25, 0.95);
+  border-bottom: 1px solid rgba(255, 205, 25, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.update-notify-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(220, 170, 0, 0.2));
+  border: 1px solid var(--c-golden);
+  border-radius: 6px;
+  color: var(--c-golden);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 205, 25, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.update-notify-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 205, 25, 0.3), rgba(220, 170, 0, 0.3));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 205, 25, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(255, 205, 25, 0.3);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(255, 205, 25, 0.6);
+  }
+}
+
 .nav-item {
   padding: 14px 10px;
   color: rgba(255, 255, 255, 0.5);

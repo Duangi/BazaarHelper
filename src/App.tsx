@@ -72,11 +72,10 @@ export default function App() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   
   // 更新检查相关状态
-  const [showUpdateScreen, setShowUpdateScreen] = useState(true); // 是否显示更新检查界面
+  const [showUpdateScreen, setShowUpdateScreen] = useState(false); // 是否显示更新界面（只在用户点击更新时显示）
   const [updateAvailable, setUpdateAvailable] = useState(false); // 是否有可用更新
   const [updateVersion, setUpdateVersion] = useState(""); // 更新版本号
-  const [isCheckingUpdate, setIsCheckingUpdate] = useState(true); // 是否正在检查更新
-  const [updateMsg, setUpdateMsg] = useState("正在检查更新..."); // 更新进度消息
+  const [updateMsg, setUpdateMsg] = useState(""); // 更新进度消息
   const [downloadProgress, setDownloadProgress] = useState(0); // 下载进度百分比
   const [downloadedBytes, setDownloadedBytes] = useState(0); // 已下载字节数
   const [totalBytes, setTotalBytes] = useState(0); // 总字节数
@@ -99,10 +98,8 @@ export default function App() {
   // --- 更新逻辑开始 ---
   const checkForUpdates = async () => {
     try {
-      setIsCheckingUpdate(true);
-      setUpdateMsg("正在检查更新...");
-      
-      console.log("开始检查更新...");
+      console.log("后台静默检查更新...");
+      console.log("当前时间:", new Date().toISOString());
       const update = await check(); // 检查是否有新版本
       
       console.log("检查更新结果:", update);
@@ -111,36 +108,39 @@ export default function App() {
       console.log("update.currentVersion:", update?.currentVersion);
       
       if (update && update.available) {
-        // 如果有新版本，设置状态让用户手动点击更新
         console.log(`发现新版本: ${update.currentVersion} -> ${update.version}`);
+        
+        // 验证下载 URL 是否可达（从 update.json 获取）
+        // 注意：这里我们无法直接获取 URL，因为 Tauri 的 check() 不返回详细信息
+        // 我们只能信任 Tauri 的更新机制，或者在执行更新时处理错误
         setUpdateAvailable(true);
         setUpdateVersion(update.version);
-        setUpdateMsg(`发现新版本 v${update.version}`);
-        setIsCheckingUpdate(false);
       } else {
-        // 没有更新，2秒后自动进入overlay
+        // 没有更新，不做任何提示
         console.log("没有可用更新，当前版本:", update?.currentVersion);
-        setUpdateMsg("当前已是最新版本");
-        setIsCheckingUpdate(false);
-        setTimeout(() => {
-          setShowUpdateScreen(false);
-        }, 2000);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("检查更新失败:", error);
+      console.error("错误类型:", typeof error);
+      console.error("错误名称:", error?.name);
+      console.error("错误消息:", error?.message);
+      console.error("错误堆栈:", error?.stack);
       console.error("错误详情:", JSON.stringify(error, null, 2));
-      // 检查失败也当作最新版本，直接进入应用
-      setUpdateMsg("检查更新失败，继续使用当前版本");
-      setIsCheckingUpdate(false);
-      setTimeout(() => {
-        setShowUpdateScreen(false);
-      }, 2000);
+      
+      // 尝试从错误消息中提取有用信息
+      if (error?.message?.includes("fetch")) {
+        console.error("可能是网络连接问题，无法访问更新服务器");
+      } else if (error?.message?.includes("timeout")) {
+        console.error("连接超时，请检查网络");
+      }
+      // 检查失败静默处理
     }
   };
   
   // 执行更新下载和安装
   const performUpdate = async () => {
     try {
+      setShowUpdateScreen(true); // 显示更新界面
       setUpdateMsg("正在准备下载...");
       setIsDownloading(true);
       const update = await check();
@@ -216,9 +216,8 @@ export default function App() {
       return convertFileSrc(fullPath);
     } catch { return ""; }
   };
-  // 检查更新
+  // 启动时后台静默检查更新
   useEffect(() => {
-    // 立即检查更新
     checkForUpdates();
   }, []);
 
@@ -364,17 +363,14 @@ export default function App() {
             </div>
           )}
           
-          {updateAvailable && !isCheckingUpdate && !isDownloading && (
+          {!isDownloading && (
             <button className="update-btn" onClick={performUpdate}>
               立即更新到 v{updateVersion}
             </button>
           )}
-          {updateAvailable && !isCheckingUpdate && !isDownloading && (
-            <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
-              跳过更新，进入应用
-            </button>
-          )}
-          {isCheckingUpdate && <div className="spinner"></div>}
+          <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
+            跳过更新，进入应用
+          </button>
         </div>
       </div>
     );
@@ -390,6 +386,15 @@ export default function App() {
 
       {!isCollapsed && (
         <>
+          {/* 更新按钮 */}
+          {updateAvailable && (
+            <div className="update-notification">
+              <button className="update-notify-btn" onClick={performUpdate}>
+                🔔 发现新版本 v{updateVersion}
+              </button>
+            </div>
+          )}
+          
           <nav className="nav-bar">
             {(["hand", "stash", "monster"] as TabType[]).map(t => (
               <div key={t} className={`nav-item ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
