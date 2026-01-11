@@ -110,7 +110,9 @@ pub fn run() {
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
+                let re_socket = Regex::new(r"- Socket: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_dealt = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
+                let re_move_socket = Regex::new(r"Successfully moved card (?P<iid>[^ ]+) to (?P<socket>Socket_[0-9]+)").unwrap();
                 
                 // 第一步：从头扫描所有购买记录，建立完整的 inst_to_temp 映射
                 let mut inst_to_temp: HashMap<String, String> = HashMap::new();
@@ -131,9 +133,11 @@ pub fn run() {
                 let mut hand_iids: HashSet<String> = HashSet::new();
                 let mut stash_iids: HashSet<String> = HashSet::new();
                 let mut monster_ids: Vec<String> = Vec::new();
+                let mut socket_to_section: HashMap<String, String> = HashMap::new();
                 let mut is_sync = false;
                 let mut sync_hand_cleared = false; // 标记是否已清空手牌
                 let (mut last_iid, mut cur_owner) = (String::new(), String::new());
+                let mut cur_socket = String::new();
                 let mut initial_scan_done = false;
                 let mut last_file_size = std::fs::metadata(&log_path).unwrap().len();
 
@@ -190,6 +194,7 @@ pub fn run() {
                         if is_sync {
                             if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
                             else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                            else if let Some(cap) = re_socket.captures(trimmed) { cur_socket = cap["val"].to_string(); }
                             else if let Some(cap) = re_section.captures(trimmed) {
                                 if !last_iid.is_empty() {
                                     if &cur_owner == "Player" {
@@ -202,6 +207,8 @@ pub fn run() {
                                         if last_iid.starts_with("itm_") {
                                             if &cap["val"] == "Hand" { hand_iids.insert(last_iid.clone()); }
                                             else { stash_iids.insert(last_iid.clone()); }
+                                            // 记录 socket -> section 的映射，便于处理仅包含 socket 的移动日志
+                                            if !cur_socket.is_empty() { socket_to_section.insert(cur_socket.clone(), cap["val"].to_string()); }
                                             changed = true;
                                         }
                                     } else if &cur_owner == "Opponent" {
@@ -211,8 +218,21 @@ pub fn run() {
                                     }
                                 }
                             }
-                            if trimmed.contains("Finished processing") { 
-                                is_sync = false; 
+                            else if let Some(cap) = re_move_socket.captures(trimmed) {
+                                // 处理格式为 "Successfully moved card itm_X to Socket_N" 的日志
+                                let iid = cap["iid"].to_string();
+                                let socket = cap["socket"].to_string();
+                                // 如果已知该 socket 对应的 section，则根据映射更新集合
+                                if iid.starts_with("itm_") {
+                                    if let Some(sec) = socket_to_section.get(&socket) {
+                                        if sec == "Hand" { hand_iids.insert(iid.clone()); }
+                                        else { stash_iids.insert(iid.clone()); }
+                                        changed = true;
+                                    }
+                                }
+                            }
+                            if trimmed.contains("Finished processing") {
+                                is_sync = false;
                                 sync_hand_cleared = false;
                                 changed = true; // 强制同步，确保状态更新
                             }

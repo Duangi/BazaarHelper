@@ -1,4 +1,141 @@
 {
+  "腹语者": {
+    "name": "Ventriloquist",
+    "name_zh": "腹语者",
+    "skills": [
+      {
+        "id": "8cb18495-c1eb-4d92-8d2c-3301eb86785c",
+        "name": "免费乘车",
+        "name_en": "Free Ride",
+        "tier": "Bronze",
+        "description": "最右侧的物品可视为载具。载具的冷却时间缩短5% » 10% » 15%。",
+        "image": "images/免费乘车.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "0022c409-c839-41e8-8022-65a407457dfe",
+        "name": "鹰之护符",
+        "name_en": "Eagle Talisman",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧的物品暴击率提高5% » 10% » 20%。",
+        "image": "images/鹰之护符.jpg"
+      },
+      {
+        "id": "b23c5988-7091-4b77-a7fb-134c0d0a3285",
+        "name": "淬锋钢",
+        "name_en": "Honing Steel",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "此物品右侧的武器伤害提高+6 » +12 » +18 » +24（限本场战斗）",
+        "image": "images/淬锋钢.jpg"
+      },
+      {
+        "id": "e2a09e24-d454-450f-a39a-23f505ee32fa",
+        "name": "友好玩偶",
+        "name_en": "Friendly Doll",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成5 » 15 » 25伤害。如果这是你唯一的伙伴，就令其暴击率+50% » +75% » +100%。",
+        "image": "images/友好玩偶.jpg"
+      },
+      {
+        "id": "d6819596-2601-4757-8b72-2d708971023d",
+        "name": "弹簧刀",
+        "name_en": "Switchblade",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成4 » 8 » 12 » 16伤害。使用相邻武器时，使其伤害提高+4 » +8 » +12 » +16（限本场战斗）。",
+        "image": "images/弹簧刀.jpg"
+      },
+      {
+        "id": "9e5e3d9e-ad05-4340-9071-4fccecb79695",
+        "name": "蝶剑",
+        "name_en": "Butterfly Swords",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成10伤害",
+        "image": "images/蝶剑.jpg"
+      },
+      {
+        "id": "529a7e95-b350-4fd6-96fd-fef80d4c1462",
+        "name": "古董剑",
+        "name_en": "Old Sword",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成5伤害",
+        "image": "images/古董剑.jpg"
+      },
+      {
+        "id": "dc3bf5cb-45fa-46c7-9a0e-3f3bfb01697d",
+        "name": "磨刀石",
+        "name_en": "Sharpening Stone",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "出售此物品时，最左侧的武器伤害提高4 » 8 » 16 » 32。",
+        "image": "images/磨刀石.jpg"
+      },
+      {
+        "id": "7f706346-b364-4791-a104-ed6fe03e87e1",
+        "name": "打破镣铐",
+        "name_en": "Broken Shackles",
+        "tier": "Silver",
+        "socket": "Socket_7",
+        "description": "武器伤害提高8（限本场战斗）",
+        "image": "images/打破镣铐.jpg"
+      }
+    ],
+    "image": "images/腹语者.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e2eba1ca87cf5e0fca3367fd4ea3c77749d9e02@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1661200c08e681c08bcc66c67a26f7a0abb78ca6@400.webp?v=2"
+  },
+  "食蕉兽": {
+    "name": "Banannibal",
+    "name_zh": "食蕉兽",
+    "skills": [
+      {
+        "id": "c372cdf3-d2f1-429a-ae12-ef3259e41654",
+        "name": "活力冲击",
+        "name_en": "Healthy Jolt",
+        "tier": "Bronze",
+        "description": "每场战斗首次过量治疗时，加速己方物品1 » 2 » 3秒。",
+        "image": "images/活力冲击.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "da766a09-0352-4966-829f-20bda8da48d7",
+        "name": "医疗包",
+        "name_en": "Med Kit",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最左侧治疗物品的治疗量提高5 » 10 » 20 » 40。",
+        "image": "images/医疗包.jpg"
+      },
+      {
+        "id": "3890374d-4952-471d-b550-e230d0ce5343",
+        "name": "蓝蕉",
+        "name_en": "Bluenanas",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "治疗10 » 20 » 40 » 80生命值。出售此物品时，最大生命值提高25 » 50 » 100 » 200。",
+        "image": "images/蓝蕉.jpg"
+      },
+      {
+        "id": "0966f887-5aaf-44a5-90fa-ecb194270513",
+        "name": "布胶带",
+        "name_en": "Duct Tape",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "减速一件物品1 » 2 » 3 » 4秒。使用相邻物品时，获得5 » 10 » 15 » 20护盾。",
+        "image": "images/布胶带.jpg"
+      }
+    ],
+    "image": "images/食蕉兽.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/09e879c410ace46f0a8dcbdc8d574c57a7420359@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fce8c94be1d65098b8e8714ae9ab690184daae73@400.webp?v=2"
+  },
   "恐惧之形": {
     "name": "Terrorform",
     "name_zh": "恐惧之形",
