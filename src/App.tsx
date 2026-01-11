@@ -97,18 +97,25 @@ export default function App() {
     try {
       setIsCheckingUpdate(true);
       setUpdateMsg("正在检查更新...");
+      
+      console.log("开始检查更新...");
       const update = await check(); // 检查是否有新版本
       
       console.log("检查更新结果:", update);
+      console.log("update.available:", update?.available);
+      console.log("update.version:", update?.version);
+      console.log("update.currentVersion:", update?.currentVersion);
       
       if (update && update.available) {
         // 如果有新版本，设置状态让用户手动点击更新
+        console.log(`发现新版本: ${update.currentVersion} -> ${update.version}`);
         setUpdateAvailable(true);
         setUpdateVersion(update.version);
         setUpdateMsg(`发现新版本 v${update.version}`);
         setIsCheckingUpdate(false);
       } else {
         // 没有更新，2秒后自动进入overlay
+        console.log("没有可用更新，当前版本:", update?.currentVersion);
         setUpdateMsg("当前已是最新版本");
         setIsCheckingUpdate(false);
         setTimeout(() => {
@@ -117,8 +124,9 @@ export default function App() {
       }
     } catch (error) {
       console.error("检查更新失败:", error);
+      console.error("错误详情:", JSON.stringify(error, null, 2));
       // 检查失败也当作最新版本，直接进入应用
-      setUpdateMsg("当前已是最新版本");
+      setUpdateMsg("检查更新失败，继续使用当前版本");
       setIsCheckingUpdate(false);
       setTimeout(() => {
         setShowUpdateScreen(false);

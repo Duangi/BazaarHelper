@@ -135,8 +135,44 @@ pub fn run() {
                 let mut sync_hand_cleared = false; // 标记是否已清空手牌
                 let (mut last_iid, mut cur_owner) = (String::new(), String::new());
                 let mut initial_scan_done = false;
+                let mut last_file_size = std::fs::metadata(&log_path).unwrap().len();
 
                 loop {
+                    // 检测日志文件是否被重置（文件变小）
+                    let current_file_size = std::fs::metadata(&log_path).unwrap().len();
+                    if current_file_size < last_file_size {
+                        println!("⚠️ 检测到日志文件被重置！清空所有数据并重新开始...");
+                        // 重置所有状态
+                        hand_iids.clear();
+                        stash_iids.clear();
+                        monster_ids.clear();
+                        inst_to_temp.clear();
+                        is_sync = false;
+                        sync_hand_cleared = false;
+                        initial_scan_done = false;
+                        
+                        // 重新打开文件并从头开始读取
+                        reader = BufReader::new(File::open(&log_path).unwrap());
+                        last_file_size = current_file_size;
+                        
+                        // 重新建立映射
+                        let file_content = std::fs::read_to_string(&log_path).unwrap_or_default();
+                        for cap in re_purchase.captures_iter(&file_content) {
+                            inst_to_temp.insert(cap["iid"].to_string(), cap["tid"].to_string());
+                        }
+                        println!("重新建立了 {} 个实例映射", inst_to_temp.len());
+                        
+                        // 发送清空事件
+                        let items_db = item_db_instance.read().unwrap();
+                        let payload = SyncPayload {
+                            hand_items: Vec::new(),
+                            stash_items: Vec::new(),
+                        };
+                        handle.emit("sync-items", payload).unwrap();
+                        continue;
+                    }
+                    last_file_size = current_file_size;
+                    
                     let mut line = String::new();
                     if reader.read_line(&mut line).unwrap() > 0 {
                         let trimmed = line.trim();
