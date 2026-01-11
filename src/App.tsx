@@ -77,6 +77,10 @@ export default function App() {
   const [updateVersion, setUpdateVersion] = useState(""); // 更新版本号
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(true); // 是否正在检查更新
   const [updateMsg, setUpdateMsg] = useState("正在检查更新..."); // 更新进度消息
+  const [downloadProgress, setDownloadProgress] = useState(0); // 下载进度百分比
+  const [downloadedBytes, setDownloadedBytes] = useState(0); // 已下载字节数
+  const [totalBytes, setTotalBytes] = useState(0); // 总字节数
+  const [isDownloading, setIsDownloading] = useState(false); // 是否正在下载
 
   // 置顶/取消置顶功能
   const togglePin = (itemId: string) => {
@@ -138,21 +142,37 @@ export default function App() {
   const performUpdate = async () => {
     try {
       setUpdateMsg("正在准备下载...");
+      setIsDownloading(true);
       const update = await check();
       
       if (update?.available) {
+        let totalDownloaded = 0;
         await update.downloadAndInstall((event) => {
           switch (event.event) {
             case 'Started':
               setUpdateMsg("开始下载更新包...");
-              console.log('开始下载...');
+              setDownloadProgress(0);
+              setDownloadedBytes(0);
+              if (event.data.contentLength) {
+                setTotalBytes(event.data.contentLength);
+              }
+              console.log('开始下载...', event.data);
               break;
             case 'Progress':
-              const downloaded = event.data.chunkLength; 
-              setUpdateMsg(`正在下载: 已完成 ${downloaded} 字节`);
-              console.log(`已下载: ${downloaded} 字节`);
+              totalDownloaded += event.data.chunkLength;
+              setDownloadedBytes(totalDownloaded);
+              
+              if (totalBytes > 0) {
+                const progress = Math.round((totalDownloaded / totalBytes) * 100);
+                setDownloadProgress(progress);
+                setUpdateMsg(`正在下载: ${progress}%`);
+              } else {
+                setUpdateMsg(`正在下载: ${(totalDownloaded / 1024 / 1024).toFixed(2)} MB`);
+              }
+              console.log(`已下载: ${totalDownloaded} 字节`);
               break;
             case 'Finished':
+              setDownloadProgress(100);
               setUpdateMsg("下载完成，正在重启应用...");
               console.log('下载完成，准备安装');
               break;
@@ -163,6 +183,7 @@ export default function App() {
     } catch (error) {
       console.error("更新失败:", error);
       setUpdateMsg("更新失败，3秒后进入应用...");
+      setIsDownloading(false);
       setTimeout(() => {
         setShowUpdateScreen(false);
       }, 3000);
@@ -326,12 +347,29 @@ export default function App() {
         <div className="update-content">
           <h1>BazaarHelper</h1>
           <div className="update-message">{updateMsg}</div>
-          {updateAvailable && !isCheckingUpdate && (
+          
+          {/* 下载进度条 */}
+          {isDownloading && (
+            <div className="progress-container">
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${downloadProgress}%` }}></div>
+              </div>
+              <div className="progress-text">
+                {totalBytes > 0 ? (
+                  <span>{(downloadedBytes / 1024 / 1024).toFixed(2)} MB / {(totalBytes / 1024 / 1024).toFixed(2)} MB</span>
+                ) : (
+                  <span>{(downloadedBytes / 1024 / 1024).toFixed(2)} MB</span>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {updateAvailable && !isCheckingUpdate && !isDownloading && (
             <button className="update-btn" onClick={performUpdate}>
               立即更新到 v{updateVersion}
             </button>
           )}
-          {updateAvailable && !isCheckingUpdate && (
+          {updateAvailable && !isCheckingUpdate && !isDownloading && (
             <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
               跳过更新，进入应用
             </button>

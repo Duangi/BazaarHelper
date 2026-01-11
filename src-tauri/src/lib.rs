@@ -163,7 +163,7 @@ pub fn run() {
                         println!("重新建立了 {} 个实例映射", inst_to_temp.len());
                         
                         // 发送清空事件
-                        let items_db = item_db_instance.read().unwrap();
+                        let _items_db = item_db_instance.read().unwrap();
                         let payload = SyncPayload {
                             hand_items: Vec::new(),
                             stash_items: Vec::new(),

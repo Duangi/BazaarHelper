@@ -1,7 +1,7 @@
-﻿{
+{
     "$schema":  "https://schema.tauri.app/config/2",
     "productName":  "BazaarHelper",
-    "version":  "0.5.3",
+    "version":  "0.5.4",
     "identifier":  "com.duang.BazaarHelper",
     "build":  {
                   "beforeDevCommand":  "npm run dev",
