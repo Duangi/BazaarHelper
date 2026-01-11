@@ -42414,7 +42414,7 @@
         "description": "此物品的伤害加成翻倍。"
       }
     ],
-    "image": ""
+    "image": "images/红色小圆猪 R.jpg"
   },
   "e37638c3-4e5c-472c-96f9-b503a86e0fe3": {
     "name": "Double Whammy",
@@ -57212,7 +57212,7 @@
         "description": "造成30伤害"
       }
     ],
-    "image": ""
+    "image": "images/红色小圆猪 A.jpg"
   },
   "2e3f4a5b-6c7d-8e9f-0a1b-2c3d4e5f6a7b": {
     "name": "Soulstone",
@@ -60331,7 +60331,7 @@
         "description": "此物品的伤害加成翻倍。"
       }
     ],
-    "image": ""
+    "image": "images/红色小圆猪 L.jpg"
   },
   "f8b41c46-8adc-4e84-835a-831e2e3d84d1": {
     "name": "Goggles",

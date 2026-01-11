@@ -1,4 +1,184 @@
 {
+  "恐惧之形": {
+    "name": "Terrorform",
+    "name_zh": "恐惧之形",
+    "skills": [
+      {
+        "id": "bdbc6677-456f-402d-a46f-24f7d0f194e5",
+        "name": "炫技装弹",
+        "name_en": "Flashy Reload",
+        "tier": "Bronze",
+        "description": "每场战斗前3 » 6次暴击时，为另一件物品装填弹药。",
+        "image": "images/炫技装弹.jpg"
+      },
+      {
+        "id": "9f31349a-7f1c-4f1d-baab-26974e974a0d",
+        "name": "被动能量",
+        "name_en": "Passive Power",
+        "tier": "Bronze",
+        "description": "无冷却时间的物品+25% » +50%伤害、灼烧、剧毒、护盾、治疗量与生命再生量。",
+        "image": "images/被动能量.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "9778f31c-87b0-4d8d-8289-50e90dd7edc5",
+        "name": "鱼雷",
+        "name_en": "Torpedo",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成100伤害。弹药量:1。使用其他水系或弹药物品时，此物品伤害提高40 » 80 » 120（限本场战斗）。若该物品为大型物品，则伤害增益翻倍。",
+        "image": "images/鱼雷.jpg"
+      },
+      {
+        "id": "840b6bc5-4786-40bc-b864-cc5c2b78641a",
+        "name": "食人鱼",
+        "name_en": "Piranha",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "此物品能造成双倍暴击伤害。",
+        "image": "images/食人鱼.jpg"
+      },
+      {
+        "id": "7d3b7b54-382d-4991-997d-2f78381d7690",
+        "name": "烈酒杯",
+        "name_en": "Shot Glasses",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "加速手头4件物品1秒。减速4件己方物品1秒。弹药量:1»2»3",
+        "image": "images/烈酒杯.jpg"
+      },
+      {
+        "id": "b18e28e6-69a3-455a-8a5a-1a3170c76bb7",
+        "name": "元素深渊冲刺",
+        "name_en": "Elemental Depth Charge",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成4剧毒、4灼烧，并冻结一件物品0.5秒。弹药量:1。每拥有另一件水系物品，此物品就+1多重触发。",
+        "image": "images/元素深渊冲刺.jpg"
+      },
+      {
+        "id": "df87dc00-f0fe-4e47-b864-ad6b4bfea81a",
+        "name": "瓶装闪电",
+        "name_en": "Bottled Lightning",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成25伤害",
+        "image": "images/瓶装闪电.jpg"
+      },
+      {
+        "id": "d5110378-323c-4af3-93e5-dca3451b3ea8",
+        "name": "皮皮虾",
+        "name_en": "Mantis Shrimp",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成20伤害。造成2灼烧。Ammo:2。触发减速时，此物品伤害提高+10 » +15 » +20 » +25、灼烧提高+2 » +3 » +4 » +5（限本场战斗）。",
+        "image": "images/皮皮虾.jpg"
+      },
+      {
+        "id": "6028b902-ccf6-4cca-bc37-de4649806460",
+        "name": "生体融合臂",
+        "name_en": "Biomerge Arm",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "物品弹药耗尽时，造成100 » 200伤害。此物品左侧的弹药物品+100%暴击率、+1最大弹药量。",
+        "image": "images/生体融合臂.jpg"
+      }
+    ],
+    "image": "images/恐惧之形.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f07201da669784f32a38fbff943b9778d800863@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8f6df48bdebd8733429b5e6ea6aef3974cbebac@400.webp?v=2"
+  },
+  "耶丹": {
+    "name": "Yerdan",
+    "name_zh": "耶丹",
+    "skills": [
+      {
+        "id": "a55baf5f-0dfe-4591-8107-4ae69cbde927",
+        "name": "兄弟别激动",
+        "name_en": "Relax Bro",
+        "tier": "Bronze",
+        "description": "使用小型物品时，生命再生量提高3 » 4（限本场战斗）。",
+        "image": "images/兄弟别激动.jpg"
+      },
+      {
+        "id": "c88d58a8-7cc7-4c7b-aa1c-c79972999a1c",
+        "name": "右撇子",
+        "name_en": "Right-Handed",
+        "tier": "Bronze",
+        "description": "最右侧的武器+20 » +30 » +40 » +50伤害。",
+        "image": "images/右撇子.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "d5ad07b5-9b1e-4000-848e-503861851e2b",
+        "name": "竞技场",
+        "name_en": "Tournament Arena",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "玩具+1多重触发。",
+        "image": "images/竞技场.jpg"
+      },
+      {
+        "id": "23da3858-b9ac-480d-9c80-da662c92d67a",
+        "name": "小圆猪板",
+        "name_en": "Piggles Board",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "使用玩具时，为另一件玩具充能1 » 2秒。",
+        "image": "images/小圆猪板.jpg"
+      },
+      {
+        "id": "b57d9963-d241-40c9-8f9f-f9925a2da661",
+        "name": "红色小圆猪 R",
+        "name_en": "Red Piggles R",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "此物品右侧的武器伤害提高+5 » +10 » +15 » +20（限本场战斗）",
+        "image": "images/红色小圆猪 R.jpg"
+      },
+      {
+        "id": "84b74f1e-0960-4c71-bb4f-d35e114250c2",
+        "name": "悠悠球",
+        "name_en": "Yo-Yo",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成1伤害。使用相邻物品时，为此物品充能3 » 4秒。",
+        "image": "images/悠悠球.jpg"
+      },
+      {
+        "id": "844efa15-de6f-4fec-a438-21904969577b",
+        "name": "红色小圆猪 A",
+        "name_en": "Red Piggles A",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "相邻武器伤害提高+3 » +6 » +9 » +12（限本场战斗）",
+        "image": "images/红色小圆猪 A.jpg"
+      },
+      {
+        "id": "ae126c7d-8f0f-4a23-b11f-da56e5353220",
+        "name": "高级红色小圆猪",
+        "name_en": "Premium Red Piggles",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成伤害，等量于此物品价值的三倍",
+        "image": "images/高级红色小圆猪.jpg"
+      },
+      {
+        "id": "b3c06ff9-f0e1-4527-81aa-2f71d7bf6503",
+        "name": "红色小圆猪 L",
+        "name_en": "Red Piggles L",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "此物品左侧武器的伤害提高+5 » +10 » +15 » +20（限本场战斗）",
+        "image": "images/红色小圆猪 L.jpg"
+      }
+    ],
+    "image": "images/耶丹.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7543353101b183ed038c9d61cee6f01c9a9974db@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c435272eab50324b20d9e530ad68be540a2abda0@400.webp?v=2"
+  },
   "辣火狂徒": {
     "name": "Scovyle",
     "name_zh": "辣火狂徒",
