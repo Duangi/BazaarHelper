@@ -1,0 +1,982 @@
+[
+  {
+    "key": "巨蚊",
+    "image": "images/巨蚊.jpg",
+    "phash_distance": 36,
+    "mse": 5514.75732421875,
+    "ssim": null,
+    "template_scores": [
+      0.1299341320991516,
+      0.005458765663206577
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 4,
+      "match_ratio": 0.008
+    }
+  },
+  {
+    "key": "退休人员",
+    "image": "images/退休人员.jpg",
+    "phash_distance": 30,
+    "mse": 5125.26171875,
+    "ssim": null,
+    "template_scores": [
+      0.35661616921424866,
+      0.057055845856666565
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 7,
+      "match_ratio": 0.014
+    }
+  },
+  {
+    "key": "阿海克萨",
+    "image": "images/阿海克萨.jpg",
+    "phash_distance": 28,
+    "mse": 5574.4658203125,
+    "ssim": null,
+    "template_scores": [
+      0.19083327054977417,
+      0.037587255239486694
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 37,
+      "match_ratio": 0.074
+    }
+  },
+  {
+    "key": "产品演示员",
+    "image": "images/产品演示员.jpg",
+    "phash_distance": 32,
+    "mse": 4711.818359375,
+    "ssim": null,
+    "template_scores": [
+      0.2636733055114746,
+      -0.031370412558317184
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 2,
+      "match_ratio": 0.004
+    }
+  },
+  {
+    "key": "飞车暴徒",
+    "image": "images/飞车暴徒.jpg",
+    "phash_distance": 24,
+    "mse": 4226.9423828125,
+    "ssim": null,
+    "template_scores": [
+      0.309712290763855,
+      0.11031564325094223
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 2,
+      "match_ratio": 0.004
+    }
+  },
+  {
+    "key": "虚空骑士",
+    "image": "images/虚空骑士.jpg",
+    "phash_distance": 26,
+    "mse": 5128.17822265625,
+    "ssim": null,
+    "template_scores": [
+      0.41007199883461,
+      0.0706528052687645
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 2,
+      "match_ratio": 0.004
+    }
+  },
+  {
+    "key": "柯玛兹",
+    "image": "images/柯玛兹.jpg",
+    "phash_distance": 38,
+    "mse": 5046.13720703125,
+    "ssim": null,
+    "template_scores": [
+      0.14722949266433716,
+      -0.11687900871038437
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 4,
+      "match_ratio": 0.008
+    }
+  },
+  {
+    "key": "碧心守护神",
+    "image": "images/碧心守护神.jpg",
+    "phash_distance": 32,
+    "mse": 4313.25830078125,
+    "ssim": null,
+    "template_scores": [
+      0.10704198479652405,
+      -0.014915038831532001
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 6,
+      "match_ratio": 0.012
+    }
+  },
+  {
+    "key": "神话典守",
+    "image": "images/神话典守.jpg",
+    "phash_distance": 30,
+    "mse": 4702.984375,
+    "ssim": null,
+    "template_scores": [
+      0.18031130731105804,
+      0.04941496625542641
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 3,
+      "match_ratio": 0.006
+    }
+  },
+  {
+    "key": "蛮猪战士",
+    "image": "images/蛮猪战士.jpg",
+    "phash_distance": 32,
+    "mse": 6087.3955078125,
+    "ssim": null,
+    "template_scores": [
+      0.2894587516784668,
+      -0.039043497294187546
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 2,
+      "match_ratio": 0.004
+    }
+  },
+  {
+    "key": "领班",
+    "image": "images/领班.jpg",
+    "phash_distance": 28,
+    "mse": 6646.71923828125,
+    "ssim": null,
+    "template_scores": [
+      0.3004384934902191,
+      -0.017331305891275406
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 2,
+      "match_ratio": 0.004
+    }
+  },
+  {
+    "key": "动物饲养员",
+    "image": "images/动物饲养员.jpg",
+    "phash_distance": 32,
+    "mse": 4805.8759765625,
+    "ssim": null,
+    "template_scores": [
+      0.24718709290027618,
+      -0.05811278149485588
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 5,
+      "match_ratio": 0.01
+    }
+  },
+  {
+    "key": "怨念和服",
+    "image": "images/怨念和服.jpg",
+    "phash_distance": 34,
+    "mse": 7436.42822265625,
+    "ssim": null,
+    "template_scores": [
+      0.06436675786972046,
+      -0.07266689091920853
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 0,
+      "match_ratio": 0.0
+    }
+  },
+  {
+    "key": "",
+    "image": "images/.jpg",
+    "error": "missing"
+  },
+  {
+    "key": "獠牙英格狼",
+    "image": "images/獠牙英格狼.jpg",
+    "phash_distance": 32,
+    "mse": 5670.85791015625,
+    "ssim": null,
+    "template_scores": [
+      0.11919012665748596,
+      -0.00026745948707684875
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 5,
+      "match_ratio": 0.01
+    }
+  },
+  {
+    "key": "火灵",
+    "image": "images/火灵.jpg",
+    "phash_distance": 30,
+    "mse": 8897.50390625,
+    "ssim": null,
+    "template_scores": [
+      0.1870604306459427,
+      -0.029889356344938278
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 0,
+      "match_ratio": 0.0
+    }
+  },
+  {
+    "key": "9AF5FE85-C06F-4227-906C-E5F8DF83A0FD",
+    "image": "images/云顶军官.jpg",
+    "phash_distance": 26,
+    "mse": 7181.185546875,
+    "ssim": null,
+    "template_scores": [
+      0.41230419278144836,
+      0.08243967592716217
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 442,
+      "good_matches": 2,
+      "match_ratio": 0.004524886877828055
+    }
+  },
+  {
+    "key": "53C31151-AD92-4181-9720-D0825EEA866B",
+    "image": "images/毒蛇暴君.jpg",
+    "phash_distance": 40,
+    "mse": 8164.7822265625,
+    "ssim": null,
+    "template_scores": [
+      0.28513315320014954,
+      -0.12295492738485336
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 446,
+      "good_matches": 1,
+      "match_ratio": 0.002242152466367713
+    }
+  },
+  {
+    "key": "709E1DCE-7E91-4612-B010-D107A6800158",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "16038F84-3CEC-4CCD-B58B-2CE974442142",
+    "image": "images/废土领主.jpg",
+    "phash_distance": 28,
+    "mse": 4458.18310546875,
+    "ssim": null,
+    "template_scores": [
+      0.3620339632034302,
+      0.010048937983810902
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 439,
+      "good_matches": 3,
+      "match_ratio": 0.00683371298405467
+    }
+  },
+  {
+    "key": "0AF10A6E-4EA8-4F76-B3F7-C0364CE6D42B",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "70EAF194-D60A-4605-AAC2-41F84EA84C46",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "EA736D32-738C-4CCA-902C-1B3A5DC67205",
+    "image": "images/史都.jpg",
+    "phash_distance": 28,
+    "mse": 3093.583984375,
+    "ssim": null,
+    "template_scores": [
+      0.19513535499572754,
+      0.05592107027769089
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 458,
+      "good_matches": 1,
+      "match_ratio": 0.002183406113537118
+    }
+  },
+  {
+    "key": "55823D26-5FA0-46CA-9D3D-50BBBFF5068B",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "8CF3C8CC-2D9E-4F10-B133-711E0FEC7039",
+    "image": "images/觉醒街区.jpg",
+    "phash_distance": 32,
+    "mse": 3954.5458984375,
+    "ssim": null,
+    "template_scores": [
+      0.23808085918426514,
+      0.15417133271694183
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 438,
+      "good_matches": 8,
+      "match_ratio": 0.0182648401826484
+    }
+  },
+  {
+    "key": "DD985314-939F-4388-86DC-50EF8E7C25B7",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "55902C8F-01AF-4234-BC56-852113C85AC9",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "867110C7-92F5-49D9-A074-2D687548E47E",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "2E9ED78C-6070-4802-9E98-E1090FE5BD78",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "1177568A-757F-469F-9438-8F3BFEACD93F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "A859BD39-A384-43E8-9299-08A73C6810A6",
+    "image": "images/辉耀海盗.jpg",
+    "phash_distance": 32,
+    "mse": 5333.517578125,
+    "ssim": null,
+    "template_scores": [
+      0.2825765311717987,
+      0.02674482949078083
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 472,
+      "good_matches": 1,
+      "match_ratio": 0.00211864406779661
+    }
+  },
+  {
+    "key": "EA63DAE1-1D9C-4422-8C2A-96260B787DD1",
+    "image": "images/垃圾泰坦.jpg",
+    "phash_distance": 40,
+    "mse": 4624.30908203125,
+    "ssim": null,
+    "template_scores": [
+      0.3514924645423889,
+      -0.03268798813223839
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 455,
+      "good_matches": 4,
+      "match_ratio": 0.008791208791208791
+    }
+  },
+  {
+    "key": "E18B8358-920D-48D7-B90C-37E455135991",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "8C211464-5961-449B-B5E9-B222C601E3C1",
+    "image": "images/炼金大师.jpg",
+    "phash_distance": 36,
+    "mse": 6578.9267578125,
+    "ssim": null,
+    "template_scores": [
+      0.39701956510543823,
+      -0.15545958280563354
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 457,
+      "good_matches": 2,
+      "match_ratio": 0.00437636761487965
+    }
+  },
+  {
+    "key": "B5409AD0-EDB2-49EB-8DEE-6D4EC238E10E",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "E07396B2-A71E-46E7-B32B-D9568585DD93",
+    "image": "images/毒蛇.jpg",
+    "phash_distance": 28,
+    "mse": 3716.7900390625,
+    "ssim": null,
+    "template_scores": [
+      0.2815108597278595,
+      0.031435515731573105
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 455,
+      "good_matches": 1,
+      "match_ratio": 0.002197802197802198
+    }
+  },
+  {
+    "key": "23274E3A-C38D-4AFF-92B6-599103256CEE",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "FDCB435F-D6C4-4657-81B5-1888E8EEFE5A",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "B40AE00E-F6DF-4920-90A4-A49EA53FBDB5",
+    "image": "images/流浪岛屿.jpg",
+    "phash_distance": 30,
+    "mse": 4698.2109375,
+    "ssim": null,
+    "template_scores": [
+      0.44110915064811707,
+      -0.04700320214033127
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 457,
+      "good_matches": 1,
+      "match_ratio": 0.002188183807439825
+    }
+  },
+  {
+    "key": "B236A2B6-3BBB-4F3E-B505-BA67605312DE",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "622B8E58-B073-4C75-9D57-322D0F16435D",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "F8CF1723-AA0C-4019-8C59-842CECDA1C93",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "FC5AA4C0-8D87-457B-BC3C-2EBF0B07D12D",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "924C56D7-1A5E-4E57-A6B2-BB0C2362980E",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "6C87BE29-E82D-4CE1-AC79-8A642B8E0C4F",
+    "image": "images/阿肯大人.jpg",
+    "phash_distance": 30,
+    "mse": 4828.064453125,
+    "ssim": null,
+    "template_scores": [
+      0.3488560914993286,
+      -0.026311390101909637
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 464,
+      "good_matches": 5,
+      "match_ratio": 0.010775862068965518
+    }
+  },
+  {
+    "key": "E873DBD7-86AA-4FEC-9206-28591346939A",
+    "image": "images/霜猴霸王.jpg",
+    "phash_distance": 32,
+    "mse": 5725.921875,
+    "ssim": null,
+    "template_scores": [
+      0.38385942578315735,
+      -0.000733401975594461
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 466,
+      "good_matches": 0,
+      "match_ratio": 0.0
+    }
+  },
+  {
+    "key": "80A6CD15-2213-493F-904F-FB6CE7C60270",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "0A70A9AB-4508-4FF4-984E-9A20F0B3D517",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "B3F9A83F-772B-4286-BF21-CD2D86A13B58",
+    "image": "images/荒原旋舞者.jpg",
+    "phash_distance": 30,
+    "mse": 4233.03515625,
+    "ssim": null,
+    "template_scores": [
+      0.6592139005661011,
+      0.05583099275827408
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 468,
+      "good_matches": 28,
+      "match_ratio": 0.05982905982905983
+    }
+  },
+  {
+    "key": "3A2F9A4B-F573-46D4-A2ED-1ED0088DA55B",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "337C2AF9-4815-4C14-B537-159F5FC80BE3",
+    "image": "images/垃圾泰坦.jpg",
+    "phash_distance": 40,
+    "mse": 4624.30908203125,
+    "ssim": null,
+    "template_scores": [
+      0.3514924645423889,
+      -0.03268798813223839
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 455,
+      "good_matches": 4,
+      "match_ratio": 0.008791208791208791
+    }
+  },
+  {
+    "key": "7719B6D8-7977-4D49-88A2-DA29A19AD235",
+    "image": "images/锅炉斗士.jpg",
+    "phash_distance": 32,
+    "mse": 4988.61328125,
+    "ssim": null,
+    "template_scores": [
+      0.3265236020088196,
+      -0.02897457778453827
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 447,
+      "good_matches": 8,
+      "match_ratio": 0.017897091722595078
+    }
+  },
+  {
+    "key": "6D946FE1-13CC-4141-BC89-84981C4EF77F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "0A633DEF-7135-408C-BCC7-785F5172EE34",
+    "image": "images/黑牛先生.jpg",
+    "phash_distance": 32,
+    "mse": 5151.38671875,
+    "ssim": null,
+    "template_scores": [
+      0.3510071933269501,
+      0.027978306636214256
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 433,
+      "good_matches": 2,
+      "match_ratio": 0.004618937644341801
+    }
+  },
+  {
+    "key": "B88974F2-E953-4C66-A231-7337FD409C53",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "D34242A2-02B0-4361-9402-E216CB12D165",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "FD181D89-0706-4220-BB95-637AF574B61B",
+    "image": "images/恶蚊.jpg",
+    "phash_distance": 30,
+    "mse": 4681.244140625,
+    "ssim": null,
+    "template_scores": [
+      0.312530517578125,
+      0.0594758577644825
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 462,
+      "good_matches": 2,
+      "match_ratio": 0.004329004329004329
+    }
+  },
+  {
+    "key": "A0B78419-E252-4BDC-8861-4325ECBEADD0",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "626224F6-4AEA-458F-8947-86A4798DE419",
+    "image": "images/626224F6-4AEA-458F-8947-86A4798DE419.jpg",
+    "phash_distance": 34,
+    "mse": 6282.4658203125,
+    "ssim": null,
+    "template_scores": [
+      0.20675425231456757,
+      0.012894047424197197
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 4,
+      "match_ratio": 0.008
+    }
+  },
+  {
+    "key": "29549218-4198-44F1-8EBC-E118DD693DDB",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "E38C6E90-E0B3-495F-9D18-9FACF49A336F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "8E823884-A27D-46CD-BDDC-9815A224AAE4",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "518BD4B2-97F4-44F9-8B74-933962339751",
+    "image": "images/哈洛大哥.jpg",
+    "phash_distance": 30,
+    "mse": 4928.6396484375,
+    "ssim": null,
+    "template_scores": [
+      0.32304906845092773,
+      0.10696166008710861
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 427,
+      "good_matches": 6,
+      "match_ratio": 0.01405152224824356
+    }
+  },
+  {
+    "key": "C4488147-71E7-4383-95D7-F96910221060",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "ECB2508B-07B1-4712-A82A-FB47C433ED6A",
+    "image": "images/放贷鲨.jpg",
+    "phash_distance": 34,
+    "mse": 7461.572265625,
+    "ssim": null,
+    "template_scores": [
+      0.4070337414741516,
+      0.04617857187986374
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 456,
+      "good_matches": 2,
+      "match_ratio": 0.0043859649122807015
+    }
+  },
+  {
+    "key": "54030DD4-8051-4C21-ABCD-9205DF585EA5",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "20061BE9-0823-41C8-AFAE-60F49073058F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "616CE451-B85D-478A-82A8-8A28105994F5",
+    "image": "images/庞大实验体.jpg",
+    "phash_distance": 28,
+    "mse": 5619.35009765625,
+    "ssim": null,
+    "template_scores": [
+      0.42783817648887634,
+      0.07553701847791672
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 455,
+      "good_matches": 2,
+      "match_ratio": 0.004395604395604396
+    }
+  },
+  {
+    "key": "F57B2A63-E4A2-4D9A-88B3-B1C3A3CF36D7",
+    "image": "images/F57B2A63-E4A2-4D9A-88B3-B1C3A3CF36D7.jpg",
+    "phash_distance": 36,
+    "mse": 8298.1357421875,
+    "ssim": null,
+    "template_scores": [
+      0.35565635561943054,
+      -0.06445763260126114
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 1,
+      "match_ratio": 0.002
+    }
+  },
+  {
+    "key": "3F3D11C5-B943-45D1-80B3-A567130708F0",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "D2FDF346-78AE-4694-8C9D-45285F09D408",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "B41BD40F-C380-4342-BFA2-3DBF772D956D",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "5B3DA8F1-5834-4A8D-967F-F98E8989B26F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "7F6CECB6-3F07-4606-8D62-21C0B5E4E369",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "479AD0EC-51A9-4D26-BA63-8062D3814619",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "B54DBAD3-BC06-481A-BA99-A2421C047665",
+    "image": "images/沃卡斯打手.jpg",
+    "phash_distance": 28,
+    "mse": 4864.92431640625,
+    "ssim": null,
+    "template_scores": [
+      0.25746971368789673,
+      0.0156722255051136
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 465,
+      "good_matches": 4,
+      "match_ratio": 0.008602150537634409
+    }
+  },
+  {
+    "key": "B6CA5C91-632D-4093-87F9-CBD0D649740E",
+    "image": "images/B6CA5C91-632D-4093-87F9-CBD0D649740E.jpg",
+    "phash_distance": 30,
+    "mse": 5330.943359375,
+    "ssim": null,
+    "template_scores": [
+      0.3081515431404114,
+      0.07212548702955246
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 6,
+      "match_ratio": 0.012
+    }
+  },
+  {
+    "key": "E6782454-5C72-47F3-AC43-140F0CC7EB8F",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "04747408-DE0E-4944-B79D-23CA41008619",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "8EF44226-7C66-417E-9F31-4CC636A68866",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "EE37EA07-E024-447C-B89F-88B9940C19AF",
+    "image": "images/剑齿虎.jpg",
+    "phash_distance": 34,
+    "mse": 6789.35595703125,
+    "ssim": null,
+    "template_scores": [
+      0.33124950528144836,
+      0.023072266951203346
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 466,
+      "good_matches": 0,
+      "match_ratio": 0.0
+    }
+  },
+  {
+    "key": "50A31EA0-ED74-484A-B04B-30F6FE273958",
+    "image": "images/章鱼.jpg",
+    "phash_distance": 30,
+    "mse": 6285.8291015625,
+    "ssim": null,
+    "template_scores": [
+      0.25498074293136597,
+      0.07891502976417542
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 6,
+      "match_ratio": 0.012
+    }
+  },
+  {
+    "key": "5A882CDB-C8DF-497B-86D5-B27BA95225ED",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "4C1A67F6-F9B4-4A46-8481-D252A24544E7",
+    "image": "images/4C1A67F6-F9B4-4A46-8481-D252A24544E7.jpg",
+    "phash_distance": 30,
+    "mse": 3236.4111328125,
+    "ssim": null,
+    "template_scores": [
+      0.169954314827919,
+      0.035107456147670746
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 500,
+      "good_matches": 4,
+      "match_ratio": 0.008
+    }
+  },
+  {
+    "key": "67F30669-0E12-4D59-82FC-6B033FA064C3",
+    "image": "images/暴徒.jpg",
+    "phash_distance": 26,
+    "mse": 5164.306640625,
+    "ssim": null,
+    "template_scores": [
+      0.32181206345558167,
+      -0.10191679000854492
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 453,
+      "good_matches": 2,
+      "match_ratio": 0.004415011037527594
+    }
+  },
+  {
+    "key": "F0D347B0-2E9A-46DA-9D82-45B65244B0F4",
+    "image": "images/初学学徒.jpg",
+    "phash_distance": 36,
+    "mse": 4716.2412109375,
+    "ssim": null,
+    "template_scores": [
+      0.20436370372772217,
+      -0.0341249480843544
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 441,
+      "good_matches": 2,
+      "match_ratio": 0.0045351473922902496
+    }
+  },
+  {
+    "key": "C2FD54DF-9CD2-4F61-AE6E-9B6C8CF87785",
+    "image": "",
+    "error": "load_failed"
+  },
+  {
+    "key": "58BA322D-A76C-4106-B91C-37EA207353A0",
+    "image": "images/巨龙.jpg",
+    "phash_distance": 30,
+    "mse": 4502.85791015625,
+    "ssim": null,
+    "template_scores": [
+      0.3195091485977173,
+      0.0777973085641861
+    ],
+    "orb": {
+      "k1": 500,
+      "k2": 459,
+      "good_matches": 5,
+      "match_ratio": 0.010893246187363835
+    }
+  }
+]

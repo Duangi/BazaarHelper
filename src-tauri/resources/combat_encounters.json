@@ -1,4 +1,50 @@
 {
+  "椰子蟹": {
+    "name": "Coconut Crab",
+    "name_zh": "椰子蟹",
+    "skills": [
+      {
+        "id": "d6633220-4f12-4c10-92da-688169ba5ee1",
+        "name": "硬壳",
+        "name_en": "Hard Shell",
+        "tier": "Bronze",
+        "description": "每场战斗己方生命值首次降至一半时，获得护盾，等量于最大生命值的20%。[0]",
+        "image": "images/硬壳.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "9ad15f24-4def-4d82-8545-d73794cfbaf2",
+        "name": "椰子",
+        "name_en": "Coconut",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "出售此物品时，最大生命值提高20。",
+        "image": "images/椰子.jpg"
+      },
+      {
+        "id": "95ff786e-b6bf-4bad-9d5c-6b2b41e9f0c3",
+        "name": "碾骨爪",
+        "name_en": "Crusher Claw",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成伤害，等量于己方物品中最高的护盾值",
+        "image": "images/碾骨爪.jpg"
+      },
+      {
+        "id": "eda51b14-8420-4da4-ba82-89513e5deaa2",
+        "name": "海螺壳",
+        "name_en": "Sea Shell",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "每拥有一件水系物品，就获得5%护盾",
+        "image": "images/海螺壳.jpg"
+      }
+    ],
+    "image": "images/椰子蟹.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47daed6ef1f0da00b07b43f23e31334f21d7598@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3aaa59be528e39b66465ba0014161b30fbb763d9@400.webp?v=2"
+  },
   "巨蚊": {
     "name": "Giant Mosquito",
     "name_zh": "巨蚊",
