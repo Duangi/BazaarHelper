@@ -1,5 +1,5 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "0.5.6"  # <--- 下次发版改这里
+$NEW_VERSION = "0.5.7"  # <--- 下次发版改这里
 $KEY_PATH = "src-tauri/tauri.key"
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
@@ -62,7 +62,7 @@ $updateData = @{
         "windows-x86_64" = @{
             signature = $signature
             # 使用 gh.ddlc.top 镜像加速（国内友好）
-            url = "https://gh.ddlc.top/https://github.com/$GITHUB_USER/$REPO_NAME/releases/download/v$NEW_VERSION/$($exeFile.Name)"
+            url = "https://github.com/$GITHUB_USER/$REPO_NAME/releases/download/v$NEW_VERSION/$($exeFile.Name)"
         }
     }
 }

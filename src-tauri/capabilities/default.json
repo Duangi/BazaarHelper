@@ -13,6 +13,7 @@
     "core:window:allow-show",
     "core:window:allow-set-shadow",
     "updater:default",
-    "process:allow-restart" 
+    "process:allow-restart",
+    "process:allow-exit"
   ]
 }

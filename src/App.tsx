@@ -3,9 +3,11 @@ import { getCurrentWindow, LogicalPosition, LogicalSize, currentMonitor } from "
 import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
+import { getVersion } from '@tauri-apps/api/app';
 import "./App.css";
 import { check } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
+import { exit } from '@tauri-apps/plugin-process';
 
 // --- 接口定义 ---
 interface Enchantment { 
@@ -70,12 +72,15 @@ export default function App() {
   const [pinnedItems, setPinnedItems] = useState<Map<string, number>>(new Map()); // 存储置顶物品ID和置顶时间戳
   const [pinnedCounter, setPinnedCounter] = useState(0); // 置顶计数器，用于确定置顶顺序
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  // const appWindow = getCurrentWindow(); // 获取当前窗口实例
   
   // 更新检查相关状态
-  const [showUpdateScreen, setShowUpdateScreen] = useState(false); // 是否显示更新界面（只在用户点击更新时显示）
+  const [showUpdateScreen, setShowUpdateScreen] = useState(true); // 启动时显示更新检查界面
   const [updateAvailable, setUpdateAvailable] = useState(false); // 是否有可用更新
   const [updateVersion, setUpdateVersion] = useState(""); // 更新版本号
-  const [updateMsg, setUpdateMsg] = useState(""); // 更新进度消息
+  const [currentVersion, setCurrentVersion] = useState(""); // 当前版本号
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(true); // 是否正在检查更新
+  const [updateMsg, setUpdateMsg] = useState("正在检查更新..."); // 更新进度消息
   const [downloadProgress, setDownloadProgress] = useState(0); // 下载进度百分比
   const [downloadedBytes, setDownloadedBytes] = useState(0); // 已下载字节数
   const [totalBytes, setTotalBytes] = useState(0); // 总字节数
@@ -98,9 +103,26 @@ export default function App() {
   // --- 更新逻辑开始 ---
   const checkForUpdates = async () => {
     try {
-      console.log("后台静默检查更新...");
+      setIsCheckingUpdate(true);
+      setUpdateMsg("正在检查更新...");
+      
+      // 获取当前应用版本
+      const appVersion = await getVersion();
+      setCurrentVersion(appVersion);
+      console.log("当前应用版本:", appVersion);
+      
+      console.log("开始检查更新...");
       console.log("当前时间:", new Date().toISOString());
-      const update = await check(); // 检查是否有新版本
+      
+      // 添加3秒超时控制
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("检查更新超时")), 3000);
+      });
+      
+      const update = await Promise.race([
+        check(),
+        timeoutPromise
+      ]) as any;
       
       console.log("检查更新结果:", update);
       console.log("update.available:", update?.available);
@@ -108,16 +130,20 @@ export default function App() {
       console.log("update.currentVersion:", update?.currentVersion);
       
       if (update && update.available) {
-        console.log(`发现新版本: ${update.currentVersion} -> ${update.version}`);
-        
-        // 验证下载 URL 是否可达（从 update.json 获取）
-        // 注意：这里我们无法直接获取 URL，因为 Tauri 的 check() 不返回详细信息
-        // 我们只能信任 Tauri 的更新机制，或者在执行更新时处理错误
+        console.log(`发现新版本: ${appVersion} -> ${update.version}`);
         setUpdateAvailable(true);
         setUpdateVersion(update.version);
+        setUpdateMsg(`当前版本 v${appVersion}\n发现新版本 v${update.version}`);
+        setIsCheckingUpdate(false);
       } else {
-        // 没有更新，不做任何提示
-        console.log("没有可用更新，当前版本:", update?.currentVersion);
+        // 没有更新，显示当前已是最新版本
+        console.log("没有可用更新，当前版本:", appVersion);
+        setUpdateMsg(`当前版本 v${appVersion}\n已是最新版本`);
+        setIsCheckingUpdate(false);
+        // 2秒后自动进入应用
+        setTimeout(() => {
+          setShowUpdateScreen(false);
+        }, 2000);
       }
     } catch (error: any) {
       console.error("检查更新失败:", error);
@@ -130,17 +156,29 @@ export default function App() {
       // 尝试从错误消息中提取有用信息
       if (error?.message?.includes("fetch")) {
         console.error("可能是网络连接问题，无法访问更新服务器");
+        setUpdateMsg("网络连接失败，无法检查更新");
       } else if (error?.message?.includes("timeout")) {
         console.error("连接超时，请检查网络");
+        setUpdateMsg("连接超时，请检查网络");
+      } else {
+        setUpdateMsg("检查更新失败，继续使用当前版本");
       }
-      // 检查失败静默处理
+      
+      setIsCheckingUpdate(false);
+      // 3秒后自动进入应用
+      setTimeout(() => {
+        setShowUpdateScreen(false);
+      }, 3000);
     }
   };
   
   // 执行更新下载和安装
   const performUpdate = async () => {
     try {
-      setShowUpdateScreen(true); // 显示更新界面
+      // 如果不在更新界面，则显示更新界面
+      if (!showUpdateScreen) {
+        setShowUpdateScreen(true);
+      }
       setUpdateMsg("正在准备下载...");
       setIsDownloading(true);
       const update = await check();
@@ -184,6 +222,54 @@ export default function App() {
       console.error("更新失败:", error);
       setUpdateMsg("更新失败，3秒后进入应用...");
       setIsDownloading(false);
+      setTimeout(() => {
+        setShowUpdateScreen(false);
+      }, 3000);
+    }
+  };
+  
+  // 处理更新按钮点击
+  const handleUpdateClick = async () => {
+    try {
+      setShowUpdateScreen(true);
+      setIsCheckingUpdate(true);
+      setUpdateMsg("正在检查更新...");
+      
+      // 获取当前版本
+      let appVersion = currentVersion;
+      if (!appVersion) {
+        appVersion = await getVersion();
+        setCurrentVersion(appVersion);
+      }
+      
+      // 添加3秒超时控制
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("检查更新超时")), 3000);
+      });
+      
+      const update = await Promise.race([
+        check(),
+        timeoutPromise
+      ]) as any;
+      
+      if (update && update.available) {
+        // 有更新，显示更新信息并准备下载
+        setUpdateAvailable(true);
+        setUpdateVersion(update.version);
+        setUpdateMsg(`当前版本 v${appVersion}\n发现新版本 v${update.version}`);
+        setIsCheckingUpdate(false);
+      } else {
+        // 没有更新
+        setUpdateMsg(`当前版本 v${appVersion}\n已是最新版本`);
+        setIsCheckingUpdate(false);
+        setTimeout(() => {
+          setShowUpdateScreen(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("检查更新失败:", error);
+      setUpdateMsg("检查更新失败，请稍后重试");
+      setIsCheckingUpdate(false);
       setTimeout(() => {
         setShowUpdateScreen(false);
       }, 3000);
@@ -363,14 +449,22 @@ export default function App() {
             </div>
           )}
           
-          {!isDownloading && (
+          {/* 检查中显示加载动画 */}
+          {isCheckingUpdate && <div className="spinner"></div>}
+          
+          {/* 有更新且未在下载时显示更新按钮 */}
+          {updateAvailable && !isCheckingUpdate && !isDownloading && (
             <button className="update-btn" onClick={performUpdate}>
               立即更新到 v{updateVersion}
             </button>
           )}
-          <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
-            跳过更新，进入应用
-          </button>
+          
+          {/* 未在检查且未在下载时显示跳过按钮 */}
+          {!isCheckingUpdate && (
+            <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
+              {updateAvailable ? "跳过更新，进入应用" : "进入应用"}
+            </button>
+          )}
         </div>
       </div>
     );
@@ -380,8 +474,25 @@ export default function App() {
     <div className={`overlay ${isCollapsed ? 'collapsed' : 'expanded'}`}>
       {!isCollapsed && <div className="resize-handle" onMouseDown={handleResize} />}
       
-      <div className="collapse-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-        {isCollapsed ? "展开插件 ▾" : "收起插件 ▴"}
+      <div className="top-bar">
+        <button className="top-update-btn" onClick={handleUpdateClick} title="检查更新">
+          <svg className="update-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 10C21 10 18.995 7.26822 17.3662 5.63824C15.7373 4.00827 13.4864 3 11 3C6.02944 3 2 7.02944 2 12C2 16.9706 6.02944 21 11 21C15.1031 21 18.5649 18.2543 19.6482 14.5M21 10V4M21 10H15" 
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {updateAvailable && <span className="update-badge"></span>}
+        </button>
+        
+        <div className="collapse-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
+          {isCollapsed ? "展开插件" : "收起插件"}
+          <span className={`collapse-arrow ${isCollapsed ? 'collapsed' : 'expanded'}`}>▾</span>
+        </div>
+        
+        <button className="close-btn" onClick={() => exit(0)} title="关闭">
+          <svg className="close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
 
       {!isCollapsed && (
