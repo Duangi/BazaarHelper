@@ -58,6 +58,32 @@ html, body, #root {
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+  user-select: none;
+}
+
+/* 拖拽手柄 */
+.drag-handle {
+  width: 60px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: move;
+  transition: all 0.3s ease;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.drag-handle svg {
+  width: 20px;
+  height: 20px;
+  pointer-events: none; /* 【关键】让鼠标点击穿透 SVG，直接点到 div 上 */
+}
+
+.drag-handle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 205, 25, 0.5);
 }
 
 /* 顶部收起按钮 */
@@ -74,6 +100,7 @@ html, body, #root {
   height: 100%;
   transition: all 0.3s ease;
   position: relative;
+  -webkit-app-region: no-drag;
 }
 
 .collapse-btn:hover {
@@ -126,6 +153,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   position: relative;
+  -webkit-app-region: no-drag;
 }
 
 .top-update-btn:hover {
@@ -182,6 +210,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-app-region: no-drag;
 }
 
 .close-btn:hover {

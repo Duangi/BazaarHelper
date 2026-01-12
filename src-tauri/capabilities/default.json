@@ -11,6 +11,7 @@
     "core:window:allow-current-monitor",
     "core:window:allow-set-always-on-top",
     "core:window:allow-show",
+    "core:window:allow-start-dragging",
     "core:window:allow-set-shadow",
     "updater:default",
     "process:allow-restart",

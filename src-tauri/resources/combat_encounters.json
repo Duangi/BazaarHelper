@@ -1,4 +1,166 @@
 {
+  "巨龟托图加": {
+    "name": "Tortuga",
+    "name_zh": "巨龟托图加",
+    "skills": [
+      {
+        "id": "916bda0c-0a2c-4c71-808e-5ecbd2d910dc",
+        "name": "伙伴卡",
+        "name_en": "Friendzone",
+        "tier": "Bronze",
+        "description": "伙伴的冷却时间缩短5% » 10%。",
+        "image": "images/伙伴卡.jpg"
+      },
+      {
+        "id": "0dcfdea9-9e59-4144-8a3d-fe2dabe9f155",
+        "name": "温暖拥抱",
+        "name_en": "Warm Hugs",
+        "tier": "Bronze",
+        "description": "每场战斗前4 » 8 » 12次使用伙伴时，造成5灼烧。",
+        "image": "images/温暖拥抱.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "f8a38ad1-5e5a-4c95-9bd1-55c81c31b117",
+        "name": "巨龟托图加",
+        "name_en": "Tortuga",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成450 » 900伤害。加速其他物品1秒。使用另一个伙伴时，为此物品充能2秒。",
+        "image": "images/巨龟托图加.jpg"
+      },
+      {
+        "id": "bbf63b5c-57c3-4412-beb5-18bfec2372e6",
+        "name": "鹦鹉皮特",
+        "name_en": "Pesky Pete",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成1灼烧",
+        "image": "images/鹦鹉皮特.jpg"
+      },
+      {
+        "id": "3191df3b-7e7d-4df9-9395-6fffd4207f6d",
+        "name": "鲇光怪鱼",
+        "name_en": "Zoarcid",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "造成30伤害。加速相邻物品2秒。触发灼烧时，为此物品充能1秒。",
+        "image": "images/鲇光怪鱼.jpg"
+      },
+      {
+        "id": "b325d26f-0625-406c-89d4-30e011b30b9e",
+        "name": "毒须鲶",
+        "name_en": "Catfish",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成6剧毒",
+        "image": "images/毒须鲶.jpg"
+      },
+      {
+        "id": "91766035-9d5c-49df-b6b1-25ff7328af5b",
+        "name": "河豚",
+        "name_en": "Pufferfish",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "造成20剧毒",
+        "image": "images/河豚.jpg"
+      },
+      {
+        "id": "b4ccf465-fbf6-4fd4-b4ed-515594ed8722",
+        "name": "水母",
+        "name_en": "Jellyfish",
+        "tier": "Silver",
+        "socket": "Socket_5",
+        "description": "造成9剧毒",
+        "image": "images/水母.jpg"
+      },
+      {
+        "id": "47e97343-d790-4ecc-8ccd-d2f7e9949494",
+        "name": "盐钳海盗",
+        "name_en": "Old Saltclaw",
+        "tier": "Silver",
+        "socket": "Socket_6",
+        "description": "造成30伤害。触发加速或减速时，此物品伤害提高+5 » +10 » +15（限本场战斗）。",
+        "image": "images/盐钳海盗.jpg"
+      }
+    ],
+    "image": "images/巨龟托图加.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3b3a2a614df0c7d53929bce5dbb8f532035e78aa@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f0c12546361122b9928835993adb596f1aa3b12@400.webp?v=2"
+  },
+  "虚空巨像": {
+    "name": "Void Colossus",
+    "name_zh": "虚空巨像",
+    "skills": [
+      {
+        "id": "1038bb7a-2a33-4bfd-a80a-93e6807507ae",
+        "name": "虚空能量",
+        "name_en": "Void Energy",
+        "tier": "Bronze",
+        "description": "触发灼烧时，为一件护盾物品充能1秒。",
+        "image": "images/虚空能量.jpg"
+      },
+      {
+        "id": "acb83c68-0d81-4619-a718-aacc7dd51425",
+        "name": "虚空之怒",
+        "name_en": "Void Rage",
+        "tier": "Bronze",
+        "description": "触发灼烧时，加速一件物品1秒。",
+        "image": "images/虚空之怒.jpg"
+      }
+    ],
+    "items": [
+      {
+        "id": "37222f02-3767-44ef-a8ed-000c90d3330e",
+        "name": "红宝石",
+        "name_en": "Ruby",
+        "tier": "Silver",
+        "socket": "Socket_0",
+        "description": "造成3灼烧",
+        "image": "images/红宝石.jpg"
+      },
+      {
+        "id": "baec36c3-2c41-47fa-bd54-6f1d6b34e8d0",
+        "name": "虚空射线",
+        "name_en": "Void Ray",
+        "tier": "Silver",
+        "socket": "Socket_1",
+        "description": "造成4 » 6灼烧。多重攻击: 2。获得护盾时，此物品的灼烧提高1 » 2（限本场战斗）。",
+        "image": "images/虚空射线.jpg"
+      },
+      {
+        "id": "3373c95c-6910-4414-8134-abf2ff1c90fa",
+        "name": "巨像之眼",
+        "name_en": "Eye of the Colossus",
+        "tier": "Silver",
+        "socket": "Socket_2",
+        "description": "摧毁敌人的一件物品（限本场战斗）使用相邻物品时，为此物品充能1秒。",
+        "image": "images/巨像之眼.jpg"
+      },
+      {
+        "id": "baec36c3-2c41-47fa-bd54-6f1d6b34e8d0",
+        "name": "虚空射线",
+        "name_en": "Void Ray",
+        "tier": "Silver",
+        "socket": "Socket_3",
+        "description": "造成4 » 6灼烧。多重攻击: 2。获得护盾时，此物品的灼烧提高1 » 2（限本场战斗）。",
+        "image": "images/虚空射线.jpg"
+      },
+      {
+        "id": "cfd94b43-c547-4dea-a977-658a388e75d4",
+        "name": "虚空护盾",
+        "name_en": "Void Shield",
+        "tier": "Silver",
+        "socket": "Socket_4",
+        "description": "获得护盾，等量于一位敌人的灼烧。敌人使用物品时，造成1灼烧。",
+        "image": "images/虚空护盾.jpg"
+      }
+    ],
+    "image": "images/虚空巨像.jpg",
+    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fcfa46f3c2a1b4573318585dadf587c52640515c@400.webp",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d891e5ba1dc65f2880e2e2a6ac5a038be7ce42a@400.webp?v=2"
+  },
   "腹语者": {
     "name": "Ventriloquist",
     "name_zh": "腹语者",

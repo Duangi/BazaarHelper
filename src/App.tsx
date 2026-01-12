@@ -5,8 +5,7 @@ import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import { getVersion } from '@tauri-apps/api/app';
 import "./App.css";
-import { check } from '@tauri-apps/plugin-updater';
-import { relaunch } from '@tauri-apps/plugin-process';
+
 import { exit } from '@tauri-apps/plugin-process';
 
 // --- 接口定义 ---
@@ -72,19 +71,22 @@ export default function App() {
   const [pinnedItems, setPinnedItems] = useState<Map<string, number>>(new Map()); // 存储置顶物品ID和置顶时间戳
   const [pinnedCounter, setPinnedCounter] = useState(0); // 置顶计数器，用于确定置顶顺序
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  // const appWindow = getCurrentWindow(); // 获取当前窗口实例
+  const appWindow = getCurrentWindow(); // 获取当前窗口实例
   
-  // 更新检查相关状态
-  const [showUpdateScreen, setShowUpdateScreen] = useState(true); // 启动时显示更新检查界面
-  const [updateAvailable, setUpdateAvailable] = useState(false); // 是否有可用更新
-  const [updateVersion, setUpdateVersion] = useState(""); // 更新版本号
+  // 自定义位置状态，用于记忆用户是否手动拖拽过窗口
+  const [hasCustomPosition, setHasCustomPosition] = useState(false);
+  const lastKnownPosition = useRef<{ x: number; y: number } | null>(null);
+  
+  // 存储当前屏幕缩放比例，用于坐标转换
+  const currentScale = useRef(1);
+  
+  // 初始化完成标志，防止初始定位触发移动监听
+  const isInitialized = useRef(false);
+  const moveDebounceTimer = useRef<number | null>(null);
+  
+  // 版本显示相关状态
+  const [showVersionScreen, setShowVersionScreen] = useState(true); // 启动时显示版本号
   const [currentVersion, setCurrentVersion] = useState(""); // 当前版本号
-  const [isCheckingUpdate, setIsCheckingUpdate] = useState(true); // 是否正在检查更新
-  const [updateMsg, setUpdateMsg] = useState("正在检查更新..."); // 更新进度消息
-  const [downloadProgress, setDownloadProgress] = useState(0); // 下载进度百分比
-  const [downloadedBytes, setDownloadedBytes] = useState(0); // 已下载字节数
-  const [totalBytes, setTotalBytes] = useState(0); // 总字节数
-  const [isDownloading, setIsDownloading] = useState(false); // 是否正在下载
 
   // 置顶/取消置顶功能
   const togglePin = (itemId: string) => {
@@ -100,182 +102,6 @@ export default function App() {
     });
   };
 
-  // --- 更新逻辑开始 ---
-  const checkForUpdates = async () => {
-    try {
-      setIsCheckingUpdate(true);
-      setUpdateMsg("正在检查更新...");
-      
-      // 获取当前应用版本
-      const appVersion = await getVersion();
-      setCurrentVersion(appVersion);
-      console.log("当前应用版本:", appVersion);
-      
-      console.log("开始检查更新...");
-      console.log("当前时间:", new Date().toISOString());
-      
-      // 添加3秒超时控制
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("检查更新超时")), 3000);
-      });
-      
-      const update = await Promise.race([
-        check(),
-        timeoutPromise
-      ]) as any;
-      
-      console.log("检查更新结果:", update);
-      console.log("update.available:", update?.available);
-      console.log("update.version:", update?.version);
-      console.log("update.currentVersion:", update?.currentVersion);
-      
-      if (update && update.available) {
-        console.log(`发现新版本: ${appVersion} -> ${update.version}`);
-        setUpdateAvailable(true);
-        setUpdateVersion(update.version);
-        setUpdateMsg(`当前版本 v${appVersion}\n发现新版本 v${update.version}`);
-        setIsCheckingUpdate(false);
-      } else {
-        // 没有更新，显示当前已是最新版本
-        console.log("没有可用更新，当前版本:", appVersion);
-        setUpdateMsg(`当前版本 v${appVersion}\n已是最新版本`);
-        setIsCheckingUpdate(false);
-        // 2秒后自动进入应用
-        setTimeout(() => {
-          setShowUpdateScreen(false);
-        }, 2000);
-      }
-    } catch (error: any) {
-      console.error("检查更新失败:", error);
-      console.error("错误类型:", typeof error);
-      console.error("错误名称:", error?.name);
-      console.error("错误消息:", error?.message);
-      console.error("错误堆栈:", error?.stack);
-      console.error("错误详情:", JSON.stringify(error, null, 2));
-      
-      // 尝试从错误消息中提取有用信息
-      if (error?.message?.includes("fetch")) {
-        console.error("可能是网络连接问题，无法访问更新服务器");
-        setUpdateMsg("网络连接失败，无法检查更新");
-      } else if (error?.message?.includes("timeout")) {
-        console.error("连接超时，请检查网络");
-        setUpdateMsg("连接超时，请检查网络");
-      } else {
-        setUpdateMsg("检查更新失败，继续使用当前版本");
-      }
-      
-      setIsCheckingUpdate(false);
-      // 3秒后自动进入应用
-      setTimeout(() => {
-        setShowUpdateScreen(false);
-      }, 3000);
-    }
-  };
-  
-  // 执行更新下载和安装
-  const performUpdate = async () => {
-    try {
-      // 如果不在更新界面，则显示更新界面
-      if (!showUpdateScreen) {
-        setShowUpdateScreen(true);
-      }
-      setUpdateMsg("正在准备下载...");
-      setIsDownloading(true);
-      const update = await check();
-      
-      if (update?.available) {
-        let totalDownloaded = 0;
-        await update.downloadAndInstall((event) => {
-          switch (event.event) {
-            case 'Started':
-              setUpdateMsg("开始下载更新包...");
-              setDownloadProgress(0);
-              setDownloadedBytes(0);
-              if (event.data.contentLength) {
-                setTotalBytes(event.data.contentLength);
-              }
-              console.log('开始下载...', event.data);
-              break;
-            case 'Progress':
-              totalDownloaded += event.data.chunkLength;
-              setDownloadedBytes(totalDownloaded);
-              
-              if (totalBytes > 0) {
-                const progress = Math.round((totalDownloaded / totalBytes) * 100);
-                setDownloadProgress(progress);
-                setUpdateMsg(`正在下载: ${progress}%`);
-              } else {
-                setUpdateMsg(`正在下载: ${(totalDownloaded / 1024 / 1024).toFixed(2)} MB`);
-              }
-              console.log(`已下载: ${totalDownloaded} 字节`);
-              break;
-            case 'Finished':
-              setDownloadProgress(100);
-              setUpdateMsg("下载完成，正在重启应用...");
-              console.log('下载完成，准备安装');
-              break;
-          }
-        });
-        await relaunch();
-      }
-    } catch (error) {
-      console.error("更新失败:", error);
-      setUpdateMsg("更新失败，3秒后进入应用...");
-      setIsDownloading(false);
-      setTimeout(() => {
-        setShowUpdateScreen(false);
-      }, 3000);
-    }
-  };
-  
-  // 处理更新按钮点击
-  const handleUpdateClick = async () => {
-    try {
-      setShowUpdateScreen(true);
-      setIsCheckingUpdate(true);
-      setUpdateMsg("正在检查更新...");
-      
-      // 获取当前版本
-      let appVersion = currentVersion;
-      if (!appVersion) {
-        appVersion = await getVersion();
-        setCurrentVersion(appVersion);
-      }
-      
-      // 添加3秒超时控制
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("检查更新超时")), 3000);
-      });
-      
-      const update = await Promise.race([
-        check(),
-        timeoutPromise
-      ]) as any;
-      
-      if (update && update.available) {
-        // 有更新，显示更新信息并准备下载
-        setUpdateAvailable(true);
-        setUpdateVersion(update.version);
-        setUpdateMsg(`当前版本 v${appVersion}\n发现新版本 v${update.version}`);
-        setIsCheckingUpdate(false);
-      } else {
-        // 没有更新
-        setUpdateMsg(`当前版本 v${appVersion}\n已是最新版本`);
-        setIsCheckingUpdate(false);
-        setTimeout(() => {
-          setShowUpdateScreen(false);
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("检查更新失败:", error);
-      setUpdateMsg("检查更新失败，请稍后重试");
-      setIsCheckingUpdate(false);
-      setTimeout(() => {
-        setShowUpdateScreen(false);
-      }, 3000);
-    }
-  };
-  // --- 更新逻辑结束 ---
   // 获取排序后的物品列表（手牌和仓库）
   const getSortedItems = (items: ItemData[]) => {
     return [...items].sort((a, b) => {
@@ -302,10 +128,74 @@ export default function App() {
       return convertFileSrc(fullPath);
     } catch { return ""; }
   };
-  // 启动时后台静默检查更新
+  // 启动时显示版本信息
   useEffect(() => {
-    checkForUpdates();
+    const showVersionInfo = async () => {
+      try {
+        const appVersion = await getVersion();
+        setCurrentVersion(appVersion);
+        
+        // 3秒后自动进入应用
+        setTimeout(() => {
+          setShowVersionScreen(false);
+        }, 3000);
+      } catch (error) {
+        console.error("获取版本信息失败:", error);
+        // 2秒后自动进入
+        setTimeout(() => {
+          setShowVersionScreen(false);
+        }, 2000);
+      }
+    };
+    
+    showVersionInfo();
   }, []);
+
+  // 监听窗口移动事件，检测用户拖拽
+  useEffect(() => {
+    const setupMoveListener = async () => {
+      // 先获取一次缩放比例存起来
+      const monitor = await currentMonitor();
+      if (monitor) {
+        currentScale.current = monitor.scaleFactor;
+      }
+
+      // 等待2秒后才开始监听，避免初始定位触发
+      setTimeout(() => {
+        isInitialized.current = true;
+      }, 2000);
+
+      // 监听窗口移动事件 (Tauri v2)
+      const unlisten = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
+        // 如果还在初始化阶段，忽略移动事件
+        if (!isInitialized.current) {
+          return;
+        }
+
+        // 清除之前的防抖定时器
+        if (moveDebounceTimer.current) {
+          clearTimeout(moveDebounceTimer.current);
+        }
+
+        // 设置防抖定时器，只有停止移动200ms后才记录位置
+        moveDebounceTimer.current = window.setTimeout(() => {
+          // 【关键修复】直接存储物理坐标，不做任何转换
+          // 这是绝对真理，不随缩放改变
+          setHasCustomPosition(true);
+          lastKnownPosition.current = { x: event.payload.x, y: event.payload.y };
+        }, 200);
+      });
+      return unlisten;
+    };
+
+    const unlistenPromise = setupMoveListener();
+    return () => {
+      unlistenPromise.then(unlisten => unlisten());
+      if (moveDebounceTimer.current) {
+        clearTimeout(moveDebounceTimer.current);
+      }
+    };
+  }, []); // 只在组件挂载时运行一次
 
   useEffect(() => {
     console.log("设置事件监听器...");
@@ -372,40 +262,72 @@ export default function App() {
   // 4. 窗口定位与尺寸控制 (更新界面居中、overlay贴边)
   useEffect(() => {
     const syncLayout = async () => {
-      const monitor = await currentMonitor();
-      if (!monitor) return;
       const appWindow = getCurrentWindow();
-      const scale = monitor.scaleFactor;
       
+      // 1. 获取当前显示器
+      const monitor = await currentMonitor(); 
+      if (!monitor) return;
+
+      const scale = monitor.scaleFactor;
+      currentScale.current = scale;
+      
+      // 获取该显示器的物理位置和尺寸
+      // 注意：多屏环境下，monitor.position.x 可能不是 0
+      const screenX = monitor.position.x / scale;
+      const screenY = monitor.position.y / scale;
+      const screenWidth = monitor.size.width / scale;
+      const screenHeight = monitor.size.height / scale;
+
       if (appWindow.setShadow) await appWindow.setShadow(false);
 
-      if (showUpdateScreen) {
-        // 更新检查界面：居中显示，固定大小
+      // --- 场景 A：显示版本号界面 (屏幕正中央) ---
+      if (showVersionScreen) {
         const updateWidth = 500;
         const updateHeight = 350;
-        const centerX = (monitor.size.width / scale - updateWidth) / 2;
-        const centerY = (monitor.size.height / scale - updateHeight) / 2;
+        
+        // 计算相对于当前屏幕的居中坐标
+        const centerX = screenX + (screenWidth - updateWidth) / 2;
+        const centerY = screenY + (screenHeight - updateHeight) / 2;
         
         try {
           await appWindow.setSize(new LogicalSize(updateWidth, updateHeight));
           await appWindow.setPosition(new LogicalPosition(centerX, centerY));
           await appWindow.setAlwaysOnTop(true);
         } catch (e) { console.error(e); }
-      } else {
-        // overlay界面：右侧贴边
-        const currentWidth = expandedWidth;
-        const currentHeight = isCollapsed ? 45 : (monitor.size.height / scale) - 200;
-        const targetX = (monitor.size.width / scale) - currentWidth;
-
-        try {
-          await appWindow.setSize(new LogicalSize(currentWidth, currentHeight));
-          await appWindow.setPosition(new LogicalPosition(targetX, 0));
-          await appWindow.setAlwaysOnTop(true);
-        } catch (e) { console.error(e); }
+        return;
       }
+
+      // --- 场景 B：显示主插件界面 (默认右上角) ---
+      const currentWidth = expandedWidth;
+      const currentHeight = isCollapsed ? 45 : (screenHeight - 200);
+
+      let targetX = 0;
+      let targetY = 0;
+
+      if (hasCustomPosition && lastKnownPosition.current) {
+        // 如果用户拖过，使用记忆的物理坐标并实时转换
+        // 【关键修复】用当前屏幕的实时缩放比转换物理坐标
+        targetX = lastKnownPosition.current.x / scale;
+        targetY = lastKnownPosition.current.y / scale;
+      } else {
+        // 默认逻辑：贴在当前屏幕的最右侧
+        // 公式：屏幕起始X + 屏幕宽度 - 窗口宽度
+        targetX = screenX + screenWidth - currentWidth;
+        // 贴顶：屏幕起始Y
+        targetY = screenY; 
+      }
+
+      try {
+        await appWindow.setSize(new LogicalSize(currentWidth, currentHeight));
+        await appWindow.setPosition(new LogicalPosition(targetX, targetY));
+        await appWindow.setAlwaysOnTop(true);
+      } catch (e) { console.error(e); }
     };
-    syncLayout();
-  }, [showUpdateScreen, expandedWidth, isCollapsed]);
+
+    // 防抖
+    const timer = setTimeout(syncLayout, 50);
+    return () => clearTimeout(timer);
+  }, [showVersionScreen, expandedWidth, isCollapsed, hasCustomPosition]);
 
   // 手动调整宽度逻辑
   const handleResize = (e: React.MouseEvent) => {
@@ -424,47 +346,17 @@ export default function App() {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
   };
-
-  // 更新检查界面
-  if (showUpdateScreen) {
+  if (showVersionScreen) {
     return (
       <div className="update-screen">
         <div className="update-content">
           <h1>BazaarHelper</h1>
-          <div className="update-message">{updateMsg}</div>
-          
-          {/* 下载进度条 */}
-          {isDownloading && (
-            <div className="progress-container">
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${downloadProgress}%` }}></div>
-              </div>
-              <div className="progress-text">
-                {totalBytes > 0 ? (
-                  <span>{(downloadedBytes / 1024 / 1024).toFixed(2)} MB / {(totalBytes / 1024 / 1024).toFixed(2)} MB</span>
-                ) : (
-                  <span>{(downloadedBytes / 1024 / 1024).toFixed(2)} MB</span>
-                )}
-              </div>
-            </div>
-          )}
-          
-          {/* 检查中显示加载动画 */}
-          {isCheckingUpdate && <div className="spinner"></div>}
-          
-          {/* 有更新且未在下载时显示更新按钮 */}
-          {updateAvailable && !isCheckingUpdate && !isDownloading && (
-            <button className="update-btn" onClick={performUpdate}>
-              立即更新到 v{updateVersion}
-            </button>
-          )}
-          
-          {/* 未在检查且未在下载时显示跳过按钮 */}
-          {!isCheckingUpdate && (
-            <button className="skip-btn" onClick={() => setShowUpdateScreen(false)}>
-              {updateAvailable ? "跳过更新，进入应用" : "进入应用"}
-            </button>
-          )}
+          <div className="update-message">
+            {currentVersion ? `当前版本 v${currentVersion}` : "加载中..."}
+          </div>
+          <button className="skip-btn" onClick={() => setShowVersionScreen(false)}>
+            进入应用
+          </button>
         </div>
       </div>
     );
@@ -475,6 +367,18 @@ export default function App() {
       {!isCollapsed && <div className="resize-handle" onMouseDown={handleResize} />}
       
       <div className="top-bar">
+        <div className="drag-handle" data-tauri-drag-region>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="7" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="7" r="1.5" fill="currentColor"/>
+            <circle cx="9" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="9" cy="17" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="17" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        
+        {/* 暂时隐藏检查更新按钮
         <button className="top-update-btn" onClick={handleUpdateClick} title="检查更新">
           <svg className="update-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M21 10C21 10 18.995 7.26822 17.3662 5.63824C15.7373 4.00827 13.4864 3 11 3C6.02944 3 2 7.02944 2 12C2 16.9706 6.02944 21 11 21C15.1031 21 18.5649 18.2543 19.6482 14.5M21 10V4M21 10H15" 
@@ -482,6 +386,7 @@ export default function App() {
           </svg>
           {updateAvailable && <span className="update-badge"></span>}
         </button>
+        */}
         
         <div className="collapse-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
           {isCollapsed ? "展开插件" : "收起插件"}
@@ -498,13 +403,13 @@ export default function App() {
       {!isCollapsed && (
         <>
           {/* 更新按钮 */}
-          {updateAvailable && (
+          {/* {updateAvailable && (
             <div className="update-notification">
               <button className="update-notify-btn" onClick={performUpdate}>
                 🔔 发现新版本 v{updateVersion}
               </button>
             </div>
-          )}
+          )} */}
           
           <nav className="nav-bar">
             {(["hand", "stash", "monster"] as TabType[]).map(t => (
