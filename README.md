@@ -1,113 +1,93 @@
-# The Bazaar Helper
+﻿# The Bazaar Helper
 
-一个为 The Bazaar 游戏设计的悬浮窗辅助工具，帮助你快速查看物品附魔信息。
+A powerful overlay assistant for **The Bazaar**. It leverages image recognition and log analysis to provide real-time monster insights, card upgrade paths, and shop probability data.
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
-
----
-
-## ✨ 功能特性
-
-- 🎮 **游戏悬浮窗** - 始终置顶的透明窗口，不遮挡游戏画面
-- 📑 **多标签切换** - 查看手牌、仓库物品信息
-- 🎨 **附魔标签** - 彩色显示毒、燃烧、冰冻等附魔效果
-- 🔍 **怪物搜索** - 快速搜索怪物技能和掉落信息
-- 📌 **置顶物品** - 重要物品可以置顶显示
-- 🔄 **自动更新** - 启动时自动检查并安装新版本
+![Version](https://img.shields.io/badge/version-0.6.0-gold.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue.svg)
 
 ---
 
-## 📦 下载安装
+##  Features
 
-1. 前往 [Releases](https://github.com/Duangi/BazaarHelper/releases) 页面
-2. 下载最新版本的 `BazaarHelper_x.x.x_x64-setup.exe`
-3. 运行安装程序
-4. 启动 **The Bazaar Helper**
+### 1 Smart Monster Recognition
+- **Auto-Detection**: Automatically identifies the three monsters on your screen during the encounter phase.
+- **Dynamic Scaling**: Analyzes game logs to match monster stats and levels according to your current day (Day 1 to Day 10+).
+- **Skill Previews**: Instantly view all monster skills, health, and their unique item drops.
 
-**系统要求：** Windows 10/11 (64位)
+### 2 Real-time Shop Probabilities
+- **Accurate Drop Rates**: Displays the current chance of encountering cards of different tiers in the shop:
+  - <span style="color: #CD7F32; font-weight: bold;">Bronze</span>
+  - <span style="color: #C0C0C0; font-weight: bold;">Silver</span>
+  - <span style="color: #FFD700; font-weight: bold;">Gold</span>
+  - <span style="color: #B9F2FF; font-weight: bold;">Diamond</span>
+- **Interactive Day Grid**: Click through the 2x5 day matrix to preview shop probabilities for future days.
 
----
+### 3 Upgrade Path Comparison
+- **Inline Value Toggling**: Click on any card description to toggle between different quality tiers (Bronze/Silver/Gold/Diamond).
+- **Visual Branding**: Card borders and text values use standardized hex colors matching the game's official tiers.
 
-## 🎮 使用说明
-
-### 1️⃣ 启动程序
-
-运行 `BazaarHelper.exe`，悬浮窗会自动显示在游戏上方。
-
-### 2️⃣ 查看物品附魔
-
-程序会自动识别游戏中的物品信息：
-
-- **手牌标签** - 显示你当前手牌中所有物品的附魔详情
-- **仓库标签** - 显示仓库中所有物品的附魔详情
-- 每个物品卡片会显示：
-  - 物品名称（中文）
-  - 物品图片
-  - 所有附魔效果及详细说明
-
-### 3️⃣ 搜索怪物信息
-
-由于无法自动获取怪物信息，我们提供了搜索功能：
-
-- 切换到 **怪物** 标签
-- 在搜索框中输入怪物名称
-- 查看怪物的技能和掉落物品
-
-### 4️⃣ 置顶重要物品
-
-- 点击物品卡片上的 📌 图标可以置顶该物品
-- 置顶的物品会始终显示在列表顶部
-- 再次点击可以取消置顶
-
-### 5️⃣ 窗口操作
-
-- **移动窗口** - 拖动标题栏
-- **最小化** - 点击最小化按钮，只保留标题栏
-- **关闭程序** - 点击 × 按钮
+### 4 Data Synchronization
+- **Hand & Stash Sync**: Real-time tracking of your current build via hybrid log and image processing.
+- **Semantic Highlighting**: Keywords like Poison, Burn, Freeze, and Haste are color-coded for better readability.
 
 ---
 
-## 🔄 自动更新
+##  Installation
 
-程序启动时会自动检查更新：
-
-- 如果有新版本，会弹出更新提示
-- 点击"立即更新"按钮，程序会自动下载并安装
-- 安装完成后会自动重启到新版本
-
----
-
-## 💡 使用小贴士
-
-1. **开箱即用** - 无需任何配置，启动后自动工作
-2. **实时同步** - 游戏中的物品变化会实时反映在悬浮窗中
-3. **搜索技巧** - 怪物搜索支持模糊匹配，输入部分名称即可
-4. **窗口大小** - 首次使用时可以拖动窗口边缘调整大小，程序会记住你的偏好
+1. Go to the [Releases](https://github.com/Duangi/BazaarHelper/releases) page.
+2. **Windows**: Download \BazaarHelper_x.x.x_x64-setup.exe\ and run the installer.
+3. **macOS**: Download \BazaarHelper_x.x.x_x64.dmg\.
+   > **Note**: macOS log paths (~/Library/Logs/Tempo Storm/The Bazaar/) are automatically handled.
 
 ---
 
-## 📞 问题反馈
+##  How to Use
 
-如果遇到任何问题或有建议，欢迎联系：
-
-**QQ: 309349894**
-
----
-
-## 📝 更新日志
-
-### v0.1.0（首个版本）
-- ✅ 手牌和仓库物品附魔信息显示
-- ✅ 怪物搜索功能
-- ✅ 物品置顶功能
-- ✅ 自动更新支持
-- ✅ 中文本地化
+1. **Window Controls**:
+   - Drag the top toolbar to move the window.
+   - Resize by dragging the bottom-right corner.
+   - Use the Collapse button to save screen space.
+2. **Monster Lookup**:
+   - The app will auto-sync when you encounter monsters. You can also manually trigger recognition by clicking the ** Recognize Monsters** button.
+3. **View Upgrades**:
+   - Simply click on a card's description to see how its values scale across different tiers.
 
 ---
 
-<div align="center">
+##  FAQ
 
-**为 The Bazaar 玩家用心制作**
+- **Recognition Issue?** 
+  - Ensure the game window is visible and active. Recommended resolution is 1080p or higher.
+- **Are Probabilities Accurate?**
+  - Rates are based on game mechanics analysis and community data; intended for strategy reference only.
+- **Automatic Updates?**
+  - To ensure stability during gameplay, **automatic updates have been removed**. Please manually check for the latest release on GitHub.
 
-</div>
+---
+
+##  Development
+
+### Dev Mode
+\\\powershell
+npm run tauri dev
+\\\
+
+### Build Production
+\\\powershell
+# Windows
+npm run tauri build -- --target nsis
+
+# macOS (Must run on Mac machine)
+npm run tauri build -- --target dmg
+\\\
+
+---
+
+##  Contact
+
+If you find a bug or have a suggestion:
+- **GitHub Issues**: Open a feedback ticket.
+- **QQ**: 309349894
+
+---
+*Disclaimer: This is a third-party tool and does not collect any user data.*

@@ -1,43 +1,72 @@
 # The Bazaar Helper
 
-这是一个为The Bazaar游戏设计的悬浮窗助手工具，用于显示附魔信息。
+一个为 **The Bazaar** 游戏设计的强力悬浮窗辅助工具。它通过图像识别和日志分析技术，为您提供实时的备战建议、怪物技能详情以及卡牌出现概率参考。
 
-## 功能特性
+![Version](https://img.shields.io/badge/version-0.6.0-gold.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue.svg)
 
-- ✅ 悬浮窗口，始终置顶于游戏之上
-- ✅ 可拖动窗口（拖动标题栏）
-- ✅ 可调整窗口大小
-- ✅ 半透明背景，不遮挡游戏视野
-- ✅ 显示12种附魔的详细信息
-- ✅ 支持隐藏/显示内容
-- ✅ 无边框设计，更美观
+---
 
-## 安装依赖
+## ✨ 核心功能
 
-### 1. 安装 Rust
+### 1️⃣ 智能怪物识别 (Monster Recognition)
+- **全自动检测**：进入战斗前自动识别当前遇到的三个怪物。
+- **动态天数适配**：自动分析游戏日志，匹配当前天数（Day 1 - Day 10+）的数值强度。
+- **技能预览**：一键查看怪物的全部技能、血量、等级及其独有的掉落物品。
 
-访问 [https://www.rust-lang.org/learn/get-started](https://www.rust-lang.org/learn/get-started)
+### 2️⃣ 实时概率显示 (Drop Probabilities)
+- **精准掉落率**：根据当前游戏天数，实时显示商店中四种品质卡牌的出现概率：
+  - <span style="color: #CD7F32; font-weight: bold;">铜牌 (Bronze)</span>
+  - <span style="color: #C0C0C0; font-weight: bold;">银牌 (Silver)</span>
+  - <span style="color: #FFD700; font-weight: bold;">金牌 (Gold)</span>
+  - <span style="color: #B9F2FF; font-weight: bold;">钻石 (Diamond)</span>
+- **一键切换预览**：支持 2x5 布局的天数选择器，点击即可预览未来天数的概率走向。
 
-或者直接下载安装：
-```powershell
-# 下载并运行 rustup-init.exe
-# 按照提示完成安装
-# 安装完成后重启 PowerShell
-```
+### 3️⃣ 升级路径横向对比 (Upgrade Progression)
+- **数值变化一目了然**：点击卡片描述，即可在当前等级与各阶级（铜/银/金/钻）之间切换数值对比。
+- **精准颜色标识**：所有卡牌边框和数值颜色均遵循官方阶级标准：
+  - 铜: `#CD7F32` | 银: `#C0C0C0` | 金: `#FFD700` | 钻: `#B9F2FF`
 
-安装完成后验证：
-```powershell
-rustc --version
-cargo --version
-```
+### 4️⃣ 多维度数据同步
+- **手牌/仓库实时同步**：基于图像与日志双重校验，实时更新你的当前作战配置。
+- **词条语义高亮**：毒、燃烧、冰冻、急速等关键词条自动彩色高亮，描述更易读。
 
-### 2. 安装 Node.js 依赖（已完成）
+---
 
-```powershell
-npm install
-```
+## 📦 下载与安装
 
-## 运行项目
+1. 前往 [Releases](https://github.com/Duangi/BazaarHelper/releases) 页面。
+2. **Windows 用户**：下载 `BazaarHelper_x.x.x_x64-setup.exe` 运行即可。
+3. **Mac 用户**：下载 `BazaarHelper_x.x.x_x64.dmg`。
+   > **注意**：Mac 版日志文件位于 `~/Library/Logs/Tempo Storm/The Bazaar/`，程序已自动适配。
+
+---
+
+## 🎮 使用说明
+
+1. **窗口操作**：
+   - 拖动顶部工具栏可移动窗口。
+   - 拖动右下角边缘可调整大小。
+   - 点击右上角收起/展开，保持简洁。
+2. **识别怪物**：
+   - 遇到怪物画面时，稍等一秒或点击 **🎯 识别画面中的怪物** 按钮。
+3. **查看升级**：
+   - 在卡片描述区域点击，即可看到该卡牌在不同颜色阶级下的数值差异。
+
+---
+
+## 🎯 常见问题 (FAQ)
+
+- **为什么识别不到？** 
+  - 请确保游戏窗口处于显示状态，分辨率建议使用 1080P 或更高（兼容 2K/4K）。
+- **概率准确吗？**
+  - 概率数据来源于游戏机制反编译与社区统计，仅供选牌参考。
+- **支持自动更新吗？**
+  - 为保证游戏运行期间的极致稳定性，**已移除自动更新功能**，请定期访问项目页面确认最新版本。
+
+---
+
+## 💻 项目开发
 
 ### 开发模式
 ```powershell
@@ -46,58 +75,23 @@ npm run tauri dev
 
 ### 构建生产版本
 ```powershell
-npm run tauri build
+# Windows
+npm run tauri build -- --target nsis
+
+# macOS (需在 Mac 设备上运行)
+npm run tauri build -- --target dmg
 ```
 
-构建完成后，可执行文件位于：`src-tauri/target/release/`
+---
 
-## 使用说明
+## 📞 联系与支持
 
-1. 启动应用后，会显示一个悬浮窗口
-2. 拖动标题栏可以移动窗口位置
-3. 拖动窗口边缘可以调整大小
-4. 点击"隐藏"按钮可以隐藏表格内容（但保留标题栏）
-5. 点击"×"按钮关闭应用
+如果在使用过程中遇到 Bug 或有改进建议：
+- **GitHub Issues**：提交反馈。
+- **开发者 QQ**：309349894
 
-## 项目结构
-
-```
-BazaarHelper/
-├── src/                    # React 前端代码
-│   ├── App.tsx            # 主应用组件
-│   ├── App.css            # 样式文件
-│   └── main.tsx           # 入口文件
-├── src-tauri/             # Tauri 后端代码
-│   ├── src/               # Rust 源代码
-│   ├── icons/             # 应用图标
-│   └── tauri.conf.json    # Tauri 配置文件
-└── package.json           # Node.js 依赖配置
-```
-
-## 自定义配置
-
-### 修改窗口属性
-
-编辑 `src-tauri/tauri.conf.json`：
-
-```json
-{
-  "app": {
-    "windows": [{
-      "width": 600,           // 窗口宽度
-      "height": 400,          // 窗口高度
-      "resizable": true,      // 是否可调整大小
-      "alwaysOnTop": true,    // 是否始终置顶
-      "decorations": false,   // 是否显示系统边框
-      "transparent": true     // 是否透明
-    }]
-  }
-}
-```
-
-### 修改附魔数据
-
-编辑 `src/App.tsx` 中的 `enchantments` 数组。
+---
+*声明：本工具为第三方助手，不收集任何用户隐私。*
 
 ## 注意事项
 
