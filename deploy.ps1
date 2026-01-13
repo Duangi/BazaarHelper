@@ -1,5 +1,5 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "0.7.3"  # <--- 以后只改这里
+$NEW_VERSION = "0.7.6"  # <--- 以后只改这里
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
 

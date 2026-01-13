@@ -270,12 +270,16 @@ pub fn run() {
             // Log Monitor Thread
             thread::spawn(move || {
                 let log_path = get_log_path();
-                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId(?P<tid>[^ ]+)").unwrap();
+                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_state_change = Regex::new(r"State changed from \[EncounterState\] to \[ChoiceState\]").unwrap();
                 let re_enc_id = Regex::new(r"enc_[A-Za-z0-9]+").unwrap();
+                let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
+                let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
+                let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
+                let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
                 
                 // Load from cache or defaults
                 let state_init = load_state();
@@ -309,7 +313,6 @@ pub fn run() {
 
                 let mut last_file_size = 0;
                 let mut is_sync = false;
-                let mut sync_hand_cleared = false;
                 let mut last_iid = String::new();
                 let mut cur_owner = String::new();
                 let mut encounter_state_detected = false;
@@ -350,6 +353,10 @@ pub fn run() {
                             // Day Detection Logic
                             if trimmed.contains("NetMessageRunInitialized") {
                                 current_day = 1; in_pvp = false; hour_count = 0; day_changed = true;
+                                inst_to_temp.clear();
+                                current_hand.clear();
+                                current_stash.clear();
+                                changed = true;
                             }
                             if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
                             if trimmed.contains("to [EncounterState]") || trimmed.contains("to [ShopState]") {
@@ -365,7 +372,65 @@ pub fn run() {
                             }
 
                             if let Some(cap) = re_purchase.captures(trimmed) {
-                                inst_to_temp.insert(cap["iid"].to_string(), cap["tid"].to_string());
+                                let iid = cap["iid"].to_string();
+                                inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
+                                
+                                let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                                let target = cap.name("tgt").map(|t| t.as_str());
+
+                                // Fallback: Derive section from Target if Section is missing or ambiguous
+                                if section.is_none() || section.as_ref().unwrap() == "" {
+                                    if let Some(tgt) = target {
+                                        if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
+                                        else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                                    }
+                                }
+
+                                if let Some(s) = section {
+                                    if s == "Player" || s == "Hand" { 
+                                        current_hand.insert(iid); changed = true; 
+                                    }
+                                    else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { 
+                                        current_stash.insert(iid); changed = true; 
+                                    }
+                                }
+                            }
+
+                            if let Some(cap) = re_moved_to.captures(trimmed) {
+                                let iid = cap["iid"].to_string();
+                                let tgt = &cap["tgt"];
+                                if tgt.contains("StorageSocket") {
+                                    current_stash.insert(iid.clone());
+                                    current_hand.remove(&iid);
+                                    changed = true;
+                                } else if tgt.contains("Socket") { // General Socket_X
+                                    current_hand.insert(iid.clone());
+                                    current_stash.remove(&iid);
+                                    changed = true;
+                                }
+                            }
+
+                            if let Some(cap) = re_sold.captures(trimmed) {
+                                let iid = cap["iid"].to_string();
+                                if current_hand.remove(&iid) || current_stash.remove(&iid) {
+                                    changed = true;
+                                }
+                            }
+
+                            if let Some(cap) = re_removed.captures(trimmed) {
+                                let iid = cap["iid"].to_string();
+                                if current_hand.remove(&iid) || current_stash.remove(&iid) {
+                                    changed = true;
+                                }
+                            }
+
+                            if trimmed.contains("Cards Disposed:") {
+                                for mat in re_item_id.find_iter(trimmed) {
+                                    let iid = mat.as_str().to_string();
+                                    if current_hand.remove(&iid) || current_stash.remove(&iid) {
+                                        changed = true;
+                                    }
+                                }
                             }
 
                             if re_state_change.is_match(trimmed) {
@@ -384,9 +449,10 @@ pub fn run() {
                                 }
                             }
 
-                            if trimmed.contains("Cards Spawned:") {
+                            if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") {
                                 is_sync = true;
-                                sync_hand_cleared = false;
+                            } else if trimmed.contains("Successfully moved card to:") {
+                                is_sync = true;
                             }
 
                             if is_sync {
@@ -394,16 +460,26 @@ pub fn run() {
                                 else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
                                 else if let Some(cap) = re_section.captures(trimmed) {
                                     if !last_iid.is_empty() && &cur_owner == "Player" {
-                                        if !sync_hand_cleared && last_iid.starts_with("itm_") && &cap["val"] == "Hand" {
-                                            current_hand.clear();
-                                            sync_hand_cleared = true;
-                                        }
                                         if last_iid.starts_with("itm_") {
-                                            if &cap["val"] == "Hand" { current_hand.insert(last_iid.clone()); }
-                                            else { current_stash.insert(last_iid.clone()); }
+                                            let sec_val = &cap["val"];
+                                            if sec_val == "Hand" || sec_val == "Player" { 
+                                                current_hand.insert(last_iid.clone());
+                                                current_stash.remove(&last_iid);
+                                            }
+                                            else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
+                                                current_stash.insert(last_iid.clone());
+                                                current_hand.remove(&last_iid);
+                                            }
+                                            else {
+                                                current_hand.remove(&last_iid);
+                                                current_stash.remove(&last_iid);
+                                            }
                                             changed = true;
                                         }
                                     }
+                                    // Reset for next block
+                                    last_iid.clear();
+                                    cur_owner.clear();
                                 }
                                 else if trimmed.contains("Finished processing") {
                                     is_sync = false;
