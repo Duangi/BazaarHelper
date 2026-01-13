@@ -33,7 +33,6 @@
             },
     "bundle":  {
                    "active":  true,
-                   "createUpdaterArtifacts":  true,
                    "targets":  [
                                    "nsis",
                                    "dmg",
@@ -60,15 +59,6 @@
                                }
                },
     "plugins":  {
-                    "updater":  {
-                                    "active":  true,
-                                    "pubkey":  "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVCQTdCMjhDRDM1MEQwNjkKUldScDBGRFRqTEtuNjFZVzBSS0tFUDFtYVY4djcrYzlVem14aVUxZDZCSk9pcVR0cnhGVzJYeksK",
-                                    "endpoints":  [
-                                                      "https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json"
-                                                  ],
-                                    "windows":  {
-                                                    "installMode":  "passive"
-                                                }
-                                }
+
                 }
 }

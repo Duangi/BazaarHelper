@@ -1,0 +1,80 @@
+name: "Build and Release"
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Windows 配置
+          - platform: "windows-latest"
+            args: ""
+            include_files: "src-tauri/target/release/bundle/nsis/*-setup.exe"
+          # macOS 配置 (构建针对 M1/M2/M3 芯片的版本，兼容性最好)
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+            include_files: "src-tauri/target/release/bundle/macos/*.dmg"
+
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Mac 需要添加对应的架构支持
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || '' }}
+
+      # 缓存加速
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      # 自动同步版本号 (Windows 和 Mac 都跑一遍，互不影响)
+      - name: Sync version from tag
+        shell: bash
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "Syncing version to $VERSION"
+          # 使用 nodejs 跨平台脚本修改版本号
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json'));
+            pkg.version = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+            
+            const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json'));
+            conf.version = '$VERSION';
+            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
+          "
+
+      - name: install frontend dependencies
+        run: npm install
+
+      # 执行构建 (根据 matrix 传入不同参数)
+      - name: Build Tauri App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "Bazaar Helper ${{ github.ref_name }}"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
