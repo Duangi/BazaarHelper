@@ -20,6 +20,14 @@
   --burn-rgb: 255, 159, 69;
   --tag-rgb: 152, 168, 254;
 
+  /* 阶级颜色 */
+  --c-bronze: #CD7F32;
+  --c-silver: #C0C0C0;
+  --c-gold: #FFD700;
+  --c-diamond: #B9F2FF;
+  
+  --c-golden: var(--c-gold); /* 统一 Gold 和 Golden */
+
   /* 显式定义所有颜色变量 */
   --c-haste: rgb(var(--haste-rgb));
   --c-damage: rgb(var(--damage-rgb));
@@ -285,6 +293,321 @@ html, body, #root {
   border-bottom: 3px solid var(--c-golden);
 }
 
+.id-badge {
+  background: var(--c-golden);
+  color: #000;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-left: 8px;
+  font-weight: 900;
+  vertical-align: middle;
+  box-shadow: 0 0 5px rgba(255, 205, 25, 0.5);
+}
+.monster-controls {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: -20px; /* 抵消父级容器的 gap */
+}
+
+.day-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.day-row {
+  display: flex;
+  gap: 4px;
+}
+
+.day-tab {
+  flex: 1;
+  padding: 6px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.day-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.day-tab.active {
+  background: var(--c-golden);
+  color: #000;
+  border-color: var(--c-golden);
+}
+
+.current-day-info {
+  font-size: 13px;
+  color: var(--c-tag);
+  margin-bottom: 12px;
+  padding-left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.day-adjust {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.day-adjust button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.day-adjust button:hover {
+  background: var(--c-golden);
+  color: #000;
+}
+
+.day-adjust span {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Monster Card V2 */
+.monster-list-v2 {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.monster-card-v2 {
+  background: rgba(50, 45, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.monster-card-v2.identified-glow {
+  border: 1px solid var(--c-golden);
+  box-shadow: 0 0 15px rgba(255, 205, 25, 0.4);
+  background: rgba(70, 60, 40, 0.7);
+}
+
+.monster-header-v2 {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 15px;
+  position: relative;
+}
+
+.avatar-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--c-golden);
+  background: #000;
+}
+
+.monster-avatar-v2 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.monster-info-v2 {
+  flex: 1;
+}
+
+.monster-name-zh {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.monster-health {
+  font-size: 14px;
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.monster-available-tag {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Assets Grid */
+.monster-assets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 10px;
+}
+
+.assets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+}
+
+/* Sub-item Card (Skills & Items) */
+.sub-item-card {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 8px;
+  transition: transform 0.2s;
+}
+
+.progression-inline-values {
+  background: rgba(0,0,0,0.3);
+  padding: 0 4px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 升级数值颜色 */
+.val-bronze { color: var(--c-bronze); }
+.val-silver { color: var(--c-silver); }
+.val-gold { color: var(--c-gold); }
+.val-diamond { color: var(--c-diamond); }
+
+.upgrade-arrow {
+  margin: 0 1px;
+  opacity: 0.5;
+  font-size: 10px;
+}
+
+.sub-item-card.progression-active {
+  background: rgba(255, 205, 25, 0.05);
+  box-shadow: inset 0 0 10px rgba(255, 205, 25, 0.1);
+}
+
+.sub-item-card {
+  cursor: pointer;
+}
+
+.sub-item-card:hover {
+  background: rgba(0, 0, 0, 0.35);
+  transform: translateX(2px);
+}
+
+.sub-item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.sub-item-img-wrap {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.sub-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sub-item-title-row {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-item-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #eee;
+}
+
+.sub-item-cd {
+  font-size: 16px; /* Larger CD as requested */
+  color: var(--c-freeze);
+  font-weight: 900;
+  margin-top: 2px;
+  text-shadow: 0 0 5px rgba(63, 200, 247, 0.4);
+}
+
+.sub-item-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+.desc-line {
+  margin-bottom: 4px;
+}
+
+.extra-desc {
+  color: var(--c-heal);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 4px;
+  margin-top: 4px;
+}
+
+/* Icons in Desc */
+.icon-locked {
+  display: inline-block;
+  margin-right: 4px;
+  filter: drop-shadow(0 0 2px rgba(255,0,0,0.5));
+}
+
+.icon-quest {
+  display: inline-block;
+  margin-right: 4px;
+  filter: drop-shadow(0 0 2px rgba(0,255,0,0.5));
+}
+
 .scroll-area {
   flex-grow: 1; overflow-y: auto;
   padding: 15px; scrollbar-width: none;
@@ -293,7 +616,7 @@ html, body, #root {
 
 .items {
   display: flex; flex-direction: column; gap: 20px;
-  align-items: flex-start; padding-bottom: 150px;
+  align-items: stretch; padding-bottom: 150px;
 }
 
 .content-wrap {
@@ -363,10 +686,13 @@ html, body, #root {
 .search-container {
   width: 100%;
   margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .search-input {
-  width: 100%;
+  flex: 1;
   padding: 14px 18px;
   background: rgba(0, 0, 0, 0.4);
   border: 2px solid rgba(255, 255, 255, 0.15);
@@ -384,6 +710,70 @@ html, body, #root {
 
 .search-input::placeholder {
   color: rgba(255, 255, 255, 0.4);
+}
+
+/* 手动识别按钮 */
+.manual-recognition-btn {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(220, 170, 0, 0.2));
+  border: 2px solid var(--c-golden);
+  border-radius: 8px;
+  color: var(--c-golden);
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 130px;
+  -webkit-app-region: no-drag;
+}
+
+.manual-recognition-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 205, 25, 0.3), rgba(220, 170, 0, 0.3));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 205, 25, 0.4);
+}
+
+.manual-recognition-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.manual-recognition-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 模板加载进度条 */
+.loading-progress {
+  width: 100%;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 205, 25, 0.3);
+}
+
+.progress-text {
+  color: var(--c-golden);
+  font-size: 14px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--c-golden), rgba(255, 205, 25, 0.7));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(255, 205, 25, 0.6);
 }
 
 /* 怪物卡片 */

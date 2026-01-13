@@ -1,36 +1,78 @@
-use regex::Regex;
-use serde::{Deserialize, Serialize};
+﻿use std::sync::{Arc, RwLock};
+use tauri::{State, Manager, Emitter};
+use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::{BufRead, BufReader, Seek, SeekFrom};
 use std::path::PathBuf;
-use std::sync::{Arc, RwLock};
+use regex::Regex;
+use std::io::{BufRead, BufReader, Seek, SeekFrom};
+use std::fs::File;
 use std::{thread, time};
-use tauri::{Emitter, Manager, State};
 
-// --- 数据模型 ---
+pub mod monster_recognition;
+
+const PROBABILITY_JSON: &str = include_str!("../resources/card_appearance_probability.json");
+
+// --- Data Models ---
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Enchantment { pub id: String, pub name: String, pub description: String }
+pub struct PersistentState {
+    pub day: u32,
+    pub inst_to_temp: HashMap<String, String>,
+    pub current_hand: HashSet<String>,
+    pub current_stash: HashSet<String>,
+}
+
+impl Default for PersistentState {
+    fn default() -> Self {
+        Self {
+            day: 1,
+            inst_to_temp: HashMap::new(),
+            current_hand: HashSet::new(),
+            current_stash: HashSet::new(),
+        }
+    }
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Enchantment {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ItemData {
     pub id: Option<String>,
-    #[serde(default)] pub name_zh: String,
+    pub name: String,
+    pub name_zh: String,
+    pub image: String,
     pub enchantments: Option<Vec<Enchantment>>,
-    pub image: Option<String>,
+    pub display_img: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct TierInfo {
+    pub description: Vec<String>,
+    pub extra_description: Vec<String>,
+    pub cd: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterSubItem {
     pub name: String,
-    pub description: String,
+    pub name_en: Option<String>,
+    pub tier: Option<String>,
+    pub current_tier: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub tiers: HashMap<String, Option<TierInfo>>,
     pub image: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterData {
-    #[serde(default)] pub name: String,
-    #[serde(default)] pub name_zh: String,
+    pub name: String,
+    pub name_zh: String,
+    pub available: String,
+    pub health: Option<u32>,
+    pub level: Option<u32>,
     pub skills: Vec<MonsterSubItem>,
     pub items: Vec<MonsterSubItem>,
     pub image: String,
@@ -48,8 +90,61 @@ pub struct DbState {
 }
 
 fn get_log_path() -> PathBuf {
-    let home = std::env::var("USERPROFILE").unwrap_or_default();
-    PathBuf::from(home).join("AppData").join("LocalLow").join("Tempo Storm").join("The Bazaar").join("Player.log")
+    if cfg!(target_os = "macos") {
+        let home = std::env::var("HOME").unwrap_or_default();
+        PathBuf::from(home)
+            .join("Library")
+            .join("Logs")
+            .join("Tempo Storm")
+            .join("The Bazaar")
+            .join("Player.log")
+    } else {
+        let home = std::env::var("USERPROFILE").unwrap_or_default();
+        PathBuf::from(home)
+            .join("AppData")
+            .join("LocalLow")
+            .join("Tempo Storm")
+            .join("The Bazaar")
+            .join("Player.log")
+    }
+}
+
+fn get_cache_path() -> PathBuf {
+    if cfg!(target_os = "macos") {
+        let home = std::env::var("HOME").unwrap_or_default();
+        PathBuf::from(home)
+            .join("Library")
+            .join("Application Support")
+            .join("com.duang.BazaarHelper")
+            .join("state_cache.json")
+    } else {
+        let home = std::env::var("USERPROFILE").unwrap_or_default();
+        PathBuf::from(home)
+            .join("AppData")
+            .join("Local")
+            .join("BazaarHelper")
+            .join("state_cache.json")
+    }
+}
+
+fn save_state(state: &PersistentState) {
+    let path = get_cache_path();
+    if let Some(parent) = path.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if let Ok(json) = serde_json::to_string(state) {
+        let _ = std::fs::write(path, json);
+    }
+}
+
+fn load_state() -> PersistentState {
+    let path = get_cache_path();
+    if let Ok(json) = std::fs::read_to_string(path) {
+        if let Ok(state) = serde_json::from_str::<PersistentState>(&json) {
+            return state;
+        }
+    }
+    PersistentState::default()
 }
 
 fn lookup_item(tid: &str, db: &HashMap<String, ItemData>) -> Option<ItemData> {
@@ -60,18 +155,95 @@ fn lookup_item(tid: &str, db: &HashMap<String, ItemData>) -> Option<ItemData> {
     })
 }
 
-// --- 指令接口 ---
+// --- Commands ---
 #[tauri::command]
-fn search_monsters(query: String, state: State<'_, DbState>) -> Result<Vec<MonsterData>, String> {
+fn get_all_monsters(state: State<'_, DbState>) -> Result<HashMap<String, MonsterData>, String> {
     let db = state.monsters.read().map_err(|_| "DB Busy")?;
-    let q = query.to_lowercase();
-    let results: Vec<MonsterData> = db.values()
-        .filter(|m| m.name_zh.to_lowercase().contains(&q) || m.name.to_lowercase().contains(&q))
-        .cloned()
-        .collect();
-    Ok(results)
+    Ok(db.clone())
 }
 
+#[tauri::command]
+fn recognize_monsters_from_screenshot(day: Option<u32>) -> Result<Vec<monster_recognition::MonsterRecognitionResult>, String> {
+    let day_filter = day.map(|d| if d > 10 { "Day 10+".to_string() } else { format!("Day {}", d) });
+    monster_recognition::recognize_monsters(day_filter)
+}
+
+#[tauri::command]
+fn get_template_loading_progress() -> monster_recognition::LoadingProgress {
+    monster_recognition::get_loading_progress()
+}
+
+#[tauri::command]
+fn get_current_day(hours_per_day: Option<u32>, retro: Option<bool>) -> Result<u32, String> {
+    // Return cached value if available, log scan only as fallback
+    let cached = load_state();
+    if cached.day > 0 {
+        return Ok(cached.day);
+    }
+    
+    let hours = hours_per_day.unwrap_or(6);
+    let retro = retro.unwrap_or(false);
+    let log_path = get_log_path();
+    
+    // Fallback to scan only if cache is 0 (first run)
+    if log_path.exists() {
+        if let Ok(content) = std::fs::read_to_string(&log_path) {
+             if let Some(day) = calculate_day_from_log(&content, hours, retro) {
+                 return Ok(day);
+             }
+        }
+    }
+
+    Ok(1)
+}
+
+#[tauri::command]
+fn update_day(day: u32) -> Result<(), String> {
+    let mut state = load_state();
+    state.day = day;
+    save_state(&state);
+    println!("[State] Manually updated Day to: {}", day);
+    Ok(())
+}
+
+#[tauri::command]
+fn get_card_probabilities() -> Result<serde_json::Value, String> {
+    let json: serde_json::Value = serde_json::from_str(PROBABILITY_JSON).map_err(|e| e.to_string())?;
+    Ok(json)
+}
+
+fn calculate_day_from_log(content: &str, hours: u32, retro: bool) -> Option<u32> {
+    let start_pos = if retro { content.rfind("NetMessageRunInitialized").unwrap_or(0) } else { 0 };
+    let slice = &content[start_pos..];
+    let mut current_day: u32 = 0;
+    let mut in_pvp = false;
+    let mut hour_count: u32 = 0;
+
+    for line in slice.lines() {
+        let l = line.trim();
+        if l.contains("NetMessageRunInitialized") {
+            current_day = 1; in_pvp = false; hour_count = 0; continue;
+        }
+        if l.contains("to [PVPCombatState]") { in_pvp = true; continue; }
+        if l.contains("to [EncounterState]") || l.contains("to [ShopState]") {
+            hour_count = hour_count.saturating_add(1);
+        }
+        if in_pvp && l.contains("State changed") && (l.contains("to [ChoiceState]") || l.contains("to [LevelUpState]") || l.contains("to [ReplayState]")) {
+            if current_day == 0 { current_day = 1; }
+            current_day = current_day.saturating_add(1);
+            in_pvp = false; hour_count = 0; continue;
+        }
+        if hour_count >= hours && l.contains("to [ChoiceState]") {
+            if current_day == 0 { current_day = 1; }
+            current_day = current_day.saturating_add(1);
+            hour_count = 0; continue;
+        }
+    }
+    
+    if current_day == 0 { None } else { Some(current_day) }
+}
+
+// --- App Run ---
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -84,254 +256,210 @@ pub fn run() {
         })
         .setup(|app| {
             let handle = app.handle().clone();
-            let state = app.state::<DbState>();
-            let item_db_instance = state.items.clone();
-            let monster_db_instance = state.monsters.clone();
+            let resources_path = app.path().resource_dir().unwrap();
+            let item_db_instance = app.state::<DbState>().items.clone();
+            
+            // Initial DB Load
+            let db_state = app.state::<DbState>();
+            let items_json = std::fs::read_to_string(resources_path.join("resources").join("items_db.json")).unwrap_or_default();
+            if let Ok(items) = serde_json::from_str::<HashMap<String, ItemData>>(&items_json) {
+                *db_state.items.write().unwrap() = items;
+            }
+            let monsters_json = std::fs::read_to_string(resources_path.join("resources").join("monsters_db.json")).unwrap_or_default();
+            if let Ok(monsters) = serde_json::from_str::<HashMap<String, MonsterData>>(&monsters_json) {
+                *db_state.monsters.write().unwrap() = monsters;
+            }
 
-            // 1. 加载数据库
-            let item_res = handle.path().resolve("resources/items_db.json", tauri::path::BaseDirectory::Resource).unwrap();
-            let items: HashMap<String, ItemData> = serde_json::from_str(&std::fs::read_to_string(item_res).unwrap()).unwrap();
-            *item_db_instance.write().unwrap() = items;
-
-            let monster_res = handle.path().resolve("resources/combat_encounters.json", tauri::path::BaseDirectory::Resource).unwrap();
-            let monsters: HashMap<String, MonsterData> = serde_json::from_str(&std::fs::read_to_string(monster_res).unwrap()).unwrap();
-            *monster_db_instance.write().unwrap() = monsters;
-
-            // 2. 日志监听线程
+            // Async Preload Templates
+            let res_dir_clone = resources_path.join("resources");
             tauri::async_runtime::spawn(async move {
+                let _ = monster_recognition::preload_templates_async(res_dir_clone).await;
+            });
+
+            // Log Monitor Thread
+            thread::spawn(move || {
                 let log_path = get_log_path();
-                while !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); }
-                
-                let file_content = std::fs::read_to_string(&log_path).unwrap_or_default();
-                
-                // 正则表达式
-                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId(?P<tid>[^ ]+)\s*-\s*Target:(?P<target>[^\s]+)").unwrap();
-                let re_sold = Regex::new(r"(Successfully removed item|Sold Card)\s+(?P<iid>[^ ]+)").unwrap();
+                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId(?P<tid>[^ ]+)").unwrap();
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
-                let re_socket = Regex::new(r"- Socket: \[(?P<val>[^\]]+)\]").unwrap();
-                let re_dealt = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
-                let re_move_socket = Regex::new(r"Successfully moved card (?P<iid>[^ ]+) to (?P<socket>Socket_[0-9]+)").unwrap();
+                let re_state_change = Regex::new(r"State changed from \[EncounterState\] to \[ChoiceState\]").unwrap();
+                let re_enc_id = Regex::new(r"enc_[A-Za-z0-9]+").unwrap();
                 
-                // 第一步：从头扫描所有购买记录，建立完整的 inst_to_temp 映射
-                let mut inst_to_temp: HashMap<String, String> = HashMap::new();
-                for cap in re_purchase.captures_iter(&file_content) {
-                    inst_to_temp.insert(cap["iid"].to_string(), cap["tid"].to_string());
-                }
-                println!("建立了 {} 个实例映射", inst_to_temp.len());
-                
-                // 第二步：找到最后一个游戏开始标记
-                let last_game_start = file_content.rfind("State changed from [null] to [StartRunAppState]")
-                    .map(|pos| file_content[..pos].rfind('\n').map(|n| n + 1).unwrap_or(0))
-                    .unwrap_or(0);
-                println!("游戏开始位置: {}", last_game_start);
-                
-                let mut reader = BufReader::new(File::open(&log_path).unwrap());
-                let _ = reader.seek(SeekFrom::Start(last_game_start as u64));
+                // Load from cache or defaults
+                let state_init = load_state();
+                let mut inst_to_temp = state_init.inst_to_temp;
+                let mut current_hand = state_init.current_hand;
+                let mut current_stash = state_init.current_stash;
+                let mut current_day = state_init.day;
 
-                let mut hand_iids: HashSet<String> = HashSet::new();
-                let mut stash_iids: HashSet<String> = HashSet::new();
-                let mut monster_ids: Vec<String> = Vec::new();
-                let mut socket_to_section: HashMap<String, String> = HashMap::new();
+                // Emit initial state
+                let init_handle = handle.clone();
+                let init_db = item_db_instance.clone();
+                let init_hand = current_hand.clone();
+                let init_stash = current_stash.clone();
+                let init_map = inst_to_temp.clone();
+                let init_day = current_day;
+                
+                tauri::async_runtime::spawn(async move {
+                    thread::sleep(time::Duration::from_millis(1000));
+                    let _ = init_handle.emit("day-update", init_day);
+                    let db = init_db.read().unwrap();
+                    let hand_items = init_hand.iter()
+                        .filter_map(|iid| init_map.get(iid))
+                        .filter_map(|tid| lookup_item(tid, &db))
+                        .collect();
+                    let stash_items = init_stash.iter()
+                        .filter_map(|iid| init_map.get(iid))
+                        .filter_map(|tid| lookup_item(tid, &db))
+                        .collect();
+                    let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items });
+                });
+
+                let mut last_file_size = 0;
                 let mut is_sync = false;
-                let mut sync_hand_cleared = false; // 标记是否已清空手牌
-                let (mut last_iid, mut cur_owner) = (String::new(), String::new());
-                let mut cur_socket = String::new();
-                let mut initial_scan_done = false;
-                let mut last_file_size = std::fs::metadata(&log_path).unwrap().len();
+                let mut sync_hand_cleared = false;
+                let mut last_iid = String::new();
+                let mut cur_owner = String::new();
+                let mut encounter_state_detected = false;
+                let mut in_pvp = false;
+                let mut hour_count: u32 = 0;
 
                 loop {
-                    // 检测日志文件是否被重置（文件变小）
-                    let current_file_size = std::fs::metadata(&log_path).unwrap().len();
-                    if current_file_size < last_file_size {
-                        println!("⚠️ 检测到日志文件被重置！清空所有数据并重新开始...");
-                        // 重置所有状态
-                        hand_iids.clear();
-                        stash_iids.clear();
-                        monster_ids.clear();
-                        inst_to_temp.clear();
-                        is_sync = false;
-                        sync_hand_cleared = false;
-                        initial_scan_done = false;
-                        
-                        // 重新打开文件并从头开始读取
-                        reader = BufReader::new(File::open(&log_path).unwrap());
-                        last_file_size = current_file_size;
-                        
-                        // 重新建立映射
-                        let file_content = std::fs::read_to_string(&log_path).unwrap_or_default();
-                        for cap in re_purchase.captures_iter(&file_content) {
-                            inst_to_temp.insert(cap["iid"].to_string(), cap["tid"].to_string());
-                        }
-                        println!("重新建立了 {} 个实例映射", inst_to_temp.len());
-                        
-                        // 发送清空事件
-                        let _items_db = item_db_instance.read().unwrap();
-                        let payload = SyncPayload {
-                            hand_items: Vec::new(),
-                            stash_items: Vec::new(),
-                        };
-                        handle.emit("sync-items", payload).unwrap();
-                        continue;
-                    }
-                    last_file_size = current_file_size;
+                    if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
+                    let meta = std::fs::metadata(&log_path).unwrap();
+                    let current_file_size = meta.len();
                     
-                    let mut line = String::new();
-                    if reader.read_line(&mut line).unwrap() > 0 {
-                        let trimmed = line.trim();
+                    if current_file_size < last_file_size {
+                        inst_to_temp.clear();
+                        current_hand.clear();
+                        current_stash.clear();
+                        current_day = 1;
+                        is_sync = false;
+                        last_file_size = 0;
+                        save_state(&PersistentState { 
+                            day: current_day, 
+                            inst_to_temp: inst_to_temp.clone(), 
+                            current_hand: current_hand.clone(), 
+                            current_stash: current_stash.clone() 
+                        });
+                    }
+                    
+                    if current_file_size > last_file_size {
+                        let mut f = File::open(&log_path).unwrap();
+                        let _ = f.seek(SeekFrom::Start(last_file_size));
+                        let reader = BufReader::new(f);
+                        
                         let mut changed = false;
+                        let mut day_changed = false;
+                        for line in reader.lines() {
+                            let l = if let Ok(l) = line { l } else { continue };
+                            let trimmed = l.trim();
 
-                        if trimmed.contains("Cards Spawned:") {
-                            // 进入同步模式，但不立即清空手牌
-                            // 只清空怪物数据和同步标记
-                            if !is_sync {
+                            // Day Detection Logic
+                            if trimmed.contains("NetMessageRunInitialized") {
+                                current_day = 1; in_pvp = false; hour_count = 0; day_changed = true;
+                            }
+                            if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
+                            if trimmed.contains("to [EncounterState]") || trimmed.contains("to [ShopState]") {
+                                hour_count = hour_count.saturating_add(1);
+                            }
+                            if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]") || trimmed.contains("to [ReplayState]")) {
+                                current_day = current_day.saturating_add(1);
+                                in_pvp = false; hour_count = 0; day_changed = true;
+                            }
+                            if hour_count >= 6 && trimmed.contains("to [ChoiceState]") {
+                                current_day = current_day.saturating_add(1);
+                                hour_count = 0; day_changed = true;
+                            }
+
+                            if let Some(cap) = re_purchase.captures(trimmed) {
+                                inst_to_temp.insert(cap["iid"].to_string(), cap["tid"].to_string());
+                            }
+
+                            if re_state_change.is_match(trimmed) {
+                                encounter_state_detected = true;
+                            }
+
+                            if re_enc_id.is_match(trimmed) {
+                                if encounter_state_detected {
+                                    let h = handle.clone();
+                                    let d = current_day;
+                                    tauri::async_runtime::spawn(async move {
+                                        thread::sleep(time::Duration::from_secs(1));
+                                        let _ = h.emit("trigger-monster-recognition", d);
+                                    });
+                                    encounter_state_detected = false;
+                                }
+                            }
+
+                            if trimmed.contains("Cards Spawned:") {
                                 is_sync = true;
                                 sync_hand_cleared = false;
-                                monster_ids.clear();
                             }
-                        }
-                        if is_sync {
-                            if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
-                            else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
-                            else if let Some(cap) = re_socket.captures(trimmed) { cur_socket = cap["val"].to_string(); }
-                            else if let Some(cap) = re_section.captures(trimmed) {
-                                if !last_iid.is_empty() {
-                                    if &cur_owner == "Player" {
-                                        // 第一次遇到玩家手牌时，清空旧的手牌数据
+
+                            if is_sync {
+                                if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
+                                else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                                else if let Some(cap) = re_section.captures(trimmed) {
+                                    if !last_iid.is_empty() && &cur_owner == "Player" {
                                         if !sync_hand_cleared && last_iid.starts_with("itm_") && &cap["val"] == "Hand" {
-                                            hand_iids.clear();
+                                            current_hand.clear();
                                             sync_hand_cleared = true;
                                         }
-                                        // 只处理物品（itm_ 开头），忽略效果(eft_)、技能(ste_)等
                                         if last_iid.starts_with("itm_") {
-                                            if &cap["val"] == "Hand" { hand_iids.insert(last_iid.clone()); }
-                                            else { stash_iids.insert(last_iid.clone()); }
-                                            // 记录 socket -> section 的映射，便于处理仅包含 socket 的移动日志
-                                            if !cur_socket.is_empty() { socket_to_section.insert(cur_socket.clone(), cap["val"].to_string()); }
+                                            if &cap["val"] == "Hand" { current_hand.insert(last_iid.clone()); }
+                                            else { current_stash.insert(last_iid.clone()); }
                                             changed = true;
                                         }
-                                    } else if &cur_owner == "Opponent" {
-                                        let tid = inst_to_temp.get(&last_iid).cloned().unwrap_or(last_iid.clone());
-                                        if !monster_ids.contains(&tid) { monster_ids.push(tid); }
-                                        changed = true;
                                     }
                                 }
-                            }
-                            else if let Some(cap) = re_move_socket.captures(trimmed) {
-                                // 处理格式为 "Successfully moved card itm_X to Socket_N" 的日志
-                                let iid = cap["iid"].to_string();
-                                let socket = cap["socket"].to_string();
-                                // 如果已知该 socket 对应的 section，则根据映射更新集合
-                                if iid.starts_with("itm_") {
-                                    if let Some(sec) = socket_to_section.get(&socket) {
-                                        if sec == "Hand" { hand_iids.insert(iid.clone()); }
-                                        else { stash_iids.insert(iid.clone()); }
-                                        changed = true;
-                                    }
-                                }
-                            }
-                            if trimmed.contains("Finished processing") {
-                                is_sync = false;
-                                sync_hand_cleared = false;
-                                changed = true; // 强制同步，确保状态更新
-                            }
-                        }
-                        // 同步模式下仍需记录映射关系，但不立即更新手牌/仓库
-                        if let Some(cap) = re_purchase.captures(trimmed) {
-                            let iid = cap["iid"].to_string();
-                            let tid = cap["tid"].to_string();
-                            let target = cap["target"].to_string();
-                            inst_to_temp.insert(iid.clone(), tid);
-                            
-                            // 只处理物品（itm_ 开头），忽略效果(eft_)、技能(ste_)等
-                            if iid.starts_with("itm_") {
-                                // 根据 Target 判断：包含 Storage 是仓库，否则是手牌
-                                if target.contains("Storage") {
-                                    // 仓库购买始终处理，不受同步模式影响
-                                    stash_iids.insert(iid);
-                                    changed = true;
-                                } else if !is_sync {
-                                    // 手牌购买只在非同步模式下处理
-                                    hand_iids.insert(iid);
+                                else if trimmed.contains("Finished processing") {
+                                    is_sync = false;
                                     changed = true;
                                 }
                             }
-                        }
-                        // 同步模式下不处理出售事件，等待完整的同步数据
-                        if !is_sync {
-                            if let Some(cap) = re_sold.captures(trimmed) {
-                                let iid = cap["iid"].to_string();
-                                
-                                // 只处理物品（itm_ 开头）
-                                if iid.starts_with("itm_") {
-                                    // 从手牌和仓库中移除这个实例
-                                    hand_iids.remove(&iid);
-                                    stash_iids.remove(&iid);
-                                    changed = true;
-                                }
-                            }
-                        }
-                        if trimmed.contains("Cards Dealt") {
-                            monster_ids.clear();
-                            for cap in re_dealt.captures_iter(trimmed) { monster_ids.push(cap["id"].to_string()); }
-                            changed = true;
                         }
 
-                        if changed && !is_sync {
-                            let items_db = item_db_instance.read().unwrap();
-                            let payload = SyncPayload {
-                                hand_items: hand_iids.iter().filter_map(|iid| lookup_item(inst_to_temp.get(iid).unwrap_or(iid), &items_db)).collect(),
-                                stash_items: stash_iids.iter().filter_map(|iid| lookup_item(inst_to_temp.get(iid).unwrap_or(iid), &items_db)).collect(),
-                            };
-                            handle.emit("sync-items", payload).unwrap();
-                        }
-                    } else { 
-                        // 读取完历史记录
-                        if !initial_scan_done {
-                            initial_scan_done = true;
-                            println!("初始扫描完成 - 手牌: {}, 仓库: {}", hand_iids.len(), stash_iids.len());
-                            for iid in &hand_iids {
-                                let tid = inst_to_temp.get(iid).unwrap_or(iid);
-                                println!("手牌 Instance: {} -> Template: {}", iid, tid);
+                        if changed || day_changed {
+                            if day_changed {
+                                let _ = handle.emit("day-update", current_day);
                             }
+                            let db = item_db_instance.read().unwrap();
+                            let hand_items = current_hand.iter()
+                                .filter_map(|iid| inst_to_temp.get(iid))
+                                .filter_map(|tid| lookup_item(tid, &db))
+                                .collect();
+                            let stash_items = current_stash.iter()
+                                .filter_map(|iid| inst_to_temp.get(iid))
+                                .filter_map(|tid| lookup_item(tid, &db))
+                                .collect();
                             
-                            // 延迟2秒让前端监听器准备好
-                            println!("等待2秒后发送初始状态...");
-                            thread::sleep(time::Duration::from_millis(2000));
+                            let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items });
+                            
+                            save_state(&PersistentState {
+                                day: current_day,
+                                inst_to_temp: inst_to_temp.clone(),
+                                current_hand: current_hand.clone(),
+                                current_stash: current_stash.clone(),
+                            });
                         }
-                        
-                        // 发送当前状态
-                        let items_db = item_db_instance.read().unwrap();
-                        let hand_items: Vec<ItemData> = hand_iids.iter().filter_map(|iid| {
-                            let tid = inst_to_temp.get(iid).unwrap_or(iid);
-                            let item = lookup_item(tid, &items_db);
-                            if item.is_none() {
-                                println!("⚠️ 找不到物品: {}", tid);
-                            }
-                            item
-                        }).collect();
-                        
-                        let stash_items: Vec<ItemData> = stash_iids.iter().filter_map(|iid| {
-                            let tid = inst_to_temp.get(iid).unwrap_or(iid);
-                            lookup_item(tid, &items_db)
-                        }).collect();
-                        
-                        println!("发送状态 - 手牌: {}, 仓库: {}", hand_items.len(), stash_items.len());
-                        let payload = SyncPayload {
-                            hand_items,
-                            stash_items,
-                        };
-                        handle.emit("sync-items", payload).unwrap();
-                        
-                        thread::sleep(time::Duration::from_millis(10000)); // 每10秒发送一次
+                        last_file_size = current_file_size;
                     }
+                    thread::sleep(time::Duration::from_millis(500));
                 }
             });
+
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![search_monsters])
+        .invoke_handler(tauri::generate_handler![
+            get_all_monsters,
+            recognize_monsters_from_screenshot,
+            get_template_loading_progress,
+            get_current_day,
+            update_day,
+            get_card_probabilities
+        ])
         .run(tauri::generate_context!())
-        .expect("Error")
-        ;
+        .expect("error while running tauri application");
 }

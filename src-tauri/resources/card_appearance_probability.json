@@ -1,0 +1,62 @@
+{
+"Day 1":{
+    "bronze":0.5,
+    "silver":0.3,
+    "gold":0.15,
+    "diamond":0.05
+},
+"Day 2":{
+    "bronze":0.4,
+    "silver":0.35,
+    "gold":0.2,
+    "diamond":0.05
+},
+"Day 3":{
+    "bronze":0.3,
+    "silver":0.4,
+    "gold":0.2,
+    "diamond":0.1
+},
+"Day 4":{
+    "bronze":0.25,
+    "silver":0.4,
+    "gold":0.25,
+    "diamond":0.1
+},
+"Day 5":{
+    "bronze":0.2,
+    "silver":0.4,
+    "gold":0.3,
+    "diamond":0.1
+},
+"Day 6":{
+    "bronze":0.15,
+    "silver":0.35,
+    "gold":0.35,
+    "diamond":0.15
+},
+"Day 7":{
+    "bronze":0.1,
+    "silver":0.3,
+    "gold":0.4,
+    "diamond":0.2
+},
+"Day 8":{
+    "bronze":0.1,
+    "silver":0.25,
+    "gold":0.4,
+    "diamond":0.25
+},
+"Day 9":{
+    "bronze":0.05,
+    "silver":0.2,
+    "gold":0.4,
+    "diamond":0.35
+},
+"Day 9+":{
+    "bronze":0.05,
+    "silver":0.15,
+    "gold":0.35,
+    "diamond":0.45
+}
+}

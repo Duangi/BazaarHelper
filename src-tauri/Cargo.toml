@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
+default-run = "tauri-app"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -26,3 +27,10 @@ regex = "1.10"
 
 tauri-plugin-updater = "2"
 tauri-plugin-process = "2"
+
+# 图像处理和截图
+xcap = "0.0.11"  # 跨平台截图
+image = "0.25"   # 图像处理（裁剪、缩放等）
+imageproc = "0.25"  # 图像处理算法
+anyhow = "1.0.100"
+clap = { version = "4.5.54", features = ["derive"] }

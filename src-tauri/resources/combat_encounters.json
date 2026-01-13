@@ -1879,7 +1879,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/518c4b846c394ca256b673ec0c1bbefec81bc2b2@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f8685bd8ee4db9767ce1f25d2dc39659a2952b0@400.webp?v=2"
   },
-  "9AF5FE85-C06F-4227-906C-E5F8DF83A0FD": {
+  "云顶军官": {
     "name": "Cloudtop Officer",
     "name_zh": "云顶军官",
     "skills": [
@@ -1941,7 +1941,7 @@
     ],
     "image": "images/云顶军官.jpg"
   },
-  "53C31151-AD92-4181-9720-D0825EEA866B": {
+  "毒蛇暴君": {
     "name": "Viper Tyrant",
     "name_zh": "毒蛇暴君",
     "skills": [
@@ -2039,7 +2039,7 @@
     ],
     "image": "images/毒蛇暴君.jpg"
   },
-  "709E1DCE-7E91-4612-B010-D107A6800158": {
+  "Coconut Crab 2": {
     "name": "Coconut Crab 2",
     "name_zh": "Coconut Crab 2",
     "skills": [
@@ -2092,7 +2092,7 @@
     ],
     "image": ""
   },
-  "16038F84-3CEC-4CCD-B58B-2CE974442142": {
+  "废土领主": {
     "name": "Lord of the Wastes",
     "name_zh": "废土领主",
     "skills": [
@@ -2163,7 +2163,7 @@
     ],
     "image": "images/废土领主.jpg"
   },
-  "0AF10A6E-4EA8-4F76-B3F7-C0364CE6D42B": {
+  "Monster_Battle_Player_Template_47": {
     "name": "Monster_Battle_Player_Template_47",
     "name_zh": "Monster_Battle_Player_Template_47",
     "skills": [
@@ -2189,7 +2189,7 @@
     ],
     "image": ""
   },
-  "70EAF194-D60A-4605-AAC2-41F84EA84C46": {
+  "Monster_Battle_Player_Template_40": {
     "name": "Monster_Battle_Player_Template_40",
     "name_zh": "Monster_Battle_Player_Template_40",
     "skills": [
@@ -2215,7 +2215,7 @@
     ],
     "image": ""
   },
-  "EA736D32-738C-4CCA-902C-1B3A5DC67205": {
+  "史都": {
     "name": "Stew",
     "name_zh": "史都",
     "skills": [
@@ -2286,7 +2286,7 @@
     ],
     "image": "images/史都.jpg"
   },
-  "55823D26-5FA0-46CA-9D3D-50BBBFF5068B": {
+  "Monster_Battle_Player_Template_32": {
     "name": "Monster_Battle_Player_Template_32",
     "name_zh": "Monster_Battle_Player_Template_32",
     "skills": [
@@ -2312,7 +2312,7 @@
     ],
     "image": ""
   },
-  "8CF3C8CC-2D9E-4F10-B133-711E0FEC7039": {
+  "觉醒街区": {
     "name": "Awakened District",
     "name_zh": "觉醒街区",
     "skills": [
@@ -2365,7 +2365,7 @@
     ],
     "image": "images/觉醒街区.jpg"
   },
-  "DD985314-939F-4388-86DC-50EF8E7C25B7": {
+  "Giant Mosquito Monster": {
     "name": "Giant Mosquito Monster",
     "name_zh": "Giant Mosquito Monster",
     "skills": [
@@ -2418,7 +2418,7 @@
     ],
     "image": ""
   },
-  "55902C8F-01AF-4234-BC56-852113C85AC9": {
+  "Monster_Battle_Player_Template_36": {
     "name": "Monster_Battle_Player_Template_36",
     "name_zh": "Monster_Battle_Player_Template_36",
     "skills": [
@@ -2444,7 +2444,7 @@
     ],
     "image": ""
   },
-  "867110C7-92F5-49D9-A074-2D687548E47E": {
+  "Monster_Battle_Player_Template_35": {
     "name": "Monster_Battle_Player_Template_35",
     "name_zh": "Monster_Battle_Player_Template_35",
     "skills": [
@@ -2470,7 +2470,7 @@
     ],
     "image": ""
   },
-  "2E9ED78C-6070-4802-9E98-E1090FE5BD78": {
+  "Coconut Crab Monster": {
     "name": "Coconut Crab Monster",
     "name_zh": "Coconut Crab Monster",
     "skills": [
@@ -2523,7 +2523,7 @@
     ],
     "image": ""
   },
-  "1177568A-757F-469F-9438-8F3BFEACD93F": {
+  "流浪暗礁": {
     "name": "Wandering Shoal",
     "name_zh": "流浪暗礁",
     "skills": [
@@ -2603,7 +2603,7 @@
     ],
     "image": ""
   },
-  "A859BD39-A384-43E8-9299-08A73C6810A6": {
+  "辉耀海盗": {
     "name": "Radiant Corsair",
     "name_zh": "辉耀海盗",
     "skills": [
@@ -2656,7 +2656,7 @@
     ],
     "image": "images/辉耀海盗.jpg"
   },
-  "EA63DAE1-1D9C-4422-8C2A-96260B787DD1": {
+  "垃圾泰坦": {
     "name": "Trash Titan",
     "name_zh": "垃圾泰坦",
     "skills": [
@@ -2745,7 +2745,7 @@
     ],
     "image": "images/垃圾泰坦.jpg"
   },
-  "E18B8358-920D-48D7-B90C-37E455135991": {
+  "绿洲守护神": {
     "name": "Oasis Guardian",
     "name_zh": "绿洲守护神",
     "skills": [
@@ -2816,7 +2816,7 @@
     ],
     "image": ""
   },
-  "8C211464-5961-449B-B5E9-B222C601E3C1": {
+  "炼金大师": {
     "name": "Master Alchemist",
     "name_zh": "炼金大师",
     "skills": [
@@ -2887,7 +2887,7 @@
     ],
     "image": "images/炼金大师.jpg"
   },
-  "B5409AD0-EDB2-49EB-8DEE-6D4EC238E10E": {
+  "Monster_Battle_Player_Template_43": {
     "name": "Monster_Battle_Player_Template_43",
     "name_zh": "Monster_Battle_Player_Template_43",
     "skills": [
@@ -2913,7 +2913,7 @@
     ],
     "image": ""
   },
-  "E07396B2-A71E-46E7-B32B-D9568585DD93": {
+  "毒蛇": {
     "name": "Viper",
     "name_zh": "毒蛇",
     "skills": [
@@ -2948,7 +2948,7 @@
     ],
     "image": "images/毒蛇.jpg"
   },
-  "23274E3A-C38D-4AFF-92B6-599103256CEE": {
+  "载宝海龟": {
     "name": "Treasure Turtle",
     "name_zh": "载宝海龟",
     "skills": [
@@ -3028,7 +3028,7 @@
     ],
     "image": ""
   },
-  "FDCB435F-D6C4-4657-81B5-1888E8EEFE5A": {
+  "血礁船长": {
     "name": "Bloodreef Captain",
     "name_zh": "血礁船长",
     "skills": [
@@ -3081,7 +3081,7 @@
     ],
     "image": ""
   },
-  "B40AE00E-F6DF-4920-90A4-A49EA53FBDB5": {
+  "流浪岛屿": {
     "name": "Roaming Isle",
     "name_zh": "流浪岛屿",
     "skills": [
@@ -3170,7 +3170,7 @@
     ],
     "image": "images/流浪岛屿.jpg"
   },
-  "B236A2B6-3BBB-4F3E-B505-BA67605312DE": {
+  "Monster_Battle_Player_Template_46": {
     "name": "Monster_Battle_Player_Template_46",
     "name_zh": "Monster_Battle_Player_Template_46",
     "skills": [
@@ -3196,7 +3196,7 @@
     ],
     "image": ""
   },
-  "622B8E58-B073-4C75-9D57-322D0F16435D": {
+  "赏金猎人": {
     "name": "Bounty Hunters",
     "name_zh": "赏金猎人",
     "skills": [
@@ -3276,7 +3276,7 @@
     ],
     "image": ""
   },
-  "F8CF1723-AA0C-4019-8C59-842CECDA1C93": {
+  "地狱飞艇": {
     "name": "Infernal Frigate",
     "name_zh": "地狱飞艇",
     "skills": [
@@ -3356,7 +3356,7 @@
     ],
     "image": ""
   },
-  "FC5AA4C0-8D87-457B-BC3C-2EBF0B07D12D": {
+  "Kyver Nest Monster": {
     "name": "Kyver Nest Monster",
     "name_zh": "Kyver Nest Monster",
     "skills": [
@@ -3400,7 +3400,7 @@
     ],
     "image": ""
   },
-  "924C56D7-1A5E-4E57-A6B2-BB0C2362980E": {
+  "Covetous Thief Monster": {
     "name": "Covetous Thief Monster",
     "name_zh": "Covetous Thief Monster",
     "skills": [
@@ -3453,7 +3453,7 @@
     ],
     "image": ""
   },
-  "6C87BE29-E82D-4CE1-AC79-8A642B8E0C4F": {
+  "阿肯大人": {
     "name": "Lord Arken",
     "name_zh": "阿肯大人",
     "skills": [
@@ -3524,7 +3524,7 @@
     ],
     "image": "images/阿肯大人.jpg"
   },
-  "E873DBD7-86AA-4FEC-9206-28591346939A": {
+  "霜猴霸王": {
     "name": "Frost Street Champion",
     "name_zh": "霜猴霸王",
     "skills": [
@@ -3595,7 +3595,7 @@
     ],
     "image": "images/霜猴霸王.jpg"
   },
-  "80A6CD15-2213-493F-904F-FB6CE7C60270": {
+  "Monster_Battle_Player_Template_39": {
     "name": "Monster_Battle_Player_Template_39",
     "name_zh": "Monster_Battle_Player_Template_39",
     "skills": [
@@ -3621,7 +3621,7 @@
     ],
     "image": ""
   },
-  "0A70A9AB-4508-4FF4-984E-9A20F0B3D517": {
+  "Tempest Flamedancer": {
     "name": "Tempest Flamedancer",
     "name_zh": "Tempest Flamedancer",
     "skills": [
@@ -3656,7 +3656,7 @@
     ],
     "image": ""
   },
-  "B3F9A83F-772B-4286-BF21-CD2D86A13B58": {
+  "荒原旋舞者": {
     "name": "Outlands Dervish",
     "name_zh": "荒原旋舞者",
     "skills": [
@@ -3729,7 +3729,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b1d33161aa1347be833413513ea8f999bfd5cfdd@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa17f72b64faf6781629a71ee22761a99d02647c@400.webp?v=2"
   },
-  "3A2F9A4B-F573-46D4-A2ED-1ED0088DA55B": {
+  "Monster_Battle_Player_Template_37": {
     "name": "Monster_Battle_Player_Template_37",
     "name_zh": "Monster_Battle_Player_Template_37",
     "skills": [
@@ -3755,96 +3755,7 @@
     ],
     "image": ""
   },
-  "337C2AF9-4815-4C14-B537-159F5FC80BE3": {
-    "name": "Trash Titan",
-    "name_zh": "垃圾泰坦",
-    "skills": [
-      {
-        "id": "d071e4de-f87f-41b5-b02d-d622e35c0b4d",
-        "name": "杂耍",
-        "name_en": "Juggler",
-        "tier": "Gold",
-        "description": "使用小型物品时，为一件大型物品充能1秒。",
-        "image": ""
-      }
-    ],
-    "items": [
-      {
-        "id": "6031a849-e93e-41fb-a41f-a2c4d8be8929",
-        "name": "毒液",
-        "name_en": "Venom",
-        "tier": "Silver",
-        "socket": "Socket_0",
-        "description": "使用此物品左侧的物品时，造成3剧毒。",
-        "image": "images/毒液.jpg"
-      },
-      {
-        "id": "c553a41a-1e8a-48c5-8b04-df60451b7795",
-        "name": "翡翠",
-        "name_en": "Emerald",
-        "tier": "Silver",
-        "socket": "Socket_1",
-        "description": "其他剧毒物品+3剧毒。",
-        "image": "images/翡翠.jpg"
-      },
-      {
-        "id": "694a08fe-e8ff-4a45-9693-4c68f11a1f8b",
-        "name": "催化剂",
-        "name_en": "Catalyst",
-        "tier": "Gold",
-        "socket": "Socket_2",
-        "description": "出售此物品时，转化你最左侧的物品。",
-        "image": "images/催化剂.jpg"
-      },
-      {
-        "id": "f7241086-8b2d-4882-80c9-a0ddb46910ad",
-        "name": "废品场长枪",
-        "name_en": "Junkyard Lance",
-        "tier": "Diamond",
-        "socket": "Socket_3",
-        "description": "每拥有一件小型物品（包括储存箱），就造成100伤害",
-        "image": "images/废品场长枪.jpg"
-      },
-      {
-        "id": "0b4d7632-b3b4-42ce-a5fc-3fafb8f1c409",
-        "name": "毒芹",
-        "name_en": "Hemlock",
-        "tier": "Bronze",
-        "socket": "Socket_6",
-        "description": "造成2剧毒",
-        "image": "images/毒芹.jpg"
-      },
-      {
-        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
-        "name": "灵质",
-        "name_en": "Ectoplasm",
-        "tier": "Diamond",
-        "socket": "Socket_7",
-        "description": "造成30剧毒",
-        "image": "images/灵质.jpg"
-      },
-      {
-        "id": "7b731de3-3598-46f4-b61f-75b7a0065d8a",
-        "name": "灵质",
-        "name_en": "Ectoplasm",
-        "tier": "Diamond",
-        "socket": "Socket_8",
-        "description": "造成30剧毒",
-        "image": "images/灵质.jpg"
-      },
-      {
-        "id": "6b02f653-a294-443e-8b85-2be47b6a1c12",
-        "name": "毒蜥",
-        "name_en": "Venomander",
-        "tier": "Gold",
-        "socket": "Socket_9",
-        "description": "造成1剧毒",
-        "image": "images/毒蜥.jpg"
-      }
-    ],
-    "image": "images/垃圾泰坦.jpg"
-  },
-  "7719B6D8-7977-4D49-88A2-DA29A19AD235": {
+  "锅炉斗士": {
     "name": "Boilerroom Brawler",
     "name_zh": "锅炉斗士",
     "skills": [
@@ -3924,7 +3835,7 @@
     ],
     "image": "images/锅炉斗士.jpg"
   },
-  "6D946FE1-13CC-4141-BC89-84981C4EF77F": {
+  "快乐杰克南瓜": {
     "name": "Joyful Jack",
     "name_zh": "快乐杰克南瓜",
     "skills": [
@@ -4004,7 +3915,7 @@
     ],
     "image": ""
   },
-  "0A633DEF-7135-408C-BCC7-785F5172EE34": {
+  "黑牛先生": {
     "name": "Mr. Moo",
     "name_zh": "黑牛先生",
     "skills": [
@@ -4111,7 +4022,7 @@
     ],
     "image": "images/黑牛先生.jpg"
   },
-  "B88974F2-E953-4C66-A231-7337FD409C53": {
+  "Monster_Battle_Player_Template_31": {
     "name": "Monster_Battle_Player_Template_31",
     "name_zh": "Monster_Battle_Player_Template_31",
     "skills": [
@@ -4137,7 +4048,7 @@
     ],
     "image": ""
   },
-  "D34242A2-02B0-4361-9402-E216CB12D165": {
+  "垃圾魔像": {
     "name": "Trash Golem",
     "name_zh": "垃圾魔像",
     "skills": [
@@ -4217,7 +4128,7 @@
     ],
     "image": ""
   },
-  "FD181D89-0706-4220-BB95-637AF574B61B": {
+  "恶蚊": {
     "name": "Dire Mosquito",
     "name_zh": "恶蚊",
     "skills": [
@@ -4306,7 +4217,7 @@
     ],
     "image": "images/恶蚊.jpg"
   },
-  "A0B78419-E252-4BDC-8861-4325ECBEADD0": {
+  "Preening Duelist Monster": {
     "name": "Preening Duelist Monster",
     "name_zh": "Preening Duelist Monster",
     "skills": [
@@ -4386,7 +4297,7 @@
     ],
     "image": ""
   },
-  "626224F6-4AEA-458F-8947-86A4798DE419": {
+  "英格恐狼": {
     "name": "Dire Inglet",
     "name_zh": "英格恐狼",
     "skills": [
@@ -4477,7 +4388,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fd6a935782dd2f5783a4ca1821d504091e2907dd@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f8c47b50839d67b2e6335be59b478aa85f0b782b@400.webp?v=2"
   },
-  "29549218-4198-44F1-8EBC-E118DD693DDB": {
+  "Training Dummy": {
     "name": "Training Dummy",
     "name_zh": "Training Dummy",
     "skills": [],
@@ -4494,7 +4405,7 @@
     ],
     "image": ""
   },
-  "E38C6E90-E0B3-495F-9D18-9FACF49A336F": {
+  "宇宙鹏鸟": {
     "name": "Cosmic Roc",
     "name_zh": "宇宙鹏鸟",
     "skills": [
@@ -4583,7 +4494,7 @@
     ],
     "image": ""
   },
-  "8E823884-A27D-46CD-BDDC-9815A224AAE4": {
+  "Monster_Battle_Player_Template_38": {
     "name": "Monster_Battle_Player_Template_38",
     "name_zh": "Monster_Battle_Player_Template_38",
     "skills": [
@@ -4609,7 +4520,7 @@
     ],
     "image": ""
   },
-  "518BD4B2-97F4-44F9-8B74-933962339751": {
+  "哈洛大哥": {
     "name": "Boss Harrow",
     "name_zh": "哈洛大哥",
     "skills": [
@@ -4689,7 +4600,7 @@
     ],
     "image": "images/哈洛大哥.jpg"
   },
-  "C4488147-71E7-4383-95D7-F96910221060": {
+  "血礁奇兵": {
     "name": "Bloodreef Raider",
     "name_zh": "血礁奇兵",
     "skills": [
@@ -4760,7 +4671,7 @@
     ],
     "image": ""
   },
-  "ECB2508B-07B1-4712-A82A-FB47C433ED6A": {
+  "放贷鲨": {
     "name": "Loan Shark",
     "name_zh": "放贷鲨",
     "skills": [
@@ -4822,7 +4733,7 @@
     ],
     "image": "images/放贷鲨.jpg"
   },
-  "54030DD4-8051-4C21-ABCD-9205DF585EA5": {
+  "地狱大魔神": {
     "name": "Infernal",
     "name_zh": "地狱大魔神",
     "skills": [
@@ -4893,7 +4804,7 @@
     ],
     "image": ""
   },
-  "20061BE9-0823-41C8-AFAE-60F49073058F": {
+  "戈尔贡贵妇": {
     "name": "Gorgon Noble",
     "name_zh": "戈尔贡贵妇",
     "skills": [
@@ -4964,7 +4875,7 @@
     ],
     "image": ""
   },
-  "616CE451-B85D-478A-82A8-8A28105994F5": {
+  "庞大实验体": {
     "name": "Hulking Experiment",
     "name_zh": "庞大实验体",
     "skills": [
@@ -5053,7 +4964,7 @@
     ],
     "image": "images/庞大实验体.jpg"
   },
-  "F57B2A63-E4A2-4D9A-88B3-B1C3A3CF36D7": {
+  "精英决斗者": {
     "name": "Elite Duelist",
     "name_zh": "精英决斗者",
     "skills": [
@@ -5161,7 +5072,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30fbbf59170e684b867528cb8b7a534f46fb4592@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/72b9872f966fafc18c2193f708d8127def5f15be@400.webp?v=2"
   },
-  "3F3D11C5-B943-45D1-80B3-A567130708F0": {
+  "地狱使者": {
     "name": "Infernal Envoy",
     "name_zh": "地狱使者",
     "skills": [
@@ -5223,7 +5134,7 @@
     ],
     "image": ""
   },
-  "D2FDF346-78AE-4694-8C9D-45285F09D408": {
+  "Monster_Battle_Player_Template_45": {
     "name": "Monster_Battle_Player_Template_45",
     "name_zh": "Monster_Battle_Player_Template_45",
     "skills": [
@@ -5249,7 +5160,7 @@
     ],
     "image": ""
   },
-  "B41BD40F-C380-4342-BFA2-3DBF772D956D": {
+  "Monster_Battle_Player_Template_33": {
     "name": "Monster_Battle_Player_Template_33",
     "name_zh": "Monster_Battle_Player_Template_33",
     "skills": [
@@ -5275,7 +5186,7 @@
     ],
     "image": ""
   },
-  "5B3DA8F1-5834-4A8D-967F-F98E8989B26F": {
+  "Monster_Battle_Player_Template_6": {
     "name": "Monster_Battle_Player_Template_6",
     "name_zh": "Monster_Battle_Player_Template_6",
     "skills": [
@@ -5310,7 +5221,7 @@
     ],
     "image": ""
   },
-  "7F6CECB6-3F07-4606-8D62-21C0B5E4E369": {
+  "拟形怪": {
     "name": "Mimic",
     "name_zh": "拟形怪",
     "skills": [
@@ -5326,7 +5237,7 @@
     "items": [],
     "image": ""
   },
-  "479AD0EC-51A9-4D26-BA63-8062D3814619": {
+  "Monster_Battle_Player_Template_48": {
     "name": "Monster_Battle_Player_Template_48",
     "name_zh": "Monster_Battle_Player_Template_48",
     "skills": [
@@ -5352,7 +5263,7 @@
     ],
     "image": ""
   },
-  "B54DBAD3-BC06-481A-BA99-A2421C047665": {
+  "沃卡斯打手": {
     "name": "Volkas Enforcer",
     "name_zh": "沃卡斯打手",
     "skills": [
@@ -5432,7 +5343,7 @@
     ],
     "image": "images/沃卡斯打手.jpg"
   },
-  "B6CA5C91-632D-4093-87F9-CBD0D649740E": {
+  "暴走破碎机": {
     "name": "Rogue Scrapper",
     "name_zh": "暴走破碎机",
     "skills": [
@@ -5505,7 +5416,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/85f994c6bee93f235a7759c14ebad0939c48f72b@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cccf18eb23c69165b12cb410d8a7d2da7976b8c4@400.webp?v=2"
   },
-  "E6782454-5C72-47F3-AC43-140F0CC7EB8F": {
+  "霜猴勇士": {
     "name": "Frost Street Challenger",
     "name_zh": "霜猴勇士",
     "skills": [
@@ -5569,7 +5480,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d20461179ae3753b1fc561276d06a8c299a432f1@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/704641f52cb4d6c75086ff0454dfe9b088df7228@400.webp?v=2"
   },
-  "04747408-DE0E-4944-B79D-23CA41008619": {
+  "舞火大师": {
     "name": "Flame Juggler",
     "name_zh": "舞火大师",
     "skills": [
@@ -5640,7 +5551,7 @@
     ],
     "image": ""
   },
-  "8EF44226-7C66-417E-9F31-4CC636A68866": {
+  "Monster_Battle_Player_Template_34": {
     "name": "Monster_Battle_Player_Template_34",
     "name_zh": "Monster_Battle_Player_Template_34",
     "skills": [
@@ -5666,7 +5577,7 @@
     ],
     "image": ""
   },
-  "EE37EA07-E024-447C-B89F-88B9940C19AF": {
+  "剑齿虎": {
     "name": "Sabretooth",
     "name_zh": "剑齿虎",
     "skills": [
@@ -5755,7 +5666,7 @@
     ],
     "image": "images/剑齿虎.jpg"
   },
-  "50A31EA0-ED74-484A-B04B-30F6FE273958": {
+  "章鱼": {
     "name": "Octopus",
     "name_zh": "章鱼",
     "skills": [
@@ -5853,7 +5764,7 @@
     ],
     "image": "images/章鱼.jpg"
   },
-  "5A882CDB-C8DF-497B-86D5-B27BA95225ED": {
+  "BattlePlayer 1": {
     "name": "BattlePlayer 1",
     "name_zh": "BattlePlayer 1",
     "skills": [
@@ -5888,7 +5799,7 @@
     ],
     "image": ""
   },
-  "4C1A67F6-F9B4-4A46-8481-D252A24544E7": {
+  "怪奇以太匠": {
     "name": "Eccentric Etherwright",
     "name_zh": "怪奇以太匠",
     "skills": [
@@ -5952,7 +5863,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/15a237c0a01fab9f122e617cd6aece6f781d2353@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e6806cf540b83658fd1dffda15efdcae002ea99e@400.webp?v=2"
   },
-  "67F30669-0E12-4D59-82FC-6B033FA064C3": {
+  "暴徒": {
     "name": "Thug",
     "name_zh": "暴徒",
     "skills": [
@@ -6014,7 +5925,7 @@
     ],
     "image": "images/暴徒.jpg"
   },
-  "F0D347B0-2E9A-46DA-9D82-45B65244B0F4": {
+  "初学学徒": {
     "name": "Dabbling Apprentice",
     "name_zh": "初学学徒",
     "skills": [
@@ -6078,7 +5989,7 @@
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7153547e4f7e27ea13599e89e12e9aa3b477e770@400.webp",
     "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29d374ede44b9726364f6049469d0a968ec51b35@400.webp?v=2"
   },
-  "C2FD54DF-9CD2-4F61-AE6E-9B6C8CF87785": {
+  "菲罗斯汗": {
     "name": "Ferros Khan",
     "name_zh": "菲罗斯汗",
     "skills": [
@@ -6149,7 +6060,7 @@
     ],
     "image": ""
   },
-  "58BA322D-A76C-4106-B91C-37EA207353A0": {
+  "巨龙": {
     "name": "Dragon",
     "name_zh": "巨龙",
     "skills": [

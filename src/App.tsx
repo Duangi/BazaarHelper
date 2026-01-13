@@ -23,9 +23,19 @@ interface ItemData {
   displayImg?: string; 
 }
 
+interface TierInfo {
+  description: string[];
+  extra_description: string[];
+  cd: string | null;
+}
+
 interface MonsterSubItem { 
   name: string; 
-  description: string; 
+  name_en?: string;
+  tier?: string;
+  current_tier?: string;
+  tags?: string[];
+  tiers: Record<string, TierInfo | null>;
   image: string; 
   displayImg?: string; 
 }
@@ -33,9 +43,11 @@ interface MonsterSubItem {
 interface MonsterData { 
   name: string; 
   name_zh: string; 
-  image: string; 
+  available: string;
+  health: number;
   skills: MonsterSubItem[]; 
   items: MonsterSubItem[]; 
+  image: string;
   displayImg?: string; 
 }
 
@@ -63,13 +75,21 @@ const ID_TO_COLOR: Record<string, string> = {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabType>("hand");
+  const [activeTab, setActiveTab] = useState<TabType>("monster");
   const [syncData, setSyncData] = useState<Record<TabType, any[]>>({ hand: [], stash: [], monster: [] });
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [manualMonsters, setManualMonsters] = useState<MonsterData[]>([]);
+  const [allMonsters, setAllMonsters] = useState<Record<string, MonsterData>>({});
+  const [selectedDay, setSelectedDay] = useState<string>("");
+  const [identifiedNames, setIdentifiedNames] = useState<string[]>([]); // 存储按顺序识别到的怪物名
   const [pinnedItems, setPinnedItems] = useState<Map<string, number>>(new Map()); // 存储置顶物品ID和置顶时间戳
   const [pinnedCounter, setPinnedCounter] = useState(0); // 置顶计数器，用于确定置顶顺序
+  const [isRecognizing, setIsRecognizing] = useState(false); // 是否正在识别怪物
+  const [templateLoading, setTemplateLoading] = useState({ loaded: 0, total: 0, is_complete: false, current_name: "" }); // 模板加载进度
+  const [currentDay, setCurrentDay] = useState<number | null>(null);
+  const [progressionMode, setProgressionMode] = useState<Set<string>>(new Set()); // 记录哪些卡片开启了“数值横评模式”
+  const [probabilities, setProbabilities] = useState<any>(null);
+
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const appWindow = getCurrentWindow(); // 获取当前窗口实例
   
@@ -102,6 +122,33 @@ export default function App() {
     });
   };
 
+ // 获取当前 Day 并定期刷新
+ useEffect(() => {
+   let mounted = true;
+   const fetchDay = async () => {
+     try {
+       const d = await invoke<number>("get_current_day", { hours_per_day: 6, retro: true });
+       if (mounted) {
+         if (d !== currentDay) {
+           setCurrentDay(d);
+           // 初始加载或检测到变化时，更新选中的标签
+           updateDayTabSelection(d);
+         }
+       }
+     } catch (e) {
+       console.warn("get_current_day failed:", e);
+     }
+   };
+   fetchDay();
+   // 移除 setInterval 自动刷新，只在初始化和收到后端事件时刷新
+   return () => { mounted = false; };
+ }, []); // 仅在挂载时运行一次
+
+ // 辅助函数：根据天数数字更新选中的 Tab
+ const updateDayTabSelection = (day: number) => {
+   const dayStr = day >= 10 ? "Day 10+" : `Day ${day}`;
+   setSelectedDay(dayStr);
+ };
   // 获取排序后的物品列表（手牌和仓库）
   const getSortedItems = (items: ItemData[]) => {
     return [...items].sort((a, b) => {
@@ -128,6 +175,7 @@ export default function App() {
       return convertFileSrc(fullPath);
     } catch { return ""; }
   };
+  
   // 启动时显示版本信息
   useEffect(() => {
     const showVersionInfo = async () => {
@@ -150,6 +198,77 @@ export default function App() {
     
     showVersionInfo();
   }, []);
+
+  // 轮询检查模板加载进度
+  useEffect(() => {
+    let timer: any = null;
+    
+    const checkProgress = async () => {
+      try {
+        const progress = await invoke("get_template_loading_progress") as any;
+        setTemplateLoading(progress);
+        
+        // 如果加载完成，停止轮询
+        if (progress.is_complete && timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      } catch (e) {
+        console.error("获取加载进度失败:", e);
+      }
+    };
+    
+    // 立即执行一次
+    checkProgress();
+    
+    // 每500ms检查一次
+    timer = setInterval(checkProgress, 500);
+    
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, []); // 只在mount时执行一次
+
+  // 监听后端事件
+  useEffect(() => {
+    let unlistenMonster: any = null;
+    let unlistenDay: any = null;
+    
+    const setupListeners = async () => {
+      // 1. 怪物识别触发
+      unlistenMonster = await listen<number | null>('trigger-monster-recognition', async (event) => {
+        console.log("收到自动识别触发事件, Day:", event.payload);
+        const day = event.payload;
+        if (day) {
+          const dayLabel = day >= 10 ? "Day 10+" : `Day ${day}`;
+          setSelectedDay(dayLabel);
+        }
+        setTimeout(async () => {
+           // 传入事件带过来的天数
+           await handleAutoRecognition(day);
+        }, 500);
+      });
+
+      // 2. 天数更新
+      unlistenDay = await listen<number>('day-update', (event) => {
+        console.log("收到天数更新事件:", event.payload);
+        const d = event.payload;
+        setCurrentDay(d);
+        // 同步切换 UI 上的天数按钮选中状态
+        const dayLabel = d >= 10 ? "Day 10+" : `Day ${d}`;
+        setSelectedDay(dayLabel);
+      });
+    };
+    
+    setupListeners();
+    
+    return () => {
+      if (unlistenMonster) unlistenMonster();
+      if (unlistenDay) unlistenDay();
+    };
+  }, [currentDay]);
 
   // 监听窗口移动事件，检测用户拖拽
   useEffect(() => {
@@ -243,21 +362,275 @@ export default function App() {
     return () => { l.then(f => f()).catch(console.error); };
   }, []);
 
-  // 3. 怪物搜索逻辑
-  const handleSearch = async (val: string) => {
-    setSearchQuery(val);
-    if (!val) { setManualMonsters([]); return; }
-    try {
-      const res: MonsterData[] = await invoke("search_monsters", { query: val });
-      const processed = await Promise.all(res.map(async m => ({
-        ...m,
-        displayImg: await getImg(m.image),
-        skills: await Promise.all(m.skills.map(async s => ({ ...s, displayImg: await getImg(s.image) }))),
-        items: await Promise.all(m.items.map(async i => ({ ...i, displayImg: await getImg(i.image) })))
-      })));
-      setManualMonsters(processed);
-    } catch (e) { console.error(e); }
+
+  // 加载概率数据
+  useEffect(() => {
+    const loadProbabilities = async () => {
+      try {
+        const res = await invoke("get_card_probabilities");
+        console.log("加载概率数据成功:", res);
+        setProbabilities(res);
+      } catch (e) {
+        console.error("加载概率数据失败:", e);
+      }
+    };
+    loadProbabilities();
+  }, []);
+
+  // 加载全量怪物数据
+  useEffect(() => {
+    const loadAllMonsters = async () => {
+      try {
+        const res: Record<string, MonsterData> = await invoke("get_all_monsters");
+        setAllMonsters(res);
+      } catch (e) {
+        console.error("加载全量怪物失败:", e);
+      }
+    };
+    loadAllMonsters();
+  }, []);
+
+  // 当 selectedDay 或 allMonsters 改变时，更新显示的怪物
+  useEffect(() => {
+    if (activeTab === "monster") {
+       updateFilteredMonsters(selectedDay);
+    }
+  }, [activeTab, selectedDay, allMonsters, identifiedNames]);
+
+  const updateFilteredMonsters = async (day: string) => {
+    const monstersOnDay = Object.values(allMonsters).filter(m => m.available === day);
+    
+    // 根据识别结果进行排序
+    const sorted = [...monstersOnDay].sort((a, b) => {
+      const indexA = identifiedNames.indexOf(a.name_zh); // 改为使用中文名匹配 backend 的 key
+      const indexB = identifiedNames.indexOf(b.name_zh);
+      
+      const posA = indexA === -1 ? 999 : indexA;
+      const posB = indexB === -1 ? 999 : indexB;
+      
+      return posA - posB;
+    });
+
+    const processed = await Promise.all(sorted.map(processMonsterImages));
+    setManualMonsters(processed);
   };
+
+  const processMonsterImages = async (m: MonsterData) => {
+    return {
+      ...m,
+      displayImg: await getImg(m.image),
+      skills: await Promise.all(m.skills.map(async s => ({ 
+        ...s, 
+        displayImg: await getImg(s.image) 
+      }))),
+      items: await Promise.all(m.items.map(async i => ({ 
+        ...i, 
+        displayImg: await getImg(i.image) 
+      })))
+    };
+  };
+
+  const renderTierInfo = (item: MonsterSubItem) => {
+    const isProgressionActive = progressionMode.has(item.name + (item.current_tier || ''));
+    
+    const toggleProgression = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const key = item.name + (item.current_tier || '');
+      const newModes = new Set(progressionMode);
+      if (newModes.has(key)) newModes.delete(key);
+      else newModes.add(key);
+      setProgressionMode(newModes);
+    };
+
+    // 辅助格式化函数
+    const formatDescription = (text: string) => {
+      const parts = text.split(/(\[Locked\]|Quest:)/g);
+      return parts.map((part, i) => {
+        if (part === "[Locked]") return <span key={i} className="icon-locked" title="Locked">🔒</span>;
+        if (part === "Quest:") return <span key={i} className="icon-quest" title="Quest">📜</span>;
+        return part;
+      });
+    };
+
+    // 兼容性修整：如果 current_tier 不存在，尝试根据名称中是否包含级位来猜测
+    let currentTier = "bronze";
+    
+    if (item.current_tier) {
+      currentTier = item.current_tier.toLowerCase();
+    } else {
+      // 检查 tiers 对象里有哪些 key，有些数据可能直接把数据塞到了特定的 key 里
+      const availableTiers = Object.keys(item.tiers);
+      if (availableTiers.length > 0) {
+        // 如果只有一个 key 或者包含特定的 key
+        if (availableTiers.includes("bronze")) currentTier = "bronze";
+        else if (availableTiers.includes("silver")) currentTier = "silver";
+        else if (availableTiers.includes("gold")) currentTier = "gold";
+        else currentTier = availableTiers[0]; // 实在不行拿第一个
+      }
+    }
+
+    const tierData = item.tiers[currentTier];
+    // 如果该级位没数据，显示第一个有数据的级位
+    const finalData = tierData || Object.values(item.tiers).find(t => t !== null);
+    
+    // --- 升级效果合并逻辑 (用于显示在卡片上或悬浮框) ---
+    const getProgressionText = (line: string, lineIdx: number) => {
+      const tierSequence = ['bronze', 'silver', 'gold', 'diamond'];
+      const activeTiers = tierSequence
+        .map(t => ({ tier: t, data: item.tiers[t] }))
+        .filter(t => t.data !== null);
+      
+      const numRegex = /(\d+(\.\d+)?%?)/g;
+      const matches = [...line.matchAll(numRegex)];
+      
+      if (matches.length > 0 && activeTiers.length > 1) {
+        let lastIndex = 0;
+        const parts = [];
+        matches.forEach((match, mIdx) => {
+          parts.push(line.substring(lastIndex, match.index));
+          parts.push(
+            <span key={mIdx} className="progression-inline-values">
+              {activeTiers.map((at, i) => {
+                const atMatches = [...(at.data!.description[lineIdx] || "").matchAll(numRegex)];
+                const val = atMatches[mIdx] ? atMatches[mIdx][0] : match[0];
+                return (
+                  <span key={at.tier}>
+                    <span className={`val-${at.tier}`}>{val}</span>
+                    {i < activeTiers.length - 1 && <span className="upgrade-arrow">»</span>}
+                  </span>
+                );
+              })}
+            </span>
+          );
+          lastIndex = match.index! + match[0].length;
+        });
+        parts.push(line.substring(lastIndex));
+        return parts;
+      }
+      return formatDescription(line);
+    };
+
+    if (!finalData) {
+      return (
+        <div className="sub-item-card tier-unknown">
+           <div className="sub-item-header">
+              <div className="sub-item-img-wrap">
+                <img src={item.displayImg} className="sub-item-img" />
+              </div>
+              <span className="sub-item-name">{item.name} (无描述)</span>
+           </div>
+        </div>
+      );
+    }
+
+    const borderColorMap: Record<string, string> = {
+      bronze: "#CD7F32",
+      silver: "#C0C0C0",
+      gold: "#FFD700",
+      diamond: "#B9F2FF",
+    };
+    const borderColor = borderColorMap[currentTier] || borderColorMap.bronze;
+
+    return (
+      <div 
+        className={`sub-item-card tier-${currentTier} ${isProgressionActive ? 'progression-active' : ''}`} 
+        style={{ borderLeft: `4px solid ${borderColor}` }}
+        onClick={toggleProgression}
+      >
+        <div className="sub-item-header">
+          <div className="sub-item-img-wrap" style={{ outline: `2px solid ${borderColor}` }}>
+            <img src={item.displayImg} className="sub-item-img" />
+          </div>
+          <div className="sub-item-title-row">
+            <span className="sub-item-name">{item.name}</span>
+            {finalData.cd && <div className="sub-item-cd">⏳ {finalData.cd}</div>}
+          </div>
+        </div>
+        <div className="sub-item-desc">
+          {finalData.description.map((d, i) => (
+            <div key={i} className="desc-line">
+              {isProgressionActive ? getProgressionText(d, i) : formatDescription(d)}
+            </div>
+          ))}
+          {finalData.extra_description?.map((d, i) => (
+            <div key={`extra-${i}`} className="desc-line extra-desc">
+              {isProgressionActive ? getProgressionText(d, i) : formatDescription(d)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // 手动修改当前天数
+  const handleDayChange = async (newDay: number) => {
+    if (newDay < 1) return;
+    setCurrentDay(newDay);
+    updateDayTabSelection(newDay); // 手动修改时也跳转 Tab
+    try {
+      await invoke("update_day", { day: newDay });
+    } catch (e) {
+      console.error("更新天数失败:", e);
+    }
+  };
+
+  const handleAutoRecognition = async (day: number | null) => {
+    setIsRecognizing(true);
+    try {
+      const results = await invoke("recognize_monsters_from_screenshot", { day }) as any[];
+      if (results && results.length > 0) {
+        const names = new Array(3).fill("");
+        results.forEach(r => {
+          if (r.position >= 1 && r.position <= 3) names[r.position - 1] = r.name;
+        });
+        const validNames = names.filter(n => n !== "");
+        console.log(`[Recognition Success] Found: ${validNames.join(', ')}`);
+        setIdentifiedNames(validNames);
+        // 不再自动跳转到 monster tab
+        // setActiveTab("monster");
+      }
+    } catch (e) {
+      console.error("自动识别失败:", e);
+    } finally {
+      setIsRecognizing(false);
+    }
+  };
+
+  // 手动触发怪物识别
+  const handleManualRecognition = async () => {
+    setIsRecognizing(true);
+    try {
+      console.log("开始手动识别怪物...");
+      // 传入当前天数以加速识别
+      const results = await invoke("recognize_monsters_from_screenshot", { day: currentDay }) as any[];
+      console.log("识别结果:", results);
+      
+      if (results && results.length > 0) {
+        // 按照 position (1, 2, 3) 提取怪物名
+        const names = new Array(3).fill("");
+        results.forEach(r => {
+          if (r.position >= 1 && r.position <= 3) {
+            names[r.position - 1] = r.name;
+          }
+        });
+        
+        // 过滤掉空的，保留 [左, 中, 右] 的顺序
+        const validNames = names.filter(n => n !== "");
+        console.log("%c[识别成功]", "color: #ffcd19; font-weight: bold", "识别到的怪物顺序 (从左至右):", validNames);
+        setIdentifiedNames(validNames);
+        
+        // setActiveTab("monster");
+      } else {
+        console.log("未识别到怪物");
+        setIdentifiedNames([]);
+      }
+    } catch (e) {
+      console.error("识别失败:", e);
+    } finally {
+      setIsRecognizing(false);
+    }
+  };
+
 
   // 4. 窗口定位与尺寸控制 (更新界面居中、overlay贴边)
   useEffect(() => {
@@ -363,7 +736,9 @@ export default function App() {
   }
 
   return (
-    <div className={`overlay ${isCollapsed ? 'collapsed' : 'expanded'}`}>
+    <div 
+      className={`overlay ${isCollapsed ? 'collapsed' : 'expanded'}`}
+    >
       {!isCollapsed && <div className="resize-handle" onMouseDown={handleResize} />}
       
       <div className="top-bar">
@@ -412,9 +787,9 @@ export default function App() {
           )} */}
           
           <nav className="nav-bar">
-            {(["hand", "stash", "monster"] as TabType[]).map(t => (
+            {(["monster", "hand", "stash"] as TabType[]).map(t => (
               <div key={t} className={`nav-item ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
-                {t === 'hand' ? '手牌' : t === 'stash' ? '仓库' : '野怪查询'}
+                {t === 'monster' ? '野怪一览' : t === 'hand' ? '手牌' : '仓库'}
               </div>
             ))}
           </nav>
@@ -423,20 +798,108 @@ export default function App() {
             <div className="items" ref={wrapRef}>
               {activeTab === "monster" ? (
                 <>
-                  <div className="search-container">
-                    <input className="search-input" placeholder="🔍 输入怪物名称查询..." value={searchQuery} onChange={e => handleSearch(e.target.value)} />
-                  </div>
-                  {manualMonsters.map((m, i) => (
-                    <div key={i} className="monster-card">
-                      <div className="monster-header"><img src={m.displayImg} className="monster-avatar" alt="" /><div>{m.name_zh}</div></div>
-                      <div className="monster-grid">
-                        {m.skills.map((s, idx) => <div key={idx} className="mini-cell skill-cell"><img src={s.displayImg} className="mini-img" alt="" /><div><strong>{s.name}</strong><p>{s.description}</p></div></div>)}
-                        {m.items.map((it, idx) => <div key={idx} className="mini-cell item-border"><img src={it.displayImg} className="mini-img" alt="" /><div><strong>{it.name}</strong><p>{it.description}</p></div></div>)}
+                  <div className="monster-controls">
+                    <div className="day-tabs">
+                      <div className="day-row">
+                        {["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"].map(d => (
+                          <div key={d} className={`day-tab ${selectedDay === d ? 'active' : ''}`} onClick={() => {
+                            setSelectedDay(d);
+                            const dayNum = parseInt(d.split(" ")[1]);
+                            handleDayChange(dayNum);
+                          }}>{d}</div>
+                        ))}
+                      </div>
+                      <div className="day-row">
+                        {["Day 6", "Day 7", "Day 8", "Day 9", "Day 10+"].map(d => (
+                          <div key={d} className={`day-tab ${selectedDay === d ? 'active' : ''}`} onClick={() => {
+                            setSelectedDay(d);
+                            // 将 Day 10+ 映射为 10，其余提取数字部分
+                            const dayNum = d === "Day 10+" ? 10 : parseInt(d.split(" ")[1]);
+                            handleDayChange(dayNum);
+                          }}>{d}</div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </>
-              ) : (
+
+                    <div className="card-probabilities" style={{ 
+                      margin: '10px 0', 
+                      padding: '8px 0', 
+                      background: 'rgba(255, 255, 255, 0.03)', 
+                      borderRadius: '8px', 
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      minHeight: '34px'
+                    }}>
+                      {(() => {
+                         if (!probabilities) return <div style={{ textAlign: 'center', fontSize: '12px', color: '#666' }}>加载概率中...</div>;
+                         let dayKey = selectedDay || "Day 1";
+                         if (dayKey === "Day 10+") dayKey = "Day 9+";
+                         const prob = probabilities[dayKey] || probabilities["Day 9+"];
+                         if (!prob) return null;
+                         return (
+                           <div className="prob-row" style={{ display: 'flex', justifyContent: 'center', gap: '22px', fontSize: '15px', fontWeight: '900', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
+                             <span style={{ color: '#CD7F32' }}>{(prob.bronze * 100).toFixed(0)}%</span>
+                             <span style={{ color: '#C0C0C0' }}>{(prob.silver * 100).toFixed(0)}%</span>
+                             <span style={{ color: '#FFD700' }}>{(prob.gold * 100).toFixed(0)}%</span>
+                             <span style={{ color: '#B9F2FF' }}>{(prob.diamond * 100).toFixed(0)}%</span>
+                           </div>
+                         );
+                      })()}
+                    </div>
+
+                    <div className="search-container">
+                      <button 
+                        className="manual-recognition-btn" 
+                        onClick={handleManualRecognition}
+                        disabled={isRecognizing || !templateLoading.is_complete}
+                        style={{ width: '100%' }}
+                      >
+                        {isRecognizing ? "识别中..." : "🎯 识别画面中的怪物"}
+                      </button>
+                    </div>
+
+                    {!templateLoading.is_complete && templateLoading.total > 0 && (
+                      <div className="loading-progress">
+                        <div className="progress-text">加载怪物模板: {templateLoading.loaded}/{templateLoading.total}</div>
+                        <div className="progress-bar"><div className="progress-fill" style={{ width: `${templateLoading.total > 0 ? (templateLoading.loaded / templateLoading.total * 100) : 0}%` }} /></div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="monster-list-v2">
+                    {manualMonsters.map((m, i) => {
+                      const isIdentified = identifiedNames.includes(m.name_zh);
+                      return (
+                        <div key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''}`}>
+                          <div className="monster-header-v2">
+                            <div className="avatar-wrap">
+                              <img src={m.displayImg} className="monster-avatar-v2" alt="" />
+                            </div>
+                            <div className="monster-info-v2">
+                              <div className="monster-name-zh">
+                                {m.name_zh}
+                                {isIdentified && <span className="id-badge">MATCH</span>}
+                              </div>
+                              <div className="monster-health">❤️ {m.health}</div>
+                            </div>
+                            <div className="monster-available-tag">{m.available}</div>
+                          </div>
+                        <div className="monster-assets-grid">
+                          <div className="assets-section">
+                            <div className="section-title">技能 (Skills)</div>
+                            {m.skills.map((s, idx) => <div key={idx}>{renderTierInfo(s)}</div>)}
+                          </div>
+                          <div className="assets-section">
+                            <div className="section-title">物品 (Items)</div>
+                            {m.items.map((it, idx) => <div key={idx}>{renderTierInfo(it)}</div>)}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {manualMonsters.length === 0 && <div className="empty-tip">该天数下暂无怪物数据</div>}
+                </div>
+              </>
+            ) : (
                 getSortedItems(syncData[activeTab]).map(item => (
                   <div key={item.id} className="content-wrap">
                     <div className="left-section">
