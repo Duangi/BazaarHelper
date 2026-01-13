@@ -277,6 +277,37 @@
           }
         },
         "image": "images/打火机.jpg"
+      },
+      {
+        "id": "",
+        "name": "余烬",
+        "name_en": "",
+        "tier": "Bronze+",
+        "current_tier": "Bronze",
+        "tags": ["LOOT"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +1。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +2。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +4。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +8。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/余烬.jpg"
       }
     ],
     "image": "images_monster/火灵.jpg"
@@ -387,6 +418,68 @@
           }
         },
         "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "",
+        "name": "獠牙",
+        "name_en": "",
+        "tier": "Bronze+",
+        "current_tier": "Bronze",
+        "tags": ["WEAPON"],
+        "tiers": {
+          "bronze": {
+            "description": ["造成5伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "silver": {
+            "description": ["造成10伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "gold": {
+            "description": ["造成15伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "diamond": {
+            "description": ["造成20伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          }
+        },
+        "image": "images/獠牙.jpg"
+      },
+      {
+        "id": "",
+        "name": "兽皮",
+        "name_en": "",
+        "tier": "Bronze+",
+        "current_tier": "Bronze",
+        "tags": ["LOOT"],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/兽皮.jpg"
       }
     ],
     "image": "images_monster/獠牙英格狼.jpg"
@@ -599,7 +692,7 @@
         "id": "",
         "name": "丝绸围巾",
         "tier": "BRONZE+",
-        "current_tier": "Silver",
+        "current_tier": "Bronze",
         "tags": ["APPAREL", "PYG"],
         "tiers": {
           "bronze": {
@@ -640,6 +733,36 @@
           }
         },
         "image": "images/丝绸围巾.jpg"
+      },
+      {
+        "id": "",
+        "name": "废料",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": ["LOOT"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧的护盾物品+8护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧的护盾物品+16护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧的护盾物品+32护盾。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/废料.jpg"
       }
     ],
     "image": "images_monster/怨念和服.jpg"
@@ -860,7 +983,7 @@
         "id": "",
         "name": "废料",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Gold",
         "tags": ["LOOT"],
         "tiers": {
           "bronze": {
@@ -890,7 +1013,7 @@
         "id": "",
         "name": "机能棒",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["FOOD", "DOO"],
         "tiers": {
           "bronze": {
@@ -928,7 +1051,7 @@
         "id": "",
         "name": "废品场大棒",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
@@ -958,7 +1081,7 @@
         "id": "",
         "name": "废品场维修机器人",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["FRIEND", "TECH"],
         "tiers": {
           "bronze": {
@@ -1021,6 +1144,36 @@
           }
         },
         "image": "images/尖刺铁丝网.jpg"
+      },
+      {
+        "id": "",
+        "name": "医疗包",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
+        "tags": ["LOOT"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高5。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高10。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高20。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高40。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/医疗包.jpg"
       }
     ],
     "image": "images_monster/暴走破碎机.jpg"
@@ -1081,7 +1234,7 @@
         "id": "",
         "name": "椰子",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Gold",
         "tags": ["FOOD"],
         "tiers": {
           "bronze": {
@@ -1111,7 +1264,7 @@
         "id": "",
         "name": "碾骨爪",
         "tier": "Silver+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "AQUATIC"],
         "tiers": {
           "bronze": null,
@@ -1137,7 +1290,7 @@
         "id": "",
         "name": "海螺壳",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["AQUATIC", "VAN"],
         "tiers": {
           "bronze": {
@@ -1182,7 +1335,7 @@
         "id": "",
         "name": "前向护盾",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["VAN", "PYG", "DOO", "STE", "JUL"],
         "tiers": {
           "bronze": {
@@ -1210,11 +1363,41 @@
       }
     ],
     "items": [
+        {
+        "id": "",
+        "name": "废料",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["LOOT", "1 tag"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧的护盾物品 +4 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧的护盾物品 +8 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧的护盾物品 +16 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧的护盾物品 +32 护盾。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/废料.jpg"
+      },
       {
         "id": "",
         "name": "獠牙头盔",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["WEAPON", "APPAREL", "RELIC", "PYG"],
         "tiers": {
           "bronze": {
@@ -1244,7 +1427,7 @@
         "id": "",
         "name": "古董剑",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
@@ -1274,7 +1457,7 @@
         "id": "",
         "name": "手斧",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "TOOL", "PYG"],
         "tiers": {
           "bronze": {
@@ -1304,7 +1487,7 @@
         "id": "",
         "name": "木桨",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["WEAPON", "AQUATIC", "PYG"],
         "tiers": {
           "bronze": {
@@ -1334,7 +1517,7 @@
         "id": "",
         "name": "神庙探险券",
         "tier": "Legendary",
-        "current_tier": "Gold",
+        "current_tier": "Legendary",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -1364,7 +1547,7 @@
         "id": "",
         "name": "磨刀石",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": ["LOOT"],
         "tiers": {
           "bronze": {
@@ -1409,7 +1592,7 @@
         "id": "",
         "name": "扒手",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -1439,7 +1622,7 @@
         "id": "",
         "name": "敏锐眼光",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["VAN", "PYG", "DOO", "MAK", "STE", "JUL"],
         "tiers": {
           "bronze": {
@@ -1471,7 +1654,7 @@
         "id": "",
         "name": "保险箱",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["PYG"],
         "tiers": {
           "bronze": {
@@ -1501,7 +1684,7 @@
         "id": "",
         "name": "暗影斗篷",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["APPAREL"],
         "tiers": {
           "bronze": {
@@ -1543,7 +1726,7 @@
         "id": "",
         "name": "藏刃匕首",
         "tier": "Silver+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "VAN"],
         "tiers": {
           "bronze": null,
@@ -1569,7 +1752,7 @@
         "id": "",
         "name": "贪婪渡鸦",
         "tier": "Bronze+",
-        "current_tier": "Gold",
+        "current_tier": "Bronze",
         "tags": ["FRIEND", "WEAPON", "MAK"],
         "tiers": {
           "bronze": {
@@ -1602,6 +1785,36 @@
           }
         },
         "image": "images/贪婪渡鸦.jpg"
+      },
+      {
+        "id": "",
+        "name": "磨刀石",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["LOOT", "1 tag"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧的武器伤害提高 4。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧的武器伤害提高 8。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧的武器伤害提高 16。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧的武器伤害提高 32。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/磨刀石.jpg"
       }
     ],
     "image": "images_monster/贪婪窃贼.jpg"
@@ -1651,7 +1864,7 @@
         "id": "",
         "name": "神庙探险券",
         "tier": "LEGENDARY",
-        "current_tier": "Silver",
+        "current_tier": "Legendary",
         "tags": ["1 tag"],
         "tiers": {
           "bronze": {
@@ -1681,7 +1894,7 @@
         "id": "",
         "name": "废料",
         "tier": "BRONZE+",
-        "current_tier": "Silver",
+        "current_tier": "Gold",
         "tags": ["LOOT", "1 tag"],
         "tiers": {
           "bronze": {
@@ -1711,7 +1924,7 @@
         "id": "",
         "name": "力场",
         "tier": "SILVER+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": ["TECH", "WEAPON", "DOO"],
         "tiers": {
           "bronze": null,
@@ -1737,7 +1950,7 @@
         "id": "",
         "name": "护目镜",
         "tier": "BRONZE+",
-        "current_tier": "Silver",
+        "current_tier": "Bronze",
         "tags": ["TOOL", "APPAREL", "STE"],
         "tiers": {
           "bronze": {
@@ -1882,10 +2095,49 @@
       },
       {
         "id": "",
+        "name": "淬锋钢",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": ["TOOL"],
+        "tiers": {
+          "bronze": {
+            "description": [],
+            "extra_description": [
+              "此物品右侧的武器伤害提高 +6 (限本场战斗)。"
+            ],
+            "cd": "4.0"
+          },
+          
+          "silver": {
+            "description": [],
+            "extra_description": [
+              "此物品右侧的武器伤害提高 +12 (限本场战斗)。"
+            ],
+            "cd": "4.0"
+          },
+          "gold": {
+            "description": [],
+            "extra_description": [
+              "此物品右侧的武器伤害提高 +18 (限本场战斗)。"
+            ],
+            "cd": "4.0"
+          },
+          "diamond": {
+            "description": [],
+            "extra_description": [
+              "此物品右侧的武器伤害提高 +24 (限本场战斗)。"
+            ],
+            "cd": "4.0"
+          }
+        },
+        "image": ""
+      },
+      {
+        "id": "",
         "name": "友好玩偶",
-        "tier": "SILVER+",
-        "current_tier": "Gold",
-        "tags": ["WEAPON", "FRIEND", "TOY"],
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": ["TOOL"],
         "tiers": {
           "bronze": null,
           "silver": {
@@ -1978,7 +2230,7 @@
       },
       {
         "id": "",
-        "name": "打破锁铐",
+        "name": "打破镣铐",
         "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": [],
@@ -2000,7 +2252,7 @@
             "cd": "8.0"
           }
         },
-        "image": "images/打破锁铐.jpg"
+        "image": "images/打破镣铐.jpg"
       }
     ],
     "image": "images_monster/腹语者.jpg"
@@ -6108,7 +6360,7 @@
     "items": [
       {
         "id": "",
-        "name": "打破锁铐",
+        "name": "打破镣铐",
         "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": [],
@@ -6130,7 +6382,7 @@
             "cd": "8.0"
           }
         },
-        "image": "images/打破锁铐.jpg"
+        "image": "images/打破镣铐.jpg"
       },
       {
         "id": "",

@@ -10,8 +10,6 @@ use std::{thread, time};
 
 pub mod monster_recognition;
 
-const PROBABILITY_JSON: &str = include_str!("../resources/card_appearance_probability.json");
-
 // --- Data Models ---
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PersistentState {
@@ -204,12 +202,6 @@ fn update_day(day: u32) -> Result<(), String> {
     save_state(&state);
     println!("[State] Manually updated Day to: {}", day);
     Ok(())
-}
-
-#[tauri::command]
-fn get_card_probabilities() -> Result<serde_json::Value, String> {
-    let json: serde_json::Value = serde_json::from_str(PROBABILITY_JSON).map_err(|e| e.to_string())?;
-    Ok(json)
 }
 
 fn calculate_day_from_log(content: &str, hours: u32, retro: bool) -> Option<u32> {
@@ -456,8 +448,7 @@ pub fn run() {
             recognize_monsters_from_screenshot,
             get_template_loading_progress,
             get_current_day,
-            update_day,
-            get_card_probabilities
+            update_day
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

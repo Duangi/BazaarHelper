@@ -88,7 +88,6 @@ export default function App() {
   const [templateLoading, setTemplateLoading] = useState({ loaded: 0, total: 0, is_complete: false, current_name: "" }); // 模板加载进度
   const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [progressionMode, setProgressionMode] = useState<Set<string>>(new Set()); // 记录哪些卡片开启了“数值横评模式”
-  const [probabilities, setProbabilities] = useState<any>(null);
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const appWindow = getCurrentWindow(); // 获取当前窗口实例
@@ -363,20 +362,6 @@ export default function App() {
   }, []);
 
 
-  // 加载概率数据
-  useEffect(() => {
-    const loadProbabilities = async () => {
-      try {
-        const res = await invoke("get_card_probabilities");
-        console.log("加载概率数据成功:", res);
-        setProbabilities(res);
-      } catch (e) {
-        console.error("加载概率数据失败:", e);
-      }
-    };
-    loadProbabilities();
-  }, []);
-
   // 加载全量怪物数据
   useEffect(() => {
     const loadAllMonsters = async () => {
@@ -474,34 +459,43 @@ export default function App() {
     const finalData = tierData || Object.values(item.tiers).find(t => t !== null);
     
     // --- 升级效果合并逻辑 (用于显示在卡片上或悬浮框) ---
-    const getProgressionText = (line: string, lineIdx: number) => {
-      const tierSequence = ['bronze', 'silver', 'gold', 'diamond'];
+    const getProgressionText = (line: string, lineIdx: number, field: 'description' | 'extra_description' = 'description') => {
+      const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
       const activeTiers = tierSequence
         .map(t => ({ tier: t, data: item.tiers[t] }))
-        .filter(t => t.data !== null);
+        .filter(t => t.data !== null && t.data !== undefined);
       
       const numRegex = /(\d+(\.\d+)?%?)/g;
       const matches = [...line.matchAll(numRegex)];
       
       if (matches.length > 0 && activeTiers.length > 1) {
         let lastIndex = 0;
-        const parts = [];
+        const parts: any[] = [];
         matches.forEach((match, mIdx) => {
+          const tierValues = activeTiers.map(at => {
+            const fieldData = (at.data as any)[field] || [];
+            const atMatches = [...(fieldData[lineIdx] || "").matchAll(numRegex)];
+            return atMatches[mIdx] ? atMatches[mIdx][0] : match[0];
+          });
+
+          // 如果所有数值都一致，则不显示升级箭头，保持原样
+          const isConstant = tierValues.every(v => v === tierValues[0]);
+
           parts.push(line.substring(lastIndex, match.index));
-          parts.push(
-            <span key={mIdx} className="progression-inline-values">
-              {activeTiers.map((at, i) => {
-                const atMatches = [...(at.data!.description[lineIdx] || "").matchAll(numRegex)];
-                const val = atMatches[mIdx] ? atMatches[mIdx][0] : match[0];
-                return (
-                  <span key={at.tier}>
-                    <span className={`val-${at.tier}`}>{val}</span>
+          if (isConstant) {
+            parts.push(match[0]);
+          } else {
+            parts.push(
+              <span key={mIdx} className="progression-inline-values">
+                {tierValues.map((val, i) => (
+                  <span key={activeTiers[i].tier}>
+                    <span className={`val-${activeTiers[i].tier}`}>{val}</span>
                     {i < activeTiers.length - 1 && <span className="upgrade-arrow">»</span>}
                   </span>
-                );
-              })}
-            </span>
-          );
+                ))}
+              </span>
+            );
+          }
           lastIndex = match.index! + match[0].length;
         });
         parts.push(line.substring(lastIndex));
@@ -528,6 +522,7 @@ export default function App() {
       silver: "#C0C0C0",
       gold: "#FFD700",
       diamond: "#B9F2FF",
+      legendary: "#FF4500",
     };
     const borderColor = borderColorMap[currentTier] || borderColorMap.bronze;
 
@@ -543,18 +538,42 @@ export default function App() {
           </div>
           <div className="sub-item-title-row">
             <span className="sub-item-name">{item.name}</span>
-            {finalData.cd && <div className="sub-item-cd">⏳ {finalData.cd}</div>}
+            {(() => {
+                const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
+                const activeTiers = tierSequence
+                  .map(t => ({ tier: t, data: item.tiers[t] }))
+                  .filter(t => t.data !== null && t.data !== undefined);
+
+                if (isProgressionActive && activeTiers.length > 1) {
+                  const cdValues = activeTiers.map(at => at.data!.cd || "");
+                  const isConstant = cdValues.every(v => v === cdValues[0]);
+                  if (!cdValues.some(v => v)) return null; 
+                  if (isConstant) return <div className="sub-item-cd">⏳ {cdValues[0]}</div>;
+                  return (
+                    <div className="sub-item-cd progression-cd">
+                      ⏳ {cdValues.map((v, i) => (
+                        <span key={activeTiers[i].tier}>
+                          <span className={`val-${activeTiers[i].tier}`}>{v || '-'}</span>
+                          {i < activeTiers.length - 1 && <span className="upgrade-arrow">»</span>}
+                        </span>
+                      ))}
+                    </div>
+                  );
+                } else {
+                  return finalData.cd && <div className="sub-item-cd">⏳ {finalData.cd}</div>;
+                }
+            })()}
           </div>
         </div>
         <div className="sub-item-desc">
           {finalData.description.map((d, i) => (
             <div key={i} className="desc-line">
-              {isProgressionActive ? getProgressionText(d, i) : formatDescription(d)}
+              {isProgressionActive ? getProgressionText(d, i, 'description') : formatDescription(d)}
             </div>
           ))}
           {finalData.extra_description?.map((d, i) => (
             <div key={`extra-${i}`} className="desc-line extra-desc">
-              {isProgressionActive ? getProgressionText(d, i) : formatDescription(d)}
+              {isProgressionActive ? getProgressionText(d, i, 'extra_description') : formatDescription(d)}
             </div>
           ))}
         </div>
@@ -819,31 +838,6 @@ export default function App() {
                           }}>{d}</div>
                         ))}
                       </div>
-                    </div>
-
-                    <div className="card-probabilities" style={{ 
-                      margin: '10px 0', 
-                      padding: '8px 0', 
-                      background: 'rgba(255, 255, 255, 0.03)', 
-                      borderRadius: '8px', 
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      minHeight: '34px'
-                    }}>
-                      {(() => {
-                         if (!probabilities) return <div style={{ textAlign: 'center', fontSize: '12px', color: '#666' }}>加载概率中...</div>;
-                         let dayKey = selectedDay || "Day 1";
-                         if (dayKey === "Day 10+") dayKey = "Day 9+";
-                         const prob = probabilities[dayKey] || probabilities["Day 9+"];
-                         if (!prob) return null;
-                         return (
-                           <div className="prob-row" style={{ display: 'flex', justifyContent: 'center', gap: '22px', fontSize: '15px', fontWeight: '900', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
-                             <span style={{ color: '#CD7F32' }}>{(prob.bronze * 100).toFixed(0)}%</span>
-                             <span style={{ color: '#C0C0C0' }}>{(prob.silver * 100).toFixed(0)}%</span>
-                             <span style={{ color: '#FFD700' }}>{(prob.gold * 100).toFixed(0)}%</span>
-                             <span style={{ color: '#B9F2FF' }}>{(prob.diamond * 100).toFixed(0)}%</span>
-                           </div>
-                         );
-                      })()}
                     </div>
 
                     <div className="search-container">

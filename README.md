@@ -1,93 +1,102 @@
 ﻿# The Bazaar Helper
 
-A powerful overlay assistant for **The Bazaar**. It leverages image recognition and log analysis to provide real-time monster insights, card upgrade paths, and shop probability data.
+一个为 **The Bazaar** 游戏设计的强力悬浮窗辅助工具。它通过图像识别和日志分析技术，为您提供实时的备战建议、怪物技能详情以及卡牌出现概率参考。
 
-![Version](https://img.shields.io/badge/version-0.6.0-gold.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue.svg)
+## ✨ 核心功能
 
----
+### 1️⃣ 智能怪物识别 (Monster Recognition)
+- **全自动检测**：进入战斗前自动识别当前遇到的三个怪物。
+- **动态天数适配**：自动分析游戏日志，匹配当前天数（Day 1 - Day 10+）的数值强度。
+- **技能预览**：一键查看怪物的全部技能、血量、等级及其独有的掉落物品。
 
-##  Features
+### 2️⃣ 实时概率显示 (Drop Probabilities)
+- **精准掉落率**：根据当前游戏天数，实时显示商店中四种品质卡牌的出现概率：
+  - <span style="color: #CD7F32; font-weight: bold;">铜牌 (Bronze)</span>
+  - <span style="color: #C0C0C0; font-weight: bold;">银牌 (Silver)</span>
+  - <span style="color: #FFD700; font-weight: bold;">金牌 (Gold)</span>
+  - <span style="color: #B9F2FF; font-weight: bold;">钻石 (Diamond)</span>
+- **一键切换预览**：支持 2x5 布局的天数选择器，点击即可预览未来天数的概率走向。
 
-### 1 Smart Monster Recognition
-- **Auto-Detection**: Automatically identifies the three monsters on your screen during the encounter phase.
-- **Dynamic Scaling**: Analyzes game logs to match monster stats and levels according to your current day (Day 1 to Day 10+).
-- **Skill Previews**: Instantly view all monster skills, health, and their unique item drops.
+### 3️⃣ 升级路径横向对比 (Upgrade Progression)
+- **数值变化一目了然**：点击卡片描述，即可在当前等级与各阶级（铜/银/金/钻）之间切换数值对比。
+- **精准颜色标识**：所有卡牌边框和数值颜色均遵循官方阶级标准：
+  - 铜: `#CD7F32` | 银: `#C0C0C0` | 金: `#FFD700` | 钻: `#B9F2FF`
 
-### 2 Real-time Shop Probabilities
-- **Accurate Drop Rates**: Displays the current chance of encountering cards of different tiers in the shop:
-  - <span style="color: #CD7F32; font-weight: bold;">Bronze</span>
-  - <span style="color: #C0C0C0; font-weight: bold;">Silver</span>
-  - <span style="color: #FFD700; font-weight: bold;">Gold</span>
-  - <span style="color: #B9F2FF; font-weight: bold;">Diamond</span>
-- **Interactive Day Grid**: Click through the 2x5 day matrix to preview shop probabilities for future days.
-
-### 3 Upgrade Path Comparison
-- **Inline Value Toggling**: Click on any card description to toggle between different quality tiers (Bronze/Silver/Gold/Diamond).
-- **Visual Branding**: Card borders and text values use standardized hex colors matching the game's official tiers.
-
-### 4 Data Synchronization
-- **Hand & Stash Sync**: Real-time tracking of your current build via hybrid log and image processing.
-- **Semantic Highlighting**: Keywords like Poison, Burn, Freeze, and Haste are color-coded for better readability.
+### 4️⃣ 多维度数据同步
+- **手牌/仓库实时同步**：基于图像与日志双重校验，实时更新你的当前作战配置。
+- **词条语义高亮**：毒、燃烧、冰冻、急速等关键词条自动彩色高亮，描述更易读。
 
 ---
 
-##  Installation
+## 📦 下载与安装
 
-1. Go to the [Releases](https://github.com/Duangi/BazaarHelper/releases) page.
-2. **Windows**: Download \BazaarHelper_x.x.x_x64-setup.exe\ and run the installer.
-3. **macOS**: Download \BazaarHelper_x.x.x_x64.dmg\.
-   > **Note**: macOS log paths (~/Library/Logs/Tempo Storm/The Bazaar/) are automatically handled.
-
----
-
-##  How to Use
-
-1. **Window Controls**:
-   - Drag the top toolbar to move the window.
-   - Resize by dragging the bottom-right corner.
-   - Use the Collapse button to save screen space.
-2. **Monster Lookup**:
-   - The app will auto-sync when you encounter monsters. You can also manually trigger recognition by clicking the ** Recognize Monsters** button.
-3. **View Upgrades**:
-   - Simply click on a card's description to see how its values scale across different tiers.
+1. 前往 [Releases](https://github.com/Duangi/BazaarHelper/releases) 页面。
+2. **Windows 用户**：下载 `BazaarHelper_x.x.x_x64-setup.exe` 运行即可。
+3. **Mac 用户**：下载 `BazaarHelper_x.x.x_x64.dmg`。
+   > **注意**：Mac 版日志文件位于 `~/Library/Logs/Tempo Storm/The Bazaar/`，程序已自动适配。
 
 ---
 
-##  FAQ
+## 🎮 使用说明
 
-- **Recognition Issue?** 
-  - Ensure the game window is visible and active. Recommended resolution is 1080p or higher.
-- **Are Probabilities Accurate?**
-  - Rates are based on game mechanics analysis and community data; intended for strategy reference only.
-- **Automatic Updates?**
-  - To ensure stability during gameplay, **automatic updates have been removed**. Please manually check for the latest release on GitHub.
+1. **窗口操作**：
+   - 拖动顶部工具栏可移动窗口。
+   - 拖动右下角边缘可调整大小。
+   - 点击右上角收起/展开，保持简洁。
+2. **识别怪物**：
+   - 遇到怪物画面时，稍等一秒或点击 **🎯 识别画面中的怪物** 按钮。
+3. **查看升级**：
+   - 在卡片描述区域点击，即可看到该卡牌在不同颜色阶级下的数值差异。
 
 ---
 
-##  Development
+## 🎯 常见问题 (FAQ)
 
-### Dev Mode
-\\\powershell
+- **为什么识别不到？** 
+  - 请确保游戏窗口处于显示状态，分辨率建议使用 1080P 或更高（兼容 2K/4K）。
+- **概率准确吗？**
+  - 概率数据来源于游戏机制反编译与社区统计，仅供选牌参考。
+- **支持自动更新吗？**
+  - 为保证游戏运行期间的极致稳定性，**已移除自动更新功能**，请定期访问项目页面确认最新版本。
+
+---
+
+## 💻 项目开发
+
+### 开发模式
+```powershell
 npm run tauri dev
-\\\
+```
 
-### Build Production
-\\\powershell
+### 构建生产版本
+```powershell
 # Windows
 npm run tauri build -- --target nsis
 
-# macOS (Must run on Mac machine)
+# macOS (需在 Mac 设备上运行)
 npm run tauri build -- --target dmg
-\\\
+```
 
 ---
 
-##  Contact
+## 📞 联系与支持
 
-If you find a bug or have a suggestion:
-- **GitHub Issues**: Open a feedback ticket.
-- **QQ**: 309349894
+如果在使用过程中遇到 Bug 或有改进建议：
+- **GitHub Issues**：提交反馈。
+- **开发者 QQ**：309349894
 
 ---
-*Disclaimer: This is a third-party tool and does not collect any user data.*
+*声明：本工具为第三方助手，不收集任何用户隐私。*
+
+## 注意事项
+
+- 首次运行时，Tauri 会下载和编译依赖，可能需要较长时间
+- 窗口会始终显示在最上层，包括游戏之上
+- 如需关闭始终置顶，可将 `alwaysOnTop` 设置为 `false`
+
+## 技术栈
+
+- **前端框架**: React 18 + TypeScript
+- **构建工具**: Vite
+- **桌面框架**: Tauri 2.x
+- **后端语言**: Rust

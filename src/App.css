@@ -25,6 +25,7 @@
   --c-silver: #C0C0C0;
   --c-gold: #FFD700;
   --c-diamond: #B9F2FF;
+  --c-legendary: #FF4500;
   
   --c-golden: var(--c-gold); /* 统一 Gold 和 Golden */
 
@@ -515,6 +516,7 @@ html, body, #root {
 .val-silver { color: var(--c-silver); }
 .val-gold { color: var(--c-gold); }
 .val-diamond { color: var(--c-diamond); }
+.val-legendary { color: var(--c-legendary); }
 
 .upgrade-arrow {
   margin: 0 1px;
