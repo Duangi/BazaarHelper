@@ -13,7 +13,6 @@
     "core:window:allow-show",
     "core:window:allow-start-dragging",
     "core:window:allow-set-shadow",
-    "updater:default",
     "process:allow-restart",
     "process:allow-exit"
   ]

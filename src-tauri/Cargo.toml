@@ -25,7 +25,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 regex = "1.10"
 
-tauri-plugin-updater = "2"
 tauri-plugin-process = "2"
 
 # 图像处理和截图
