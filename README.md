@@ -34,6 +34,10 @@
 2. **Windows 用户**：下载 `BazaarHelper_x.x.x_x64-setup.exe` 运行即可。
 3. **Mac 用户**：下载 `BazaarHelper_x.x.x_x64.dmg`。
    > **注意**：Mac 版日志文件位于 `~/Library/Logs/Tempo Storm/The Bazaar/`，程序已自动适配。
+   > **首次运行**：需要在终端输入以下命令以跳过签名检查：
+   ```bash
+   sudo xattr -rd com.apple.quarantine /Applications/BazaarHelper.app
+    ```
 
 ---
 
@@ -83,7 +87,7 @@ npm run tauri build -- --target dmg
 
 如果在使用过程中遇到 Bug 或有改进建议：
 - **GitHub Issues**：提交反馈。
-- **开发者 QQ**：309349894
+- **qq群**：836507299
 
 ---
 *声明：本工具为第三方助手，不收集任何用户隐私。*
