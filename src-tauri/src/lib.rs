@@ -4,9 +4,10 @@ use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use regex::Regex;
-use std::io::{BufRead, BufReader, Seek, SeekFrom};
+use std::io::{Read, BufRead, BufReader, Seek, SeekFrom};
 use std::fs::File;
 use std::{thread, time};
+use tokio;
 
 pub mod monster_recognition;
 
@@ -107,6 +108,32 @@ fn get_log_path() -> PathBuf {
     }
 }
 
+#[tauri::command]
+#[allow(dead_code)]
+async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
+    let resources_path = app.path().resource_dir().unwrap();
+    let res_dir = resources_path.join("resources");
+    let cache_dir = get_cache_path().parent().unwrap().to_path_buf();
+    
+    // 异步加载
+    tauri::async_runtime::spawn(async move {
+        let _ = monster_recognition::preload_templates_async(res_dir, cache_dir).await;
+    });
+    
+    Ok(())
+}
+
+#[tauri::command]
+#[allow(dead_code)]
+async fn clear_monster_cache() -> Result<(), String> {
+    let cache_dir = get_cache_path().parent().unwrap().to_path_buf();
+    let cache_file = cache_dir.join("monster_features.bin");
+    if cache_file.exists() {
+        std::fs::remove_file(cache_file).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 fn get_cache_path() -> PathBuf {
     if cfg!(target_os = "macos") {
         let home = std::env::var("HOME").unwrap_or_default();
@@ -185,10 +212,20 @@ fn get_current_day(hours_per_day: Option<u32>, retro: Option<bool>) -> Result<u3
     
     // Fallback to scan only if cache is 0 (first run)
     if log_path.exists() {
-        if let Ok(content) = std::fs::read_to_string(&log_path) {
-             if let Some(day) = calculate_day_from_log(&content, hours, retro) {
-                 return Ok(day);
-             }
+        // Use a more memory-efficient way to read large logs
+        let mut file = File::open(&log_path).map_err(|e| e.to_string())?;
+        let metadata = file.metadata().map_err(|e| e.to_string())?;
+        let file_size = metadata.len();
+        
+        // Read at most 5MB from the end
+        let read_size = file_size.min(5_000_000) as usize;
+        let mut buffer = vec![0u8; read_size];
+        file.seek(SeekFrom::End(-(read_size as i64))).map_err(|e| e.to_string())?;
+        file.read_exact(&mut buffer).map_err(|e| e.to_string())?;
+        
+        let content = String::from_utf8_lossy(&buffer);
+        if let Some(day) = calculate_day_from_log(&content, hours, retro) {
+            return Ok(day);
         }
     }
 
@@ -204,10 +241,10 @@ fn update_day(day: u32) -> Result<(), String> {
     Ok(())
 }
 
-fn calculate_day_from_log(content: &str, hours: u32, retro: bool) -> Option<u32> {
+fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
     let start_pos = if retro { content.rfind("NetMessageRunInitialized").unwrap_or(0) } else { 0 };
     let slice = &content[start_pos..];
-    let mut current_day: u32 = 0;
+    let mut current_day: u32 = 1; // Default to 1
     let mut in_pvp = false;
     let mut hour_count: u32 = 0;
 
@@ -216,23 +253,26 @@ fn calculate_day_from_log(content: &str, hours: u32, retro: bool) -> Option<u32>
         if l.contains("NetMessageRunInitialized") {
             current_day = 1; in_pvp = false; hour_count = 0; continue;
         }
+        
         if l.contains("to [PVPCombatState]") { in_pvp = true; continue; }
-        if l.contains("to [EncounterState]") || l.contains("to [ShopState]") {
-            hour_count = hour_count.saturating_add(1);
-        }
-        if in_pvp && l.contains("State changed") && (l.contains("to [ChoiceState]") || l.contains("to [LevelUpState]") || l.contains("to [ReplayState]")) {
-            if current_day == 0 { current_day = 1; }
+
+        if in_pvp && l.contains("State changed") && (l.contains("to [ChoiceState]") || l.contains("to [LevelUpState]")) {
             current_day = current_day.saturating_add(1);
             in_pvp = false; hour_count = 0; continue;
         }
-        if hour_count >= hours && l.contains("to [ChoiceState]") {
-            if current_day == 0 { current_day = 1; }
-            current_day = current_day.saturating_add(1);
-            hour_count = 0; continue;
+
+        if l.starts_with("[") && l.contains("State changed from [ChoiceState] to [") {
+             if !l.contains("to [ChoiceState]") && !l.contains("to [PVPCombatState]") {
+                hour_count = hour_count.saturating_add(1);
+                if hour_count >= 10 { // Fallback for modes without PVP or unexpected logs
+                    current_day = current_day.saturating_add(1);
+                    hour_count = 0;
+                }
+             }
         }
     }
     
-    if current_day == 0 { None } else { Some(current_day) }
+    Some(current_day)
 }
 
 // --- App Run ---
@@ -246,6 +286,23 @@ pub fn run() {
             monsters: Arc::new(RwLock::new(HashMap::new())),
         })
         .setup(|app| {
+            // 设置窗口不占据焦点，穿透焦点解决遮挡游戏悬浮的问题 (仅 Windows)
+            #[cfg(target_os = "windows")]
+            {
+                use tauri::Manager;
+                if let Some(window) = app.get_webview_window("main") {
+                    if let Ok(hwnd) = window.hwnd() {
+                        use windows::Win32::Foundation::HWND;
+                        use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongW, SetWindowLongW, GWL_EXSTYLE, WS_EX_NOACTIVATE};
+                        unsafe {
+                            let handle = HWND(hwnd.0 as _);
+                            let ex_style = GetWindowLongW(handle, GWL_EXSTYLE);
+                            SetWindowLongW(handle, GWL_EXSTYLE, ex_style | WS_EX_NOACTIVATE.0 as i32);
+                        }
+                    }
+                }
+            }
+
             let handle = app.handle().clone();
             let resources_path = app.path().resource_dir().unwrap();
             let item_db_instance = app.state::<DbState>().items.clone();
@@ -261,21 +318,15 @@ pub fn run() {
                 *db_state.monsters.write().unwrap() = monsters;
             }
 
-            // Async Preload Templates
-            let res_dir_clone = resources_path.join("resources");
-            tauri::async_runtime::spawn(async move {
-                let _ = monster_recognition::preload_templates_async(res_dir_clone).await;
-            });
-
             // Log Monitor Thread
             thread::spawn(move || {
                 let log_path = get_log_path();
-                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
+                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId\s*(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
-                let re_state_change = Regex::new(r"State changed from \[EncounterState\] to \[ChoiceState\]").unwrap();
-                let re_enc_id = Regex::new(r"enc_[A-Za-z0-9]+").unwrap();
+                let re_state_to_enc = Regex::new(r"State changed to \[(EncounterState|ShopState|CombatState)\]").unwrap();
+                let re_enc_id = Regex::new(r"ID: \[(?P<id>enc_[A-Za-z0-9]+)\]").unwrap();
                 let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
                 let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
                 let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
@@ -297,7 +348,7 @@ pub fn run() {
                 let init_day = current_day;
                 
                 tauri::async_runtime::spawn(async move {
-                    thread::sleep(time::Duration::from_millis(1000));
+                    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
                     let _ = init_handle.emit("day-update", init_day);
                     let db = init_db.read().unwrap();
                     let hand_items = init_hand.iter()
@@ -318,6 +369,7 @@ pub fn run() {
                 let mut encounter_state_detected = false;
                 let mut in_pvp = false;
                 let mut hour_count: u32 = 0;
+                let mut is_initial_scan = true;
 
                 loop {
                     if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
@@ -331,6 +383,7 @@ pub fn run() {
                         current_day = 1;
                         is_sync = false;
                         last_file_size = 0;
+                        is_initial_scan = true;
                         save_state(&PersistentState { 
                             day: current_day, 
                             inst_to_temp: inst_to_temp.clone(), 
@@ -358,17 +411,32 @@ pub fn run() {
                                 current_stash.clear();
                                 changed = true;
                             }
-                            if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
-                            if trimmed.contains("to [EncounterState]") || trimmed.contains("to [ShopState]") {
-                                hour_count = hour_count.saturating_add(1);
+                            
+                            // Tracks PVP state
+                            if trimmed.contains("to [PVPCombatState]") { 
+                                in_pvp = true; 
                             }
-                            if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]") || trimmed.contains("to [ReplayState]")) {
+                            
+                            // Day increment: The most reliable trigger is the transition back to Map (ChoiceState) after a PVP fight.
+                            if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
                                 current_day = current_day.saturating_add(1);
-                                in_pvp = false; hour_count = 0; day_changed = true;
+                                in_pvp = false; 
+                                hour_count = 0; 
+                                day_changed = true;
+                                println!("[DayMonitor] Day increased to {} after PVP completion", current_day);
                             }
-                            if hour_count >= 6 && trimmed.contains("to [ChoiceState]") {
-                                current_day = current_day.saturating_add(1);
-                                hour_count = 0; day_changed = true;
+
+                            // Optional: PVE-only day detection (less common, but as a fallback)
+                            if trimmed.contains("State changed from [ChoiceState] to [") {
+                                if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
+                                    hour_count = hour_count.saturating_add(1);
+                                    if hour_count >= 10 { 
+                                        current_day = current_day.saturating_add(1);
+                                        hour_count = 0;
+                                        day_changed = true;
+                                        println!("[DayMonitor] Day increased to {} after 10 encounters", current_day);
+                                    }
+                                }
                             }
 
                             if let Some(cap) = re_purchase.captures(trimmed) {
@@ -433,23 +501,23 @@ pub fn run() {
                                 }
                             }
 
-                            if re_state_change.is_match(trimmed) {
+                            if re_state_to_enc.is_match(trimmed) {
                                 encounter_state_detected = true;
                             }
 
-                            if re_enc_id.is_match(trimmed) {
-                                if encounter_state_detected {
+                            if let Some(_) = re_enc_id.captures(trimmed) {
+                                if encounter_state_detected && !is_initial_scan {
                                     let h = handle.clone();
                                     let d = current_day;
                                     tauri::async_runtime::spawn(async move {
-                                        thread::sleep(time::Duration::from_secs(1));
+                                        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
                                         let _ = h.emit("trigger-monster-recognition", d);
                                     });
                                     encounter_state_detected = false;
                                 }
                             }
 
-                            if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") {
+                            if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") {
                                 is_sync = true;
                             } else if trimmed.contains("Successfully moved card to:") {
                                 is_sync = true;
@@ -512,6 +580,7 @@ pub fn run() {
                             });
                         }
                         last_file_size = current_file_size;
+                        is_initial_scan = false;
                     }
                     thread::sleep(time::Duration::from_millis(500));
                 }
@@ -524,7 +593,9 @@ pub fn run() {
             recognize_monsters_from_screenshot,
             get_template_loading_progress,
             get_current_day,
-            update_day
+            update_day,
+            start_template_loading,
+            clear_monster_cache
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

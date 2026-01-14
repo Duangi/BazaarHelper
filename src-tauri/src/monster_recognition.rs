@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock};
+use rayon::prelude::*;
 
 // 识别结果
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -21,7 +22,7 @@ pub struct LoadingProgress {
     pub current_name: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 struct TemplateCache {
     name: String,
     day: String,
@@ -81,7 +82,7 @@ fn extract_features(img: &DynamicImage) -> Vec<([u8; 32], (u32, u32))> {
     features
 }
 
-pub async fn preload_templates_async(resources_dir: PathBuf) -> Result<(), String> {
+pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf) -> Result<(), String> {
     let progress = Arc::new(Mutex::new(LoadingProgress {
         loaded: 0,
         total: 0,
@@ -90,6 +91,24 @@ pub async fn preload_templates_async(resources_dir: PathBuf) -> Result<(), Strin
     }));
     let _ = LOADING_PROGRESS.set(progress.clone());
 
+    // 1. 尝试从二进制缓存加载 (极快)
+    let cache_file = cache_dir.join("monster_features.bin");
+    if cache_file.exists() {
+        if let Ok(data) = std::fs::read(&cache_file) {
+            if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
+                println!("从缓存加载了 {} 个怪物特征点模板", cached_templates.len());
+                if let Ok(mut p) = progress.lock() {
+                    p.loaded = cached_templates.len();
+                    p.total = cached_templates.len();
+                    p.is_complete = true;
+                }
+                let _ = TEMPLATE_CACHE.set(cached_templates);
+                return Ok(());
+            }
+        }
+    }
+
+    // 2. 如果缓存不存在或加载失败，从原始图片加载 (使用 Rayon 并行)
     let db_path = resources_dir.join("monsters_db.json");
     let json_content = std::fs::read_to_string(&db_path)
         .map_err(|e| format!("读取 monsters_db.json 失败: {}", e))?;
@@ -110,16 +129,31 @@ pub async fn preload_templates_async(resources_dir: PathBuf) -> Result<(), Strin
     let total = image_tasks.len();
     if let Ok(mut p) = progress.lock() { p.total = total; }
 
-    println!("开始加载 {} 个特征点模板 (FAST + BRIEF)...", total);
+    println!("缓存未命中，开始并行计算 {} 个特征点模板...", total);
 
-    let mut cache = Vec::new();
-    for (name, day, path) in image_tasks {
-        if let Ok(mut p) = progress.lock() { p.current_name = name.clone(); }
+    // 使用 Rayon 并行处理所有图片
+    let cache: Vec<TemplateCache> = image_tasks.into_par_iter().map(|(name, day, path)| {
+        let mut descriptors = Vec::new();
         if let Ok(img) = image::open(&path) {
-            let descriptors = extract_features(&img);
-            cache.push(TemplateCache { name, day, descriptors });
+            descriptors = extract_features(&img);
         }
-        if let Ok(mut p) = progress.lock() { p.loaded += 1; }
+        
+        // 更新进度 (原子锁)
+        if let Some(p_arc) = LOADING_PROGRESS.get() {
+            if let Ok(mut p) = p_arc.lock() {
+                p.loaded += 1;
+                p.current_name = name.clone();
+            }
+        }
+        
+        TemplateCache { name, day, descriptors }
+    }).collect();
+
+    // 3. 保存到二进制缓存以备下次使用
+    let _ = std::fs::create_dir_all(&cache_dir);
+    if let Ok(encoded) = bincode::serialize(&cache) {
+        let _ = std::fs::write(&cache_file, encoded);
+        println!("特征点模板已保存到缓存: {:?}", cache_file);
     }
 
     if let Ok(mut p) = progress.lock() { p.is_complete = true; }
@@ -145,15 +179,32 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     let windows = Window::all().map_err(|e| e.to_string())?;
     let bazaar_window = windows.into_iter().find(|w| {
         let title = w.title().to_lowercase();
-        title.contains("the bazaar") || title.contains("thebazaar")
+        let app_name = w.app_name().to_lowercase();
+        
+        // 排除常见的干扰窗口
+        let is_excluded = 
+            title.contains("visual studio code") || app_name.contains("visual studio code") ||
+            title.contains("obs") || app_name.contains("obs") ||
+            title.contains("mediaplayer") || app_name.contains("mediaplayer") ||
+            title.contains("bazaarhelper") || app_name.contains("bazaarhelper");
+
+        let is_bazaar = 
+            title.contains("the bazaar") || title.contains("thebazaar") || 
+            app_name.contains("the bazaar") || app_name.contains("thebazaar");
+
+        is_bazaar && !is_excluded
     });
 
     let start_capture = Instant::now();
     let screenshot = if let Some(window) = bazaar_window {
-        println!("[Recognition] Found window: {}", window.title());
-        window.capture_image().map_err(|e| e.to_string())?
+        println!("[Recognition] Found window: '{}' (App: '{}'), Pos: {:?}, Size: {:?}", 
+                 window.title(), window.app_name(), (window.x(), window.y()), (window.width(), window.height()));
+        window.capture_image().map_err(|e| {
+            println!("[Recognition] Error capturing window: {}. Ensure screen recording permission is granted.", e);
+            e.to_string()
+        })?
     } else {
-        println!("[Recognition] 'The Bazaar' window not found, falling back to monitor 0");
+        println!("[Recognition] 'The Bazaar' window not found among {} windows, falling back to monitor 0", Window::all().unwrap().len());
         use xcap::Monitor;
         let monitors = Monitor::all().map_err(|e| e.to_string())?;
         if monitors.is_empty() { return Err("No monitor found".into()); }
@@ -195,15 +246,6 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
 
         let slice = img.crop_imm(x, y, slot_w, slot_h);
         
-        // 保存调试图片到 target/debug/monster_debug
-        let debug_dir = PathBuf::from("target/debug/monster_debug");
-        if !debug_dir.exists() {
-            let _ = std::fs::create_dir_all(&debug_dir);
-        }
-        let debug_path = debug_dir.join(format!("slot_{}.png", i + 1));
-        let _ = slice.save(&debug_path);
-        println!("[Debug] Saved slot {} image to: {:?}", i + 1, debug_path);
-
         let scene_features = extract_features(&slice);
         
         if scene_features.is_empty() { continue; }

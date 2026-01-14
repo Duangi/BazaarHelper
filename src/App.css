@@ -57,6 +57,59 @@ html, body, #root {
   height: 100vh !important; width: 100% !important;
 }
 
+.resize-handle-width {
+  position: absolute;
+  left: 0;
+  top: 45px;
+  bottom: 0;
+  width: 12px;
+  cursor: ew-resize;
+  background: rgba(255, 205, 25, 0.01);
+  z-index: 1001;
+  -webkit-app-region: no-drag;
+  transition: background 0.2s;
+}
+.resize-handle-width:hover {
+  background: linear-gradient(to right, rgba(255, 205, 25, 0.3), transparent);
+}
+
+.resize-handle-height {
+  position: absolute;
+  left: 12px;
+  right: 0;
+  bottom: 0;
+  height: 12px;
+  cursor: ns-resize;
+  background: rgba(255, 205, 25, 0.01);
+  z-index: 1001;
+  -webkit-app-region: no-drag;
+  transition: background 0.2s;
+}
+.resize-handle-height:hover {
+  background: linear-gradient(to top, rgba(255, 205, 25, 0.3), transparent);
+}
+
+
+
+.scale-display {
+  font-size: calc(11px * var(--font-scale, 1));
+  color: #ffcd19;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 8px;
+  font-family: monospace;
+  font-weight: bold;
+  border: 1px solid rgba(255, 205, 25, 0.2);
+  -webkit-app-region: no-drag;
+  user-select: none;
+}
+
+.scale-display:hover {
+  background: rgba(255, 205, 25, 0.15);
+}
+
 /* 顶部栏 */
 .top-bar {
   background: rgba(30, 28, 25, 0.95);
@@ -96,6 +149,126 @@ html, body, #root {
 }
 
 /* 顶部收起按钮 */
+.settings-btn {
+  background: transparent;
+  border: none;
+  color: #ffcd19;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+  -webkit-app-region: no-drag;
+}
+.settings-btn:hover {
+  transform: rotate(45deg);
+  color: #fff;
+}
+.settings-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.settings-panel-overlay {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+.settings-panel {
+  width: 100%;
+  max-height: 100%;
+  background: #2b2621;
+  border: 1px solid rgba(255, 205, 25, 0.4);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-out;
+}
+@keyframes slideIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.settings-header {
+  padding: 10px 16px;
+  background: rgba(255, 205, 25, 0.1);
+  border-bottom: 1px solid rgba(255, 205, 25, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.settings-header h3 {
+  color: #ffcd19;
+  font-size: calc(14px * var(--font-scale, 1));
+  margin: 0;
+}
+.close-panel-btn {
+  background: transparent;
+  border: none;
+  color: #ffcd19;
+  font-size: calc(20px * var(--font-scale, 1));
+  cursor: pointer;
+}
+.settings-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  flex: 1;
+}
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.setting-item label {
+  color: #ccc;
+  font-size: calc(13px * var(--font-scale, 1));
+}
+.setting-item input[type="range"] {
+  accent-color: #ffcd19;
+}
+.setting-tip {
+  font-size: calc(11px * var(--font-scale, 1));
+  color: #888;
+  font-style: italic;
+}
+
+.bulk-controls {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.bulk-btn {
+  background: rgba(255, 205, 25, 0.1);
+  border: 1px solid rgba(255, 205, 25, 0.3);
+  color: #ffcd19;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: calc(12px * var(--font-scale, 1));
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bulk-btn:hover {
+  background: rgba(255, 205, 25, 0.2);
+  border-color: #ffcd19;
+}
+
 .collapse-btn {
   flex: 1;
   color: var(--c-golden);
@@ -103,7 +276,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   cursor: pointer;
   font-weight: 800;
   height: 100%;
@@ -123,7 +296,7 @@ html, body, #root {
 .collapse-arrow {
   display: inline-block;
   transition: transform 0.3s ease;
-  font-size: 18px;
+  font-size: calc(18px * var(--font-scale, 1));
 }
 
 .collapse-arrow.expanded {
@@ -155,7 +328,7 @@ html, body, #root {
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--c-golden);
-  font-size: 18px;
+  font-size: calc(18px * var(--font-scale, 1));
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -259,7 +432,7 @@ html, body, #root {
   border: 1px solid var(--c-golden);
   border-radius: 6px;
   color: var(--c-golden);
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -285,7 +458,7 @@ html, body, #root {
 .nav-item {
   padding: 14px 10px;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 16px; font-weight: bold;
+  font-size: calc(16px * var(--font-scale, 1)); font-weight: bold;
   text-align: center; flex: 1; cursor: pointer;
 }
 
@@ -297,7 +470,7 @@ html, body, #root {
 .id-badge {
   background: var(--c-golden);
   color: #000;
-  font-size: 10px;
+  font-size: calc(10px * var(--font-scale, 1));
   padding: 1px 4px;
   border-radius: 2px;
   margin-left: 8px;
@@ -311,7 +484,7 @@ html, body, #root {
   padding: 10px;
   background: rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(255,255,255,0.05);
-  margin-bottom: -20px; /* 抵消父级容器的 gap */
+  margin-bottom: -40px; /* 抵消父级容器的 gap */
 }
 
 .day-tabs {
@@ -332,7 +505,7 @@ html, body, #root {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   font-weight: bold;
   text-align: center;
   cursor: pointer;
@@ -352,7 +525,7 @@ html, body, #root {
 }
 
 .current-day-info {
-  font-size: 13px;
+  font-size: calc(13px * var(--font-scale, 1));
   color: var(--c-tag);
   margin-bottom: 12px;
   padding-left: 2px;
@@ -381,7 +554,7 @@ html, body, #root {
   justify-content: center;
   cursor: pointer;
   border-radius: 2px;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   line-height: 1;
 }
 
@@ -391,7 +564,7 @@ html, body, #root {
 }
 
 .day-adjust span {
-  font-size: 11px;
+  font-size: calc(11px * var(--font-scale, 1));
   opacity: 0.7;
 }
 
@@ -425,18 +598,31 @@ html, body, #root {
   align-items: center;
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.monster-header-v2:hover {
+  background: rgba(255, 205, 25, 0.1);
+}
+
+.monster-card-v2.expanded {
+  border-color: rgba(255, 205, 25, 0.3);
+}
+
+.monster-card-v2.expanded .monster-header-v2 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  gap: 15px;
-  position: relative;
 }
 
 .avatar-wrap {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--c-golden);
   background: #000;
+  margin-right: 12px;
 }
 
 .monster-avatar-v2 {
@@ -450,20 +636,20 @@ html, body, #root {
 }
 
 .monster-name-zh {
-  font-size: 18px;
+  font-size: calc(18px * var(--font-scale, 1));
   font-weight: 800;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .monster-health {
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   color: #ff4d4d;
   font-weight: bold;
 }
 
 .monster-available-tag {
-  font-size: 11px;
+  font-size: calc(11px * var(--font-scale, 1));
   background: rgba(255, 255, 255, 0.1);
   padding: 2px 6px;
   border-radius: 10px;
@@ -485,7 +671,7 @@ html, body, #root {
 }
 
 .section-title {
-  font-size: 11px;
+  font-size: calc(11px * var(--font-scale, 1));
   color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -521,7 +707,7 @@ html, body, #root {
 .upgrade-arrow {
   margin: 0 1px;
   opacity: 0.5;
-  font-size: 10px;
+  font-size: calc(10px * var(--font-scale, 1));
 }
 
 .sub-item-card.progression-active {
@@ -567,13 +753,13 @@ html, body, #root {
 }
 
 .sub-item-name {
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   font-weight: bold;
   color: #eee;
 }
 
 .sub-item-cd {
-  font-size: 16px; /* Larger CD as requested */
+  font-size: calc(16px * var(--font-scale, 1)); /* Larger CD as requested */
   color: var(--c-freeze);
   font-weight: 900;
   margin-top: 2px;
@@ -581,7 +767,7 @@ html, body, #root {
 }
 
 .sub-item-desc {
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.4;
 }
@@ -622,16 +808,50 @@ html, body, #root {
 }
 
 .content-wrap {
-  display: inline-flex; gap: 15px; align-items: flex-start;
-  padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; flex-direction: column; gap: 0; align-items: stretch;
+  padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.content-wrap:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.item-main-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+
+.expand-indicator {
+  color: #ffcd19;
+  font-size: calc(13px * var(--font-scale, 1));
+  opacity: 0.6;
+  font-weight: bold;
+}
+
+.content-wrap.expanded {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* 左侧区域 */
 .left-section {
-  display: flex; flex-direction: column; align-items: center;
-  width: 100px; gap: 8px; flex-shrink: 0;
+  display: flex; flex-direction: row; align-items: center;
+  gap: 12px; flex-shrink: 0;
   position: relative;
 }
+.left-image {
+  width: 48px; height: 48px; flex-shrink: 0;
+}
+.left-image img {
+  width: 100%; height: 100%; object-fit: contain;
+}
+.item-name {
+  font-weight: bold;
+  color: #eee;
+}
+
 
 .left-image {
   width: 96px; height: 96px; border-radius: 8px;
@@ -642,7 +862,7 @@ html, body, #root {
 
 .item-name {
   color: #fff;
-  font-size: 16px; /* 增大字号 */
+  font-size: calc(16px * var(--font-scale, 1)); /* 增大字号 */
   font-weight: 900;
   text-align: center; line-height: 1.2;
   text-shadow: 1px 1px 3px #000;
@@ -663,7 +883,7 @@ html, body, #root {
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: flex-start;
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   line-height: 1.5;
   /* 移除全局颜色设置，由内部元素控制 */
 }
@@ -700,7 +920,7 @@ html, body, #root {
   border: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: #fff;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   outline: none;
   transition: all 0.3s;
 }
@@ -716,12 +936,12 @@ html, body, #root {
 
 /* 手动识别按钮 */
 .manual-recognition-btn {
-  padding: 14px 20px;
+  padding: 10px 20px;
   background: linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(220, 170, 0, 0.2));
   border: 2px solid var(--c-golden);
   border-radius: 8px;
   color: var(--c-golden);
-  font-size: 15px;
+  font-size: calc(15px * var(--font-scale, 1));
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -757,7 +977,7 @@ html, body, #root {
 
 .progress-text {
   color: var(--c-golden);
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   margin-bottom: 8px;
   text-align: center;
 }
@@ -806,7 +1026,7 @@ html, body, #root {
 }
 
 .monster-header > div {
-  font-size: 20px;
+  font-size: calc(20px * var(--font-scale, 1));
   font-weight: 900;
   color: var(--c-golden);
   text-shadow: 1px 1px 3px #000;
@@ -830,14 +1050,14 @@ html, body, #root {
 
 .mini-cell strong {
   color: var(--c-tag);
-  font-size: 15px;
+  font-size: calc(15px * var(--font-scale, 1));
   font-weight: 800;
 }
 
 .mini-cell span,
 .mini-cell p {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   line-height: 1.5;
   margin: 0;
 }
@@ -871,7 +1091,7 @@ html, body, #root {
 
 .empty-tip {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   text-align: center;
   padding: 40px;
 }
@@ -890,7 +1110,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   opacity: 0.7;
   transition: all 0.2s;
   z-index: 10;
@@ -938,14 +1158,14 @@ html, body, #root {
 
 .update-content h1 {
   color: var(--c-golden);
-  font-size: 32px;
+  font-size: calc(32px * var(--font-scale, 1));
   margin-bottom: 30px;
   text-shadow: 0 2px 8px rgba(255, 205, 25, 0.5);
 }
 
 .update-message {
   color: #e8e8e8;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   margin-bottom: 30px;
   min-height: 24px;
   white-space: pre-line; /* 支持换行符 */
@@ -955,7 +1175,7 @@ html, body, #root {
 .update-btn, .skip-btn {
   padding: 12px 24px;
   margin: 8px;
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -1023,6 +1243,6 @@ html, body, #root {
 .progress-text {
   margin-top: 8px;
   color: #b8b8b8;
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
   text-align: center;
 }

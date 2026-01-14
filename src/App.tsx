@@ -88,6 +88,17 @@ export default function App() {
   const [templateLoading, setTemplateLoading] = useState({ loaded: 0, total: 0, is_complete: false, current_name: "" }); // 模板加载进度
   const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [progressionMode, setProgressionMode] = useState<Set<string>>(new Set()); // 记录哪些卡片开启了“数值横评模式”
+  const [fontSize, setFontSize] = useState(() => {
+    const saved = localStorage.getItem("user-font-size");
+    return saved ? parseInt(saved, 10) : 16;
+  }); // 自定义字号
+  const [showSettings, setShowSettings] = useState(false);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
+  const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
+
+  // 图片路径缓存，避免重复解析
+  const [imgCache] = useState<Map<string, string>>(new Map());
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const appWindow = getCurrentWindow(); // 获取当前窗口实例
@@ -108,7 +119,8 @@ export default function App() {
   const [currentVersion, setCurrentVersion] = useState(""); // 当前版本号
 
   // 置顶/取消置顶功能
-  const togglePin = (itemId: string) => {
+  const togglePin = (itemId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // 防止触发展开/收起
     setPinnedItems(prev => {
       const newPinned = new Map(prev);
       if (newPinned.has(itemId)) {
@@ -118,6 +130,24 @@ export default function App() {
         newPinned.set(itemId, pinnedCounter + 1);
       }
       return newPinned;
+    });
+  };
+
+  const toggleExpand = (itemId: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(itemId)) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+  };
+
+  const toggleMonsterExpand = (name_zh: string) => {
+    setExpandedMonsters(prev => {
+      const next = new Set(prev);
+      if (next.has(name_zh)) next.delete(name_zh);
+      else next.add(name_zh);
+      return next;
     });
   };
 
@@ -160,21 +190,33 @@ export default function App() {
     });
   };
 
-  // 1. 记忆宽度 (默认 680px 保证内容不拥挤)
+  // 1. 记忆宽度与高度
   const [expandedWidth, setExpandedWidth] = useState(() => {
     const saved = localStorage.getItem("plugin-width");
     return saved ? parseInt(saved, 10) : 400;
+  });
+  const [expandedHeight, setExpandedHeight] = useState(() => {
+    const saved = localStorage.getItem("plugin-height");
+    return saved ? parseInt(saved, 10) : 700;
   });
 
   // 图片路径处理函数
   const getImg = async (path: string | null | undefined) => {
     if (!path) return "";
+    if (imgCache.has(path)) return imgCache.get(path)!;
     try {
       const fullPath = await resolveResource(`resources/${path}`);
-      return convertFileSrc(fullPath);
+      const assetUrl = convertFileSrc(fullPath);
+      imgCache.set(path, assetUrl);
+      return assetUrl;
     } catch { return ""; }
   };
   
+  const enterApp = () => {
+    setShowVersionScreen(false);
+    invoke("start_template_loading").catch(console.error);
+  };
+
   // 启动时显示版本信息
   useEffect(() => {
     const showVersionInfo = async () => {
@@ -184,13 +226,13 @@ export default function App() {
         
         // 3秒后自动进入应用
         setTimeout(() => {
-          setShowVersionScreen(false);
+          enterApp();
         }, 3000);
       } catch (error) {
         console.error("获取版本信息失败:", error);
         // 2秒后自动进入
         setTimeout(() => {
-          setShowVersionScreen(false);
+          enterApp();
         }, 2000);
       }
     };
@@ -234,19 +276,20 @@ export default function App() {
   useEffect(() => {
     let unlistenMonster: any = null;
     let unlistenDay: any = null;
+    let unlistenSync: any = null;
     
     const setupListeners = async () => {
       // 1. 怪物识别触发
       unlistenMonster = await listen<number | null>('trigger-monster-recognition', async (event) => {
         console.log("收到自动识别触发事件, Day:", event.payload);
-        const day = event.payload;
-        if (day) {
-          const dayLabel = day >= 10 ? "Day 10+" : `Day ${day}`;
+        const dayNum = event.payload;
+        if (dayNum) {
+          const dayLabel = dayNum >= 10 ? "Day 10+" : `Day ${dayNum}`;
           setSelectedDay(dayLabel);
+          setCurrentDay(dayNum);
         }
         setTimeout(async () => {
-           // 传入事件带过来的天数
-           await handleAutoRecognition(day);
+           await handleAutoRecognition(dayNum);
         }, 500);
       });
 
@@ -255,9 +298,22 @@ export default function App() {
         console.log("收到天数更新事件:", event.payload);
         const d = event.payload;
         setCurrentDay(d);
-        // 同步切换 UI 上的天数按钮选中状态
         const dayLabel = d >= 10 ? "Day 10+" : `Day ${d}`;
         setSelectedDay(dayLabel);
+      });
+
+      // 3. 物品同步 (sync-items)
+      unlistenSync = await listen<SyncPayload>("sync-items", async (event) => {
+        const payload = event.payload;
+        const processItems = (items: ItemData[]) => 
+          Promise.all(items.map(async (i) => ({ ...i, displayImg: await getImg(i.image) })));
+
+        const [hand, stash] = await Promise.all([
+          processItems(payload.hand_items || []),
+          processItems(payload.stash_items || [])
+        ]);
+
+        setSyncData(prev => ({ ...prev, hand, stash }));
       });
     };
     
@@ -266,18 +322,36 @@ export default function App() {
     return () => {
       if (unlistenMonster) unlistenMonster();
       if (unlistenDay) unlistenDay();
+      if (unlistenSync) unlistenSync();
     };
-  }, [currentDay]);
+  }, []); // 仅在挂载时运行一次，不再依赖 currentDay
+
+  // 基础环境侦测：分辨率适配
+  useEffect(() => {
+    const detectScale = async () => {
+      try {
+        const monitor = await currentMonitor();
+        if (monitor) {
+          currentScale.current = monitor.scaleFactor;
+          const { height } = monitor.size;
+          const logicalHeight = height / monitor.scaleFactor;
+          console.log(`[Screen] height: ${height}, scale: ${monitor.scaleFactor}, logical: ${logicalHeight}`);
+          
+          // 初始高度适配逻辑：如果没有保存过高度，则默认屏幕高度 - 200
+          if (!localStorage.getItem("plugin-height")) {
+            setExpandedHeight(Math.max(600, Math.floor(logicalHeight - 200)));
+          }
+        }
+      } catch (e) {
+        console.error("检测屏幕信息失败:", e);
+      }
+    };
+    detectScale();
+  }, []);
 
   // 监听窗口移动事件，检测用户拖拽
   useEffect(() => {
     const setupMoveListener = async () => {
-      // 先获取一次缩放比例存起来
-      const monitor = await currentMonitor();
-      if (monitor) {
-        currentScale.current = monitor.scaleFactor;
-      }
-
       // 等待2秒后才开始监听，避免初始定位触发
       setTimeout(() => {
         isInitialized.current = true;
@@ -308,59 +382,12 @@ export default function App() {
 
     const unlistenPromise = setupMoveListener();
     return () => {
-      unlistenPromise.then(unlisten => unlisten());
+      unlistenPromise.then(unlisten => { if(unlisten) unlisten(); });
       if (moveDebounceTimer.current) {
         clearTimeout(moveDebounceTimer.current);
       }
     };
   }, []); // 只在组件挂载时运行一次
-
-  useEffect(() => {
-    console.log("设置事件监听器...");
-    const setupListener = async () => {
-      try {
-        const unlisten = await listen<SyncPayload>("sync-items", async (event) => {
-          console.log("收到同步事件:", event.payload);
-          
-          const payload = event.payload;
-
-          const processItems = (items: ItemData[]) => 
-            Promise.all(items.map(async (i) => ({ ...i, displayImg: await getImg(i.image) })));
-
-          // 修正字段名匹配
-          const [hand, stash] = await Promise.all([
-            processItems(payload.hand_items || []),
-            processItems(payload.stash_items || [])
-          ]);
-
-          console.log("处理后的数据:", { hand: hand.length, stash: stash.length });
-          setSyncData(prev => ({ ...prev, hand, stash }));
-        });
-        console.log("事件监听器设置完成");
-        
-        // 延迟500ms后主动获取一次数据，防止错过初始事件
-        setTimeout(async () => {
-          try {
-            console.log("主动获取当前数据...");
-            // 这里暂时用一个虚假的调用，后面再实现
-            // const data = await invoke<SyncPayload>("get_current_items");
-            console.log("等待后端实现获取当前数据的接口");
-          } catch (error) {
-            console.log("获取当前数据失败:", error);
-          }
-        }, 500);
-        
-        return unlisten;
-      } catch (error) {
-        console.error("设置事件监听器失败:", error);
-        return () => {};
-      }
-    };
-
-    const l = setupListener();
-    return () => { l.then(f => f()).catch(console.error); };
-  }, []);
-
 
   // 加载全量怪物数据
   useEffect(() => {
@@ -594,6 +621,7 @@ export default function App() {
   };
 
   const handleAutoRecognition = async (day: number | null) => {
+    if (isRecognizing) return;
     setIsRecognizing(true);
     try {
       const results = await invoke("recognize_monsters_from_screenshot", { day }) as any[];
@@ -690,22 +718,19 @@ export default function App() {
       }
 
       // --- 场景 B：显示主插件界面 (默认右上角) ---
-      const currentWidth = expandedWidth;
-      const currentHeight = isCollapsed ? 45 : (screenHeight - 200);
+      const currentWidth = Math.min(expandedWidth, screenWidth - 20); // 留一点边距
+      const currentHeight = Math.min(isCollapsed ? 45 : expandedHeight, screenHeight - 40); // 留出任务栏空间
 
       let targetX = 0;
       let targetY = 0;
 
       if (hasCustomPosition && lastKnownPosition.current) {
         // 如果用户拖过，使用记忆的物理坐标并实时转换
-        // 【关键修复】用当前屏幕的实时缩放比转换物理坐标
         targetX = lastKnownPosition.current.x / scale;
         targetY = lastKnownPosition.current.y / scale;
       } else {
         // 默认逻辑：贴在当前屏幕的最右侧
-        // 公式：屏幕起始X + 屏幕宽度 - 窗口宽度
         targetX = screenX + screenWidth - currentWidth;
-        // 贴顶：屏幕起始Y
         targetY = screenY; 
       }
 
@@ -719,16 +744,30 @@ export default function App() {
     // 防抖
     const timer = setTimeout(syncLayout, 50);
     return () => clearTimeout(timer);
-  }, [showVersionScreen, expandedWidth, isCollapsed, hasCustomPosition]);
+  }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
 
-  // 手动调整宽度逻辑
-  const handleResize = (e: React.MouseEvent) => {
+  // 分离的手动调整逻辑
+  const handleResizeWidth = (e: React.MouseEvent) => {
+    e.preventDefault();
     const startX = e.screenX;
     const startWidth = expandedWidth;
+    
+    // 如果已有自定义位置，记录起始的右边界物理坐标，以便后续维持贴右
+    const startRightX = lastKnownPosition.current ? lastKnownPosition.current.x + (startWidth * currentScale.current) : null;
+
     const onMouseMove = (moveE: MouseEvent) => {
-      const delta = startX - moveE.screenX;
-      const newWidth = Math.max(400, Math.min(1000, startWidth + delta));
+      const deltaX = startX - moveE.screenX;
+      // 向左拖动 deltaX 为正，宽度增加
+      const newWidth = Math.max(200, Math.min(1600, startWidth + deltaX));
       setExpandedWidth(newWidth);
+      
+      // 如果用户之前移动过窗口，我们需要更新其记录的位置，使其看起来是向左延伸（保持右边界不动）
+      if (hasCustomPosition && startRightX !== null && lastKnownPosition.current) {
+        const newPhysicalWidth = newWidth * currentScale.current;
+        const newX = startRightX - newPhysicalWidth;
+        lastKnownPosition.current = { x: newX, y: lastKnownPosition.current.y };
+      }
+      
       localStorage.setItem("plugin-width", newWidth.toString());
     };
     const onMouseUp = () => {
@@ -738,6 +777,25 @@ export default function App() {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
   };
+
+  const handleResizeHeight = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.screenY;
+    const startHeight = expandedHeight;
+    const onMouseMove = (moveE: MouseEvent) => {
+      const deltaY = moveE.screenY - startY; // 往下拖变高
+      const newHeight = Math.max(200, Math.min(2560, startHeight + deltaY));
+      setExpandedHeight(newHeight);
+      localStorage.setItem("plugin-height", newHeight.toString());
+    };
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
+
   if (showVersionScreen) {
     return (
       <div className="update-screen">
@@ -746,7 +804,7 @@ export default function App() {
           <div className="update-message">
             {currentVersion ? `当前版本 v${currentVersion}` : "加载中..."}
           </div>
-          <button className="skip-btn" onClick={() => setShowVersionScreen(false)}>
+          <button className="skip-btn" onClick={enterApp}>
             进入应用
           </button>
         </div>
@@ -757,8 +815,17 @@ export default function App() {
   return (
     <div 
       className={`overlay ${isCollapsed ? 'collapsed' : 'expanded'}`}
+      style={{ 
+        '--user-font-size': `${fontSize}px`,
+        '--font-scale': fontSize / 16 
+      } as any}
     >
-      {!isCollapsed && <div className="resize-handle" onMouseDown={handleResize} />}
+      {!isCollapsed && (
+        <>
+          <div className="resize-handle-width" onMouseDown={handleResizeWidth} title="左右拖动调整宽度" />
+          <div className="resize-handle-height" onMouseDown={handleResizeHeight} title="上下拖动调整高度" />
+        </>
+      )}
       
       <div className="top-bar">
         <div className="drag-handle" data-tauri-drag-region>
@@ -771,19 +838,16 @@ export default function App() {
             <circle cx="15" cy="17" r="1.5" fill="currentColor"/>
           </svg>
         </div>
-        
-        {/* 暂时隐藏检查更新按钮
-        <button className="top-update-btn" onClick={handleUpdateClick} title="检查更新">
-          <svg className="update-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 10C21 10 18.995 7.26822 17.3662 5.63824C15.7373 4.00827 13.4864 3 11 3C6.02944 3 2 7.02944 2 12C2 16.9706 6.02944 21 11 21C15.1031 21 18.5649 18.2543 19.6482 14.5M21 10V4M21 10H15" 
-                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+
+        <button className="settings-btn" onClick={() => setShowSettings(true)} title="设置">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          {updateAvailable && <span className="update-badge"></span>}
         </button>
-        */}
         
         <div className="collapse-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-          {isCollapsed ? "展开插件" : "收起插件"}
+          {isCollapsed ? "展开" : "收起"}
           <span className={`collapse-arrow ${isCollapsed ? 'collapsed' : 'expanded'}`}>▾</span>
         </div>
         
@@ -794,17 +858,91 @@ export default function App() {
         </button>
       </div>
 
+      {showSettings && (
+        <div className="settings-panel-overlay" onClick={() => setShowSettings(false)}>
+          <div className="settings-panel" onClick={e => e.stopPropagation()}>
+            <div className="settings-header">
+              <h3>应用设置</h3>
+              <button className="close-panel-btn" onClick={() => setShowSettings(false)}>×</button>
+            </div>
+            <div className="settings-content">
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <label>字体大小: {fontSize}px</label>
+                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                    setFontSize(16);
+                    localStorage.setItem("user-font-size", "16");
+                  }}>重置</button>
+                </div>
+                <input 
+                  type="range" 
+                  min="10" 
+                  max="32" 
+                  value={fontSize} 
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    setFontSize(val);
+                    localStorage.setItem("user-font-size", val.toString());
+                  }} 
+                />
+              </div>
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <label>数据缓存</label>
+                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={async () => {
+                    try {
+                      await invoke("clear_monster_cache");
+                      setStatusMsg("野怪特征缓存已清空，请手动重启插件以重新加载。");
+                    } catch (e) {
+                      setStatusMsg("清空失败: " + e);
+                    }
+                  }}>清空野怪特征缓存</button>
+                </div>
+              </div>
+              
+              {statusMsg && (
+                <div style={{ 
+                  background: 'rgba(255, 205, 25, 0.1)', 
+                  border: '1px solid rgba(255, 205, 25, 0.3)', 
+                  color: '#ffcd19', 
+                  padding: '8px', 
+                  fontSize: '12px',
+                  borderRadius: '4px',
+                  marginTop: '10px',
+                  position: 'relative'
+                }}>
+                  {statusMsg}
+                  <button 
+                    onClick={() => setStatusMsg(null)}
+                    style={{ 
+                      position: 'absolute', right: '5px', top: '5px', 
+                      background: 'transparent', border: 'none', color: '#ffcd19',
+                      cursor: 'pointer', fontSize: '14px'
+                    }}>×</button>
+                </div>
+              )}
+
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <label>窗口布局</label>
+                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                    localStorage.removeItem("plugin-width");
+                    localStorage.removeItem("plugin-height");
+                    setExpandedWidth(400);
+                    setExpandedHeight(700);
+                    setHasCustomPosition(false);
+                  }}>重置宽高与位置</button>
+                </div>
+              </div>
+              <div className="setting-tip">调整后将实时影响所有文字大小</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!isCollapsed && (
         <>
           {/* 更新按钮 */}
-          {/* {updateAvailable && (
-            <div className="update-notification">
-              <button className="update-notify-btn" onClick={performUpdate}>
-                🔔 发现新版本 v{updateVersion}
-              </button>
-            </div>
-          )} */}
-          
           <nav className="nav-bar">
             {(["monster", "hand", "stash"] as TabType[]).map(t => (
               <div key={t} className={`nav-item ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
@@ -862,8 +1000,10 @@ export default function App() {
                   <div className="monster-list-v2">
                     {manualMonsters.map((m, i) => {
                       const isIdentified = identifiedNames.includes(m.name_zh);
+                      const isExpanded = expandedMonsters.has(m.name_zh);
+                      
                       return (
-                        <div key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''}`}>
+                        <div key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''} ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleMonsterExpand(m.name_zh)}>
                           <div className="monster-header-v2">
                             <div className="avatar-wrap">
                               <img src={m.displayImg} className="monster-avatar-v2" alt="" />
@@ -875,18 +1015,24 @@ export default function App() {
                               </div>
                               <div className="monster-health">❤️ {m.health}</div>
                             </div>
-                            <div className="monster-available-tag">{m.available}</div>
+                            <div className="monster-available-tag">
+                              {m.available}
+                              <span className="expand-indicator" style={{ marginLeft: '8px' }}>{isExpanded ? '▴' : '▾'}</span>
+                            </div>
                           </div>
-                        <div className="monster-assets-grid">
-                          <div className="assets-section">
-                            <div className="section-title">技能 (Skills)</div>
-                            {m.skills.map((s, idx) => <div key={idx}>{renderTierInfo(s)}</div>)}
+                        
+                        {isExpanded && (
+                          <div className="monster-assets-grid">
+                            <div className="assets-section">
+                              <div className="section-title">技能 (Skills)</div>
+                              {m.skills.map((s, idx) => <div key={idx}>{renderTierInfo(s)}</div>)}
+                            </div>
+                            <div className="assets-section">
+                              <div className="section-title">物品 (Items)</div>
+                              {m.items.map((it, idx) => <div key={idx}>{renderTierInfo(it)}</div>)}
+                            </div>
                           </div>
-                          <div className="assets-section">
-                            <div className="section-title">物品 (Items)</div>
-                            {m.items.map((it, idx) => <div key={idx}>{renderTierInfo(it)}</div>)}
-                          </div>
-                        </div>
+                        )}
                       </div>
                     )
                   })}
@@ -895,34 +1041,39 @@ export default function App() {
               </>
             ) : (
                 getSortedItems(syncData[activeTab]).map(item => (
-                  <div key={item.id} className="content-wrap">
-                    <div className="left-section">
-                      <div 
-                        className={pinnedItems.has(item.id) ? "pin-btn pinned" : "pin-btn"}
-                        onClick={() => togglePin(item.id)}
-                        title={pinnedItems.has(item.id) ? "取消置顶" : "置顶"}>
-                        {pinnedItems.has(item.id) ? "📌" : "📍"}
+                  <div key={item.id} className={`content-wrap ${expandedItems.has(item.id) ? 'expanded' : ''}`} onClick={() => toggleExpand(item.id)}>
+                    <div className="item-main-info">
+                      <div className="left-section">
+                        <div 
+                          className={pinnedItems.has(item.id) ? "pin-btn pinned" : "pin-btn"}
+                          onClick={(e) => togglePin(item.id, e)}
+                          title={pinnedItems.has(item.id) ? "取消置顶" : "置顶"}>
+                          {pinnedItems.has(item.id) ? "📌" : "📍"}
+                        </div>
+                        <div className="left-image"><img src={item.displayImg} alt="" /></div>
+                        <div className="item-name">{item.name_zh}</div>
                       </div>
-                      <div className="left-image"><img src={item.displayImg} alt="" /></div>
-                      <div className="item-name">{item.name_zh}</div>
+                      <div className="expand-indicator">{expandedItems.has(item.id) ? '▴' : '▾附魔'}</div>
                     </div>
-                    <div className="effect-table">
-                      {item.enchantments?.map((enc: any) => {
-                        const colorKey = ID_TO_COLOR[enc.id] || "tag";
-                        return (
-                          <div key={enc.id} className="effect-cell">
-                            {/* 强行应用颜色并增加间距 */}
-                            <strong className="effect-label" style={{ 
-                                color: `var(--c-${colorKey})`, 
-                                borderLeft: `3px solid var(--c-${colorKey})` 
-                            }}>
-                              {enc.name}
-                            </strong>
-                            <span className="effect-desc">{enc.description}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    
+                    {expandedItems.has(item.id) && (
+                      <div className="effect-table">
+                        {item.enchantments?.map((enc: any) => {
+                          const colorKey = ID_TO_COLOR[enc.id] || "tag";
+                          return (
+                            <div key={enc.id} className="effect-cell">
+                              <strong className="effect-label" style={{ 
+                                  color: `var(--c-${colorKey})`, 
+                                  borderLeft: `3px solid var(--c-${colorKey})` 
+                              }}>
+                                {enc.name}
+                              </strong>
+                              <span className="effect-desc">{enc.description}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 ))
               )}
