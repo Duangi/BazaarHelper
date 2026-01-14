@@ -221,7 +221,7 @@
         "name": "余烬",
         "name_en": "",
         "tier": "Bronze+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["LOOT"],
         "tiers": {
           "bronze": {
@@ -2542,7 +2542,7 @@
   },
   "焰风勇士": {
     "name": "Flame Dancer",
-    "name_zh": "烈焰舞者",
+    "name_zh": "焰风勇士",
     "available": "Day 3",
     "health": 300,
     "tags": ["Bronze", "CombatEncounter", "Common"],
@@ -3342,17 +3342,29 @@
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": ["加速其他飞行物品1秒。", "使 2 件物品开始飞行", "弹药量:1"],
+            "description": [
+              "加速其他飞行物品1秒。",
+              "使 2 件物品开始飞行",
+              "弹药量:1"
+            ],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["加速其他飞行物品1秒。", "使 3 件物品开始飞行", "弹药量:1"],
+            "description": [
+              "加速其他飞行物品1秒。",
+              "使 3 件物品开始飞行",
+              "弹药量:1"
+            ],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["加速其他飞行物品1秒。", "使 4 件物品开始飞行", "弹药量:1"],
+            "description": [
+              "加速其他飞行物品1秒。",
+              "使 4 件物品开始飞行",
+              "弹药量:1"
+            ],
             "extra_description": [],
             "cd": null
           }
@@ -3394,11 +3406,7 @@
     "name_zh": "街头玩家",
     "available": "Day 3",
     "health": 450,
-    "tags": [
-      "Silver",
-      "CombatEncounter",
-      "Common"
-    ],
+    "tags": ["Silver", "CombatEncounter", "Common"],
     "level": 4,
     "combat": {
       "gold": "3 Gold",
@@ -3414,30 +3422,22 @@
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": [
-              "每场战斗前 3 次使用小型物品时，获得50治疗。"
-            ],
+            "description": ["每场战斗前 3 次使用小型物品时，获得50治疗。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": [
-              "每场战斗前 6 次使用小型物品时，获得50治疗。"
-            ],
+            "description": ["每场战斗前 6 次使用小型物品时，获得50治疗。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "每场战斗前 9 次使用小型物品时，获得50治疗。"
-            ],
+            "description": ["每场战斗前 9 次使用小型物品时，获得50治疗。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "每场战斗前 12 次使用小型物品时，获得50治疗。"
-            ],
+            "description": ["每场战斗前 12 次使用小型物品时，获得50治疗。"],
             "extra_description": [],
             "cd": null
           }
@@ -3451,35 +3451,25 @@
         "name": "红色小圆猪 R",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOY"
-        ],
+        "tags": ["TOY"],
         "tiers": {
           "bronze": {
-            "description": [
-              "此物品右侧的武器伤害提高 +5 (限本场战斗)"
-            ],
+            "description": ["此物品右侧的武器伤害提高 +5 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "silver": {
-            "description": [
-              "此物品右侧的武器伤害提高 +10 (限本场战斗)"
-            ],
+            "description": ["此物品右侧的武器伤害提高 +10 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "gold": {
-            "description": [
-              "此物品右侧的武器伤害提高 +15 (限本场战斗)"
-            ],
+            "description": ["此物品右侧的武器伤害提高 +15 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "diamond": {
-            "description": [
-              "此物品右侧的武器伤害提高 +20 (限本场战斗)"
-            ],
+            "description": ["此物品右侧的武器伤害提高 +20 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           }
@@ -3491,36 +3481,25 @@
         "name": "高级红色小圆猪",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOY",
-          "WEAPON"
-        ],
+        "tags": ["TOY", "WEAPON"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成伤害，等于此物品价值的三倍"
-            ],
+            "description": ["造成伤害，等于此物品价值的三倍"],
             "extra_description": [],
             "cd": "5.0"
           },
           "silver": {
-            "description": [
-              "造成伤害，等于此物品价值的三倍"
-            ],
+            "description": ["造成伤害，等于此物品价值的三倍"],
             "extra_description": [],
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "造成伤害，等于此物品价值的三倍"
-            ],
+            "description": ["造成伤害，等于此物品价值的三倍"],
             "extra_description": [],
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "造成伤害，等于此物品价值的三倍"
-            ],
+            "description": ["造成伤害，等于此物品价值的三倍"],
             "extra_description": [],
             "cd": "5.0"
           }
@@ -3532,14 +3511,10 @@
         "name": "小圆猪",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOY"
-        ],
+        "tags": ["TOY"],
         "tiers": {
           "bronze": {
-            "description": [
-              "为相邻小型物品充能 1 秒"
-            ],
+            "description": ["为相邻小型物品充能 1 秒"],
             "extra_description": [
               "赢得战斗时，获得一只小圆猪。",
               "每天开始时，升级一只小圆猪。"
@@ -3547,9 +3522,7 @@
             "cd": "8.0"
           },
           "silver": {
-            "description": [
-              "为相邻小型物品充能 2 秒"
-            ],
+            "description": ["为相邻小型物品充能 2 秒"],
             "extra_description": [
               "赢得战斗时，获得一只小圆猪。",
               "每天开始时，升级一只小圆猪。"
@@ -3557,9 +3530,7 @@
             "cd": "8.0"
           },
           "gold": {
-            "description": [
-              "为相邻小型物品充能 3 秒"
-            ],
+            "description": ["为相邻小型物品充能 3 秒"],
             "extra_description": [
               "赢得战斗时，获得一只小圆猪。",
               "每天开始时，升级一只小圆猪。"
@@ -3567,9 +3538,7 @@
             "cd": "8.0"
           },
           "diamond": {
-            "description": [
-              "为相邻小型物品充能 4 秒"
-            ],
+            "description": ["为相邻小型物品充能 4 秒"],
             "extra_description": [
               "赢得战斗时，获得一只小圆猪。",
               "每天开始时，升级一只小圆猪。"
@@ -3584,44 +3553,26 @@
         "name": "小圆猪守卫",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOY"
-        ],
+        "tags": ["TOY"],
         "tiers": {
           "bronze": {
-            "description": [
-              "获得 5 护盾"
-            ],
-            "extra_description": [
-              "此物品的护盾值翻倍。"
-            ],
+            "description": ["获得 5 护盾"],
+            "extra_description": ["此物品的护盾值翻倍。"],
             "cd": "5.0"
           },
           "silver": {
-            "description": [
-              "获得 10 护盾"
-            ],
-            "extra_description": [
-              "此物品的护盾值翻倍。"
-            ],
+            "description": ["获得 10 护盾"],
+            "extra_description": ["此物品的护盾值翻倍。"],
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "获得 15 护盾"
-            ],
-            "extra_description": [
-              "此物品的护盾值翻倍。"
-            ],
+            "description": ["获得 15 护盾"],
+            "extra_description": ["此物品的护盾值翻倍。"],
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "获得 20 护盾"
-            ],
-            "extra_description": [
-              "此物品的护盾值翻倍。"
-            ],
+            "description": ["获得 20 护盾"],
+            "extra_description": ["此物品的护盾值翻倍。"],
             "cd": "5.0"
           }
         },
@@ -3632,35 +3583,25 @@
         "name": "黄色小圆猪 L",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOY"
-        ],
+        "tags": ["TOY"],
         "tiers": {
           "bronze": {
-            "description": [
-              "此物品左侧护盾物品的护盾提高 +5 (限本场战斗)"
-            ],
+            "description": ["此物品左侧护盾物品的护盾提高 +5 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "silver": {
-            "description": [
-              "此物品左侧护盾物品的护盾提高 +10 (限本场战斗)"
-            ],
+            "description": ["此物品左侧护盾物品的护盾提高 +10 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "gold": {
-            "description": [
-              "此物品左侧护盾物品的护盾提高 +15 (限本场战斗)"
-            ],
+            "description": ["此物品左侧护盾物品的护盾提高 +15 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           },
           "diamond": {
-            "description": [
-              "此物品左侧护盾物品的护盾提高 +20 (限本场战斗)"
-            ],
+            "description": ["此物品左侧护盾物品的护盾提高 +20 (限本场战斗)"],
             "extra_description": [],
             "cd": "4.0"
           }
@@ -3675,30 +3616,22 @@
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": [
-              "第9天可使用此物品，开启神庙探险。"
-            ],
+            "description": ["第9天可使用此物品，开启神庙探险。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": [
-              "第9天可使用此物品，开启神庙探险。"
-            ],
+            "description": ["第9天可使用此物品，开启神庙探险。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "第9天可使用此物品，开启神庙探险。"
-            ],
+            "description": ["第9天可使用此物品，开启神庙探险。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "第9天可使用此物品，开启神庙探险。"
-            ],
+            "description": ["第9天可使用此物品，开启神庙探险。"],
             "extra_description": [],
             "cd": null
           }
@@ -3713,11 +3646,7 @@
     "name_zh": "霜猴勇士",
     "available": "Day 3",
     "health": 550,
-    "tags": [
-      "Silver",
-      "CombatEncounter",
-      "Common"
-    ],
+    "tags": ["Silver", "CombatEncounter", "Common"],
     "level": 4,
     "combat": {
       "gold": "3 Gold",
@@ -3730,35 +3659,25 @@
         "name_en": "Snowstorm",
         "tier": "BRONZE+",
         "current_tier": "Bronze",
-        "tags": [
-          "WEAPON"
-        ],
+        "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
-            "description": [
-              "触发冻结时，一件武器伤害提高 +10 (限本场战斗)。"
-            ],
+            "description": ["触发冻结时，一件武器伤害提高 +10 (限本场战斗)。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": [
-              "触发冻结时，一件武器伤害提高 +20 (限本场战斗)。"
-            ],
+            "description": ["触发冻结时，一件武器伤害提高 +20 (限本场战斗)。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "触发冻结时，一件武器伤害提高 +30 (限本场战斗)。"
-            ],
+            "description": ["触发冻结时，一件武器伤害提高 +30 (限本场战斗)。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "触发冻结时，一件武器伤害提高 +40 (限本场战斗)。"
-            ],
+            "description": ["触发冻结时，一件武器伤害提高 +40 (限本场战斗)。"],
             "extra_description": [],
             "cd": null
           }
@@ -3775,30 +3694,22 @@
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": [
-              "每场战斗开始时，冻结一件物品 3 秒。"
-            ],
+            "description": ["每场战斗开始时，冻结一件物品 3 秒。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": [
-              "每场战斗开始时，冻结一件物品 4 秒。"
-            ],
+            "description": ["每场战斗开始时，冻结一件物品 4 秒。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "每场战斗开始时，冻结一件物品 5 秒。"
-            ],
+            "description": ["每场战斗开始时，冻结一件物品 5 秒。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "每场战斗开始时，冻结一件物品 6 秒。"
-            ],
+            "description": ["每场战斗开始时，冻结一件物品 6 秒。"],
             "extra_description": [],
             "cd": null
           }
@@ -3810,44 +3721,26 @@
         "name": "壶铃",
         "tier": "BRONZE+",
         "current_tier": "Bronze",
-        "tags": [
-          "TOOL"
-        ],
+        "tags": ["TOOL"],
         "tiers": {
           "bronze": {
-            "description": [
-              "武器伤害提高 +10 (限本场战斗)"
-            ],
-            "extra_description": [
-              "获得治疗时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +10 (限本场战斗)"],
+            "extra_description": ["获得治疗时，为此物品充能2秒。"],
             "cd": "7.0"
           },
           "silver": {
-            "description": [
-              "武器伤害提高 +20 (限本场战斗)"
-            ],
-            "extra_description": [
-              "获得治疗时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +20 (限本场战斗)"],
+            "extra_description": ["获得治疗时，为此物品充能2秒。"],
             "cd": "7.0"
           },
           "gold": {
-            "description": [
-              "武器伤害提高 +30 (限本场战斗)"
-            ],
-            "extra_description": [
-              "获得治疗时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +30 (限本场战斗)"],
+            "extra_description": ["获得治疗时，为此物品充能2秒。"],
             "cd": "7.0"
           },
           "diamond": {
-            "description": [
-              "武器伤害提高 +40 (限本场战斗)"
-            ],
-            "extra_description": [
-              "获得治疗时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +40 (限本场战斗)"],
+            "extra_description": ["获得治疗时，为此物品充能2秒。"],
             "cd": "7.0"
           }
         },
@@ -3858,45 +3751,26 @@
         "name": "手斧",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "VAN"
-        ],
+        "tags": ["WEAPON", "VAN"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 10 伤害"
-            ],
-            "extra_description": [
-              "武器 +6 伤害。"
-            ],
+            "description": ["造成 10 伤害"],
+            "extra_description": ["武器 +6 伤害。"],
             "cd": "6.0"
           },
           "silver": {
-            "description": [
-              "造成 15 伤害"
-            ],
-            "extra_description": [
-              "武器 +9 伤害。"
-            ],
+            "description": ["造成 15 伤害"],
+            "extra_description": ["武器 +9 伤害。"],
             "cd": "6.0"
           },
           "gold": {
-            "description": [
-              "造成 20 伤害"
-            ],
-            "extra_description": [
-              "武器 +12 伤害。"
-            ],
+            "description": ["造成 20 伤害"],
+            "extra_description": ["武器 +12 伤害。"],
             "cd": "6.0"
           },
           "diamond": {
-            "description": [
-              "造成 25 伤害"
-            ],
-            "extra_description": [
-              "武器 +15 伤害。"
-            ],
+            "description": ["造成 25 伤害"],
+            "extra_description": ["武器 +15 伤害。"],
             "cd": "6.0"
           }
         },
@@ -3907,45 +3781,31 @@
         "name": "冻结殴打",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON"
-        ],
+        "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 20 伤害",
-              "冻结 1 件物品1秒"
-            ],
+            "description": ["造成 20 伤害", "冻结 1 件物品1秒"],
             "extra_description": [
               "触发冻结时，己方武器伤害提高 5 (限本场战斗)。"
             ],
             "cd": "9.0"
           },
           "silver": {
-            "description": [
-              "造成 40 伤害",
-              "冻结 2 件物品1秒"
-            ],
+            "description": ["造成 40 伤害", "冻结 2 件物品1秒"],
             "extra_description": [
               "触发冻结时，己方武器伤害提高 10 (限本场战斗)。"
             ],
             "cd": "9.0"
           },
           "gold": {
-            "description": [
-              "造成 60 伤害",
-              "冻结 3 件物品1秒"
-            ],
+            "description": ["造成 60 伤害", "冻结 3 件物品1秒"],
             "extra_description": [
               "触发冻结时，己方武器伤害提高 15 (限本场战斗)。"
             ],
             "cd": "9.0"
           },
           "diamond": {
-            "description": [
-              "造成 80 伤害",
-              "冻结 4 件物品1秒"
-            ],
+            "description": ["造成 80 伤害", "冻结 4 件物品1秒"],
             "extra_description": [
               "触发冻结时，己方武器伤害提高 20 (限本场战斗)。"
             ],
@@ -3959,37 +3819,22 @@
         "name": "雪花玻璃球",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "PROPERTY",
-          "TOY"
-        ],
+        "tags": ["PROPERTY", "TOY"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "冻结一件物品 1 秒"
-            ],
-            "extra_description": [
-              "每有一处相邻地产，此物品就+1多重触发。"
-            ],
+            "description": ["冻结一件物品 1 秒"],
+            "extra_description": ["每有一处相邻地产，此物品就+1多重触发。"],
             "cd": "7.0"
           },
           "gold": {
-            "description": [
-              "冻结一件物品 1.5 秒"
-            ],
-            "extra_description": [
-              "每有一处相邻地产，此物品就+1多重触发。"
-            ],
+            "description": ["冻结一件物品 1.5 秒"],
+            "extra_description": ["每有一处相邻地产，此物品就+1多重触发。"],
             "cd": "7.0"
           },
           "diamond": {
-            "description": [
-              "冻结一件物品 2 秒"
-            ],
-            "extra_description": [
-              "每有一处相邻地产，此物品就+1多重触发。"
-            ],
+            "description": ["冻结一件物品 2 秒"],
+            "extra_description": ["每有一处相邻地产，此物品就+1多重触发。"],
             "cd": "7.0"
           }
         },
@@ -4003,11 +3848,7 @@
     "name_zh": "飞车暴徒",
     "available": "Day 3",
     "health": 650,
-    "tags": [
-      "Gold",
-      "CombatEncounter",
-      "Common"
-    ],
+    "tags": ["Gold", "CombatEncounter", "Common"],
     "level": 5,
     "combat": {
       "gold": "4 Gold",
@@ -4020,30 +3861,21 @@
         "name_en": "Gunner",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "VAN",
-          "MAK"
-        ],
+        "tags": ["VAN", "MAK"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "己方物品 +1 最大弹药量。"
-            ],
+            "description": ["己方物品 +1 最大弹药量。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "己方物品 +2 最大弹药量。"
-            ],
+            "description": ["己方物品 +2 最大弹药量。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "己方物品 +3 最大弹药量。"
-            ],
+            "description": ["己方物品 +3 最大弹药量。"],
             "extra_description": [],
             "cd": null
           }
@@ -4057,29 +3889,21 @@
         "name": "火药",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "LOOT"
-        ],
+        "tags": ["LOOT"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "出售此物品时，最左侧的弹药物品最大弹药量提高 1。"
-            ],
+            "description": ["出售此物品时，最左侧的弹药物品最大弹药量提高 1。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "出售此物品时，最左侧的弹药物品最大弹药量提高 2。"
-            ],
+            "description": ["出售此物品时，最左侧的弹药物品最大弹药量提高 2。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "出售此物品时，最左侧的弹药物品最大弹药量提高 4。"
-            ],
+            "description": ["出售此物品时，最左侧的弹药物品最大弹药量提高 4。"],
             "extra_description": [],
             "cd": null
           }
@@ -4091,37 +3915,25 @@
         "name": "激光手枪",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "TECH",
-          "DOO"
-        ],
+        "tags": ["WEAPON", "TECH", "DOO"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 15 伤害"
-            ],
+            "description": ["造成 15 伤害"],
             "extra_description": [],
             "cd": "5.0"
           },
           "silver": {
-            "description": [
-              "造成 30 伤害"
-            ],
+            "description": ["造成 30 伤害"],
             "extra_description": [],
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "造成 45 伤害"
-            ],
+            "description": ["造成 45 伤害"],
             "extra_description": [],
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "造成 60 伤害"
-            ],
+            "description": ["造成 60 伤害"],
             "extra_description": [],
             "cd": "5.0"
           }
@@ -4133,40 +3945,25 @@
         "name": "冲锋枪",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "DOO"
-        ],
+        "tags": ["WEAPON", "DOO"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 10 伤害",
-              "Ammo: 6"
-            ],
+            "description": ["造成 10 伤害", "Ammo: 6"],
             "extra_description": [],
             "cd": "2.0"
           },
           "silver": {
-            "description": [
-              "造成 10 伤害",
-              "Ammo: 8"
-            ],
+            "description": ["造成 10 伤害", "Ammo: 8"],
             "extra_description": [],
             "cd": "2.0"
           },
           "gold": {
-            "description": [
-              "造成 10 伤害",
-              "Ammo: 10"
-            ],
+            "description": ["造成 10 伤害", "Ammo: 10"],
             "extra_description": [],
             "cd": "2.0"
           },
           "diamond": {
-            "description": [
-              "造成 10 伤害",
-              "Ammo: 12"
-            ],
+            "description": ["造成 10 伤害", "Ammo: 12"],
             "extra_description": [],
             "cd": "2.0"
           }
@@ -4178,44 +3975,25 @@
         "name": "流星索",
         "tier": "BRONZE+",
         "current_tier": "Bronze",
-        "tags": [
-          "WEAPON",
-          "VAN"
-        ],
+        "tags": ["WEAPON", "VAN"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 20 伤害",
-              "减速一件物品 2 秒",
-              "Ammo: 2"
-            ],
+            "description": ["造成 20 伤害", "减速一件物品 2 秒", "Ammo: 2"],
             "extra_description": [],
             "cd": "4.0"
           },
           "silver": {
-            "description": [
-              "造成 40 伤害",
-              "减速一件物品 3 秒",
-              "Ammo: 2"
-            ],
+            "description": ["造成 40 伤害", "减速一件物品 3 秒", "Ammo: 2"],
             "extra_description": [],
             "cd": "4.0"
           },
           "gold": {
-            "description": [
-              "造成 60 伤害",
-              "减速一件物品 4 秒",
-              "Ammo: 2"
-            ],
+            "description": ["造成 60 伤害", "减速一件物品 4 秒", "Ammo: 2"],
             "extra_description": [],
             "cd": "4.0"
           },
           "diamond": {
-            "description": [
-              "造成 80 伤害",
-              "减速一件物品 5 秒",
-              "Ammo: 2"
-            ],
+            "description": ["造成 80 伤害", "减速一件物品 5 秒", "Ammo: 2"],
             "extra_description": [],
             "cd": "4.0"
           }
@@ -4227,45 +4005,26 @@
         "name": "弱点探测器",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOOL",
-          "DOO"
-        ],
+        "tags": ["TOOL", "DOO"],
         "tiers": {
           "bronze": {
-            "description": [
-              "武器伤害提高 +5 (限本场战斗)"
-            ],
-            "extra_description": [
-              "触发减速时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +5 (限本场战斗)"],
+            "extra_description": ["触发减速时，为此物品充能2秒。"],
             "cd": "6.0"
           },
           "silver": {
-            "description": [
-              "武器伤害提高 +10 (限本场战斗)"
-            ],
-            "extra_description": [
-              "触发减速时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +10 (限本场战斗)"],
+            "extra_description": ["触发减速时，为此物品充能2秒。"],
             "cd": "6.0"
           },
           "gold": {
-            "description": [
-              "武器伤害提高 +20 (限本场战斗)"
-            ],
-            "extra_description": [
-              "触发减速时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +20 (限本场战斗)"],
+            "extra_description": ["触发减速时，为此物品充能2秒。"],
             "cd": "6.0"
           },
           "diamond": {
-            "description": [
-              "武器伤害提高 +40 (限本场战斗)"
-            ],
-            "extra_description": [
-              "触发减速时，为此物品充能2秒。"
-            ],
+            "description": ["武器伤害提高 +40 (限本场战斗)"],
+            "extra_description": ["触发减速时，为此物品充能2秒。"],
             "cd": "6.0"
           }
         },
@@ -4276,41 +4035,25 @@
         "name": "抓钩",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "TOOL",
-          "VAN"
-        ],
+        "tags": ["WEAPON", "TOOL", "VAN"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 12 伤害",
-              "减速 1 件物品1秒"
-            ],
+            "description": ["造成 12 伤害", "减速 1 件物品1秒"],
             "extra_description": [],
             "cd": "7.0"
           },
           "silver": {
-            "description": [
-              "造成 18 伤害",
-              "减速 2 件物品1秒"
-            ],
+            "description": ["造成 18 伤害", "减速 2 件物品1秒"],
             "extra_description": [],
             "cd": "7.0"
           },
           "gold": {
-            "description": [
-              "造成 24 伤害",
-              "减速 3 件物品1秒"
-            ],
+            "description": ["造成 24 伤害", "减速 3 件物品1秒"],
             "extra_description": [],
             "cd": "7.0"
           },
           "diamond": {
-            "description": [
-              "造成 32 伤害",
-              "减速 4 件物品1秒"
-            ],
+            "description": ["造成 32 伤害", "减速 4 件物品1秒"],
             "extra_description": [],
             "cd": "7.0"
           }
@@ -4322,29 +4065,21 @@
         "name": "鹰之护符",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "LOOT"
-        ],
+        "tags": ["LOOT"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "出售此物品时，最左侧的物品暴击率提高 5%。"
-            ],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 5%。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "出售此物品时，最左侧的物品暴击率提高 10%。"
-            ],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 10%。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "出售此物品时，最左侧的物品暴击率提高 20%。"
-            ],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 20%。"],
             "extra_description": [],
             "cd": null
           }
@@ -4359,11 +4094,7 @@
     "name_zh": "变异烘焙师",
     "available": "Day 3",
     "health": 700,
-    "tags": [
-      "Diamond",
-      "CombatEncounter",
-      "Common"
-    ],
+    "tags": ["Diamond", "CombatEncounter", "Common"],
     "level": 5,
     "combat": {
       "gold": "5 Gold",
@@ -4376,29 +4107,21 @@
         "name_en": "The Right Tool",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "TOOL"
-        ],
+        "tags": ["TOOL"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "每拥有一件工具，己方非工具物品就 +5% 暴击率。"
-            ],
+            "description": ["每拥有一件工具，己方非工具物品就 +5% 暴击率。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": [
-              "每拥有一件工具，己方非工具物品就 +10% 暴击率。"
-            ],
+            "description": ["每拥有一件工具，己方非工具物品就 +10% 暴击率。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": [
-              "每拥有一件工具，己方非工具物品就 +15% 暴击率。"
-            ],
+            "description": ["每拥有一件工具，己方非工具物品就 +15% 暴击率。"],
             "extra_description": [],
             "cd": null
           }
@@ -4412,41 +4135,31 @@
         "name": "毒液注射",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "MAK"
-        ],
+        "tags": ["MAK"],
         "tiers": {
           "bronze": {
-            "description": [
-              "对双方玩家都造成 2 剧毒"
-            ],
+            "description": ["对双方玩家都造成 2 剧毒"],
             "extra_description": [
               "生命再生量提高，增幅等于此物品的剧毒 (限本场战斗)"
             ],
             "cd": "5.0"
           },
           "silver": {
-            "description": [
-              "对双方玩家都造成 4 剧毒"
-            ],
+            "description": ["对双方玩家都造成 4 剧毒"],
             "extra_description": [
               "生命再生量提高，增幅等于此物品的剧毒 (限本场战斗)"
             ],
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "对双方玩家都造成 6 剧毒"
-            ],
+            "description": ["对双方玩家都造成 6 剧毒"],
             "extra_description": [
               "生命再生量提高，增幅等于此物品的剧毒 (限本场战斗)"
             ],
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "对双方玩家都造成 8 剧毒"
-            ],
+            "description": ["对双方玩家都造成 8 剧毒"],
             "extra_description": [
               "生命再生量提高，增幅等于此物品的剧毒 (限本场战斗)"
             ],
@@ -4460,42 +4173,31 @@
         "name": "黄油",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "FOOD",
-          "JUL"
-        ],
+        "tags": ["FOOD", "JUL"],
         "tiers": {
           "bronze": {
-            "description": [
-              "加速一件物品 1 秒"
-            ],
+            "description": ["加速一件物品 1 秒"],
             "extra_description": [
               "每有一件相邻工具或食物物品，此物品就+1多重触发。"
             ],
             "cd": "8.0"
           },
           "silver": {
-            "description": [
-              "加速一件物品 1 秒"
-            ],
+            "description": ["加速一件物品 1 秒"],
             "extra_description": [
               "每有一件相邻工具或食物物品，此物品就+1多重触发。"
             ],
             "cd": "7.0"
           },
           "gold": {
-            "description": [
-              "加速一件物品 1 秒"
-            ],
+            "description": ["加速一件物品 1 秒"],
             "extra_description": [
               "每有一件相邻工具或食物物品，此物品就+1多重触发。"
             ],
             "cd": "6.0"
           },
           "diamond": {
-            "description": [
-              "加速一件物品 1 秒"
-            ],
+            "description": ["加速一件物品 1 秒"],
             "extra_description": [
               "每有一件相邻工具或食物物品，此物品就+1多重触发。"
             ],
@@ -4509,38 +4211,22 @@
         "name": "面包刀",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "TOOL",
-          "JUL"
-        ],
+        "tags": ["WEAPON", "TOOL", "JUL"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "造成伤害，等于己方生命再生量的两倍"
-            ],
-            "extra_description": [
-              "加速此物品左侧的食物 1 秒"
-            ],
+            "description": ["造成伤害，等于己方生命再生量的两倍"],
+            "extra_description": ["加速此物品左侧的食物 1 秒"],
             "cd": "4.0"
           },
           "gold": {
-            "description": [
-              "造成伤害，等于己方生命再生量的两倍"
-            ],
-            "extra_description": [
-              "加速此物品左侧的食物 2 秒"
-            ],
+            "description": ["造成伤害，等于己方生命再生量的两倍"],
+            "extra_description": ["加速此物品左侧的食物 2 秒"],
             "cd": "4.0"
           },
           "diamond": {
-            "description": [
-              "造成伤害，等于己方生命再生量的两倍"
-            ],
-            "extra_description": [
-              "加速此物品左侧的食物 3 秒"
-            ],
+            "description": ["造成伤害，等于己方生命再生量的两倍"],
+            "extra_description": ["加速此物品左侧的食物 3 秒"],
             "cd": "4.0"
           }
         },
@@ -4551,16 +4237,11 @@
         "name": "毒性蔓延 面包",
         "tier": "SILVER+",
         "current_tier": "Silver",
-        "tags": [
-          "FOOD",
-          "JUL"
-        ],
+        "tags": ["FOOD", "JUL"],
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": [
-              "生命再生量提高 10 (限本场战斗)"
-            ],
+            "description": ["生命再生量提高 10 (限本场战斗)"],
             "extra_description": [
               "此物品加速时，生命再生物品的生命再生量提高 +2 (限本场战斗) 。",
               "毒性蔓延: 造成剧毒，等于此物品生命再生量"
@@ -4568,9 +4249,7 @@
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "生命再生量提高 20 (限本场战斗)"
-            ],
+            "description": ["生命再生量提高 20 (限本场战斗)"],
             "extra_description": [
               "此物品加速时，生命再生物品的生命再生量提高 +4 (限本场战斗) 。",
               "毒性蔓延: 造成剧毒，等于此物品生命再生量"
@@ -4578,9 +4257,7 @@
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "生命再生量提高 30 (限本场战斗)"
-            ],
+            "description": ["生命再生量提高 30 (限本场战斗)"],
             "extra_description": [
               "此物品加速时，生命再生物品的生命再生量提高 +6 (限本场战斗) 。",
               "毒性蔓延: 造成剧毒，等于此物品生命再生量"
@@ -4595,42 +4272,31 @@
         "name": "磨刀器",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "TOOL",
-          "JUL"
-        ],
+        "tags": ["TOOL", "JUL"],
         "tiers": {
           "bronze": {
-            "description": [
-              "加速另一件工具 1 秒"
-            ],
+            "description": ["加速另一件工具 1 秒"],
             "extra_description": [
               "使用相邻武器时，使其伤害提高 +4 (限本场战斗) 。"
             ],
             "cd": "4.0"
           },
           "silver": {
-            "description": [
-              "加速另一件工具 1.5 秒"
-            ],
+            "description": ["加速另一件工具 1.5 秒"],
             "extra_description": [
               "使用相邻武器时，使其伤害提高 +8 (限本场战斗) 。"
             ],
             "cd": "4.0"
           },
           "gold": {
-            "description": [
-              "加速另一件工具 2 秒"
-            ],
+            "description": ["加速另一件工具 2 秒"],
             "extra_description": [
               "使用相邻武器时，使其伤害提高 +12 (限本场战斗) 。"
             ],
             "cd": "4.0"
           },
           "diamond": {
-            "description": [
-              "加速另一件工具 2.5 秒"
-            ],
+            "description": ["加速另一件工具 2.5 秒"],
             "extra_description": [
               "使用相邻武器时，使其伤害提高 +16 (限本场战斗) 。"
             ],
@@ -4644,43 +4310,25 @@
         "name": "擀面杖",
         "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [
-          "WEAPON",
-          "TOOL",
-          "JUL"
-        ],
+        "tags": ["WEAPON", "TOOL", "JUL"],
         "tiers": {
           "bronze": {
-            "description": [
-              "造成 30 伤害"
-            ],
-            "extra_description": [
-              "此物品加速时，伤害提高 +30 (限本场战斗) 。"
-            ],
+            "description": ["造成 30 伤害"],
+            "extra_description": ["此物品加速时，伤害提高 +30 (限本场战斗) 。"],
             "cd": "5.0"
           },
           "silver": {
-            "description": [
-              "造成 30 伤害"
-            ],
-            "extra_description": [
-              "此物品加速时，伤害提高 +60 (限本场战斗) 。"
-            ],
+            "description": ["造成 30 伤害"],
+            "extra_description": ["此物品加速时，伤害提高 +60 (限本场战斗) 。"],
             "cd": "5.0"
           },
           "gold": {
-            "description": [
-              "造成 30 伤害"
-            ],
-            "extra_description": [
-              "此物品加速时，伤害提高 +90 (限本场战斗) 。"
-            ],
+            "description": ["造成 30 伤害"],
+            "extra_description": ["此物品加速时，伤害提高 +90 (限本场战斗) 。"],
             "cd": "5.0"
           },
           "diamond": {
-            "description": [
-              "造成 30 伤害"
-            ],
+            "description": ["造成 30 伤害"],
             "extra_description": [
               "此物品加速时，伤害提高 +120 (限本场战斗) 。"
             ],
@@ -4710,7 +4358,7 @@
         "name": "敏锐眼光",
         "name_en": "",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["VAN", "PYG", "DOO", "MAK", "STE", "JUL"],
         "tiers": {
           "bronze": {
@@ -4738,6 +4386,36 @@
       }
     ],
     "items": [
+      {
+        "id": "65fec4a6-a2c4-4aac-9b05-774fcfb19ea2",
+        "name": "金条",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得 5 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得 10 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得 20 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得 40 金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/金条.jpg"
+      },
       {
         "id": "",
         "name": "靴里剑",
@@ -4780,7 +4458,7 @@
         "id": "",
         "name": "发条匕首",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
@@ -4807,59 +4485,97 @@
         "image": "images/发条匕首.jpg"
       },
       {
-        "id": "65fec4a6-a2c4-4aac-9b05-774fcfb19ea2",
-        "name": "金条",
-        "tier": "SILVER",
+        "id": "",
+        "name": "发条匕首",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
-        "tags": [],
+        "tags": ["WEAPON"],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
+            "description": ["造成 20 伤害"],
+            "extra_description": ["出售此物品时，己方物品的冷却时间缩短 1%。"],
+            "cd": "7.0"
           },
           "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
+            "description": ["造成 40 伤害"],
+            "extra_description": ["出售此物品时，己方物品的冷却时间缩短 2%。"],
+            "cd": "7.0"
           },
           "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
+            "description": ["造成 80 伤害"],
+            "extra_description": ["出售此物品时，己方物品的冷却时间缩短 3%。"],
+            "cd": "7.0"
           },
           "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
+            "description": ["造成 160 伤害"],
+            "extra_description": ["出售此物品时，己方物品的冷却时间缩短 4%。"],
+            "cd": "7.0"
           }
         },
-        "image": "images/金条.jpg"
+        "image": "images/发条匕首.jpg"
       },
       {
-        "id": "cc463ccc-3e9d-4b19-9261-53451a3c8d0d",
+        "id": "",
+        "name": "靴里剑",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["WEAPON", "APPAREL", "VAN"],
+        "tiers": {
+          "bronze": {
+            "description": ["造成 20 伤害"],
+            "extra_description": [
+              "每场战斗首次使用此物品时，此物品 +100% 暴击率。"
+            ],
+            "cd": "7.0"
+          },
+          "silver": {
+            "description": ["造成 40 伤害"],
+            "extra_description": [
+              "每场战斗首次使用此物品时，此物品 +100% 暴击率。"
+            ],
+            "cd": "7.0"
+          },
+          "gold": {
+            "description": ["造成 60 伤害"],
+            "extra_description": [
+              "每场战斗首次使用此物品时，此物品 +100% 暴击率。"
+            ],
+            "cd": "7.0"
+          },
+          "diamond": {
+            "description": ["造成 80 伤害"],
+            "extra_description": [
+              "每场战斗首次使用此物品时，此物品 +100% 暴击率。"
+            ],
+            "cd": "7.0"
+          }
+        },
+        "image": "images/靴里剑.jpg"
+      },
+      {
+        "id": "65fec4a6-a2c4-4aac-9b05-774fcfb19ea2",
         "name": "金条",
-        "tier": "SILVER",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 5 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 10 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 20 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 40 金币"],
             "extra_description": [],
             "cd": null
           }
@@ -4945,7 +4661,7 @@
         "id": "",
         "name": "磨刀石",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["LOOT", "1 tag"],
         "tiers": {
           "bronze": {
@@ -5042,122 +4758,6 @@
         "image": "images/护目镜.jpg"
       },
       {
-        "id": "",
-        "name": "瑞士军刀",
-        "tier": "SILVER+",
-        "current_tier": "Silver",
-        "tags": ["TOOL", "STE"],
-        "tiers": {
-          "bronze": null,
-          "silver": {
-            "description": ["加速 1 件物品 1秒", "减速 1 件物品 1秒"],
-            "extra_description": [],
-            "cd": "5.0"
-          },
-          "gold": {
-            "description": ["加速 2 件物品 1秒", "减速 2 件物品 1秒"],
-            "extra_description": [],
-            "cd": "5.0"
-          },
-          "diamond": {
-            "description": ["加速 3 件物品 1秒", "减速 3 件物品 1秒"],
-            "extra_description": [],
-            "cd": "5.0"
-          }
-        },
-        "image": "images/瑞士军刀.jpg"
-      },
-      {
-        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
-        "name": "废料",
-        "tier": "BRONZE",
-        "current_tier": "Bronze",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/废料.jpg"
-      },
-      {
-        "id": "f8dd1239-f4a3-4bca-b975-2125906e7fcb",
-        "name": "锤子",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["造成1伤害"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["造成1伤害"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["造成1伤害"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["造成1伤害"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/锤子.jpg"
-      },
-      {
-        "id": "27e2ea0b-4e39-4826-be29-9f5505d5938a",
-        "name": "扳手",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["此物品飞行时，伤害翻倍。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["此物品飞行时，伤害翻倍。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["此物品飞行时，伤害翻倍。"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["此物品飞行时，伤害翻倍。"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/扳手.jpg"
-      },
-      {
         "id": "4cf73614-52fd-4c59-8002-bbff087951ba",
         "name": "工具箱",
         "tier": "BRONZE",
@@ -5188,29 +4788,51 @@
         "image": "images/工具箱.jpg"
       },
       {
-        "id": "54040bca-14e5-4f6d-bfa8-b67658adda0b",
+        "id": "",
+        "name": "瑞士军刀",
+        "tier": "SILVER+",
+        "current_tier": "Silver",
+        "tags": ["TOOL", "STE"],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": ["加速 1 件物品 1秒", "减速 1 件物品 1秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          },
+          "gold": {
+            "description": ["加速 2 件物品 1秒", "减速 2 件物品 1秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          },
+          "diamond": {
+            "description": ["加速 3 件物品 1秒", "减速 3 件物品 1秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          }
+        },
+        "image": "images/瑞士军刀.jpg"
+      },
+      {
+        "id": "",
         "name": "能量药水",
-        "tier": "SILVER",
+        "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {
-          "bronze": {
-            "description": ["加速其他物品1秒"],
-            "extra_description": [],
-            "cd": null
-          },
+          "bronze": null,
           "silver": {
-            "description": ["加速其他物品1秒"],
+            "description": ["加速其他物品1秒", "弹药量:1"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["加速其他物品1秒"],
+            "description": ["加速其他物品1秒", "弹药量:1"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["加速其他物品1秒"],
+            "description": ["加速其他物品1秒", "弹药量:1"],
             "extra_description": [],
             "cd": null
           }
@@ -5218,34 +4840,30 @@
         "image": "images/能量药水.jpg"
       },
       {
-        "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
-        "name": "废料",
-        "tier": "BRONZE",
-        "current_tier": "Bronze",
-        "tags": [],
+        "id": "",
+        "name": "鹰之护符",
+        "tier": "SILVER+",
+        "current_tier": "Silver",
+        "tags": ["LOOT"],
         "tiers": {
-          "bronze": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
-            "extra_description": [],
-            "cd": null
-          },
+          "bronze": null,
           "silver": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 5%。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 10%。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的物品暴击率提高 20%。"],
             "extra_description": [],
             "cd": null
           }
         },
-        "image": "images/废料.jpg"
+        "image": "images/鹰之护符.jpg"
       }
     ],
     "image": "images_monster/锅炉斗士.jpg"
@@ -5297,6 +4915,36 @@
     "items": [
       {
         "id": "",
+        "name": "金条",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得 5 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得 10 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得 20 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得 40 金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/金条.jpg"
+      },
+      {
+        "id": "",
         "name": "鸦巢",
         "tier": "SILVER+",
         "current_tier": "Silver",
@@ -5325,7 +4973,7 @@
         "id": "",
         "name": "火药角",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["TOOL", "VAN", "1 tag"],
         "tiers": {
           "bronze": {
@@ -5355,26 +5003,26 @@
         "id": "",
         "name": "左轮手枪",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "VAN"],
         "tiers": {
           "bronze": {
-            "description": ["造成 8 伤害", "Ammo: 6"],
+            "description": ["造成 8 伤害", "弹药量: 6"],
             "extra_description": [],
             "cd": "3.0"
           },
           "silver": {
-            "description": ["造成 16 伤害", "Ammo: 6"],
+            "description": ["造成 16 伤害", "弹药量: 6"],
             "extra_description": [],
             "cd": "3.0"
           },
           "gold": {
-            "description": ["造成 24 伤害", "Ammo: 6"],
+            "description": ["造成 24 伤害", "弹药量: 6"],
             "extra_description": [],
             "cd": "3.0"
           },
           "diamond": {
-            "description": ["造成 32 伤害", "Ammo: 6"],
+            "description": ["造成 32 伤害", "弹药量: 6"],
             "extra_description": [],
             "cd": "3.0"
           }
@@ -5382,124 +5030,55 @@
         "image": "images/左轮手枪.jpg"
       },
       {
-        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
-        "name": "Spare Change",
-        "tier": "GOLD",
-        "current_tier": "Gold",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": ""
-      },
-      {
-        "id": "03e4c71d-5317-4c35-a0fb-5348356edc03",
-        "name": "Powder Horn",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["为此物品右侧的物品装填2发弹药"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["为此物品右侧的物品装填2发弹药"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["为此物品右侧的物品装填2发弹药"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["为此物品右侧的物品装填2发弹药"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": ""
-      },
-      {
-        "id": "55377bdf-359b-495c-895c-c7852511c915",
+        "id": "",
         "name": "炮弹",
-        "tier": "SILVER",
+        "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {
-          "bronze": {
-            "description": ["相邻物品+1最大弹药量。"],
-            "extra_description": [],
-            "cd": null
-          },
+          "bronze": null,
           "silver": {
-            "description": ["相邻物品+1最大弹药量。"],
+            "description": ["相邻物品 +1 最大弹药量"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["相邻物品+1最大弹药量。"],
+            "description": ["相邻物品 +2 最大弹药量"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["相邻物品+1最大弹药量。"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/炮弹.jpg"
-      },
-      {
-        "id": "f212afe2-08d1-40e3-978b-762d345bc7e5",
-        "name": "Spare Change",
-        "tier": "GOLD",
-        "current_tier": "Gold",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["相邻物品 +3 最大弹药量"],
             "extra_description": [],
             "cd": null
           }
         },
         "image": ""
+      },
+      {
+        "id": "",
+        "name": "无敌药水",
+        "tier": "SILVER+",
+        "current_tier": "Gold",
+        "tags": [],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": ["你在1秒内免疫伤害", "弹药量:1"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["你在1秒内免疫伤害", "弹药量:2"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["你在1秒内免疫伤害", "弹药量:3"],
+            "extra_description": [],
+            "cd": null
+          }
+        }
       }
     ],
     "image": "images_monster/血礁奇兵.jpg"
@@ -5553,9 +5132,51 @@
     "items": [
       {
         "id": "",
+        "name": "猪猪存钱罐",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": [
+              "出售此物品时，获得等于其价值的零钱。",
+              "每小时开始时，花费2金币，就能令价值提高1。"
+            ],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": [
+              "出售此物品时，获得等于其价值的零钱。",
+              "每小时开始时，花费2金币，就能令价值提高1。"
+            ],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": [
+              "出售此物品时，获得等于其价值的零钱。",
+              "每小时开始时，花费2金币，就能令价值提高1。"
+            ],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": [
+              "出售此物品时，获得等于其价值的零钱。",
+              "每小时开始时，花费2金币，就能令价值提高1。"
+            ],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/猪猪存钱罐.jpg"
+      },
+      {
+        "id": "",
         "name": "多肉植物",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["PYG"],
         "tiers": {
           "bronze": {
@@ -5593,7 +5214,7 @@
         "id": "",
         "name": "高尔夫球杆",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "PYG"],
         "tiers": {
           "bronze": {
@@ -5673,7 +5294,7 @@
         "id": "",
         "name": "绷带",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["PYG"],
         "tiers": {
           "bronze": {
@@ -5699,49 +5320,12 @@
         },
         "image": "images/绷带.jpg"
       },
-      {
-        "id": "855cf2a5-930b-43db-b388-9f814f80a4fb",
-        "name": "猪猪存钱罐",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": [
-              "出售此物品时，获得等于其价值的零钱。每小时开始时，花费2金币，就能令价值提高1。"
-            ],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": [
-              "出售此物品时，获得等于其价值的零钱。每小时开始时，花费2金币，就能令价值提高1。"
-            ],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": [
-              "出售此物品时，获得等于其价值的零钱。每小时开始时，花费2金币，就能令价值提高1。"
-            ],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": [
-              "出售此物品时，获得等于其价值的零钱。每小时开始时，花费2金币，就能令价值提高1。"
-            ],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/猪猪存钱罐.jpg"
-      },
+
       {
         "id": "da766a09-0352-4966-829f-20bda8da48d7",
         "name": "医疗包",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -5750,17 +5334,17 @@
             "cd": null
           },
           "silver": {
-            "description": ["10"],
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高10"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["20"],
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高20"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["40。"],
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高40"],
             "extra_description": [],
             "cd": null
           }
@@ -5787,7 +5371,7 @@
         "name": "左撇子",
         "name_en": "",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["VAN", "PYG", "DOO", "MAK", "STE", "JUL", "WEAPON", "1 tag"],
         "tiers": {
           "bronze": {
@@ -5817,28 +5401,58 @@
     "items": [
       {
         "id": "",
+        "name": "医疗包",
+        "tier": "SILVER",
+        "current_tier": "Gold",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高5"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高10"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高20"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧治疗物品的治疗量提高40"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/医疗包.jpg"
+      },
+      {
+        "id": "",
         "name": "双头刀",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["WEAPON", "PYG"],
         "tiers": {
           "bronze": {
-            "description": ["造成 5 伤害", "Multicast: 2"],
+            "description": ["造成 5 伤害", "多重触发: 2"],
             "extra_description": [],
             "cd": "7.0"
           },
           "silver": {
-            "description": ["造成 5 伤害", "Multicast: 2"],
+            "description": ["造成 5 伤害", "多重触发: 2"],
             "extra_description": [],
             "cd": "6.0"
           },
           "gold": {
-            "description": ["造成 5 伤害", "Multicast: 2"],
+            "description": ["造成 5 伤害", "多重触发: 2"],
             "extra_description": [],
             "cd": "5.0"
           },
           "diamond": {
-            "description": ["造成 5 伤害", "Multicast: 2"],
+            "description": ["造成 5 伤害", "多重触发: 2"],
             "extra_description": [],
             "cd": "4.0"
           }
@@ -5849,7 +5463,7 @@
         "id": "",
         "name": "甘卓琴",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["PYG", "3 tags"],
         "tiers": {
           "bronze": {
@@ -5914,10 +5528,10 @@
         "image": "images/纺织品.jpg"
       },
       {
-        "id": "95400405-1627-4566-9edc-d45ceb9df1a3",
+        "id": "",
         "name": "神庙探险券",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "LEGENDARY",
+        "current_tier": "Legendary",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -5943,60 +5557,31 @@
         },
         "image": "images/神庙探险券.jpg"
       },
-      {
-        "id": "da766a09-0352-4966-829f-20bda8da48d7",
-        "name": "医疗包",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["出售此物品时，最左侧治疗物品的治疗量提高5"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["10"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["20"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["40。"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/医疗包.jpg"
-      },
+
       {
         "id": "6ba3778c-e760-44f3-b3b4-a4b4ca267cc2",
         "name": "废料",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "BRONZE+",
+        "current_tier": "Diamond",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的护盾物品 +4 护盾。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的护盾物品 +8 护盾。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的护盾物品 +16 护盾。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["出售此物品时，最左侧的护盾物品+4护盾。"],
+            "description": ["出售此物品时，最左侧的护盾物品 +32 护盾。"],
             "extra_description": [],
             "cd": null
           }
@@ -6023,7 +5608,7 @@
         "id": "",
         "name": "加密货币",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["TECH", "DOO"],
         "tiers": {
           "bronze": {
@@ -6119,7 +5704,7 @@
         "id": "",
         "name": "病毒",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["TECH", "DOO"],
         "tiers": {
           "bronze": {
@@ -6152,6 +5737,42 @@
           }
         },
         "image": "images/病毒.jpg"
+      },
+      {
+        "id": "",
+        "name": "加密货币",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["TECH", "DOO"],
+        "tiers": {
+          "bronze": {
+            "description": ["每小时开始时，此物品的价值随机设定在0到 5 之间。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": [
+              "每小时开始时，此物品的价值随机设定在0到 10 之间。"
+            ],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": [
+              "每小时开始时，此物品的价值随机设定在0到 20 之间。"
+            ],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": [
+              "每小时开始时，此物品的价值随机设定在0到 40 之间。"
+            ],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/加密货币.jpg"
       }
     ],
     "image": "images_monster/阿海克萨.jpg"
@@ -6205,9 +5826,69 @@
     "items": [
       {
         "id": "",
+        "name": "神庙探险券",
+        "tier": "LEGENDARY",
+        "current_tier": "Legendary",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["第9天可使用此物品，开启神庙探险。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["第9天可使用此物品，开启神庙探险。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["第9天可使用此物品，开启神庙探险。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["第9天可使用此物品，开启神庙探险。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/神庙探险券.jpg"
+      },
+      {
+        "id": "",
+        "name": "椰子",
+        "tier": "Bronze+",
+        "current_tier": "Diamond",
+        "tags": ["FOOD"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最大生命值提高10。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最大生命值提高20。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最大生命值提高30。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最大生命值提高40。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/椰子.jpg"
+      },
+      {
+        "id": "",
         "name": "鱼饵",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": ["AQUATIC", "FOOD", "VAN"],
         "tiers": {
           "bronze": {
@@ -6235,6 +5916,104 @@
       },
       {
         "id": "",
+        "name": "食人鱼",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["此物品能造成双倍暴击伤害。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["此物品能造成双倍暴击伤害。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["此物品能造成双倍暴击伤害。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["此物品能造成双倍暴击伤害。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/食人鱼.jpg"
+      },
+      {
+        "id": "",
+        "name": "迷幻蝠鲼",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
+        "tags": ["AQUATIC", "FRIEND", "RAY"],
+        "tiers": {
+          "bronze": {
+            "description": ["减速一件物品 1 秒"],
+            "extra_description": [
+              "每有一个相邻伙伴或射线，此物品就 +1 多重触发。"
+            ],
+            "cd": "6.0"
+          },
+          "silver": {
+            "description": ["减速一件物品 2 秒"],
+            "extra_description": [
+              "每有一个相邻伙伴或射线，此物品就 +1 多重触发。"
+            ],
+            "cd": "5.0"
+          },
+          "gold": {
+            "description": ["减速一件物品 3 秒"],
+            "extra_description": [
+              "每有一个相邻伙伴或射线，此物品就 +1 多重触发。"
+            ],
+            "cd": "4.0"
+          },
+          "diamond": {
+            "description": ["减速一件物品 4 秒"],
+            "extra_description": [
+              "每有一个相邻伙伴或射线，此物品就 +1 多重触发。"
+            ],
+            "cd": "3.0"
+          }
+        },
+        "image": "images/迷幻蝠鲼.jpg"
+      },
+      {
+        "id": "",
+        "name": "独角鲸",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["AQUATIC", "FRIEND", "WEAPON"],
+        "tiers": {
+          "bronze": {
+            "description": ["造成 5 伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "silver": {
+            "description": ["造成 10 伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "gold": {
+            "description": ["造成 15 伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          },
+          "diamond": {
+            "description": ["造成 20 伤害"],
+            "extra_description": [],
+            "cd": "3.0"
+          }
+        },
+        "image": "images/独角鲸.jpg"
+      },
+      {
+        "id": "",
         "name": "电鳗",
         "tier": "GOLD+",
         "current_tier": "Gold",
@@ -6254,6 +6033,36 @@
           }
         },
         "image": "images/电鳗.jpg"
+      },
+      {
+        "id": "",
+        "name": "柑橘",
+        "tier": "BRONZE+",
+        "current_tier": "Diamond",
+        "tags": ["FOOD"],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，生命再生量提高 1。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，生命再生量提高 2。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，生命再生量提高 3。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，生命再生量提高 4。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/柑橘.jpg"
       }
     ],
     "image": "images_monster/马力亚纳斯王子.jpg"
@@ -6275,7 +6084,7 @@
         "name": "烈焰爆发",
         "name_en": "",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Silver",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -6305,9 +6114,39 @@
     "items": [
       {
         "id": "",
+        "name": "打火机",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["造成 3 灼烧"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["造成 5 灼烧"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["造成 7 灼烧"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["造成 9 灼烧"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/打火机.jpg"
+      },
+      {
+        "id": "",
         "name": "岩浆核心",
         "tier": "BRONZE+",
-        "current_tier": "Bronze",
+        "current_tier": "Gold",
         "tags": [],
         "tiers": {
           "bronze": {
@@ -6334,89 +6173,119 @@
         "image": "images/岩浆核心.jpg"
       },
       {
-        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
-        "name": "余烬",
-        "tier": "BRONZE",
-        "current_tier": "Bronze",
+        "id": "",
+        "name": "岩浆核心",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 6 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 9 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 12 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 15 灼烧。"],
             "extra_description": [],
             "cd": null
           }
         },
-        "image": "images/余烬.jpg"
+        "image": "images/岩浆核心.jpg"
       },
       {
-        "id": "3d212e22-12eb-427e-ab96-e7baf1229a7b",
-        "name": "打火机",
-        "tier": "SILVER",
+        "id": "",
+        "name": "岩浆核心",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["造成5灼烧"],
+            "description": ["每场战斗开始时，造成 6 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["造成5灼烧"],
+            "description": ["每场战斗开始时，造成 9 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["造成5灼烧"],
+            "description": ["每场战斗开始时，造成 12 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["造成5灼烧"],
+            "description": ["每场战斗开始时，造成 15 灼烧。"],
             "extra_description": [],
             "cd": null
           }
         },
-        "image": "images/打火机.jpg"
+        "image": "images/岩浆核心.jpg"
       },
       {
-        "id": "d45bb1dd-5342-4c69-b7fe-f56d3fac7d1f",
-        "name": "余烬",
-        "tier": "BRONZE",
-        "current_tier": "Bronze",
+        "id": "",
+        "name": "岩浆核心",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 6 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 9 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 12 灼烧。"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高+1。"],
+            "description": ["每场战斗开始时，造成 15 灼烧。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/岩浆核心.jpg"
+      },
+      {
+        "id": "",
+        "name": "余烬",
+        "tier": "BRONZE",
+        "current_tier": "Gold",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +1。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +2。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +4。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["出售此物品时，最左侧灼烧物品的灼烧提高 +8。"],
             "extra_description": [],
             "cd": null
           }
@@ -6468,40 +6337,129 @@
           }
         },
         "image": "images/钻石狼牙.jpg"
-      },
+      }
+    ],
+    "items": [
       {
-        "id": "20db8a31-f74d-40d2-a5a5-db28e3261bea",
-        "name": "钻石獠牙",
-        "name_en": "Diamond Fangs",
-        "tier": "GOLD",
-        "current_tier": "Gold",
+        "id": "",
+        "name": "兽皮",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["小型钻石级物品的冷却时间缩短40%。"],
+            "description": ["可出售换得 2 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["小型钻石级物品的冷却时间缩短40%。"],
+            "description": ["可出售换得 4 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["小型钻石级物品的冷却时间缩短40%。"],
+            "description": ["可出售换得 8 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["小型钻石级物品的冷却时间缩短40%。"],
+            "description": ["可出售换得 16 金币"],
             "extra_description": [],
             "cd": null
           }
         },
-        "image": ""
-      }
-    ],
-    "items": [
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "",
+        "name": "兽皮",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得 2 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得 4 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得 8 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得 16 金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "",
+        "name": "兽皮",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得 2 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得 4 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得 8 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得 16 金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/兽皮.jpg"
+      },
+      {
+        "id": "",
+        "name": "兽皮",
+        "tier": "BRONZE+",
+        "current_tier": "Diamond",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["可出售换得 2 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["可出售换得 4 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["可出售换得 8 金币"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["可出售换得 16 金币"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/兽皮.jpg"
+      },
       {
         "id": "",
         "name": "闪亮 獠牙",
@@ -6533,29 +6491,59 @@
         "image": "images/闪亮 獠牙.jpg"
       },
       {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
-        "name": "兽皮",
-        "tier": "SILVER",
+        "id": "",
+        "name": "闪亮 獠牙",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
+        "tags": ["WEAPON"],
+        "tiers": {
+          "bronze": {
+            "description": ["造成 5 伤害"],
+            "extra_description": ["此物品 +1 多重触发。"],
+            "cd": "3.0"
+          },
+          "silver": {
+            "description": ["造成 10 伤害"],
+            "extra_description": ["此物品 +1 多重触发。"],
+            "cd": "3.0"
+          },
+          "gold": {
+            "description": ["造成 15 伤害"],
+            "extra_description": ["此物品 +1 多重触发。"],
+            "cd": "3.0"
+          },
+          "diamond": {
+            "description": ["造成 20 伤害"],
+            "extra_description": ["此物品 +1 多重触发。"],
+            "cd": "3.0"
+          }
+        },
+        "image": "images/闪亮 獠牙.jpg"
+      },
+      {
+        "id": "",
+        "name": "兽皮",
+        "tier": "BRONZE+",
+        "current_tier": "Diamond",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 2 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 4 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 8 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 16 金币"],
             "extra_description": [],
             "cd": null
           }
@@ -6563,29 +6551,29 @@
         "image": "images/兽皮.jpg"
       },
       {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "id": "",
         "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "BRONZE+",
+        "current_tier": "Gold",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 2 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 4 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 8 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 16 金币"],
             "extra_description": [],
             "cd": null
           }
@@ -6593,29 +6581,29 @@
         "image": "images/兽皮.jpg"
       },
       {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "id": "",
         "name": "兽皮",
-        "tier": "SILVER",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 2 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 4 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 8 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 16 金币"],
             "extra_description": [],
             "cd": null
           }
@@ -6623,149 +6611,29 @@
         "image": "images/兽皮.jpg"
       },
       {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
+        "id": "",
         "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "BRONZE+",
+        "current_tier": "Bronze",
         "tags": [],
         "tiers": {
           "bronze": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 2 金币"],
             "extra_description": [],
             "cd": null
           },
           "silver": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 4 金币"],
             "extra_description": [],
             "cd": null
           },
           "gold": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 8 金币"],
             "extra_description": [],
             "cd": null
           },
           "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/兽皮.jpg"
-      },
-      {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
-        "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/兽皮.jpg"
-      },
-      {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
-        "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/兽皮.jpg"
-      },
-      {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
-        "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          }
-        },
-        "image": "images/兽皮.jpg"
-      },
-      {
-        "id": "fb41fdef-d83b-4674-8cb3-9a224aa8f84a",
-        "name": "兽皮",
-        "tier": "SILVER",
-        "current_tier": "Silver",
-        "tags": [],
-        "tiers": {
-          "bronze": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "silver": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "gold": {
-            "description": ["可出售换得金币"],
-            "extra_description": [],
-            "cd": null
-          },
-          "diamond": {
-            "description": ["可出售换得金币"],
+            "description": ["可出售换得 16 金币"],
             "extra_description": [],
             "cd": null
           }
@@ -16775,9 +16643,9 @@
         "image": "images/生物融合臂.jpg"
       },
       {
-        "id": "840b6bc5-4786-40bc-b864-cc5c2b78641a",
+        "id": "",
         "name": "食人鱼",
-        "tier": "SILVER",
+        "tier": "BRONZE+",
         "current_tier": "Silver",
         "tags": [],
         "tiers": {

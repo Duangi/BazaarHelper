@@ -61,20 +61,20 @@ pub struct MonsterSubItem {
     pub tier: Option<String>,
     pub current_tier: Option<String>,
     pub tags: Option<Vec<String>>,
-    pub tiers: HashMap<String, Option<TierInfo>>,
-    pub image: String,
+    pub tiers: Option<HashMap<String, Option<TierInfo>>>,
+    pub image: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterData {
     pub name: String,
     pub name_zh: String,
-    pub available: String,
-    pub health: Option<u32>,
-    pub level: Option<u32>,
-    pub skills: Vec<MonsterSubItem>,
-    pub items: Vec<MonsterSubItem>,
-    pub image: String,
+    pub available: Option<String>,
+    pub health: Option<serde_json::Value>,
+    pub level: Option<serde_json::Value>,
+    pub skills: Option<Vec<MonsterSubItem>>,
+    pub items: Option<Vec<MonsterSubItem>>,
+    pub image: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -130,6 +130,27 @@ async fn clear_monster_cache() -> Result<(), String> {
     let cache_file = cache_dir.join("monster_features.bin");
     if cache_file.exists() {
         std::fs::remove_file(cache_file).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn restore_game_focus() -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    {
+        use windows::Win32::UI::WindowsAndMessaging::{FindWindowW, SetForegroundWindow, ShowWindow, SW_SHOW};
+        use windows::core::PCWSTR;
+
+        let window_name: Vec<u16> = "The Bazaar\0".encode_utf16().collect();
+        unsafe {
+            if let Ok(hwnd) = FindWindowW(PCWSTR::null(), PCWSTR(window_name.as_ptr())) {
+                if !hwnd.is_invalid() {
+                    // 先 ShowWindow 确保不是最小化
+                    let _ = ShowWindow(hwnd, SW_SHOW);
+                    let _ = SetForegroundWindow(hwnd);
+                }
+            }
+        }
     }
     Ok(())
 }
@@ -309,13 +330,51 @@ pub fn run() {
             
             // Initial DB Load
             let db_state = app.state::<DbState>();
-            let items_json = std::fs::read_to_string(resources_path.join("resources").join("items_db.json")).unwrap_or_default();
-            if let Ok(items) = serde_json::from_str::<HashMap<String, ItemData>>(&items_json) {
-                *db_state.items.write().unwrap() = items;
+            
+            // 尝试多个可能的路径
+            let monsters_possible_paths = [
+                resources_path.join("resources").join("monsters_db.json"),
+                resources_path.join("monsters_db.json"),
+            ];
+            
+            for path in &monsters_possible_paths {
+                if path.exists() {
+                    match std::fs::read_to_string(path) {
+                        Ok(json) => {
+                            match serde_json::from_str::<HashMap<String, MonsterData>>(&json) {
+                                Ok(monsters) => {
+                                    println!("[Init] Successfully loaded {} monsters from {:?}", monsters.len(), path);
+                                    *db_state.monsters.write().unwrap() = monsters;
+                                    break;
+                                }
+                                Err(e) => println!("[Error] Failed to parse monsters_db.json at {:?}: {}", path, e),
+                            }
+                        }
+                        Err(e) => println!("[Error] Failed to read monsters_db.json at {:?}: {}", path, e),
+                    }
+                }
             }
-            let monsters_json = std::fs::read_to_string(resources_path.join("resources").join("monsters_db.json")).unwrap_or_default();
-            if let Ok(monsters) = serde_json::from_str::<HashMap<String, MonsterData>>(&monsters_json) {
-                *db_state.monsters.write().unwrap() = monsters;
+
+            let items_possible_paths = [
+                resources_path.join("resources").join("items_db.json"),
+                resources_path.join("items_db.json"),
+            ];
+            for path in &items_possible_paths {
+                if path.exists() {
+                    match std::fs::read_to_string(path) {
+                        Ok(json) => {
+                            match serde_json::from_str::<HashMap<String, ItemData>>(&json) {
+                                Ok(items) => {
+                                    println!("[Init] Successfully loaded {} items from {:?}", items.len(), path);
+                                    *db_state.items.write().unwrap() = items;
+                                    break;
+                                }
+                                Err(e) => println!("[Error] Failed to parse items_db.json at {:?}: {}", path, e),
+                            }
+                        }
+                        Err(e) => println!("[Error] Failed to read items_db.json at {:?}: {}", path, e),
+                    }
+                }
             }
 
             // Log Monitor Thread
@@ -325,8 +384,7 @@ pub fn run() {
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
                 let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
-                let re_state_to_enc = Regex::new(r"State changed to \[(EncounterState|ShopState|CombatState)\]").unwrap();
-                let re_enc_id = Regex::new(r"ID: \[(?P<id>enc_[A-Za-z0-9]+)\]").unwrap();
+
                 let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
                 let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
                 let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
@@ -366,10 +424,8 @@ pub fn run() {
                 let mut is_sync = false;
                 let mut last_iid = String::new();
                 let mut cur_owner = String::new();
-                let mut encounter_state_detected = false;
                 let mut in_pvp = false;
                 let mut hour_count: u32 = 0;
-                let mut is_initial_scan = true;
 
                 loop {
                     if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
@@ -383,7 +439,6 @@ pub fn run() {
                         current_day = 1;
                         is_sync = false;
                         last_file_size = 0;
-                        is_initial_scan = true;
                         save_state(&PersistentState { 
                             day: current_day, 
                             inst_to_temp: inst_to_temp.clone(), 
@@ -501,22 +556,6 @@ pub fn run() {
                                 }
                             }
 
-                            if re_state_to_enc.is_match(trimmed) {
-                                encounter_state_detected = true;
-                            }
-
-                            if let Some(_) = re_enc_id.captures(trimmed) {
-                                if encounter_state_detected && !is_initial_scan {
-                                    let h = handle.clone();
-                                    let d = current_day;
-                                    tauri::async_runtime::spawn(async move {
-                                        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-                                        let _ = h.emit("trigger-monster-recognition", d);
-                                    });
-                                    encounter_state_detected = false;
-                                }
-                            }
-
                             if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") {
                                 is_sync = true;
                             } else if trimmed.contains("Successfully moved card to:") {
@@ -580,7 +619,6 @@ pub fn run() {
                             });
                         }
                         last_file_size = current_file_size;
-                        is_initial_scan = false;
                     }
                     thread::sleep(time::Duration::from_millis(500));
                 }
@@ -595,7 +633,8 @@ pub fn run() {
             get_current_day,
             update_day,
             start_template_loading,
-            clear_monster_cache
+            clear_monster_cache,
+            restore_game_focus
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

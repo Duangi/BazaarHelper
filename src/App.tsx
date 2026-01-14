@@ -43,11 +43,11 @@ interface MonsterSubItem {
 interface MonsterData { 
   name: string; 
   name_zh: string; 
-  available: string;
-  health: number;
-  skills: MonsterSubItem[]; 
-  items: MonsterSubItem[]; 
-  image: string;
+  available?: string;
+  health?: any;
+  skills?: MonsterSubItem[]; 
+  items?: MonsterSubItem[]; 
+  image?: string;
   displayImg?: string; 
 }
 
@@ -410,11 +410,22 @@ export default function App() {
   }, [activeTab, selectedDay, allMonsters, identifiedNames]);
 
   const updateFilteredMonsters = async (day: string) => {
-    const monstersOnDay = Object.values(allMonsters).filter(m => m.available === day);
+    // 如果天数还没加载出来，且目前已经有怪物全量数据，默认显示第一天
+    let targetDay = day;
+    if (!targetDay && Object.keys(allMonsters).length > 0) {
+      targetDay = "Day 1";
+    }
+
+    const monstersOnDay = Object.values(allMonsters).filter(m => m.available === targetDay);
     
+    // 如果在该天数下没有找到怪物，可能是加载还没完成或者数据格式匹配问题
+    if (monstersOnDay.length === 0 && Object.keys(allMonsters).length > 0 && targetDay !== "") {
+       console.warn(`[MonsterTab] No monsters found for ${targetDay}, total monsters in DB: ${Object.keys(allMonsters).length}`);
+    }
+
     // 根据识别结果进行排序
     const sorted = [...monstersOnDay].sort((a, b) => {
-      const indexA = identifiedNames.indexOf(a.name_zh); // 改为使用中文名匹配 backend 的 key
+      const indexA = identifiedNames.indexOf(a.name_zh);
       const indexB = identifiedNames.indexOf(b.name_zh);
       
       const posA = indexA === -1 ? 999 : indexA;
@@ -431,14 +442,14 @@ export default function App() {
     return {
       ...m,
       displayImg: await getImg(m.image),
-      skills: await Promise.all(m.skills.map(async s => ({ 
+      skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
         ...s, 
         displayImg: await getImg(s.image) 
-      }))),
-      items: await Promise.all(m.items.map(async i => ({ 
+      }))) : [],
+      items: m.items ? await Promise.all(m.items.map(async i => ({ 
         ...i, 
         displayImg: await getImg(i.image) 
-      })))
+      }))) : []
     };
   };
 
@@ -466,12 +477,13 @@ export default function App() {
 
     // 兼容性修整：如果 current_tier 不存在，尝试根据名称中是否包含级位来猜测
     let currentTier = "bronze";
+    const tiers: Record<string, TierInfo | null> = (item as any).tiers || {};
     
     if (item.current_tier) {
       currentTier = item.current_tier.toLowerCase();
     } else {
       // 检查 tiers 对象里有哪些 key，有些数据可能直接把数据塞到了特定的 key 里
-      const availableTiers = Object.keys(item.tiers);
+      const availableTiers = Object.keys(tiers);
       if (availableTiers.length > 0) {
         // 如果只有一个 key 或者包含特定的 key
         if (availableTiers.includes("bronze")) currentTier = "bronze";
@@ -481,15 +493,15 @@ export default function App() {
       }
     }
 
-    const tierData = item.tiers[currentTier];
+    const tierData = tiers[currentTier];
     // 如果该级位没数据，显示第一个有数据的级位
-    const finalData = tierData || Object.values(item.tiers).find(t => t !== null);
+    const finalData = tierData || Object.values(tiers).find(t => t !== null);
     
     // --- 升级效果合并逻辑 (用于显示在卡片上或悬浮框) ---
     const getProgressionText = (line: string, lineIdx: number, field: 'description' | 'extra_description' = 'description') => {
       const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
       const activeTiers = tierSequence
-        .map(t => ({ tier: t, data: item.tiers[t] }))
+        .map(t => ({ tier: t, data: tiers[t] }))
         .filter(t => t.data !== null && t.data !== undefined);
       
       const numRegex = /(\d+(\.\d+)?%?)/g;
@@ -568,7 +580,7 @@ export default function App() {
             {(() => {
                 const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
                 const activeTiers = tierSequence
-                  .map(t => ({ tier: t, data: item.tiers[t] }))
+                  .map(t => ({ tier: t, data: (item.tiers as any)?.[t] }))
                   .filter(t => t.data !== null && t.data !== undefined);
 
                 if (isProgressionActive && activeTiers.length > 1) {
@@ -624,6 +636,7 @@ export default function App() {
     if (isRecognizing) return;
     setIsRecognizing(true);
     try {
+      console.log(`[Recognition] Triggering recognition for Day: ${day}`);
       const results = await invoke("recognize_monsters_from_screenshot", { day }) as any[];
       if (results && results.length > 0) {
         const names = new Array(3).fill("");
@@ -633,11 +646,24 @@ export default function App() {
         const validNames = names.filter(n => n !== "");
         console.log(`[Recognition Success] Found: ${validNames.join(', ')}`);
         setIdentifiedNames(validNames);
-        // 不再自动跳转到 monster tab
-        // setActiveTab("monster");
+        
+        // 自动展开识别出的怪物，方便用户直接看到技能
+        setExpandedMonsters(prev => {
+          const next = new Set(prev);
+          validNames.forEach(name => {
+            // 在 monsters_db.json 中，key 已经就是中文字符串
+            if (allMonsters[name]) next.add(name);
+          });
+          return next;
+        });
+      } else {
+        console.log("[Recognition] No monsters found in screenshot");
       }
     } catch (e) {
       console.error("自动识别失败:", e);
+      if (typeof e === 'string' && e.includes("Templates not loaded")) {
+        console.warn("[Recognition] Templates still loading, will not auto-retry. Please ensure 'Enter App' was clicked.");
+      }
     } finally {
       setIsRecognizing(false);
     }
@@ -665,6 +691,15 @@ export default function App() {
         const validNames = names.filter(n => n !== "");
         console.log("%c[识别成功]", "color: #ffcd19; font-weight: bold", "识别到的怪物顺序 (从左至右):", validNames);
         setIdentifiedNames(validNames);
+
+        // 识别后自动展开
+        setExpandedMonsters(prev => {
+          const next = new Set(prev);
+          validNames.forEach(name => {
+            if (allMonsters[name]) next.add(name);
+          });
+          return next;
+        });
         
         // setActiveTab("monster");
       } else {
@@ -819,6 +854,10 @@ export default function App() {
         '--user-font-size': `${fontSize}px`,
         '--font-scale': fontSize / 16 
       } as any}
+      onMouseLeave={() => {
+        // 当鼠标划出插件界面时，自动尝试把焦点还给游戏
+        invoke("restore_game_focus").catch(() => {});
+      }}
     >
       {!isCollapsed && (
         <>
@@ -1013,7 +1052,7 @@ export default function App() {
                                 {m.name_zh}
                                 {isIdentified && <span className="id-badge">MATCH</span>}
                               </div>
-                              <div className="monster-health">❤️ {m.health}</div>
+                              <div className="monster-health">❤️ {m.health?.toString() || m.health}</div>
                             </div>
                             <div className="monster-available-tag">
                               {m.available}
@@ -1025,11 +1064,11 @@ export default function App() {
                           <div className="monster-assets-grid">
                             <div className="assets-section">
                               <div className="section-title">技能 (Skills)</div>
-                              {m.skills.map((s, idx) => <div key={idx}>{renderTierInfo(s)}</div>)}
+                              {m.skills?.map((s, idx) => <div key={idx}>{renderTierInfo(s)}</div>)}
                             </div>
                             <div className="assets-section">
                               <div className="section-title">物品 (Items)</div>
-                              {m.items.map((it, idx) => <div key={idx}>{renderTierInfo(it)}</div>)}
+                              {m.items?.map((it, idx) => <div key={idx}>{renderTierInfo(it)}</div>)}
                             </div>
                           </div>
                         )}
