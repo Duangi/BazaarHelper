@@ -6644,11 +6644,12 @@
     "image": "images_monster/剑齿虎.jpg"
   },
   "发条爷爷": {
+    "id": "",
     "name": "Clockwork Grandpa",
     "name_zh": "发条爷爷",
     "available": "Day 5",
     "health": 800,
-    "tags": ["Bronze", "CombatEncounter", "Common"],
+    "tags": ["Silver", "CombatEncounter", "Common"],
     "level": 5,
     "combat": {
       "gold": "2 Gold",
@@ -6658,7 +6659,6 @@
       {
         "id": "",
         "name": "精密工具",
-        "name_en": "",
         "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": ["TOOL"],
@@ -6687,9 +6687,65 @@
           }
         },
         "image": "images/精密工具.jpg"
+      },
+      {
+        "id": "",
+        "name": "修理时间",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": [],
+        "tiers": {
+          "bronze": {
+            "description": ["每场战斗前 3 次触发加速时，获得 50 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "silver": {
+            "description": ["每场战斗前 6 次触发加速时，获得 50 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "gold": {
+            "description": ["每场战斗前 9 次触发加速时，获得 50 护盾。"],
+            "extra_description": [],
+            "cd": null
+          },
+          "diamond": {
+            "description": ["每场战斗前 12 次触发加速时，获得 50 护盾。"],
+            "extra_description": [],
+            "cd": null
+          }
+        },
+        "image": "images/修理时间.jpg"
       }
     ],
     "items": [
+      {
+        "id": "",
+        "name": "瑞士军刀",
+        "tier": "SILVER+",
+        "current_tier": "Silver",
+        "tags": ["TOOL", "STE"],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": ["加速 1 件物品 1 秒", "减速 1 件物品 1 秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          },
+          "gold": {
+            "description": ["加速 2 件物品 1 秒", "减速 2 件物品 1 秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          },
+          "diamond": {
+            "description": ["加速 3 件物品 1 秒", "减速 3 件物品 1 秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          }
+        },
+        "image": "images/瑞士军刀.jpg"
+      },
       {
         "id": "",
         "name": "时光指针",
@@ -6699,28 +6755,151 @@
         "tiers": {
           "bronze": null,
           "silver": {
-            "description": ["另一件工具的冷却时间缩短 1秒 (限本场战斗)"],
+            "description": ["另一件工具的冷却时间缩短 1 秒 (限本场战斗)"],
             "extra_description": [
-              "每有一件相邻的工具，此物品的冷却时间就缩短 1秒。"
+              "每有一件相邻的工具，此物品的冷却时间就缩短 1 秒。"
             ],
             "cd": "9.0"
           },
           "gold": {
-            "description": ["另一件工具的冷却时间缩短 1秒 (限本场战斗)"],
+            "description": ["另一件工具的冷却时间缩短 1 秒 (限本场战斗)"],
             "extra_description": [
-              "每有一件相邻的工具，此物品的冷却时间就缩短 1秒。"
+              "每有一件相邻的工具，此物品的冷却时间就缩短 1 秒。"
             ],
             "cd": "8.0"
           },
           "diamond": {
-            "description": ["另一件工具的冷却时间缩短 1秒 (限本场战斗)"],
+            "description": ["另一件工具的冷却时间缩短 1 秒 (限本场战斗)"],
             "extra_description": [
-              "每有一件相邻的工具，此物品的冷却时间就缩短 1秒。"
+              "每有一件相邻的工具，此物品的冷却时间就缩短 1 秒。"
             ],
             "cd": "7.0"
           }
         },
         "image": "images/时光指针.jpg"
+      },
+      {
+        "id": "",
+        "name": "铆钉枪",
+        "tier": "SILVER+",
+        "current_tier": "Gold",
+        "tags": ["TOOL", "WEAPON", "STE"],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": ["造成 10 伤害", "为此物品左侧的物品充能 1 秒"],
+            "extra_description": [],
+            "cd": "5.0"
+          },
+          "gold": {
+            "description": ["造成 15 伤害", "为此物品左侧的物品充能 1 秒"],
+            "extra_description": [],
+            "cd": "4.0"
+          },
+          "diamond": {
+            "description": ["造成 20 伤害", "为此物品左侧的物品充能 1 秒"],
+            "extra_description": [],
+            "cd": "3.0"
+          }
+        },
+        "image": "images/铆钉枪.jpg"
+      },
+      {
+        "id": "",
+        "name": "齿轮",
+        "tier": "BRONZE+",
+        "current_tier": "Silver",
+        "tags": ["RELIC", "DOO"],
+        "tiers": {
+          "bronze": {
+            "description": ["加速一件相邻物品 1 秒"],
+            "extra_description": [],
+            "cd": "4.0"
+          },
+          "silver": {
+            "description": ["加速一件相邻物品 2 秒"],
+            "extra_description": [],
+            "cd": "4.0"
+          },
+          "gold": {
+            "description": ["加速一件相邻物品 3 秒"],
+            "extra_description": [],
+            "cd": "4.0"
+          },
+          "diamond": {
+            "description": ["加速一件相邻物品 4 秒"],
+            "extra_description": [],
+            "cd": "4.0"
+          }
+        },
+        "image": "images/齿轮.jpg"
+      },
+      {
+        "id": "",
+        "name": "原子钟",
+        "tier": "SILVER+",
+        "current_tier": "Gold",
+        "tags": ["TECH", "DOO"],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": [
+              "使敌人物品的冷却时间延长 1 秒 (限本场战斗)",
+              "Ammo: 2"
+            ],
+            "extra_description": [],
+            "cd": "1.0"
+          },
+          "gold": {
+            "description": [
+              "使敌人物品的冷却时间延长 1 秒 (限本场战斗)",
+              "Ammo: 3"
+            ],
+            "extra_description": [],
+            "cd": "1.0"
+          },
+          "diamond": {
+            "description": [
+              "使敌人物品的冷却时间延长 1 秒 (限本场战斗)",
+              "Ammo: 4"
+            ],
+            "extra_description": [],
+            "cd": "1.0"
+          }
+        },
+        "image": "images/原子钟.jpg"
+      },
+      {
+        "id": "",
+        "name": "精密卡尺",
+        "tier": "SILVER+",
+        "current_tier": "Silver",
+        "tags": ["TOOL", "STE"],
+        "tiers": {
+          "bronze": null,
+          "silver": {
+            "description": ["加速己方其他小型物品 2 秒"],
+            "extra_description": [
+              "如果持有的物品不少于 7 件，此物品的冷却时间就缩短 2 秒。"
+            ],
+            "cd": "8.0"
+          },
+          "gold": {
+            "description": ["加速己方其他小型物品 2 秒"],
+            "extra_description": [
+              "如果持有的物品不少于 7 件，此物品的冷却时间就缩短 2 秒。"
+            ],
+            "cd": "7.0"
+          },
+          "diamond": {
+            "description": ["加速己方其他小型物品 2 秒"],
+            "extra_description": [
+              "如果持有的物品不少于 7 件，此物品的冷却时间就缩短 2 秒。"
+            ],
+            "cd": "6.0"
+          }
+        },
+        "image": "images/精密卡尺.jpg"
       }
     ],
     "image": "images_monster/发条爷爷.jpg"
@@ -9817,9 +9996,9 @@
     ],
     "image": "images_monster/垃圾魔像.jpg"
   },
-  "墓石泣妖": {
+  "基石泣妖": {
     "name": "Crypt Weeper",
-    "name_zh": "墓石泣妖",
+    "name_zh": "基石泣妖",
     "available": "Day 6",
     "health": 1350,
     "tags": ["Silver", "CombatEncounter", "Common"],
@@ -10098,7 +10277,7 @@
         "image": "images/神庙探险券.jpg"
       }
     ],
-    "image": "images_monster/墓石泣妖.jpg"
+    "image": "images_monster/基石泣妖.jpg"
   },
   "恶蚊": {
     "name": "Vile Mosquito",
