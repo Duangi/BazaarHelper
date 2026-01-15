@@ -123,6 +123,7 @@ export default function App() {
   const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
   const [updateStatus, setUpdateStatus] = useState<"none" | "checking" | "available" | "downloading" | "ready">("none");
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
 
   // 置顶/取消置顶功能
   const togglePin = (itemId: string, e: React.MouseEvent) => {
@@ -954,7 +955,7 @@ export default function App() {
           </svg>
         </div>
 
-        <button className="settings-btn" onClick={() => setShowSettings(true)} title="设置">
+        <button className="settings-btn" onClick={() => setShowSettings(!showSettings)} title="设置">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1109,6 +1110,7 @@ export default function App() {
                 </div>
 
                 {updateStatus === "checking" && <div style={{ fontSize: '12px', color: '#999' }}>正在检查远端更新...</div>}
+                {updateStatus === "none" && <div style={{ fontSize: '12px', color: '#238636' }}>当前已经是最新版本</div>}
                 
                 {(updateStatus === "available" || updateStatus === "downloading" || updateStatus === "ready") && (
                   <div style={{ 
@@ -1140,7 +1142,10 @@ export default function App() {
                     )}
 
                     {updateStatus === "ready" && (
-                      <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={() => relaunch()}>
+                      <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={() => {
+                        setIsInstalling(true);
+                        setTimeout(() => relaunch(), 1000);
+                      }}>
                         下载完成，点击重启安装
                       </button>
                     )}
@@ -1293,6 +1298,21 @@ export default function App() {
             </div>
           </div>
         </>
+      )}
+
+      {/* 正在安装层 */}
+      {isInstalling && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: '#292521', color: '#ffcd19',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div className="version-logo">BH</div>
+          <div style={{ fontSize: '18px', marginBottom: '10px' }}>正在启动更新安装程序...</div>
+          <div style={{ fontSize: '12px', opacity: 0.7 }}>程序即将自动重启以完成安装</div>
+          <div className="loader" style={{ marginTop: '20px' }}></div>
+        </div>
       )}
     </div>
   );
