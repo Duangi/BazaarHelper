@@ -1,5 +1,5 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "0.8.2"  # <--- 版本号
+$NEW_VERSION = "0.8.3"  # <--- 版本号
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
 $KEY_PATH = "src-tauri/tauri.key" # 密钥路径
@@ -83,7 +83,7 @@ $updateData = @{
         "windows-x86_64" = @{
             signature = $signature
             # 如果你需要用 ghproxy 加速，可以在这里加前缀
-            url = "https://github.com/$GITHUB_USER/$REPO_NAME/releases/download/v$NEW_VERSION/$($exeFile.Name)"
+            url = "https://gh.llkk.cc/https://github.com/$GITHUB_USER/$REPO_NAME/releases/download/v$NEW_VERSION/$($exeFile.Name)"
         }
     }
 }
