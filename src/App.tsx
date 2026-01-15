@@ -4,9 +4,10 @@ import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import { getVersion } from '@tauri-apps/api/app';
+import { check, Update } from '@tauri-apps/plugin-updater';
 import "./App.css";
 
-import { exit } from '@tauri-apps/plugin-process';
+import { exit, relaunch } from '@tauri-apps/plugin-process';
 
 // --- 接口定义 ---
 interface Enchantment { 
@@ -117,6 +118,11 @@ export default function App() {
   // 版本显示相关状态
   const [showVersionScreen, setShowVersionScreen] = useState(true); // 启动时显示版本号
   const [currentVersion, setCurrentVersion] = useState(""); // 当前版本号
+  
+  // 更新相关状态
+  const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
+  const [updateStatus, setUpdateStatus] = useState<"none" | "checking" | "available" | "downloading" | "ready">("none");
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   // 置顶/取消置顶功能
   const togglePin = (itemId: string, e: React.MouseEvent) => {
@@ -213,31 +219,96 @@ export default function App() {
   };
   
   const enterApp = () => {
+    console.log("[Update] Entering App. updateAvailable:", !!updateAvailable);
     setShowVersionScreen(false);
     invoke("start_template_loading").catch(console.error);
+    
+    // 如果有更新，进入应用后开始后台下载
+    if (updateAvailable) {
+      console.log("[Update] Found update, starting background download...");
+      startUpdateDownload();
+    } else {
+      console.log("[Update] No update found, skipping download.");
+    }
   };
 
-  // 启动时显示版本信息
+  const startUpdateDownload = async () => {
+    if (!updateAvailable) {
+      console.warn("[Update] startUpdateDownload 被调用，但没有可用更新");
+      return;
+    }
+    
+    try {
+      console.log(`[Update] 开始下载并安装版本: ${updateAvailable.version} (当前版本: ${currentVersion})`);
+      setUpdateStatus("downloading");
+      let downloaded = 0;
+      let total = 0;
+      
+      await updateAvailable.downloadAndInstall((event) => {
+        switch (event.event) {
+          case 'Started':
+            total = event.data.contentLength || 0;
+            console.log(`[Update] 下载开始。总大小: ${total} 字节`);
+            break;
+          case 'Progress':
+            downloaded += event.data.chunkLength;
+            if (total > 0) {
+              const p = Math.round((downloaded / total) * 100);
+              if (p % 10 === 0 && p !== downloadProgress) { 
+                console.log(`[Update] 下载进度: ${p}% (${downloaded}/${total})`);
+              }
+              setDownloadProgress(p);
+            }
+            break;
+          case 'Finished':
+            console.log('[Update] 下载完成，更新已就绪。');
+            setUpdateStatus("ready");
+            break;
+        }
+      });
+    } catch (e) {
+      console.error("[Update] 自动更新失败:", e);
+      setUpdateStatus("available"); 
+    }
+  };
+
+  // 启动时显示版本信息并检查更新
   useEffect(() => {
-    const showVersionInfo = async () => {
+    const initApp = async () => {
+      console.log("[App] initApp 开始执行...");
       try {
         const appVersion = await getVersion();
         setCurrentVersion(appVersion);
+        console.log(`[App] 启动初始化。当前版本: v${appVersion}`);
+
+        // 检查更新
+        console.log("[Update] 正在连接服务器检查更新...");
+        setUpdateStatus("checking");
+        const update = await check();
+        console.log("[Update] check() 响应结果:", update);
+        if (update) {
+          console.log(`[Update] 检测到新版本! 远端版本: v${update.version}, 发布日期: ${update.date}`);
+          setUpdateAvailable(update);
+          setUpdateStatus("available");
+        } else {
+          console.log("[Update] 已经是最新版本 (v" + appVersion + ")，无需更新。");
+          setUpdateStatus("none");
+        }
         
-        // 3秒后自动进入应用
+        // 3.5秒后自动进入应用
         setTimeout(() => {
           enterApp();
-        }, 3000);
+        }, 3500);
       } catch (error) {
-        console.error("获取版本信息失败:", error);
-        // 2秒后自动进入
+        console.error("[App] 初始化加载更新失败:", error);
+        setUpdateStatus("none");
         setTimeout(() => {
           enterApp();
         }, 2000);
       }
     };
     
-    showVersionInfo();
+    initApp();
   }, []);
 
   // 轮询检查模板加载进度
@@ -839,6 +910,11 @@ export default function App() {
           <div className="update-message">
             {currentVersion ? `当前版本 v${currentVersion}` : "加载中..."}
           </div>
+          <div className="update-available-info">
+            {updateStatus === "checking" && <span className="status-checking">正在检查更新...</span>}
+            {updateStatus === "available" && <span className="status-available">检测到新版本 v{updateAvailable?.version}</span>}
+            {updateStatus === "none" && <span className="status-none">已是最新版本</span>}
+          </div>
           <button className="skip-btn" onClick={enterApp}>
             进入应用
           </button>
@@ -974,6 +1050,103 @@ export default function App() {
                 </div>
               </div>
               <div className="setting-tip">调整后将实时影响所有文字大小</div>
+
+              <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
+
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label>版本信息: v{currentVersion}</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ 
+                      padding: '2px 8px', 
+                      opacity: updateStatus === "checking" ? 0.5 : 1,
+                      cursor: updateStatus === "checking" ? 'not-allowed' : 'pointer'
+                    }} 
+                    disabled={updateStatus === "checking" || updateStatus === "downloading"}
+                    onClick={async () => {
+                      const ENDPOINT = "https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json";
+                      console.log(`[Update] 用户手动触发更新检查...`);
+                      console.log(`[Update] 目标 JSON 地址: ${ENDPOINT}`);
+                      setUpdateStatus("checking");
+
+                      try {
+                        // 额外做一个手动 Fetch 用于调试，展示 JSON 内容
+                        console.log("[Update] 尝试手动 Fetch 远端内容以验证访问...");
+                        const response = await fetch(ENDPOINT, { cache: 'no-store' });
+                        if (response.ok) {
+                          const remoteJson = await response.json();
+                          console.log("[Update] 远端 JSON 内容获取成功:", remoteJson);
+                          console.log(`[Update] 远端版本: ${remoteJson.version}, 当前本地版本: ${currentVersion}`);
+                          
+                          if (remoteJson.version === currentVersion) {
+                            console.log("[Update] 提示: 版本号完全一致，Tauri check() 必然返回 null");
+                          }
+                        } else {
+                          console.error(`[Update] 远端 JSON 访问失败! 状态码: ${response.status}`);
+                        }
+
+                        console.log("[Update] 调用 Tauri 插件 check() 进行正式比对与签名校验...");
+                        const u = await check();
+                        console.log("[Update] check() 返回对象:", u);
+                        
+                        if (u) {
+                          console.log(`[Update] 手动检查发现新版本: v${u.version}`);
+                          setUpdateAvailable(u);
+                          setUpdateStatus("available");
+                        } else {
+                          console.log("[Update] 手动检查结果: 已经是最新版本 (check 返回 null)");
+                          setUpdateStatus("none");
+                        }
+                      } catch (e) {
+                        console.error("[Update] 手动检查过程中发生异常:", e);
+                        setUpdateStatus("none");
+                      }
+                    }}
+                  >
+                    {updateStatus === "checking" ? "检查中..." : "检查更新"}
+                  </button>
+                </div>
+
+                {updateStatus === "checking" && <div style={{ fontSize: '12px', color: '#999' }}>正在检查远端更新...</div>}
+                
+                {(updateStatus === "available" || updateStatus === "downloading" || updateStatus === "ready") && (
+                  <div style={{ 
+                    background: 'rgba(56, 139, 253, 0.15)', 
+                    border: '1px solid rgba(56, 139, 253, 0.4)', 
+                    padding: '10px', 
+                    borderRadius: '6px' 
+                  }}>
+                    <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#58a6ff' }}>
+                      发现新版本: v{updateAvailable?.version}
+                    </div>
+                    
+                    {updateStatus === "available" && (
+                      <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={startUpdateDownload}>
+                        立即下载更新
+                      </button>
+                    )}
+
+                    {updateStatus === "downloading" && (
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                          <span>正在下载后台更新...</span>
+                          <span>{downloadProgress}%</span>
+                        </div>
+                        <div style={{ background: 'rgba(255,255,255,0.1)', height: '4px', borderRadius: '2px' }}>
+                          <div style={{ background: '#58a6ff', width: `${downloadProgress}%`, height: '100%', borderRadius: '2px', transition: 'width 0.3s' }}></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {updateStatus === "ready" && (
+                      <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={() => relaunch()}>
+                        下载完成，点击重启安装
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

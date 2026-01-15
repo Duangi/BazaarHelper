@@ -1204,6 +1204,60 @@ html, body, #root {
   background: rgba(170, 170, 170, 0.4);
 }
 
+.update-available-info {
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+.status-checking { color: #aaa; }
+.status-available { color: var(--c-golden); font-weight: bold; }
+.status-none { color: #8eba31; }
+
+.bottom-update-bar {
+  margin: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 205, 25, 0.2);
+}
+
+.update-bar-text {
+  font-size: 12px;
+  color: var(--c-golden);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.update-bar-container {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.update-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--c-golden), #fff);
+  transition: width 0.3s ease;
+}
+
+.update-ready-btn {
+  width: 100%;
+  margin-top: 5px;
+  padding: 8px;
+  background: var(--c-golden);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.update-ready-btn:hover {
+  background: #fff;
+}
+
 .spinner {
   margin: 20px auto 0;
   width: 40px;
