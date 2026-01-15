@@ -964,7 +964,9 @@ export default function App() {
         '--user-font-size': `${fontSize}px`,
         '--font-scale': fontSize / 16 
       } as any}
-      onMouseLeave={() => {
+      onMouseLeave={(e) => {
+        // 如果鼠标离开时按键未松开（可能正在拖动或缩放），则不交还焦点，防止操作中断
+        if (e.buttons !== 0) return;
         // 当鼠标划出插件界面时，自动尝试把焦点还给游戏
         invoke("restore_game_focus").catch(() => {});
       }}

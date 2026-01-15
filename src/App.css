@@ -135,6 +135,7 @@ html, body, #root {
   transition: all 0.3s ease;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  -webkit-app-region: drag; /* 显式声明拖拽区域 */
 }
 
 .drag-handle svg {
