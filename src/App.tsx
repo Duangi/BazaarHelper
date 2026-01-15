@@ -848,38 +848,63 @@ export default function App() {
       } catch (e) { console.error(e); }
     };
 
-    // 防抖
-    const timer = setTimeout(syncLayout, 50);
+    // 50ms 的防抖在调整大小时会造成显著延迟
+    // 我们将逻辑改为：如果是处于版本页面或刚进入，保持延迟同步
+    // 但如果是正在拖动缩放，我们已经在事件处理器中直接操作了窗口
+    const timer = setTimeout(syncLayout, showVersionScreen ? 50 : 16); 
     return () => clearTimeout(timer);
   }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
 
   // 分离的手动调整逻辑
   const handleResizeWidth = (e: React.MouseEvent) => {
     e.preventDefault();
+    const appWindow = getCurrentWindow();
     const startX = e.screenX;
     const startWidth = expandedWidth;
+    const scale = currentScale.current;
     
-    // 如果已有自定义位置，记录起始的右边界物理坐标，以便后续维持贴右
-    const startRightX = lastKnownPosition.current ? lastKnownPosition.current.x + (startWidth * currentScale.current) : null;
+    // 记录起始右边界物理坐标
+    const startRightX = lastKnownPosition.current 
+      ? lastKnownPosition.current.x + (startWidth * scale)
+      : null;
+    
+    // 如果没有 customPosition，说明在屏幕右上角
+    // 这种情况下，targetX = screenWidth - currentWidth
+    // 我们也需要获取显示器的信息
+    let monitorRect = { x: 0, width: 0 };
+    currentMonitor().then(m => {
+      if (m) {
+        monitorRect.x = m.position.x;
+        monitorRect.width = m.size.width;
+      }
+    });
 
     const onMouseMove = (moveE: MouseEvent) => {
       const deltaX = startX - moveE.screenX;
-      // 向左拖动 deltaX 为正，宽度增加
       const newWidth = Math.max(200, Math.min(1600, startWidth + deltaX));
+      
+      // 使用 requestAnimationFrame 确保平滑度且不阻塞
+      requestAnimationFrame(async () => {
+        const currentHeight = isCollapsed ? 45 : expandedHeight;
+        await appWindow.setSize(new LogicalSize(newWidth, currentHeight));
+        
+        let targetXPhys = 0;
+        if (hasCustomPosition && startRightX !== null) {
+          targetXPhys = startRightX - (newWidth * scale);
+          lastKnownPosition.current = { x: targetXPhys, y: lastKnownPosition.current.y };
+        } else {
+          targetXPhys = monitorRect.x + monitorRect.width - (newWidth * scale);
+        }
+        await appWindow.setPosition(new LogicalPosition(targetXPhys / scale, (lastKnownPosition.current?.y || 0) / scale));
+      });
+
       setExpandedWidth(newWidth);
-      
-      // 如果用户之前移动过窗口，我们需要更新其记录的位置，使其看起来是向左延伸（保持右边界不动）
-      if (hasCustomPosition && startRightX !== null && lastKnownPosition.current) {
-        const newPhysicalWidth = newWidth * currentScale.current;
-        const newX = startRightX - newPhysicalWidth;
-        lastKnownPosition.current = { x: newX, y: lastKnownPosition.current.y };
-      }
-      
-      localStorage.setItem("plugin-width", newWidth.toString());
     };
+
     const onMouseUp = () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
+      localStorage.setItem("plugin-width", expandedWidth.toString());
     };
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -887,17 +912,26 @@ export default function App() {
 
   const handleResizeHeight = (e: React.MouseEvent) => {
     e.preventDefault();
+    const appWindow = getCurrentWindow();
     const startY = e.screenY;
     const startHeight = expandedHeight;
+    const scale = currentScale.current;
+
     const onMouseMove = (moveE: MouseEvent) => {
-      const deltaY = moveE.screenY - startY; // 往下拖变高
+      const deltaY = moveE.screenY - startY; 
       const newHeight = Math.max(200, Math.min(2560, startHeight + deltaY));
+      
+      requestAnimationFrame(async () => {
+        await appWindow.setSize(new LogicalSize(expandedWidth, newHeight));
+      });
+      
       setExpandedHeight(newHeight);
-      localStorage.setItem("plugin-height", newHeight.toString());
     };
+
     const onMouseUp = () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
+      localStorage.setItem("plugin-height", expandedHeight.toString());
     };
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);

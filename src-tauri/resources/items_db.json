@@ -41,7 +41,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -120,7 +120,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -199,7 +199,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -278,7 +278,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -357,7 +357,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品停止飞行时，造成剧毒，等量于其伤害的5%。"
       },
@@ -436,7 +436,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -515,7 +515,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -594,7 +594,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -673,7 +673,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -752,7 +752,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -825,7 +825,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -904,7 +904,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -983,7 +983,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -1062,7 +1062,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -1141,7 +1141,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每拥有一个独特类型，就造成1剧毒"
       },
@@ -1220,7 +1220,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -1299,7 +1299,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用飞行物品造成暴击时，造成4剧毒"
       },
@@ -1372,7 +1372,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -1451,7 +1451,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -1530,7 +1530,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用食物时，造成剧毒，等量于此物品灼烧"
       },
@@ -1609,7 +1609,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -1688,7 +1688,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -1767,7 +1767,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成4剧毒。"
       },
@@ -1846,7 +1846,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -1925,7 +1925,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -2004,7 +2004,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -2083,7 +2083,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发冻结时，造成剧毒，等量于此物品护盾的5%。"
       },
@@ -2156,7 +2156,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -2229,7 +2229,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用物品时，造成2剧毒。"
       },
@@ -2308,7 +2308,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -2387,7 +2387,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -2466,7 +2466,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -2539,7 +2539,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -2606,7 +2606,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -2685,7 +2685,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -2764,7 +2764,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -2843,7 +2843,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成1剧毒。"
       },
@@ -2922,7 +2922,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -3001,7 +3001,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -3080,7 +3080,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -3159,7 +3159,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -3238,7 +3238,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -3305,7 +3305,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -3384,7 +3384,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成6剧毒。"
       },
@@ -3463,7 +3463,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -3542,7 +3542,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -3621,7 +3621,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -3700,7 +3700,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -3779,7 +3779,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -3858,7 +3858,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -3937,7 +3937,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -4016,7 +4016,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -4095,7 +4095,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -4174,7 +4174,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -4247,7 +4247,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -4326,7 +4326,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -4405,7 +4405,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -4484,7 +4484,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -4563,7 +4563,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -4642,7 +4642,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -4721,7 +4721,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -4800,7 +4800,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -4879,7 +4879,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -4958,7 +4958,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用玩具时，造成2剧毒。"
       },
@@ -5037,7 +5037,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -5110,7 +5110,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -5183,7 +5183,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -5262,7 +5262,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -5341,7 +5341,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -5420,7 +5420,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -5493,7 +5493,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -5560,7 +5560,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -5639,7 +5639,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -5718,7 +5718,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -5797,7 +5797,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -5876,7 +5876,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -5955,7 +5955,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -6034,7 +6034,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -6113,7 +6113,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -6192,7 +6192,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -6271,7 +6271,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -6350,7 +6350,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -6429,7 +6429,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -6508,7 +6508,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -6587,7 +6587,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用水系物品时，造成3剧毒。"
       },
@@ -6666,7 +6666,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -6745,7 +6745,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -6824,7 +6824,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -6903,7 +6903,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用一件剧毒物品"
       },
@@ -6976,7 +6976,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -7055,7 +7055,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成2剧毒。"
       },
@@ -7134,7 +7134,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -7213,7 +7213,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -7292,7 +7292,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -7371,7 +7371,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -7450,7 +7450,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成20剧毒"
       },
@@ -7529,7 +7529,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻的剧毒物品时，使其剧毒提高+1（限本场战斗）。"
       },
@@ -7608,7 +7608,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -7687,7 +7687,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -7766,7 +7766,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -7845,7 +7845,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -7924,7 +7924,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -8003,7 +8003,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -8082,7 +8082,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -8161,7 +8161,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -8240,7 +8240,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -8319,7 +8319,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -8398,7 +8398,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "敌人使用物品时，造成1剧毒。"
       },
@@ -8477,7 +8477,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -8556,7 +8556,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -8635,7 +8635,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用伙伴或飞行物品时，造成剧毒，等量于此物品灼烧"
       },
@@ -8714,7 +8714,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -8793,7 +8793,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -8872,7 +8872,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -8951,7 +8951,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -9030,7 +9030,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -9109,7 +9109,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品被摧毁时，造成剧毒，等量于其伤害的5%。"
       },
@@ -9188,7 +9188,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -9267,7 +9267,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -9346,7 +9346,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的武器时，造成2剧毒。"
       },
@@ -9425,7 +9425,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -9504,7 +9504,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -9583,7 +9583,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -9662,7 +9662,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -9735,7 +9735,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -9808,7 +9808,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -9887,7 +9887,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -9960,7 +9960,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发减速时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -10039,7 +10039,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -10118,7 +10118,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品价值的一半"
       },
@@ -10197,7 +10197,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -10276,7 +10276,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -10355,7 +10355,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -10434,7 +10434,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用最左侧物品时，造成1剧毒。"
       },
@@ -10513,7 +10513,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -10592,7 +10592,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -10671,7 +10671,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -10750,7 +10750,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -10829,7 +10829,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -10908,7 +10908,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -10987,7 +10987,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用高温物品时，造成3剧毒。"
       },
@@ -11066,7 +11066,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -11145,7 +11145,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -11224,7 +11224,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -11303,7 +11303,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -11376,7 +11376,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -11455,7 +11455,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -11534,7 +11534,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗即将首次落败时，造成50剧毒。"
       },
@@ -11613,7 +11613,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -11692,7 +11692,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -11771,7 +11771,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -11850,7 +11850,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -11929,7 +11929,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成剧毒，等量于此物品灼烧。"
       },
@@ -12008,7 +12008,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成12剧毒"
       },
@@ -12087,7 +12087,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的武器时，造成1剧毒。"
       },
@@ -12166,7 +12166,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -12245,7 +12245,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发冻结时，造成剧毒，等量于此物品的生命再生。"
       },
@@ -12324,7 +12324,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -12403,7 +12403,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -12482,7 +12482,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -12561,7 +12561,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用玩具时，造成3剧毒。"
       },
@@ -12634,7 +12634,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -12701,7 +12701,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -12780,7 +12780,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成2剧毒。"
       },
@@ -12859,7 +12859,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有武器开始飞行时，造成2剧毒。"
       },
@@ -12938,7 +12938,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -13011,7 +13011,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -13078,7 +13078,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -13157,7 +13157,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -13236,7 +13236,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -13315,7 +13315,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品被摧毁时，造成剧毒，等量于其伤害的5%。"
       },
@@ -13388,7 +13388,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+5。"
       },
@@ -13455,7 +13455,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成2剧毒。"
       },
@@ -13534,7 +13534,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -13613,7 +13613,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -13692,7 +13692,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -13771,7 +13771,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -13850,7 +13850,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -13929,7 +13929,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -14008,7 +14008,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -14087,7 +14087,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -14166,7 +14166,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -14245,7 +14245,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -14324,7 +14324,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -14403,7 +14403,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -14482,7 +14482,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -14561,7 +14561,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -14653,7 +14653,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用载具或飞行物品时，造成1剧毒。"
       },
@@ -14732,7 +14732,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用物品时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -14811,7 +14811,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -14890,7 +14890,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -14969,7 +14969,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -15048,7 +15048,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品价值"
       },
@@ -15127,7 +15127,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -15206,7 +15206,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的物品时，造成2剧毒。"
       },
@@ -15285,7 +15285,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成30剧毒"
       },
@@ -15364,7 +15364,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -15443,7 +15443,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "霜冻时：造成剧毒，等量于此物品的生命再生量。"
       },
@@ -15522,7 +15522,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -15601,7 +15601,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -15680,7 +15680,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -15759,7 +15759,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -15838,7 +15838,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -15917,7 +15917,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -15996,7 +15996,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -16075,7 +16075,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成50剧毒"
       },
@@ -16173,7 +16173,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品被摧毁时，造成100剧毒。"
       },
@@ -16252,7 +16252,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -16325,7 +16325,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -16404,7 +16404,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -16483,7 +16483,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高+2（限本场战斗）"
       },
@@ -16562,7 +16562,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -16641,7 +16641,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "霜冻时：触发冻结时，造成剧毒，等量于此物品伤害的5%"
       },
@@ -16720,7 +16720,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -16799,7 +16799,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -16878,7 +16878,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -16957,7 +16957,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -17036,7 +17036,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻武器时，造成1剧毒。"
       },
@@ -17115,7 +17115,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -17194,7 +17194,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成30剧毒"
       },
@@ -17273,7 +17273,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -17352,7 +17352,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -17431,7 +17431,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -17510,7 +17510,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -17589,7 +17589,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -17668,7 +17668,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒加成翻倍。"
       },
@@ -17747,7 +17747,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -17826,7 +17826,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -17905,7 +17905,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -17984,7 +17984,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -18063,7 +18063,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -18142,7 +18142,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -18221,7 +18221,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品停止飞行时，造成剧毒，等量于此物品护盾值的5%。"
       },
@@ -18300,7 +18300,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -18379,7 +18379,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -18458,7 +18458,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用附魔物品时，造成6剧毒。"
       },
@@ -18537,7 +18537,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -18616,7 +18616,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -18689,7 +18689,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -18768,7 +18768,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -18847,7 +18847,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成2剧毒。"
       },
@@ -18926,7 +18926,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -19005,7 +19005,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -19084,7 +19084,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -19163,7 +19163,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成剧毒，等量于此物品护盾的5%。"
       },
@@ -19242,7 +19242,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -19321,7 +19321,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -19400,7 +19400,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高+0（限本场战斗）"
       },
@@ -19479,7 +19479,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成2剧毒。"
       },
@@ -19558,7 +19558,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -19637,7 +19637,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -19716,7 +19716,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -19795,7 +19795,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -19868,7 +19868,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -19947,7 +19947,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -20026,7 +20026,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -20105,7 +20105,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水时，造成2剧毒。"
       },
@@ -20184,7 +20184,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗即将首次落败时，造成剧毒，等量于最大生命值的5%。"
       },
@@ -20263,7 +20263,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -20342,7 +20342,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -20421,7 +20421,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -20500,7 +20500,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -20579,7 +20579,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -20658,7 +20658,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -20737,7 +20737,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高+1（限本场战斗）"
       },
@@ -20816,7 +20816,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -20895,7 +20895,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成16剧毒"
       },
@@ -20974,7 +20974,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻的剧毒物品时，使其剧毒提高+1（限本场战斗）。"
       },
@@ -21053,7 +21053,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水或神器时，造成剧毒，等量于此物品的生命再生量。"
       },
@@ -21132,7 +21132,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -21211,7 +21211,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -21290,7 +21290,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成2剧毒。"
       },
@@ -21369,7 +21369,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -21448,7 +21448,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -21527,7 +21527,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -21606,7 +21606,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -21685,7 +21685,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成剧毒，等量于此物品护盾的5%"
       },
@@ -21764,7 +21764,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -21843,7 +21843,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用弹药物品时，造成1剧毒。"
       },
@@ -21922,7 +21922,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -22001,7 +22001,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -22080,7 +22080,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -22159,7 +22159,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -22238,7 +22238,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -22311,7 +22311,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用玩具或伙伴时，造成2剧毒。"
       },
@@ -22390,7 +22390,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -22469,7 +22469,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -22548,7 +22548,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -22627,7 +22627,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用武器造成暴击时，造成6剧毒"
       },
@@ -22706,7 +22706,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -22785,7 +22785,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发减速时，造成剧毒，等量于此物品灼烧"
       },
@@ -22877,7 +22877,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -22944,7 +22944,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -23023,7 +23023,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -23102,7 +23102,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -23181,7 +23181,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水时，造成2剧毒。"
       },
@@ -23260,7 +23260,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品开始飞行时，造成1剧毒。"
       },
@@ -23339,7 +23339,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -23412,7 +23412,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -23491,7 +23491,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用飞行物品时，造成2剧毒。"
       },
@@ -23570,7 +23570,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -23649,7 +23649,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发减速时，造成剧毒，等量于此物品的生命再生。"
       },
@@ -23728,7 +23728,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -23807,7 +23807,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -23886,7 +23886,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每拥有一件神器，就造成1剧毒"
       },
@@ -23965,7 +23965,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -24044,7 +24044,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -24123,7 +24123,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -24202,7 +24202,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -24281,7 +24281,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -24360,7 +24360,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品开始飞行时，造成剧毒，等量于此物品生命再生量。"
       },
@@ -24439,7 +24439,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -24518,7 +24518,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -24597,7 +24597,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -24676,7 +24676,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -24755,7 +24755,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -24834,7 +24834,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的武器时，造成1剧毒。"
       },
@@ -24913,7 +24913,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -24992,7 +24992,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -25065,7 +25065,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -25144,7 +25144,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -25223,7 +25223,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用食物造成暴击时，造成2剧毒"
       },
@@ -25302,7 +25302,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -25381,7 +25381,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成12剧毒"
       },
@@ -25460,7 +25460,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品加速时，剧毒物品的剧毒提高1（限本场战斗）。"
       },
@@ -25539,7 +25539,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -25618,7 +25618,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -25697,7 +25697,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -25776,7 +25776,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -25855,7 +25855,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -25934,7 +25934,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -26013,7 +26013,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -26092,7 +26092,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -26171,7 +26171,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -26250,7 +26250,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -26329,7 +26329,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成4剧毒。"
       },
@@ -26402,7 +26402,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -26469,7 +26469,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -26542,7 +26542,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -26621,7 +26621,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -26694,7 +26694,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -26761,7 +26761,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -26840,7 +26840,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -26913,7 +26913,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -26980,7 +26980,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27059,7 +27059,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27132,7 +27132,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -27211,7 +27211,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -27290,7 +27290,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -27369,7 +27369,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27467,7 +27467,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27546,7 +27546,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -27625,7 +27625,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -27704,7 +27704,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27783,7 +27783,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成30剧毒"
       },
@@ -27862,7 +27862,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -27941,7 +27941,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28020,7 +28020,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28099,7 +28099,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -28178,7 +28178,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -28257,7 +28257,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28336,7 +28336,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品开始飞行时，造成剧毒，等量于此物品灼烧。"
       },
@@ -28415,7 +28415,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28494,7 +28494,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -28573,7 +28573,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28646,7 +28646,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -28713,7 +28713,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成1剧毒。"
       },
@@ -28792,7 +28792,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -28871,7 +28871,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -28950,7 +28950,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -29029,7 +29029,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -29096,7 +29096,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -29163,7 +29163,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -29261,7 +29261,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -29340,7 +29340,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用飞行物品时，造成剧毒，等量于此物品护盾的5%"
       },
@@ -29419,7 +29419,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -29498,7 +29498,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -29577,7 +29577,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -29656,7 +29656,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -29735,7 +29735,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -29814,7 +29814,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -29893,7 +29893,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用附魔或飞行物品时，造成4剧毒。"
       },
@@ -29972,7 +29972,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "任意物品冻结时，造成剧毒，等量于此物品护盾的5%。"
       },
@@ -30051,7 +30051,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -30130,7 +30130,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -30209,7 +30209,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -30288,7 +30288,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -30367,7 +30367,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -30446,7 +30446,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -30525,7 +30525,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每拥有一件非武器物品，就造成2剧毒"
       },
@@ -30604,7 +30604,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -30683,7 +30683,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -30762,7 +30762,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -30841,7 +30841,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -30914,7 +30914,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -30993,7 +30993,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -31072,7 +31072,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的物品造成暴击时，造成2剧毒。"
       },
@@ -31151,7 +31151,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用附魔物品时，造成3剧毒。"
       },
@@ -31230,7 +31230,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -31309,7 +31309,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -31388,7 +31388,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "敌人使用物品时，造成剧毒，树脂等于此物品伤害5%。"
       },
@@ -31467,7 +31467,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -31546,7 +31546,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -31619,7 +31619,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -31698,7 +31698,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -31777,7 +31777,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成6剧毒。"
       },
@@ -31856,7 +31856,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -31935,7 +31935,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -32008,7 +32008,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -32075,7 +32075,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -32154,7 +32154,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -32233,7 +32233,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用伙伴时，造成2剧毒"
       },
@@ -32306,7 +32306,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -32385,7 +32385,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -32464,7 +32464,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -32543,7 +32543,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -32622,7 +32622,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -32701,7 +32701,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -32780,7 +32780,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -32859,7 +32859,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -32938,7 +32938,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -33017,7 +33017,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -33096,7 +33096,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -33175,7 +33175,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -33254,7 +33254,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -33333,7 +33333,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -33412,7 +33412,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成1剧毒。"
       },
@@ -33491,7 +33491,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品触发灼烧时，造成剧毒，等量于此物品护盾值的5%"
       },
@@ -33570,7 +33570,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -33649,7 +33649,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -33728,7 +33728,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -33807,7 +33807,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -33886,7 +33886,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -33965,7 +33965,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "施加减速效果时，造成剧毒，等量于此物品护盾值的5%"
       },
@@ -34044,7 +34044,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -34117,7 +34117,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -34196,7 +34196,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -34269,7 +34269,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -34348,7 +34348,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -34427,7 +34427,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成1剧毒。"
       },
@@ -34506,7 +34506,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -34585,7 +34585,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -34664,7 +34664,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害"
       },
@@ -34737,7 +34737,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒加成翻倍。"
       },
@@ -34804,7 +34804,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的物品时，造成2剧毒"
       },
@@ -34883,7 +34883,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品 + 剧毒，增幅等于此物品价值的10%。"
       },
@@ -34962,7 +34962,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -35029,7 +35029,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -35108,7 +35108,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -35187,7 +35187,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -35266,7 +35266,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗己方生命值首次降至一半时，造成40剧毒。"
       },
@@ -35333,7 +35333,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -35400,7 +35400,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -35473,7 +35473,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发减速时，造成剧毒，等量于此物品的生命再生。"
       },
@@ -35552,7 +35552,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -35631,7 +35631,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -35710,7 +35710,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的物品时，造成2剧毒"
       },
@@ -35789,7 +35789,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -35868,7 +35868,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用食物时，造成3剧毒。"
       },
@@ -35947,7 +35947,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -36026,7 +36026,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -36105,7 +36105,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -36172,7 +36172,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -36251,7 +36251,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -36330,7 +36330,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -36409,7 +36409,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -36488,7 +36488,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -36567,7 +36567,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -36646,7 +36646,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -36725,7 +36725,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -36804,7 +36804,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -36883,7 +36883,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗开始时，造成6剧毒"
       },
@@ -36962,7 +36962,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -37041,7 +37041,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -37120,7 +37120,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用伙伴时，造成3剧毒。"
       },
@@ -37199,7 +37199,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -37278,7 +37278,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -37370,7 +37370,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -37449,7 +37449,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的物品时，造成1剧毒。"
       },
@@ -37528,7 +37528,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -37607,7 +37607,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的科技物品时，造成1剧毒。"
       },
@@ -37686,7 +37686,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成1剧毒。"
       },
@@ -37765,7 +37765,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -37844,7 +37844,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -37923,7 +37923,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -38002,7 +38002,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -38081,7 +38081,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -38154,7 +38154,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -38233,7 +38233,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -38300,7 +38300,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -38361,7 +38361,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每天开始时，获得一份毒芹。"
       },
@@ -38440,7 +38440,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -38519,7 +38519,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -38598,7 +38598,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -38677,7 +38677,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -38756,7 +38756,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -38835,7 +38835,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品开始飞行时，造成剧毒，等量于其护盾值的5%。"
       },
@@ -38914,7 +38914,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -38993,7 +38993,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -39066,7 +39066,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "and Poison {ability.e1}"
       },
@@ -39133,7 +39133,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -39212,7 +39212,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -39291,7 +39291,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -39370,7 +39370,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -39449,7 +39449,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -39528,7 +39528,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -39607,7 +39607,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每天开始时，一件剧毒物品的剧毒提高+2。"
       },
@@ -39686,7 +39686,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -39759,7 +39759,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -39838,7 +39838,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "高温时：使用其他物品触发护盾或提高生命再生时，造成剧毒，等量于此物品灼烧"
       },
@@ -39917,7 +39917,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "当敌人物品加速或你的物品减速时，造成1剧毒。"
       },
@@ -39996,7 +39996,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "相邻剧毒物品+3剧毒。"
       },
@@ -40075,7 +40075,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -40154,7 +40154,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -40227,7 +40227,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -40306,7 +40306,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -40385,7 +40385,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -40458,7 +40458,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -40537,7 +40537,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -40616,7 +40616,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -40695,7 +40695,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -40774,7 +40774,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -40853,7 +40853,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -40932,7 +40932,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -41011,7 +41011,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -41090,7 +41090,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -41169,7 +41169,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -41248,7 +41248,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -41327,7 +41327,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -41406,7 +41406,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -41485,7 +41485,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成30剧毒"
       },
@@ -41564,7 +41564,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -41643,7 +41643,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品停止飞行时，造成剧毒，等量于此物品护盾值的5%。"
       },
@@ -41722,7 +41722,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -41801,7 +41801,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成2剧毒。"
       },
@@ -41880,7 +41880,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -41959,7 +41959,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -42038,7 +42038,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水时，造成2剧毒。"
       },
@@ -42105,7 +42105,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -42166,7 +42166,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -42239,7 +42239,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+2。"
       },
@@ -42306,7 +42306,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -42379,7 +42379,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -42458,7 +42458,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -42537,7 +42537,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -42616,7 +42616,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用药水时，造成剧毒，等量于此物品灼烧。"
       },
@@ -42689,7 +42689,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -42756,7 +42756,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用武器时，造成3剧毒。"
       },
@@ -42835,7 +42835,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -42914,7 +42914,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -42993,7 +42993,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -43072,7 +43072,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -43151,7 +43151,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的10%"
       },
@@ -43230,7 +43230,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -43309,7 +43309,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -43388,7 +43388,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -43467,7 +43467,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -43546,7 +43546,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品停止飞行时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -43625,7 +43625,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -43704,7 +43704,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -43783,7 +43783,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -43856,7 +43856,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -43935,7 +43935,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -44014,7 +44014,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品开始飞行时，造成剧毒，等量于此物品护盾值的5%。"
       },
@@ -44093,7 +44093,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用工具时，造成3剧毒。"
       },
@@ -44172,7 +44172,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -44251,7 +44251,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -44330,7 +44330,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "有物品停止飞行时，造成剧毒，等量于此物品护盾值的5%。"
       },
@@ -44409,7 +44409,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -44488,7 +44488,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -44567,7 +44567,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "工蜂造成伤害时，同时造成剧毒，等量于其造成伤害的10%。"
       },
@@ -44646,7 +44646,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -44725,7 +44725,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用地产时，造成2剧毒。"
       },
@@ -44804,7 +44804,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的物品时，造成1剧毒"
       },
@@ -44883,7 +44883,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -44962,7 +44962,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -45041,7 +45041,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -45120,7 +45120,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -45199,7 +45199,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -45278,7 +45278,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -45357,7 +45357,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的武器时，造成1剧毒。"
       },
@@ -45436,7 +45436,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -45509,7 +45509,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -45588,7 +45588,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成20剧毒"
       },
@@ -45667,7 +45667,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -45765,7 +45765,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -45838,7 +45838,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+3。"
       },
@@ -45911,7 +45911,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -45990,7 +45990,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -46069,7 +46069,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -46148,7 +46148,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用非武器物品时，造成3剧毒。"
       },
@@ -46227,7 +46227,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -46306,7 +46306,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发灼烧时，造成1剧毒。"
       },
@@ -46385,7 +46385,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -46464,7 +46464,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -46543,7 +46543,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -46622,7 +46622,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的武器时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -46701,7 +46701,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -46774,7 +46774,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -46853,7 +46853,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -46932,7 +46932,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47005,7 +47005,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47078,7 +47078,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -47157,7 +47157,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -47236,7 +47236,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47315,7 +47315,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -47394,7 +47394,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47473,7 +47473,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -47552,7 +47552,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47631,7 +47631,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -47710,7 +47710,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用神器或附魔物品时，造成1剧毒。"
       },
@@ -47789,7 +47789,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -47893,7 +47893,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -48010,7 +48010,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -48089,7 +48089,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -48168,7 +48168,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -48247,7 +48247,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -48320,7 +48320,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -48399,7 +48399,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -48478,7 +48478,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用高温物品时，造成3剧毒。"
       },
@@ -48557,7 +48557,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -48636,7 +48636,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -48715,7 +48715,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -48794,7 +48794,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -48873,7 +48873,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -48952,7 +48952,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -49031,7 +49031,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -49110,7 +49110,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -49189,7 +49189,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -49268,7 +49268,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗开始时，造成剧毒，等量于此物品的灼烧。"
       },
@@ -49329,7 +49329,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -49408,7 +49408,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -49487,7 +49487,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -49566,7 +49566,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -49645,7 +49645,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -49724,7 +49724,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -49803,7 +49803,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -49882,7 +49882,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -49961,7 +49961,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -50040,7 +50040,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用其他英雄的物品时，造成2剧毒。"
       },
@@ -50113,7 +50113,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -50186,7 +50186,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+2。"
       },
@@ -50253,7 +50253,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -50332,7 +50332,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -50411,7 +50411,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -50490,7 +50490,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -50569,7 +50569,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "物品弹药耗尽时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -50648,7 +50648,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -50727,7 +50727,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -50800,7 +50800,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+2。"
       },
@@ -50867,7 +50867,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用弹药物品时，造成剧毒，等量于此物品伤害的5%"
       },
@@ -50946,7 +50946,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -51025,7 +51025,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高，增幅等于此物品价值的20%（限本场战斗）。[0]"
       },
@@ -51104,7 +51104,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -51183,7 +51183,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -51262,7 +51262,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品 + 剧毒，增幅等于此物品价值的10%。"
       },
@@ -51341,7 +51341,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "仅赋予剧毒技能。"
       },
@@ -51420,7 +51420,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品开始飞行时，造成2剧毒"
       },
@@ -51499,7 +51499,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每拥有一件水系或玩具物品，就造成1剧毒"
       },
@@ -51578,7 +51578,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -51657,7 +51657,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻护盾物品时，造成剧毒，等量于此物品伤害的5%。"
       },
@@ -51736,7 +51736,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -51809,7 +51809,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -51888,7 +51888,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -51967,7 +51967,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发减速时，造成3剧毒。"
       },
@@ -52046,7 +52046,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -52125,7 +52125,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -52204,7 +52204,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -52283,7 +52283,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -52362,7 +52362,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -52441,7 +52441,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品停止飞行时，造成剧毒，等量于其伤害的5%。"
       },
@@ -52520,7 +52520,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发冻结或减速时，造成剧毒，等量于此物品伤害量的5%。"
       },
@@ -52599,7 +52599,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -52660,7 +52660,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每天开始时，获得一份毒芹。"
       },
@@ -52739,7 +52739,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -52818,7 +52818,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -52897,7 +52897,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -52976,7 +52976,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的地产时，造成5剧毒。"
       },
@@ -53055,7 +53055,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -53128,7 +53128,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -53207,7 +53207,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -53286,7 +53286,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -53365,7 +53365,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成20剧毒"
       },
@@ -53444,7 +53444,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -53523,7 +53523,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -53602,7 +53602,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -53681,7 +53681,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -53760,7 +53760,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -53839,7 +53839,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用武器或护盾物品时，造成3剧毒。"
       },
@@ -53918,7 +53918,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -53997,7 +53997,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用载具或无人机时，造成3剧毒。"
       },
@@ -54076,7 +54076,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -54155,7 +54155,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -54234,7 +54234,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -54313,7 +54313,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -54392,7 +54392,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -54465,7 +54465,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -54532,7 +54532,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -54611,7 +54611,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -54690,7 +54690,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用护盾物品时，造成3剧毒。"
       },
@@ -54769,7 +54769,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -54848,7 +54848,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -54927,7 +54927,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -55006,7 +55006,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -55085,7 +55085,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -55164,7 +55164,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -55243,7 +55243,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -55335,7 +55335,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -55402,7 +55402,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -55481,7 +55481,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "相邻剧毒物品的剧毒提升2（限本场战斗）"
       },
@@ -55554,7 +55554,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -55621,7 +55621,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -55700,7 +55700,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -55779,7 +55779,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -55858,7 +55858,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成6剧毒"
       },
@@ -55937,7 +55937,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -56010,7 +56010,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -56083,7 +56083,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -56162,7 +56162,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -56241,7 +56241,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成暴击时，造成2剧毒。"
       },
@@ -56320,7 +56320,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用水系物品时，造成3剧毒。"
       },
@@ -56399,7 +56399,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -56478,7 +56478,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -56557,7 +56557,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -56636,7 +56636,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -56715,7 +56715,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品被摧毁时，造成剧毒，等量于其伤害的5%。"
       },
@@ -56794,7 +56794,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成10剧毒"
       },
@@ -56873,7 +56873,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗首次使用物品时，造成剧毒，等量于最大生命值的5%。"
       },
@@ -56946,7 +56946,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -57025,7 +57025,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -57104,7 +57104,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -57177,7 +57177,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -57256,7 +57256,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -57335,7 +57335,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍"
       },
@@ -57414,7 +57414,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -57493,7 +57493,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -57572,7 +57572,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -57651,7 +57651,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -57724,7 +57724,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -57803,7 +57803,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用工具时，造成剧毒，等量于此物品伤害的5%"
       },
@@ -57882,7 +57882,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -57961,7 +57961,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量的一半"
       },
@@ -58034,7 +58034,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -58113,7 +58113,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -58192,7 +58192,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58271,7 +58271,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用工具时，造成3剧毒。"
       },
@@ -58350,7 +58350,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58429,7 +58429,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58508,7 +58508,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用弹药物品时，造成2剧毒。"
       },
@@ -58587,7 +58587,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58666,7 +58666,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高，增幅等于最弱剧毒物品的剧毒（限本场战斗）"
       },
@@ -58745,7 +58745,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -58824,7 +58824,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58903,7 +58903,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -58982,7 +58982,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -59061,7 +59061,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成11剧毒"
       },
@@ -59140,7 +59140,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -59219,7 +59219,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -59298,7 +59298,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -59377,7 +59377,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -59456,7 +59456,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -59535,7 +59535,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -59614,7 +59614,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -59687,7 +59687,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -59766,7 +59766,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -59845,7 +59845,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -59943,7 +59943,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -60016,7 +60016,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -60077,7 +60077,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -60144,7 +60144,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -60223,7 +60223,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -60296,7 +60296,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -60375,7 +60375,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -60448,7 +60448,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -60527,7 +60527,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -60606,7 +60606,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -60685,7 +60685,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成5剧毒"
       },
@@ -60764,7 +60764,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成2剧毒。"
       },
@@ -60843,7 +60843,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -60922,7 +60922,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -61001,7 +61001,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -61080,7 +61080,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -61159,7 +61159,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -61238,7 +61238,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -61317,7 +61317,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -61396,7 +61396,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -61475,7 +61475,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "如果此物品没有附魔，就为其赋予毒素附魔（如适用）。"
       },
@@ -61554,7 +61554,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -61633,7 +61633,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成4剧毒"
       },
@@ -61712,7 +61712,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "提高生命再生时，造成4剧毒"
       },
@@ -61791,7 +61791,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -61870,7 +61870,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -61949,7 +61949,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -62022,7 +62022,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -62089,7 +62089,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成8剧毒"
       },
@@ -62168,7 +62168,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -62247,7 +62247,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用伙伴时，造成2剧毒。"
       },
@@ -62326,7 +62326,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于相邻物品灼烧的一半"
       },
@@ -62405,7 +62405,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的弹药物品时，造成1剧毒。"
       },
@@ -62484,7 +62484,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -62563,7 +62563,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品治疗量的5%"
       },
@@ -62642,7 +62642,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -62722,7 +62722,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -62801,7 +62801,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -62880,7 +62880,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -62959,7 +62959,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -63038,7 +63038,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -63117,7 +63117,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -63196,7 +63196,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成50剧毒"
       },
@@ -63275,7 +63275,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -63354,7 +63354,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -63433,7 +63433,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品左侧的物品时，造成1剧毒"
       },
@@ -63512,7 +63512,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -63585,7 +63585,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "触发冻结时，造成3剧毒。"
       },
@@ -63658,7 +63658,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -63737,7 +63737,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗开始时，造成10剧毒。"
       },
@@ -63816,7 +63816,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -63895,7 +63895,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -63974,7 +63974,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -64053,7 +64053,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -64132,7 +64132,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -64205,7 +64205,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -64284,7 +64284,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用此物品右侧的武器时，造成1剧毒。"
       },
@@ -64363,7 +64363,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成4剧毒。"
       },
@@ -64442,7 +64442,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "高温时：造成剧毒，等量于此物品灼烧"
       },
@@ -64521,7 +64521,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用价值大于10的物品时，造成剧毒，等量于此物品护盾的5%"
       },
@@ -64600,7 +64600,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -64679,7 +64679,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为转化后的物品赋予毒素附魔（如适用）。"
       },
@@ -64752,7 +64752,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -64831,7 +64831,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -64910,7 +64910,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -64989,7 +64989,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -65068,7 +65068,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -65147,7 +65147,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -65226,7 +65226,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成7剧毒"
       },
@@ -65305,7 +65305,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -65384,7 +65384,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "敌人使用物品时，造成1剧毒。"
       },
@@ -65463,7 +65463,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -65542,7 +65542,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -65621,7 +65621,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -65700,7 +65700,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻地产时，造成2剧毒。"
       },
@@ -65779,7 +65779,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -65852,7 +65852,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -65919,7 +65919,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -65998,7 +65998,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品生命再生量"
       },
@@ -66077,7 +66077,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -66156,7 +66156,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "高温时：造成剧毒，等量于此物品灼烧"
       },
@@ -66235,7 +66235,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -66314,7 +66314,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -66393,7 +66393,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -66472,7 +66472,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成20剧毒"
       },
@@ -66551,7 +66551,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -66630,7 +66630,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -66709,7 +66709,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品护盾值的5%"
       },
@@ -66788,7 +66788,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -66867,7 +66867,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -66946,7 +66946,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -67025,7 +67025,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -67104,7 +67104,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "高温时：造成剧毒，等量于此物品灼烧"
       },
@@ -67183,7 +67183,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -67262,7 +67262,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -67341,7 +67341,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -67420,7 +67420,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "敌人使用物品时，造成1剧毒。"
       },
@@ -67499,7 +67499,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -67578,7 +67578,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -67657,7 +67657,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -67736,7 +67736,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -67809,7 +67809,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "出售此物品时，最左侧剧毒物品的剧毒提高+1。"
       },
@@ -67876,7 +67876,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -67955,7 +67955,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害"
       },
@@ -68034,7 +68034,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -68113,7 +68113,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -68192,7 +68192,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "每场战斗开始时，造成20剧毒。"
       },
@@ -68271,7 +68271,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -68350,7 +68350,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -68429,7 +68429,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成15剧毒"
       },
@@ -68508,7 +68508,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成3剧毒"
       },
@@ -68587,7 +68587,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "相邻物品触发灼烧时，造成剧毒，等量于此物品护盾值的5%。"
       },
@@ -68666,7 +68666,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -68745,7 +68745,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -68824,7 +68824,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成12剧毒"
       },
@@ -68903,7 +68903,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "……并为物品赋予毒素附魔（如适用）。"
       },
@@ -68982,7 +68982,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成1剧毒"
       },
@@ -69061,7 +69061,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -69140,7 +69140,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成1剧毒。"
       },
@@ -69219,7 +69219,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -69298,7 +69298,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "剧毒物品的剧毒提高+3（限本场战斗）"
       },
@@ -69377,7 +69377,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -69456,7 +69456,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成4剧毒。"
       },
@@ -69529,7 +69529,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -69608,7 +69608,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "此物品的剧毒翻倍。"
       },
@@ -69687,7 +69687,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品灼烧"
       },
@@ -69766,7 +69766,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品造成暴击时，造成4剧毒。"
       },
@@ -69845,7 +69845,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用霜冻物品时，造成3剧毒。"
       },
@@ -69924,7 +69924,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -70003,7 +70003,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成2剧毒"
       },
@@ -70082,7 +70082,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用核心时，造成3剧毒。"
       },
@@ -70161,7 +70161,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "造成剧毒，等量于此物品伤害的5%"
       },
@@ -70240,7 +70240,7 @@
       },
       {
         "id": "toxic",
-        "name": "毒性蔓延",
+        "name": "毒素",
         "name_en": "Toxic",
         "description": "使用相邻物品时，造成2剧毒。"
       },

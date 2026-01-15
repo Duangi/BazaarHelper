@@ -13,6 +13,9 @@
                 "windows":  [
                                 {
                                     "title":  "The Bazaar Helper",
+                                    "width": 500,
+                                    "height": 350,
+                                    "center": true,
                                     "resizable":  false,
                                     "alwaysOnTop":  true,
                                     "decorations":  false,
