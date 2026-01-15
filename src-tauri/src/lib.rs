@@ -85,7 +85,7 @@ pub struct SyncPayload {
 
 pub struct DbState {
     pub items: Arc<RwLock<HashMap<String, ItemData>>>,
-    pub monsters: Arc<RwLock<HashMap<String, MonsterData>>>,
+    pub monsters: Arc<RwLock<serde_json::Map<String, serde_json::Value>>>,
 }
 
 fn get_log_path() -> PathBuf {
@@ -203,7 +203,7 @@ fn lookup_item(tid: &str, db: &HashMap<String, ItemData>) -> Option<ItemData> {
 
 // --- Commands ---
 #[tauri::command]
-fn get_all_monsters(state: State<'_, DbState>) -> Result<HashMap<String, MonsterData>, String> {
+fn get_all_monsters(state: State<'_, DbState>) -> Result<serde_json::Map<String, serde_json::Value>, String> {
     let db = state.monsters.read().map_err(|_| "DB Busy")?;
     Ok(db.clone())
 }
@@ -305,7 +305,7 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(DbState {
             items: Arc::new(RwLock::new(HashMap::new())),
-            monsters: Arc::new(RwLock::new(HashMap::new())),
+            monsters: Arc::new(RwLock::new(serde_json::Map::new())),
         })
         .setup(|app| {
             // 设置窗口不占据焦点，穿透焦点解决遮挡游戏悬浮的问题 (仅 Windows)
@@ -332,7 +332,6 @@ pub fn run() {
             // Initial DB Load
             let db_state = app.state::<DbState>();
             
-            // 尝试多个可能的路径
             let monsters_possible_paths = [
                 resources_path.join("resources").join("monsters_db.json"),
                 resources_path.join("monsters_db.json"),
@@ -342,12 +341,13 @@ pub fn run() {
                 if path.exists() {
                     match std::fs::read_to_string(path) {
                         Ok(json) => {
-                            match serde_json::from_str::<HashMap<String, MonsterData>>(&json) {
-                                Ok(monsters) => {
+                            match serde_json::from_str::<serde_json::Value>(&json) {
+                                Ok(serde_json::Value::Object(monsters)) => {
                                     println!("[Init] Successfully loaded {} monsters from {:?}", monsters.len(), path);
                                     *db_state.monsters.write().unwrap() = monsters;
                                     break;
                                 }
+                                Ok(_) => println!("[Error] monsters_db.json is not an object at {:?}", path),
                                 Err(e) => println!("[Error] Failed to parse monsters_db.json at {:?}: {}", path, e),
                             }
                         }

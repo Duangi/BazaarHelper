@@ -1,5 +1,5 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "0.8.4"  # <--- 版本号
+$NEW_VERSION = "1.0.0"  # <--- 版本号
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
 $KEY_PATH = "src-tauri/tauri.key" # 密钥路径

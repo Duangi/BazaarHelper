@@ -889,7 +889,7 @@ export default function App() {
         await appWindow.setSize(new LogicalSize(newWidth, currentHeight));
         
         let targetXPhys = 0;
-        if (hasCustomPosition && startRightX !== null) {
+        if (hasCustomPosition && startRightX !== null && lastKnownPosition.current) {
           targetXPhys = startRightX - (newWidth * scale);
           lastKnownPosition.current = { x: targetXPhys, y: lastKnownPosition.current.y };
         } else {
@@ -915,7 +915,6 @@ export default function App() {
     const appWindow = getCurrentWindow();
     const startY = e.screenY;
     const startHeight = expandedHeight;
-    const scale = currentScale.current;
 
     const onMouseMove = (moveE: MouseEvent) => {
       const deltaY = moveE.screenY - startY; 

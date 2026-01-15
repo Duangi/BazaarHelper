@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNitWV1dFUndubVhCTUd2N3lMbWcrOXdXWllDQytuWnQwMitydGhwWkdxNHRXMUdRUXlKM2duNlBZU3FmeG5JK0tFSGRFNDZRdEExd0phdkFjOEtVV2dJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY4NDU0MjU0CWZpbGU6QmF6YWFySGVscGVyXzAuOC40X3g2NC1zZXR1cC5leGUKajgrbkU4MEc3alRpdkxuRTR6RUpxbkJaR0JNc29meW9uQVRhbzZFY3h5RDNOQmhjd3NRRUhDQmNzUkN0TEhWZUZUclJGWUJwTnlCSWJsU09SdzFzRGc9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v0.8.4/BazaarHelper_0.8.4_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjVIckVYVnFDdWl3RnR5L1N6UUhjb3BEUGJYbEg0TktkenN1bFdPd3loWndsM1ZmeU51aUpvQ1pCVHBETVRPK0RHZ1IzQTB0Uy9hUUVjT3JxVzl3T0E0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY4NDcxOTM4CWZpbGU6QmF6YWFySGVscGVyXzEuMC4wX3g2NC1zZXR1cC5leGUKMUdVd1AyeTlwckJkV3dlaDhtSy95eUNUMk1Nek5nanc5ZnVyMThuV21leTZYSU1aWFNwbUs4eXZoSnNtL281OXp1ajYyMlFFblI1UW9NWHg3SHpNQ3c9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.0.0/BazaarHelper_1.0.0_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-15T05:17:34Z",
-    "version":  "0.8.4",
-    "notes":  "Bazaar Helper v0.8.4"
+    "pub_date":  "2026-01-15T10:12:18Z",
+    "version":  "1.0.0",
+    "notes":  "Bazaar Helper v1.0.0"
 }
