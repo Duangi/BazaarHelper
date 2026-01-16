@@ -2127,7 +2127,7 @@
             "cd": "4.0"
           }
         },
-        "image": ""
+        "image": "images/淬锋钢.jpg"
       },
       {
         "id": "",
@@ -2287,7 +2287,7 @@
       },
       {
         "id": "",
-        "name": "打破镣铐",
+        "name": "断裂镣铐",
         "tier": "SILVER+",
         "current_tier": "Silver",
         "tags": [],
@@ -2309,7 +2309,7 @@
             "cd": "8.0"
           }
         },
-        "image": "images/打破镣铐.jpg"
+        "image": "images/断裂镣铐.jpg"
       }
     ],
     "image": "images_monster/腹语者.jpg"
@@ -2480,8 +2480,8 @@
       {
         "id": "c806d176-2587-420b-be14-681980c0a863",
         "name": "神庙探险券",
-        "tier": "SILVER",
-        "current_tier": "Silver",
+        "tier": "LEGENDARY",
+        "current_tier": "Legendary",
         "tags": [],
         "tiers": {
           "bronze": {

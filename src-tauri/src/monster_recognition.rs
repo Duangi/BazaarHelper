@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImageView, GenericImage, ImageBuffer, RgbaImage};
 use imageproc::corners::corners_fast9;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -27,6 +27,10 @@ struct TemplateCache {
     name: String,
     day: String,
     descriptors: Vec<([u8; 32], (u32, u32))>, // (BRIEF描述子, 坐标)
+    // 保存一份样本 PNG，用于调试时做可视化对比（序列化到二进制缓存）
+    sample_png: Vec<u8>,
+    sample_w: u32,
+    sample_h: u32,
 }
 
 #[derive(Deserialize)]
@@ -134,8 +138,15 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
     // 使用 Rayon 并行处理所有图片
     let cache: Vec<TemplateCache> = image_tasks.into_par_iter().map(|(name, day, path)| {
         let mut descriptors = Vec::new();
+        let mut sample_png = Vec::new();
+        let mut sample_w = 0u32;
+        let mut sample_h = 0u32;
         if let Ok(img) = image::open(&path) {
             descriptors = extract_features(&img);
+            sample_w = img.width();
+            sample_h = img.height();
+            // 直接读取原始文件字节，后续可以用 image::load_from_memory 加载（支持 jpg/png 等）
+            sample_png = std::fs::read(&path).unwrap_or_default();
         }
         
         // 更新进度 (原子锁)
@@ -146,7 +157,7 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
             }
         }
         
-        TemplateCache { name, day, descriptors }
+        TemplateCache { name, day, descriptors, sample_png, sample_w, sample_h }
     }).collect();
 
     // 3. 保存到二进制缓存以备下次使用
@@ -238,6 +249,10 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     let slot_h = region_h;
 
     let start_match = Instant::now();
+    // Debug output directory (开发时将输出用于比对的图片)
+    let _ = std::fs::create_dir_all("target/debug/monster_debug");
+    // 保存整张截图用于调试
+    let _ = img.save("target/debug/monster_debug/screenshot.png");
     for i in 0..3 {
         let start_slot = Instant::now();
         let x = region_x_start + (i as u32 * slot_w);
@@ -276,6 +291,31 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
 
         // 核心修正：降低判定门槛到 5。
         // 因为我们已经按天过滤了怪兽（只有8个目标），所以匹配点数为 6 已经具有极高的置信度。
+        // Debug: 保存每个槽位的切片以及与最佳模板的并列对比图（若找到模板样本）
+        let slot_scene_path = format!("target/debug/monster_debug/slot_{}_scene.png", i + 1);
+        let _ = slice.save(&slot_scene_path);
+
+        if let Some(found_template) = full_cache.iter().find(|t| t.name == best_name) {
+            if !found_template.sample_png.is_empty() {
+                if let Ok(tmpl_img) = image::load_from_memory(&found_template.sample_png) {
+                    // 将模板缩放到槽位大小，以便直观对比
+                    let resized_tmpl = tmpl_img.resize_exact(slot_w, slot_h, image::imageops::FilterType::Lanczos3);
+                    let tmpl_path = format!("target/debug/monster_debug/slot_{}_template.png", i + 1);
+                    let _ = resized_tmpl.save(&tmpl_path);
+
+                    // 合成左右并排图像
+                    let mut pair: RgbaImage = ImageBuffer::new(slot_w * 2, slot_h);
+                    let left: RgbaImage = slice.to_rgba8();
+                    // resized_tmpl is an ImageBuffer; convert/cast to RgbaImage if necessary
+                    let right: RgbaImage = resized_tmpl.to_rgba8();
+                    let _ = pair.copy_from(&left, 0, 0);
+                    let _ = pair.copy_from(&right, slot_w, 0);
+                    let pair_path = format!("target/debug/monster_debug/slot_{}_pair.png", i + 1);
+                    let _ = pair.save(&pair_path);
+                }
+            }
+        }
+
         if max_matches >= 5 {
             results.push(MonsterRecognitionResult {
                 position: (i + 1) as u8,

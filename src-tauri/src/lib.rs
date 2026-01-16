@@ -421,7 +421,11 @@ pub fn run() {
                     let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items });
                 });
 
-                let mut last_file_size = 0;
+                let mut last_file_size = if log_path.exists() {
+                    std::fs::metadata(&log_path).map(|m| m.len()).unwrap_or(0)
+                } else {
+                    0
+                };
                 let mut is_sync = false;
                 let mut last_iid = String::new();
                 let mut cur_owner = String::new();
