@@ -210,7 +210,7 @@ fn get_all_monsters(state: State<'_, DbState>) -> Result<serde_json::Map<String,
 
 #[tauri::command]
 fn recognize_monsters_from_screenshot(day: Option<u32>) -> Result<Vec<monster_recognition::MonsterRecognitionResult>, String> {
-    let day_filter = day.map(|d| if d > 10 { "Day 10+".to_string() } else { format!("Day {}", d) });
+    let day_filter = day.map(|d| if d >= 10 { "Day 10+".to_string() } else { format!("Day {}", d) });
     monster_recognition::recognize_monsters(day_filter)
 }
 
