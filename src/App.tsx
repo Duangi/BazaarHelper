@@ -10,18 +10,26 @@ import "./App.css";
 import { exit, relaunch } from '@tauri-apps/plugin-process';
 
 // --- 接口定义 ---
-interface Enchantment { 
-  id: string; 
-  name: string; 
-  description: string; 
+interface ItemData {
+  uuid: string;
+  name: string;
+  name_cn: string;
+  tier: string;
+  tags: string;
+  processed_tags: string[];
+  heroes: string[];
+  cooldown?: number;
+  skills: string[];
+  enchantments: string[];
+  description: string;
+  image: string;
+  displayImg?: string;
 }
 
-interface ItemData { 
-  id: string; 
-  name_zh: string; 
-  image: string; 
-  enchantments: Enchantment[] | null; 
-  displayImg?: string; 
+interface SyncPayload {
+  hand_items: ItemData[];
+  stash_items: ItemData[];
+  all_tags: string[];
 }
 
 interface TierInfo {
@@ -52,32 +60,41 @@ interface MonsterData {
   displayImg?: string; 
 }
 
-interface SyncPayload { 
-  hand_items: ItemData[]; 
-  stash_items: ItemData[]; 
-}
-
 type TabType = "hand" | "stash" | "monster";
 
-// --- 颜色映射：对应 JSON 里的 id 和 CSS 里的变量 ---
-const ID_TO_COLOR: Record<string, string> = {
-  heavy: "slow",
-  golden: "golden",
-  icy: "freeze",
-  turbo: "haste",
-  shielded: "shield",
-  restorative: "heal",
-  toxic: "poison",
-  fiery: "burn",
-  shiny: "tag",
-  deadly: "damage",
-  radiant: "freeze",
-  obsidian: "lifesteal"
+const KEYWORD_COLORS: Record<string, string> = {
+  "弹药": "#ff8e00",
+  "灼烧": "#ff9f45",
+  "充能": "#00ecc3",
+  "冷却": "#00ecc3",
+  "加速": "#00ecc3",
+  "暴击率": "#f5503d",
+  "伤害": "#f5503d",
+  "飞行": "#f4cf20",
+  "冻结": "#00ccff",
+  "金币": "#ffd700",
+  "治疗": "#8eea31",
+  "生命值": "#8eea31",
+  "最大生命值": "#8eea31",
+  "收入": "#ffcd19",
+  "吸血": "#9d4a6f",
+  "剧毒": "#0ebe4f",
+  "生命再生": "#8eea31",
+  "护盾": "#f4cf20",
+  "减速": "#cb9f6e",
+  "价值": "#ffcd19"
 };
+
+const TIER_COLORS = ["#cd7f32", "#c0c0c0", "#ffd700", "#b9f2ff"]; // Bronze, Silver, Gold, Diamond
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("monster");
-  const [syncData, setSyncData] = useState<Record<TabType, any[]>>({ hand: [], stash: [], monster: [] });
+  const [syncData, setSyncData] = useState<SyncPayload & { monster: any[] }>({ 
+    hand_items: [], 
+    stash_items: [], 
+    all_tags: [],
+    monster: [] 
+  });
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [manualMonsters, setManualMonsters] = useState<MonsterData[]>([]);
   const [allMonsters, setAllMonsters] = useState<Record<string, MonsterData>>({});
@@ -126,25 +143,25 @@ export default function App() {
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
 
   // 置顶/取消置顶功能
-  const togglePin = (itemId: string, e: React.MouseEvent) => {
+  const togglePin = (uuid: string, e: React.MouseEvent) => {
     e.stopPropagation(); // 防止触发展开/收起
     setPinnedItems(prev => {
       const newPinned = new Map(prev);
-      if (newPinned.has(itemId)) {
-        newPinned.delete(itemId);
+      if (newPinned.has(uuid)) {
+        newPinned.delete(uuid);
       } else {
         setPinnedCounter(c => c + 1);
-        newPinned.set(itemId, pinnedCounter + 1);
+        newPinned.set(uuid, pinnedCounter + 1);
       }
       return newPinned;
     });
   };
 
-  const toggleExpand = (itemId: string) => {
+  const toggleExpand = (uuid: string) => {
     setExpandedItems(prev => {
       const next = new Set(prev);
-      if (next.has(itemId)) next.delete(itemId);
-      else next.add(itemId);
+      if (next.has(uuid)) next.delete(uuid);
+      else next.add(uuid);
       return next;
     });
   };
@@ -158,6 +175,58 @@ export default function App() {
     });
   };
 
+  const renderText = (text: string) => {
+    if (!text) return null;
+    
+    // 1. 处理数值序列如 3/6/9/12 或 9/12
+    // 逻辑：匹配由数字和斜杠组成的模式
+    const parts = text.split(/(\d+(?:\/\d+)+)/g);
+    
+    return parts.map((part, i) => {
+      if (part.includes('/')) {
+        const nums = part.split('/');
+        return (
+          <span key={i} className="progression-nums">
+            {nums.map((n, idx) => {
+              // 决定颜色偏移量。如果有4个数则是0,1,2,3。如果有2个数且是高阶卡通常是2,3
+              let colorIdx = idx;
+              if (nums.length === 2) colorIdx = idx + 2;
+              else if (nums.length === 3) colorIdx = idx + 1;
+              
+              return (
+                <span key={idx}>
+                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{n}</span>
+                  {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
+                </span>
+              );
+            })}
+          </span>
+        );
+      }
+
+      // 2. 处理关键词和标签颜色
+      // 构建正则，包含关键词和动态从 backend 获取的 tags
+      const keywords = Object.keys(KEYWORD_COLORS);
+      const tags = syncData.all_tags || [];
+      const allMatches = [...new Set([...keywords, ...tags])].filter(k => k.length > 0);
+      
+      if (allMatches.length === 0) return part;
+      
+      const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
+      const subParts = part.split(regex);
+      
+      return subParts.map((sub, j) => {
+        if (KEYWORD_COLORS[sub]) {
+          return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
+        }
+        if (tags.includes(sub)) {
+          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>; // 统一标签颜色
+        }
+        return sub;
+      });
+    });
+  };
+
  // 获取当前 Day 并定期刷新
  useEffect(() => {
    let mounted = true;
@@ -167,7 +236,7 @@ export default function App() {
        if (mounted) {
          if (d !== currentDay) {
            setCurrentDay(d);
-           // 初始加载或检测到变化时，更新选中的标签
+           // 初始加载 or 检测到变化时，更新选中的标签
            updateDayTabSelection(d);
          }
        }
@@ -188,8 +257,8 @@ export default function App() {
   // 获取排序后的物品列表（手牌和仓库）
   const getSortedItems = (items: ItemData[]) => {
     return [...items].sort((a, b) => {
-      const aPin = pinnedItems.get(a.id);
-      const bPin = pinnedItems.get(b.id);
+      const aPin = pinnedItems.get(a.uuid);
+      const bPin = pinnedItems.get(b.uuid);
       if (aPin && bPin) return bPin - aPin; // 都置顶，后置顶的在前
       if (aPin) return -1; // a置顶，a在前
       if (bPin) return 1; // b置顶，b在前
@@ -385,7 +454,12 @@ export default function App() {
           processItems(payload.stash_items || [])
         ]);
 
-        setSyncData(prev => ({ ...prev, hand, stash }));
+        setSyncData(prev => ({ 
+          ...prev, 
+          hand_items: hand, 
+          stash_items: stash, 
+          all_tags: payload.all_tags || [] 
+        }));
       });
     };
     
@@ -787,6 +861,8 @@ export default function App() {
 
 
   // 4. 窗口定位与尺寸控制 (更新界面居中、overlay贴边)
+  const lastLayout = useRef<string>("");
+
   useEffect(() => {
     const syncLayout = async () => {
       const appWindow = getCurrentWindow();
@@ -795,63 +871,78 @@ export default function App() {
       const monitor = await currentMonitor(); 
       if (!monitor) return;
 
-      const scale = monitor.scaleFactor;
-      currentScale.current = scale;
+      const logicalScale = monitor.scaleFactor;
+      currentScale.current = logicalScale;
       
-      // 获取该显示器的物理位置和尺寸
-      // 注意：多屏环境下，monitor.position.x 可能不是 0
-      const screenX = monitor.position.x / scale;
-      const screenY = monitor.position.y / scale;
-      const screenWidth = monitor.size.width / scale;
-      const screenHeight = monitor.size.height / scale;
+      const pX = monitor.position.x;
+      const pY = monitor.position.y;
+      const pWidth = monitor.size.width;
+      const pHeight = monitor.size.height;
 
-      if (appWindow.setShadow) await appWindow.setShadow(false);
-
-      // --- 场景 A：显示版本号界面 (屏幕正中央) ---
-      if (showVersionScreen) {
-        const updateWidth = 500;
-        const updateHeight = 350;
-        
-        // 计算相对于当前屏幕的居中坐标
-        const centerX = screenX + (screenWidth - updateWidth) / 2;
-        const centerY = screenY + (screenHeight - updateHeight) / 2;
-        
-        try {
-          await appWindow.setSize(new LogicalSize(updateWidth, updateHeight));
-          await appWindow.setPosition(new LogicalPosition(centerX, centerY));
-          await appWindow.setAlwaysOnTop(true);
-        } catch (e) { console.error(e); }
-        return;
-      }
-
-      // --- 场景 B：显示主插件界面 (默认右上角) ---
-      const currentWidth = Math.min(expandedWidth, screenWidth - 20); // 留一点边距
-      const currentHeight = Math.min(isCollapsed ? 45 : expandedHeight, screenHeight - 40); // 留出任务栏空间
-
+      // 生成当前布局状态的唯一标识
+      let targetW = 0;
+      let targetH = 0;
       let targetX = 0;
       let targetY = 0;
 
-      if (hasCustomPosition && lastKnownPosition.current) {
-        // 如果用户拖过，使用记忆的物理坐标并实时转换
-        targetX = lastKnownPosition.current.x / scale;
-        targetY = lastKnownPosition.current.y / scale;
+      if (showVersionScreen) {
+        targetW = 500;
+        targetH = 350;
+        targetX = Math.round(pX / logicalScale + (pWidth / logicalScale - targetW) / 2);
+        targetY = Math.round(pY / logicalScale + (pHeight / logicalScale - targetH) / 2);
       } else {
-        // 默认逻辑：贴在当前屏幕的最右侧
-        targetX = screenX + screenWidth - currentWidth;
-        targetY = screenY; 
+        const screenWLogical = pWidth / logicalScale;
+        const screenHLogical = pHeight / logicalScale;
+        
+        targetW = Math.round(Math.min(expandedWidth, screenWLogical - 20));
+        targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeight, screenHLogical - 40));
+
+        if (hasCustomPosition && lastKnownPosition.current) {
+          targetX = Math.round(lastKnownPosition.current.x / logicalScale);
+          targetY = Math.round(lastKnownPosition.current.y / logicalScale);
+        } else {
+          targetX = Math.round((pX + pWidth) / logicalScale - targetW);
+          targetY = Math.round(pY / logicalScale); 
+        }
       }
 
+      const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
+      if (lastLayout.current === layoutKey) return;
+      lastLayout.current = layoutKey;
+
       try {
-        await appWindow.setSize(new LogicalSize(currentWidth, currentHeight));
-        await appWindow.setPosition(new LogicalPosition(targetX, targetY));
+        // 先关掉阴影减少重绘压力
+        if (appWindow.setShadow) await appWindow.setShadow(false);
+        
+        // 关键：合并调整，虽然 Tauri V2 依然是分开的 API，
+        // 但我们可以判断当前位置是否已经是目标，减少不必要的调用
+        const size = await appWindow.innerSize();
+        const pos = await appWindow.outerPosition();
+        
+        const currentW = Math.round(size.width / logicalScale);
+        const currentH = Math.round(size.height / logicalScale);
+        const currentX = Math.round(pos.x / logicalScale);
+        const currentY = Math.round(pos.y / logicalScale);
+
+        if (currentW !== targetW || currentH !== targetH) {
+          await appWindow.setSize(new LogicalSize(targetW, targetH));
+        }
+        if (currentX !== targetX || currentY !== targetY) {
+          await appWindow.setPosition(new LogicalPosition(targetX, targetY));
+        }
+        
         await appWindow.setAlwaysOnTop(true);
-      } catch (e) { console.error(e); }
+        await appWindow.show(); // 确保在位置调整后显示
+      } catch (e) { 
+        console.error("[Layout] Sync failed:", e); 
+        lastLayout.current = ""; 
+        // 即使出错也尝试显示，避免应用不可见
+        await appWindow.show().catch(() => {});
+      }
     };
 
-    // 50ms 的防抖在调整大小时会造成显著延迟
-    // 我们将逻辑改为：如果是处于版本页面或刚进入，保持延迟同步
-    // 但如果是正在拖动缩放，我们已经在事件处理器中直接操作了窗口
-    const timer = setTimeout(syncLayout, showVersionScreen ? 50 : 16); 
+    const delay = showVersionScreen ? 100 : 20; // 稍微增加延迟让 React 渲染稳定
+    const timer = setTimeout(syncLayout, delay); 
     return () => clearTimeout(timer);
   }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
 
@@ -1292,44 +1383,84 @@ export default function App() {
                 </div>
               </>
             ) : (
-                getSortedItems(syncData[activeTab]).map(item => (
-                  <div key={item.id} className={`content-wrap ${expandedItems.has(item.id) ? 'expanded' : ''}`} onClick={() => toggleExpand(item.id)}>
-                    <div className="item-main-info">
-                      <div className="left-section">
-                        <div 
-                          className={pinnedItems.has(item.id) ? "pin-btn pinned" : "pin-btn"}
-                          onClick={(e) => togglePin(item.id, e)}
-                          title={pinnedItems.has(item.id) ? "取消置顶" : "置顶"}>
-                          {pinnedItems.has(item.id) ? "📌" : "📍"}
-                        </div>
-                        <div className="left-image"><img src={item.displayImg} alt="" /></div>
-                        <div className="item-name">{item.name_zh}</div>
-                      </div>
-                      <div className="expand-indicator">{expandedItems.has(item.id) ? '▴' : '▾附魔'}</div>
-                    </div>
-                    
-                    {expandedItems.has(item.id) && (
-                      <div className="effect-table">
-                        {item.enchantments?.map((enc: any) => {
-                          const colorKey = ID_TO_COLOR[enc.id] || "tag";
-                          return (
-                            <div key={enc.id} className="effect-cell">
-                              <strong className="effect-label" style={{ 
-                                  color: `var(--c-${colorKey})`, 
-                                  borderLeft: `3px solid var(--c-${colorKey})` 
-                              }}>
-                                {enc.name}
-                              </strong>
-                              <span className="effect-desc">{enc.description}</span>
+                <div className="card-list">
+                  {getSortedItems(activeTab === "hand" ? syncData.hand_items : syncData.stash_items).map(item => {
+                    const isExpanded = expandedItems.has(item.uuid);
+                    const tierClass = item.tier.split(' / ')[0].toLowerCase();
+                    const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+
+                    return (
+                      <div key={item.uuid} className={`item-card-container ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleExpand(item.uuid)}>
+                        <div className={`item-card tier-${tierClass}`}>
+                          <div className="card-left">
+                            <div className="image-box">
+                              <img src={item.displayImg} alt={item.name} />
                             </div>
-                          );
-                        })}
+                          </div>
+
+                          <div className="card-center">
+                            <div className="name-line">
+                              <span className="name-cn">{item.name_cn}</span>
+                              <span className="tier-label">{item.tier.split(' / ')[0].toUpperCase()}+</span>
+                            </div>
+                            <div className="tags-line">
+                              {item.processed_tags.slice(0, 3).map(t => (
+                                <span key={t} className="tag-badge">{t}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="card-right">
+                            <div className="top-right-group">
+                              <span className="hero-badge">{heroZh}</span>
+                              <div 
+                                className={`pin-btn ${pinnedItems.has(item.uuid) ? 'active' : ''}`}
+                                onClick={(e) => togglePin(item.uuid, e)}
+                              >
+                                {pinnedItems.has(item.uuid) ? "📌" : "📍"}
+                              </div>
+                            </div>
+                            <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
+                          </div>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="item-details-v2">
+                            {item.cooldown !== undefined && item.cooldown > 0 && (
+                              <div className="details-left">
+                                <div className="cd-display">
+                                  <div className="cd-value">{item.cooldown.toFixed(1)}</div>
+                                  <div className="cd-unit">秒</div>
+                                </div>
+                              </div>
+                            )}
+                            <div className="details-right">
+                              {item.skills.map((s, idx) => (
+                                <div key={idx} className="skill-item">
+                                  {renderText(s)}
+                                </div>
+                              ))}
+                              {item.enchantments.map((enc, idx) => (
+                                <div key={idx} className="enchant-item">
+                                  {renderText(enc)}
+                                </div>
+                              ))}
+                              {item.description && (
+                                <div className="description-text">
+                                  {renderText(item.description)}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))
+                    );
+                  })}
+                  {(activeTab === "hand" ? syncData.hand_items : syncData.stash_items).length === 0 && (
+                    <div className="empty-tip">当前暂无数据，请在游戏中操作相应卡牌</div>
+                  )}
+                </div>
               )}
-              {syncData[activeTab].length === 0 && activeTab !== "monster" && <div className="empty-tip">等待游戏日志更新...</div>}
             </div>
           </div>
         </>

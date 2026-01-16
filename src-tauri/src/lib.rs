@@ -31,20 +31,102 @@ impl Default for PersistentState {
     }
 }
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Enchantment {
+pub struct RawSkill {
+    pub en: Option<String>,
+    pub cn: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RawItem {
     pub id: String,
-    pub name: String,
-    pub description: String,
+    pub name_en: Option<String>,
+    pub name_cn: Option<String>,
+    pub starting_tier: Option<String>,
+    pub heroes: Option<String>,
+    pub tags: Option<String>,
+    pub cooldown: Option<f32>,
+    pub skills: Option<Vec<RawSkill>>,
+    pub enchantments: Option<serde_json::Value>,
+    pub image: Option<String>,
+    #[serde(default)]
+    pub description_cn: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ItemData {
-    pub id: Option<String>,
+    pub uuid: String,
     pub name: String,
-    pub name_zh: String,
+    pub name_cn: String,
+    pub tier: String,
+    pub tags: String,
+    pub processed_tags: Vec<String>,
+    pub heroes: Vec<String>,
+    pub cooldown: Option<f32>,
+    pub skills: Vec<String>,
+    pub enchantments: Vec<String>,
+    pub description: String,
     pub image: String,
-    pub enchantments: Option<Vec<Enchantment>>,
-    pub display_img: Option<String>,
+}
+
+impl From<RawItem> for ItemData {
+    fn from(raw: RawItem) -> Self {
+        let name_en = raw.name_en.clone().unwrap_or_else(|| "Unknown".to_string());
+        let name_cn = raw.name_cn.clone().unwrap_or_else(|| name_en.clone());
+
+        let h_str = raw.heroes.clone().unwrap_or_default();
+        let heroes = if h_str.is_empty() {
+            vec!["Common".to_string()]
+        } else {
+            h_str.split('|').map(|s| s.trim().to_string()).collect()
+        };
+
+        let processed_tags = raw.tags.as_deref().unwrap_or_default()
+            .split('|')
+            .map(|s| {
+                let part = s.trim();
+                // Pick the last part after / if it exists
+                part.split(" / ").last().unwrap_or(part).trim().to_string()
+            })
+            .filter(|s| !s.is_empty())
+            .filter(|s| !s.contains("隐藏") && !s.contains("Hide") && !s.contains("Hidden"))
+            .collect();
+
+        let skills = raw.skills.unwrap_or_default().into_iter()
+            .filter_map(|s| s.cn.or(s.en))
+            .filter(|s| !s.is_empty())
+            .collect();
+        
+        // Handle enchantments
+        let mut enchantments = Vec::new();
+        if let Some(val) = raw.enchantments {
+            if let Some(obj) = val.as_object() {
+                for (_name, details) in obj {
+                    if let Some(desc_cn) = details.get("cn").and_then(|v| v.as_str()) {
+                        if !desc_cn.is_empty() {
+                            enchantments.push(desc_cn.to_string());
+                        }
+                    }
+                }
+            }
+        }
+
+        let img = raw.image.unwrap_or_else(|| format!("images/{}.jpg", name_cn));
+
+        ItemData {
+            uuid: raw.id,
+            name: name_en,
+            name_cn,
+            tier: raw.starting_tier.clone().unwrap_or_else(|| "Bronze".to_string()),
+            tags: raw.tags.unwrap_or_default(),
+            processed_tags,
+            heroes,
+            cooldown: raw.cooldown.map(|c| c / 1000.0), // ms to s
+            skills,
+            enchantments,
+            description: raw.description_cn.unwrap_or_default(),
+            image: img,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -81,10 +163,23 @@ pub struct MonsterData {
 pub struct SyncPayload {
     pub hand_items: Vec<ItemData>,
     pub stash_items: Vec<ItemData>,
+    pub all_tags: Vec<String>,
+}
+
+pub struct ItemDb {
+    pub list: Vec<ItemData>,
+    pub id_map: HashMap<String, usize>,
+    pub unique_tags: Vec<String>,
+}
+
+pub struct SkillDb {
+    pub list: Vec<ItemData>, // Skills have similar structure
+    pub id_map: HashMap<String, usize>,
 }
 
 pub struct DbState {
-    pub items: Arc<RwLock<HashMap<String, ItemData>>>,
+    pub items: Arc<RwLock<ItemDb>>,
+    pub skills: Arc<RwLock<SkillDb>>,
     pub monsters: Arc<RwLock<serde_json::Map<String, serde_json::Value>>>,
 }
 
@@ -173,6 +268,12 @@ fn get_cache_path() -> PathBuf {
     }
 }
 
+fn get_prev_log_path() -> PathBuf {
+    let mut p = get_log_path();
+    p.set_file_name("Player-prev.log");
+    p
+}
+
 fn save_state(state: &PersistentState) {
     let path = get_cache_path();
     if let Some(parent) = path.parent() {
@@ -193,12 +294,14 @@ fn load_state() -> PersistentState {
     PersistentState::default()
 }
 
-fn lookup_item(tid: &str, db: &HashMap<String, ItemData>) -> Option<ItemData> {
-    db.get(tid).map(|item| {
-        let mut cloned = item.clone();
-        cloned.id = Some(tid.to_string());
-        cloned
-    })
+fn lookup_item(tid: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<ItemData> {
+    if let Some(&index) = items_db.id_map.get(tid) {
+        return items_db.list.get(index).cloned();
+    }
+    if let Some(&index) = skills_db.id_map.get(tid) {
+        return skills_db.list.get(index).cloned();
+    }
+    None
 }
 
 // --- Commands ---
@@ -304,7 +407,15 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(DbState {
-            items: Arc::new(RwLock::new(HashMap::new())),
+            items: Arc::new(RwLock::new(ItemDb {
+                list: Vec::new(),
+                id_map: HashMap::new(),
+                unique_tags: Vec::new(),
+            })),
+            skills: Arc::new(RwLock::new(SkillDb {
+                list: Vec::new(),
+                id_map: HashMap::new(),
+            })),
             monsters: Arc::new(RwLock::new(serde_json::Map::new())),
         })
         .setup(|app| {
@@ -327,7 +438,6 @@ pub fn run() {
 
             let handle = app.handle().clone();
             let resources_path = app.path().resource_dir().unwrap();
-            let item_db_instance = app.state::<DbState>().items.clone();
             
             // Initial DB Load
             let db_state = app.state::<DbState>();
@@ -364,10 +474,26 @@ pub fn run() {
                 if path.exists() {
                     match std::fs::read_to_string(path) {
                         Ok(json) => {
-                            match serde_json::from_str::<HashMap<String, ItemData>>(&json) {
-                                Ok(items) => {
-                                    println!("[Init] Successfully loaded {} items from {:?}", items.len(), path);
-                                    *db_state.items.write().unwrap() = items;
+                            match serde_json::from_str::<Vec<RawItem>>(&json) {
+                                Ok(raw_list) => {
+                                    let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                                    let mut id_map = HashMap::new();
+                                    let mut tag_set = std::collections::HashSet::new();
+                                    for (index, item) in items_list.iter().enumerate() {
+                                        id_map.insert(item.uuid.clone(), index);
+                                        for tag in &item.processed_tags {
+                                            tag_set.insert(tag.clone());
+                                        }
+                                    }
+                                    let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
+                                    unique_tags.sort();
+                                    
+                                    let count = items_list.len();
+                                    let mut db = db_state.items.write().unwrap();
+                                    db.list = items_list;
+                                    db.id_map = id_map;
+                                    db.unique_tags = unique_tags;
+                                    println!("[Init] Successfully loaded {} items from {:?}", count, path);
                                     break;
                                 }
                                 Err(e) => println!("[Error] Failed to parse items_db.json at {:?}: {}", path, e),
@@ -378,9 +504,44 @@ pub fn run() {
                 }
             }
 
+            let skills_possible_paths = [
+                resources_path.join("resources").join("skills_db.json"),
+                resources_path.join("skills_db.json"),
+            ];
+            for path in &skills_possible_paths {
+                if path.exists() {
+                    match std::fs::read_to_string(path) {
+                        Ok(json) => {
+                            match serde_json::from_str::<Vec<RawItem>>(&json) {
+                                Ok(raw_list) => {
+                                    let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                                    let mut id_map = HashMap::new();
+                                    for (index, item) in skills_list.iter().enumerate() {
+                                        id_map.insert(item.uuid.clone(), index);
+                                    }
+                                    let count = skills_list.len();
+                                    let mut db = db_state.skills.write().unwrap();
+                                    db.list = skills_list;
+                                    db.id_map = id_map;
+                                    println!("[Init] Successfully loaded {} skills from {:?}", count, path);
+                                    break;
+                                }
+                                Err(e) => println!("[Error] Failed to parse skills_db.json at {:?}: {}", path, e),
+                            }
+                        }
+                        Err(e) => println!("[Error] Failed to read skills_db.json at {:?}: {}", path, e),
+                    }
+                }
+            }
+
             // Log Monitor Thread
+            let thread_items_db = db_state.items.clone();
+            let thread_skills_db = db_state.skills.clone();
+            
             thread::spawn(move || {
                 let log_path = get_log_path();
+                let prev_path = get_prev_log_path();
+                
                 let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId\s*(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
                 let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
                 let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
@@ -391,46 +552,144 @@ pub fn run() {
                 let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
                 let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
                 
-                // Load from cache or defaults
+                // Initialize state from cache
+                let cache_path = get_cache_path();
+                let has_cache = cache_path.exists();
                 let state_init = load_state();
+                
                 let mut inst_to_temp = state_init.inst_to_temp;
                 let mut current_hand = state_init.current_hand;
                 let mut current_stash = state_init.current_stash;
                 let mut current_day = state_init.day;
+                
+                let mut last_file_size = if log_path.exists() {
+                    std::fs::metadata(&log_path).map(|m| m.len()).unwrap_or(0)
+                } else {
+                    0
+                };
+                
+                let mut last_iid = String::new();
+                let mut cur_owner = String::new();
+                let mut in_pvp = false;
+                let mut hour_count: u32 = 0;
+                let mut is_sync = false;
 
-                // Emit initial state
+                // --- Initial Backfill if no cache ---
+                if !has_cache {
+                    println!("[LogMonitor] No cache found, backfilling from logs...");
+                    let files_to_process = vec![prev_path, log_path.clone()];
+                    for path in files_to_process {
+                        if !path.exists() { continue; }
+                        if let Ok(file) = File::open(&path) {
+                            let reader = BufReader::new(file);
+                            for line in reader.lines() {
+                                if let Ok(l) = line {
+                                    let trimmed = l.trim();
+                                    
+                                    // REUSE LOGIC (SIMULATION - NO EMITS)
+                                    if trimmed.contains("NetMessageRunInitialized") {
+                                        current_day = 1; in_pvp = false; hour_count = 0;
+                                        inst_to_temp.clear(); current_hand.clear(); current_stash.clear();
+                                    }
+                                    if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
+                                    if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
+                                        current_day = current_day.saturating_add(1); in_pvp = false; hour_count = 0;
+                                    }
+                                    if trimmed.contains("State changed from [ChoiceState] to [") {
+                                        if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
+                                            hour_count = hour_count.saturating_add(1);
+                                            if hour_count >= 10 { current_day = current_day.saturating_add(1); hour_count = 0; }
+                                        }
+                                    }
+
+                                    if let Some(cap) = re_purchase.captures(trimmed) {
+                                        let iid = cap["iid"].to_string();
+                                        inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
+                                        let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                                        if section.is_none() || section.as_ref().unwrap() == "" {
+                                            if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
+                                                if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
+                                                else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                                            }
+                                        }
+                                        if let Some(s) = section {
+                                            if s == "Player" || s == "Hand" { current_hand.insert(iid); }
+                                            else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); }
+                                        }
+                                    }
+                                    if let Some(cap) = re_moved_to.captures(trimmed) {
+                                        let iid = cap["iid"].to_string();
+                                        if cap["tgt"].contains("StorageSocket") {
+                                            current_stash.insert(iid.clone()); current_hand.remove(&iid);
+                                        } else if cap["tgt"].contains("Socket") {
+                                            current_hand.insert(iid.clone()); current_stash.remove(&iid);
+                                        }
+                                    }
+                                    if let Some(cap) = re_sold.captures(trimmed) {
+                                        let iid = cap["iid"].to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
+                                    }
+                                    if let Some(cap) = re_removed.captures(trimmed) {
+                                        let iid = cap["iid"].to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
+                                    }
+                                    if trimmed.contains("Cards Disposed:") {
+                                        for mat in re_item_id.find_iter(trimmed) {
+                                            let iid = mat.as_str().to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
+                                        }
+                                    }
+                                    if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") { is_sync = true; }
+                                    if is_sync {
+                                        if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
+                                        else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                                        else if let Some(cap) = re_section.captures(trimmed) {
+                                            if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
+                                                let sec_val = &cap["val"];
+                                                if sec_val == "Hand" || sec_val == "Player" { current_hand.insert(last_iid.clone()); current_stash.remove(&last_iid); }
+                                                else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { current_stash.insert(last_iid.clone()); current_hand.remove(&last_iid); }
+                                                else { current_hand.remove(&last_iid); current_stash.remove(&last_iid); }
+                                            }
+                                            last_iid.clear(); cur_owner.clear();
+                                        }
+                                        else if trimmed.contains("Finished processing") { is_sync = false; }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    save_state(&PersistentState {
+                        day: current_day,
+                        inst_to_temp: inst_to_temp.clone(),
+                        current_hand: current_hand.clone(),
+                        current_stash: current_stash.clone(),
+                    });
+                } else {
+                    println!("[LogMonitor] Loading from cache (current_day: {})", current_day);
+                }
+
+                // Initial UI Sync after loading/backfilling
                 let init_handle = handle.clone();
-                let init_db = item_db_instance.clone();
+                let init_items_db = thread_items_db.clone();
+                let init_skills_db = thread_skills_db.clone();
                 let init_hand = current_hand.clone();
                 let init_stash = current_stash.clone();
                 let init_map = inst_to_temp.clone();
                 let init_day = current_day;
                 
                 tauri::async_runtime::spawn(async move {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
+                    tokio::time::sleep(tokio::time::Duration::from_millis(1500)).await;
                     let _ = init_handle.emit("day-update", init_day);
-                    let db = init_db.read().unwrap();
+                    let items_db = init_items_db.read().unwrap();
+                    let skills_db = init_skills_db.read().unwrap();
                     let hand_items = init_hand.iter()
                         .filter_map(|iid| init_map.get(iid))
-                        .filter_map(|tid| lookup_item(tid, &db))
+                        .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
                         .collect();
                     let stash_items = init_stash.iter()
                         .filter_map(|iid| init_map.get(iid))
-                        .filter_map(|tid| lookup_item(tid, &db))
+                        .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
                         .collect();
-                    let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items });
+                    let all_tags = items_db.unique_tags.clone();
+                    let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
                 });
-
-                let mut last_file_size = if log_path.exists() {
-                    std::fs::metadata(&log_path).map(|m| m.len()).unwrap_or(0)
-                } else {
-                    0
-                };
-                let mut is_sync = false;
-                let mut last_iid = String::new();
-                let mut cur_owner = String::new();
-                let mut in_pvp = false;
-                let mut hour_count: u32 = 0;
 
                 loop {
                     if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
@@ -438,6 +697,7 @@ pub fn run() {
                     let current_file_size = meta.len();
                     
                     if current_file_size < last_file_size {
+                        println!("[LogMonitor] Log truncated, resetting state...");
                         inst_to_temp.clear();
                         current_hand.clear();
                         current_stash.clear();
@@ -604,17 +864,19 @@ pub fn run() {
                             if day_changed {
                                 let _ = handle.emit("day-update", current_day);
                             }
-                            let db = item_db_instance.read().unwrap();
+                            let items_db = thread_items_db.read().unwrap();
+                            let skills_db = thread_skills_db.read().unwrap();
                             let hand_items = current_hand.iter()
                                 .filter_map(|iid| inst_to_temp.get(iid))
-                                .filter_map(|tid| lookup_item(tid, &db))
+                                .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
                                 .collect();
                             let stash_items = current_stash.iter()
                                 .filter_map(|iid| inst_to_temp.get(iid))
-                                .filter_map(|tid| lookup_item(tid, &db))
+                                .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
                                 .collect();
                             
-                            let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items });
+                            let all_tags = items_db.unique_tags.clone();
+                            let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
                             
                             save_state(&PersistentState {
                                 day: current_day,

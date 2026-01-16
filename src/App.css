@@ -1301,3 +1301,237 @@ html, body, #root {
   font-size: calc(14px * var(--font-scale, 1));
   text-align: center;
 }
+/* --- New Item UI Styles (Professional Overhaul V2) --- */
+.item-card-container {
+  margin-bottom: 8px;
+  background: rgba(30, 30, 30, 0.4);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.item-card-container:hover {
+  background: rgba(50, 50, 50, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.item-card-container.expanded {
+  background: rgba(25, 25, 25, 0.9);
+  border-color: rgba(255, 205, 25, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.item-card {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 12px;
+  min-height: 64px;
+  position: relative;
+}
+
+/* Tier Specific Borders */
+.item-card.tier-bronze { border-left: 4px solid #cd7f32; }
+.item-card.tier-silver { border-left: 4px solid #c0c0c0; }
+.item-card.tier-gold { border-left: 4px solid #ffd700; box-shadow: inset 10px 0 20px -15px rgba(255, 215, 0, 0.3); }
+.item-card.tier-diamond { border-left: 4px solid #b9f2ff; box-shadow: inset 10px 0 20px -15px rgba(185, 242, 255, 0.4); }
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pin-btn {
+  font-size: 16px;
+  opacity: 0.1;
+  transition: all 0.2s;
+  filter: grayscale(1);
+  padding: 4px;
+  cursor: pointer;
+}
+
+/* Hover over container shows pin placeholder */
+.item-card-container:hover .pin-btn {
+  opacity: 0.5;
+}
+
+/* Hover specifically over pin btn turns it red */
+.pin-btn:hover {
+  opacity: 1 !important;
+  filter: grayscale(0) !important;
+  color: #ff4444 !important; /* 明显的红色 */
+  transform: scale(1.2);
+}
+
+.pin-btn.active {
+  opacity: 1 !important;
+  filter: grayscale(0) !important;
+  transform: scale(1.1);
+}
+
+.image-box {
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.image-box img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.card-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-cn {
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.tier-label {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tags-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag-badge {
+  font-size: 10px;
+  color: #8eba31;
+  background: rgba(142, 186, 49, 0.15);
+  padding: 0 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(142, 186, 49, 0.3);
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.top-right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-badge {
+  font-size: 10px;
+  color: var(--c-golden);
+  background: rgba(255, 205, 25, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 205, 25, 0.2);
+  margin-right: 25px;
+}
+
+.expand-chevron {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Item Details Layout V2 (Two Columns) */
+.item-details-v2 {
+  padding: 12px;
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+  align-items: center;
+}
+
+.details-left {
+  flex: 0 0 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  align-self: stretch;
+}
+
+.cd-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4db8ff;
+}
+
+.cd-value {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.cd-unit {
+  font-size: 8px;
+  font-weight: bold;
+  opacity: 0.6;
+}
+
+.details-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skill-item, .enchant-item {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.enchant-item {
+  color: #ffcd19; /* Enchantments have a golden tint */
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.description-text {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dotted rgba(255, 255, 255, 0.1);
+}
+
+/* Text Highlights */
+.progression-nums {
+  letter-spacing: 0.5px;
+}
+
+
