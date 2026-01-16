@@ -100,15 +100,24 @@ impl From<RawItem> for ItemData {
         let mut enchantments = Vec::new();
         if let Some(val) = raw.enchantments {
             if let Some(obj) = val.as_object() {
-                for (_name, details) in obj {
-                    if let Some(desc_cn) = details.get("cn").and_then(|v| v.as_str()) {
-                        if !desc_cn.is_empty() {
-                            enchantments.push(desc_cn.to_string());
+                for (_key, details) in obj {
+                    let name_cn = details.get("name_cn").and_then(|v| v.as_str());
+                    let effect_cn = details.get("effect_cn").and_then(|v| v.as_str());
+                    let effect_en = details.get("effect_en").and_then(|v| v.as_str());
+                    
+                    let effect = effect_cn.or(effect_en);
+                    if let Some(eff) = effect {
+                        if let Some(n) = name_cn {
+                            // 使用分隔符方便前端拆分名称和描述
+                            enchantments.push(format!("{}|{}", n, eff));
+                        } else {
+                            enchantments.push(eff.to_string());
                         }
                     }
                 }
             }
         }
+        // Removed .sort() to keep JSON order
 
         let img = raw.image.unwrap_or_else(|| format!("images/{}.jpg", name_cn));
 

@@ -87,6 +87,21 @@ const KEYWORD_COLORS: Record<string, string> = {
 
 const TIER_COLORS = ["#cd7f32", "#c0c0c0", "#ffd700", "#b9f2ff"]; // Bronze, Silver, Gold, Diamond
 
+const ENCHANT_COLORS: Record<string, string> = {
+  "黄金": "var(--c-gold)",
+  "沉重": "var(--c-slow)",
+  "寒冰": "var(--c-freeze)",
+  "疾速": "var(--c-haste)",
+  "护盾": "var(--c-shield)",
+  "回复": "var(--c-heal)",
+  "毒素": "var(--c-poison)",
+  "炽焰": "var(--c-burn)",
+  "闪亮": "#98a8fe",
+  "致命": "var(--c-damage)",
+  "辉耀": "#98a8fe",
+  "黑曜石": "#9d4a6f"
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("monster");
   const [syncData, setSyncData] = useState<SyncPayload & { monster: any[] }>({ 
@@ -1440,16 +1455,38 @@ export default function App() {
                                   {renderText(s)}
                                 </div>
                               ))}
-                              {item.enchantments.map((enc, idx) => (
+                            </div>
+                          </div>
+                        )}
+                        {item.enchantments.length > 0 && isExpanded && (
+                          <div className="item-enchantments-row">
+                            {item.enchantments.map((enc, idx) => {
+                              const parts = enc.split('|');
+                              if (parts.length > 1) {
+                                const name = parts[0];
+                                const effect = parts[1];
+                                const color = ENCHANT_COLORS[name] || '#ffcd19';
+                                return (
+                                  <div key={idx} className="enchant-item">
+                                    <span className="enchant-badge" style={{ 
+                                      '--enc-clr': color
+                                    } as React.CSSProperties}>{name}</span>
+                                    <span className="enchant-effect">{renderText(effect)}</span>
+                                  </div>
+                                );
+                              }
+                              return (
                                 <div key={idx} className="enchant-item">
                                   {renderText(enc)}
                                 </div>
-                              ))}
-                              {item.description && (
-                                <div className="description-text">
-                                  {renderText(item.description)}
-                                </div>
-                              )}
+                              );
+                            })}
+                          </div>
+                        )}
+                        {item.description && isExpanded && (
+                          <div className="item-description-row">
+                            <div className="description-text">
+                              {renderText(item.description)}
                             </div>
                           </div>
                         )}
