@@ -1,9 +1,9 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.2.0"  # <--- 版本号
+$NEW_VERSION = "1.2.1"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
-$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新来了：\n 更新内容太多了。都去看最新视频！  \n"
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新来了：1. 修复无法识别day10+怪物的bug，以及其他无法识别的怪物 现在的准确率应该真的是100了。 2.在day9新增所有神庙怪物。 3.修复焰风勇士的物品等级不一致 4.当卡牌升级是cd变化的时候，之前没有体现升级的变化，现在补上了"
 
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"

@@ -7,7 +7,7 @@ use rayon::prelude::*;
 use opencv::{
     core::{Mat, Vector, KeyPoint, DMatch, NORM_HAMMING, Vec2i},
     features2d::{ORB, BFMatcher, ORB_Trait, DescriptorMatcher},
-    imgcodecs::{imread, IMREAD_GRAYSCALE},
+    imgcodecs::{imread, imdecode, IMREAD_GRAYSCALE},
     prelude::*,
 };
 
@@ -64,8 +64,9 @@ pub fn get_loading_progress() -> LoadingProgress {
 
 // 使用 OpenCV ORB 提取特征点和描述符
 fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i32, i32), opencv::Error> {
-    // 读取灰度图
-    let img = imread(image_path, IMREAD_GRAYSCALE)?;
+    // 读取灰度图 (使用 imdecode 以支持中文路径)
+    let content = std::fs::read(image_path).map_err(|e| opencv::Error::new(opencv::core::StsError, format!("Read error: {}", e)))?;
+    let img = imdecode(&Mat::from_slice(&content)?, IMREAD_GRAYSCALE)?;
     
     if img.empty() {
         return Ok((Vec::new(), Vec::new(), 0, 0));
@@ -182,14 +183,19 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
     if cache_file.exists() {
         if let Ok(data) = std::fs::read(&cache_file) {
             if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
-                println!("从 OpenCV 缓存加载了 {} 个怪物特征点模板", cached_templates.len());
-                if let Ok(mut p) = progress.lock() {
-                    p.loaded = cached_templates.len();
-                    p.total = cached_templates.len();
-                    p.is_complete = true;
+                // 如果缓存数量太少，可能是之前的 bug 导致的，强制重新加载
+                if cached_templates.len() > 50 {
+                    println!("从 OpenCV 缓存加载了 {} 个怪物特征点模板", cached_templates.len());
+                    if let Ok(mut p) = progress.lock() {
+                        p.loaded = cached_templates.len();
+                        p.total = cached_templates.len();
+                        p.is_complete = true;
+                    }
+                    let _ = TEMPLATE_CACHE.set(cached_templates);
+                    return Ok(());
+                } else {
+                     println!("缓存中的模板数量过少 ({})，跳过缓存重新加载...", cached_templates.len());
                 }
-                let _ = TEMPLATE_CACHE.set(cached_templates);
-                return Ok(());
             }
         }
     }
@@ -204,10 +210,35 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
 
     let mut image_tasks = Vec::new();
     for (key, entry) in monsters.iter() {
-        if let (Some(rel_path), Some(day)) = (&entry.image, &entry.available) {
-            let full_path = resources_dir.join(rel_path);
-            if full_path.exists() {
-                image_tasks.push((key.clone(), day.clone(), full_path));
+        if let Some(day) = &entry.available {
+            let mut found_path = None;
+            
+            // 1. Try explicit path from DB
+            if let Some(rel_path) = &entry.image {
+                let p = resources_dir.join(rel_path);
+                if p.exists() {
+                    found_path = Some(p);
+                }
+            }
+            
+            // 2. Fallback: Try Character image (Chinese name)
+            if found_path.is_none() {
+                let char_path = resources_dir.join(format!("images_monster_char/{}.webp", key));
+                if char_path.exists() {
+                    found_path = Some(char_path);
+                }
+            }
+            
+            // 3. Fallback: Try Background image (Chinese name)
+            if found_path.is_none() {
+                let bg_path = resources_dir.join(format!("images_monster_bg/{}.webp", key));
+                if bg_path.exists() {
+                    found_path = Some(bg_path);
+                }
+            }
+
+            if let Some(path) = found_path {
+                image_tasks.push((key.clone(), day.clone(), path));
             }
         }
     }
@@ -306,11 +337,36 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
             e.to_string()
         })?
     } else {
-        println!("[OpenCV Recognition] 'The Bazaar' window not found, falling back to monitor 0");
+        println!("[OpenCV Recognition] 'The Bazaar' window not found, attempting to capture monitor with mouse cursor (Dev Mode)");
         use xcap::Monitor;
+        use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
+        use windows::Win32::Foundation::POINT;
+
         let monitors = Monitor::all().map_err(|e| e.to_string())?;
         if monitors.is_empty() { return Err("No monitor found".into()); }
-        monitors[0].capture_image().map_err(|e| e.to_string())?
+
+        let mut target_idx = 0;
+        let mut point = POINT { x: 0, y: 0 };
+        
+        unsafe {
+            if GetCursorPos(&mut point).as_bool() {
+                let mx = point.x;
+                let my = point.y;
+                // Find which monitor contains the mouse
+                if let Some(idx) = monitors.iter().position(|m| {
+                    let x = m.x();
+                    let y = m.y();
+                    let w = m.width() as i32;
+                    let h = m.height() as i32;
+                    mx >= x && mx < x + w && my >= y && my < y + h
+                }) {
+                    target_idx = idx;
+                    println!("[OpenCV Recognition] Mouse found at ({}, {}) on Monitor {}", mx, my, idx);
+                }
+            }
+        }
+
+        monitors[target_idx].capture_image().map_err(|e| e.to_string())?
     };
     println!("[Timer] 截图耗时: {:?}", start_capture.elapsed());
 

@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNno3Mm5HeDFkZGo1MjlvR0swRVRjZlhyQ3piOTRiRVJzRFJYRjZRY21FbmlRZ0pGQzkzRW1MSGN6eDYrL1AzNkZFd010ekNNOGZwdTZjU1FEckx3ZXdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY4NjUxOTMxCWZpbGU6QmF6YWFySGVscGVyXzEuMi4wX3g2NC1zZXR1cC5leGUKYWF5eWQ0T3FueWpKMTBuM25TZm1GcjFOYnlzRlliMEttK1A1ZDRHZUk1YnNoM1RqQW44a3AyVWVmSE1SK3dVVDVyVG13dGgvdENINW5NR0VTQ1krQUE9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.2.0/BazaarHelper_1.2.0_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjRhNlpOR1lHSWZ0V21MeGZJdUthS3JVNmNCZW1heWFQSDMzdzh0RDFuSWJDbjdLNTY0NkVmRlhOeGFPc0MwR24xR3d1bldFVm4xbXI3cUQ4cnV4Y2dRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY4Njg1NDIzCWZpbGU6QmF6YWFySGVscGVyXzEuMi4xX3g2NC1zZXR1cC5leGUKRFdiNVZDZUU0L2VhbUorQ2VtTitOam9aTUxhVTRBTFpLZTFCcU9kS3puTURZMXFzYzkxUXFCaWhNVGk2TWMvK2Y0YnVWRFExZ3NpeXN3VUNDNlhVQnc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.2.1/BazaarHelper_1.2.1_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-17T12:12:11Z",
-    "version":  "1.2.0",
-    "notes":  "🎉 v1.2.0 更新来了：\\n 更新内容太多了。都去看最新视频！  \\n"
+    "pub_date":  "2026-01-17T21:30:23Z",
+    "version":  "1.2.1",
+    "notes":  "🎉 v1.2.1 更新来了：1. 修复无法识别day10+怪物的bug，以及其他无法识别的怪物 现在的准确率应该真的是100了。 2.在day9新增所有神庙怪物。 3.修复焰风勇士的物品等级不一致 4.当卡牌升级是cd变化的时候，之前没有体现升级的变化，现在补上了"
 }

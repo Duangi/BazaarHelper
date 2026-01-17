@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import { getCurrentWindow, LogicalPosition, LogicalSize, currentMonitor } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
@@ -15,11 +16,23 @@ interface ItemData {
   name: string;
   name_cn: string;
   tier: string;
+  available_tiers: string;
   size?: string;
   tags: string;
   processed_tags: string[];
   heroes: string[];
   cooldown?: number;
+  cooldown_tiers: string;
+  damage_tiers: string;
+  heal_tiers: string;
+  shield_tiers: string;
+  ammo_tiers: string;
+  crit_tiers: string;
+  multicast_tiers: string;
+  burn_tiers: string;
+  poison_tiers: string;
+  regen_tiers: string;
+  lifesteal_tiers: string;
   skills: string[];
   enchantments: string[];
   description: string;
@@ -40,6 +53,7 @@ interface TierInfo {
 }
 
 interface MonsterSubItem { 
+  id?: string;
   name: string; 
   name_en?: string;
   tier?: string;
@@ -212,8 +226,8 @@ export default function App() {
     });
   };
 
-  const renderText = (text: string) => {
-    if (!text) return null;
+  const renderText = (text: any) => {
+    if (!text || typeof text !== 'string') return null;
     
     // 1. 处理数值序列如 3/6/9/12 或 9/12
     // 逻辑：匹配由数字和斜杠组成的模式
@@ -527,6 +541,9 @@ export default function App() {
           const { day, monster_name } = event.payload;
           console.log(`收到自动跳转事件: Day ${day}, Monster: ${monster_name}`);
           
+          // 支持并列名称 (如: "毒素 吹箭枪陷阱|黑曜石 吹箭枪陷阱|炽焰 吹箭枪陷阱")
+          const names = monster_name.includes('|') ? monster_name.split('|') : [monster_name];
+
           // 1. 自动展开插件
           if (isCollapsed) {
               setIsCollapsed(false);
@@ -538,9 +555,20 @@ export default function App() {
           setSelectedDay(dayLabel);
 
           // 3. 高亮匹配的怪物 (设置 Identify 和 Expand)
-          // 覆盖之前的匹配结果
-          setIdentifiedNames([monster_name]);
-          setExpandedMonsters(new Set([monster_name]));
+          setIdentifiedNames(names);
+          setExpandedMonsters(prev => {
+              const next = new Set(prev);
+              names.forEach(n => next.add(n));
+              return next;
+          });
+          
+          // 滚动到第一个匹配项 (可选)
+          setTimeout(() => {
+              const element = document.getElementById(`monster-${names[0]}`);
+              if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+          }, 100);
 
           // 4. 切换到怪物 Tab
           setActiveTab("monster");
@@ -559,7 +587,7 @@ export default function App() {
       unlistenSync = await listen<SyncPayload>("sync-items", async (event) => {
         const payload = event.payload;
         const processItems = (items: ItemData[]) => 
-          Promise.all(items.map(async (i) => ({ ...i, displayImg: await getImg(i.image) })));
+          Promise.all(items.map(async (i) => ({ ...i, displayImg: await getImg(`images/${i.uuid || i.name}.webp`) })));
 
         const [hand, stash] = await Promise.all([
           processItems(payload.hand_items || []),
@@ -704,28 +732,36 @@ export default function App() {
   };
 
   const processMonsterImages = async (m: MonsterData) => {
-    // Use name_zh to derive image paths, ignoring m.image
-    let filename = `${m.name_zh}.webp`;
-    // Hardcoded exception handling
-    if (m.name_zh === '绿洲守护神') {
-      filename = '绿洲守护神_Day9.webp';
+    // 优先使用后端传递的 image 字段
+    let filename = m.image ? m.image.split('/').pop() || `${m.name_zh}.webp` : `${m.name_zh}.webp`;
+    
+    // 调试日志：如果图片依然出不来，请查看此输出
+    if (m.name_zh === '快乐杰克南瓜' || m.name_zh === '绿洲守护神') {
+       console.log(`[Image Processing] ${m.name_zh}:`, { m_image: m.image, derived_filename: filename });
     }
 
-    // Character image path
-    const displayImg = await getImg(`images_monster_char/${filename}`);
+    // 尝试寻找角色图
+    let displayImg = await getImg(`images_monster_char/${filename}`);
     
-    // Background image path
-    const displayImgBg = await getImg(`images_monster_bg/${filename}`);
-    
-    if (m.name_zh === '快乐杰克南瓜') {
-      console.log('[DEBUG] 快乐杰克南瓜 image processing:', {
-        name_zh: m.name_zh,
-        available: m.available,
-        derivedFilename: filename,
-        displayImg: displayImg,
-        displayImgBg: displayImgBg
-      });
+    // 如果找不到特定图片，尝试剥离前缀（针对陷阱类：毒素 吹箭枪陷阱 -> 吹箭枪陷阱.webp）
+    if (!displayImg && m.name_zh.includes(' ')) {
+      const spacePos = m.name_zh.lastIndexOf(' ');
+      const baseName = m.name_zh.substring(spacePos + 1);
+      const fallbackFilename = `${baseName}.webp`;
+      const fallbackImg = await getImg(`images_monster_char/${fallbackFilename}`);
+      if (fallbackImg) {
+        displayImg = fallbackImg;
+        filename = fallbackFilename; // 更新 filename 以供背景图共享
+      }
     }
+    
+    // 背景图路径
+    let bgFilename = filename;
+    // 绿洲守护神背景图特殊处理
+    if (m.name_zh === '绿洲守护神') {
+      bgFilename = '绿洲守护神_Day9.webp';
+    }
+    const displayImgBg = await getImg(`images_monster_bg/${bgFilename}`);
 
     return {
       ...m,
@@ -733,16 +769,17 @@ export default function App() {
       displayImgBg: displayImgBg,
       skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
         ...s, 
-        displayImg: await getImg(s.image) 
+        displayImg: await getImg(`images/${s.id || s.name}.webp`) 
       }))) : [],
       items: m.items ? await Promise.all(m.items.map(async i => ({ 
         ...i, 
-        displayImg: await getImg(i.image) 
+        displayImg: await getImg(`images/${i.id || i.name}.webp`) 
       }))) : []
     };
   };
 
   const renderTierInfo = (item: MonsterSubItem) => {
+    if (!item) return null;
     const isProgressionActive = progressionMode.has(item.name + (item.current_tier || ''));
     
     const toggleProgression = (e: React.MouseEvent) => {
@@ -880,13 +917,16 @@ export default function App() {
                   if (!cdValues.some(v => v)) return null; 
                   if (isConstant) return <div className="sub-item-cd">⏳ {cdValues[0]}</div>;
                   return (
-                    <div className="sub-item-cd progression-cd">
-                      ⏳ {cdValues.map((v, i) => (
-                        <span key={activeTiers[i].tier}>
-                          <span className={`val-${activeTiers[i].tier}`}>{v || '-'}</span>
-                          {i < activeTiers.length - 1 && <span className="upgrade-arrow">»</span>}
-                        </span>
+                    <div className="sub-item-cd-progression">
+                      {cdValues.map((v, i) => (
+                        <Fragment key={activeTiers[i].tier}>
+                          <div className={`cd-step val-${activeTiers[i].tier}`}>
+                            {v.replace('s', '')}
+                          </div>
+                          {i < activeTiers.length - 1 && <div className="cd-arrow">»</div>}
+                        </Fragment>
                       ))}
+                      <div className="cd-unit">秒</div>
                     </div>
                   );
                 } else {
@@ -947,6 +987,30 @@ export default function App() {
           });
           return next;
         });
+
+        // 自动切换到对应 Day Tab
+        if (validNames.length > 0) {
+          const firstMonsterName = validNames[0];
+          const monster = allMonsters[firstMonsterName];
+          if (monster && monster.available) {
+             if (selectedDay !== monster.available) {
+               console.log(`[Auto-Switch] 自动识别到 ${firstMonsterName} (${monster.available})，自动切换 Day Tab`);
+               setSelectedDay(monster.available);
+               
+               try {
+                 const match = monster.available.match(/Day\s+(\d+)/);
+                 if (match && match[1]) {
+                   const dayNum = parseInt(match[1]);
+                   // 仅当差异较大时才更新 currentDay，或者总是更新？
+                   // 为了保持一致性，总是更新比较好
+                   setCurrentDay(dayNum);
+                 }
+               } catch (e) {
+                 console.warn("Failed to parse day from available string:", monster.available);
+               }
+             }
+          }
+        }
       } else {
         console.log("[Recognition] No monsters found in screenshot");
       }
@@ -992,7 +1056,31 @@ export default function App() {
           return next;
         });
         
-        // setActiveTab("monster");
+        // 自动切换到对应 Day Tab
+        if (validNames.length > 0) {
+          const firstMonsterName = validNames[0];
+          const monster = allMonsters[firstMonsterName];
+          if (monster && monster.available) {
+             // 如果当前选中的 Day 与识别到的怪物不符，则跳转
+             if (selectedDay !== monster.available) {
+               console.log(`[Auto-Switch] 识别到 ${firstMonsterName} (${monster.available})，自动切换 Day Tab`);
+               setSelectedDay(monster.available);
+               // 同时尝试更新 currentDay 状态，以便后续逻辑同步（例如 +1 day）
+               // 格式通常为 "Day 1", "Day 10+"
+               try {
+                 const match = monster.available.match(/Day\s+(\d+)/);
+                 if (match && match[1]) {
+                   const dayNum = parseInt(match[1]);
+                   setCurrentDay(dayNum);
+                 }
+               } catch (e) {
+                 console.warn("Failed to parse day from available string:", monster.available);
+               }
+             }
+          }
+        }
+
+        setActiveTab("monster");
       } else {
         console.log("未识别到怪物");
         setIdentifiedNames([]);
@@ -1651,7 +1739,7 @@ export default function App() {
                       const isExpanded = expandedMonsters.has(m.name_zh);
                       
                       return (
-                        <div key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''} ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleMonsterExpand(m.name_zh)}>
+                        <div id={`monster-${m.name_zh}`} key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''} ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleMonsterExpand(m.name_zh)}>
                           <div className="monster-header-v2">
                             <div className="avatar-wrap">
                               <div className="monster-image-layers">
@@ -1740,15 +1828,67 @@ export default function App() {
                         </div>
 
                         {isExpanded && (
-                          <div className="item-details-v2">
-                            {item.cooldown !== undefined && item.cooldown > 0 && (
-                              <div className="details-left">
-                                <div className="cd-display">
-                                  <div className="cd-value">{item.cooldown.toFixed(1)}</div>
-                                  <div className="cd-unit">秒</div>
-                                </div>
-                              </div>
-                            )}
+                          <div className={`item-details-v2 ${pinnedItems.has(item.uuid) ? 'progression-active' : ''}`}>
+                            {(() => {
+                                try {
+                                    // 强制从原始数据读取，防止类型系统干扰
+                                    const cdTiersRaw = (item as any).cooldown_tiers;
+                                    const availTiersRaw = (item as any).available_tiers;
+                                    
+                                    const hasProgression = cdTiersRaw && typeof cdTiersRaw === 'string' && cdTiersRaw.includes('/');
+                                    
+                                    if (hasProgression) {
+                                      const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
+                                        const ms = parseFloat(v);
+                                        return isNaN(ms) ? "0.0" : (ms/1000).toFixed(1);
+                                      });
+                                      const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
+                                      const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
+                                      
+                                      return (
+                                        <div className="details-left">
+                                          <div className="sub-item-cd-progression" style={{ 
+                                            position: 'static', 
+                                            background: 'rgba(0,0,0,0.2)', 
+                                            border: '1px solid rgba(255,255,255,0.05)', 
+                                            padding: '4px',
+                                            borderRadius: '4px',
+                                            minWidth: '50px'
+                                          }}>
+                                            {cdVals.map((v: string, i: number) => {
+                                              let tierName = 'gold';
+                                              if (availTiers[i]) {
+                                                tierName = availTiers[i];
+                                              } else {
+                                                if (cdVals.length === 2) tierName = i === 0 ? 'gold' : 'diamond';
+                                                else tierName = tierSequence[i] || 'gold';
+                                              }
+
+                                              return (
+                                                <Fragment key={i}>
+                                                  <div className={`cd-step val-${tierName}`} style={{ fontSize: '16px' }}>{v}</div>
+                                                  {i < cdVals.length - 1 && <div className="cd-arrow" style={{ transform: 'none', margin: '0' }}>↓</div>}
+                                                </Fragment>
+                                              );
+                                            })}
+                                            <div className="cd-unit">秒</div>
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                } catch (e) {
+                                  console.error("Error rendering CD progression:", e);
+                                }
+                                
+                                return item.cooldown !== undefined && item.cooldown > 0 && (
+                                  <div className="details-left">
+                                    <div className="cd-display">
+                                      <div className="cd-value">{item.cooldown.toFixed(1)}</div>
+                                      <div className="cd-unit">秒</div>
+                                    </div>
+                                  </div>
+                                );
+                            })()}
                             <div className="details-right">
                               {item.skills.map((s, idx) => (
                                 <div key={idx} className="skill-item">

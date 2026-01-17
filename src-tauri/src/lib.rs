@@ -65,10 +65,22 @@ pub struct RawItem {
     pub name_en: Option<String>,
     pub name_cn: Option<String>,
     pub starting_tier: Option<String>,
+    pub available_tiers: Option<String>,
     pub heroes: Option<String>,
     pub tags: Option<String>,
     pub size: Option<String>,
     pub cooldown: Option<f32>,
+    pub cooldown_tiers: Option<String>,
+    pub damage_tiers: Option<String>,
+    pub heal_tiers: Option<String>,
+    pub shield_tiers: Option<String>,
+    pub ammo_tiers: Option<String>,
+    pub crit_tiers: Option<String>,
+    pub multicast_tiers: Option<String>,
+    pub burn_tiers: Option<String>,
+    pub poison_tiers: Option<String>,
+    pub regen_tiers: Option<String>,
+    pub lifesteal_tiers: Option<String>,
     pub skills: Option<Vec<RawSkill>>,
     pub enchantments: Option<serde_json::Value>,
     pub image: Option<String>,
@@ -82,15 +94,26 @@ pub struct ItemData {
     pub name: String,
     pub name_cn: String,
     pub tier: String,
+    pub available_tiers: String,
     pub tags: String,
     pub size: Option<String>,
     pub processed_tags: Vec<String>,
     pub heroes: Vec<String>,
     pub cooldown: Option<f32>,
+    pub cooldown_tiers: String,
+    pub damage_tiers: String,
+    pub heal_tiers: String,
+    pub shield_tiers: String,
+    pub ammo_tiers: String,
+    pub crit_tiers: String,
+    pub multicast_tiers: String,
+    pub burn_tiers: String,
+    pub poison_tiers: String,
+    pub regen_tiers: String,
+    pub lifesteal_tiers: String,
     pub skills: Vec<String>,
     pub enchantments: Vec<String>,
     pub description: String,
-    pub image: String,
 }
 
 impl From<RawItem> for ItemData {
@@ -144,28 +167,31 @@ impl From<RawItem> for ItemData {
         }
         // Removed .sort() to keep JSON order
 
-        let img = raw.image.unwrap_or_else(|| {
-            if !raw.id.is_empty() {
-                format!("images/{}.webp", raw.id)
-            } else {
-                format!("images/{}.webp", name_cn)
-            }
-        });
-
         ItemData {
             uuid: raw.id,
             name: name_en,
             name_cn,
             tier: raw.starting_tier.clone().unwrap_or_else(|| "Bronze".to_string()),
+            available_tiers: raw.available_tiers.unwrap_or_default(),
             tags: raw.tags.unwrap_or_default(),
             size: raw.size,
             processed_tags,
             heroes,
             cooldown: raw.cooldown.map(|c| c / 1000.0), // ms to s
+            cooldown_tiers: raw.cooldown_tiers.unwrap_or_default(),
+            damage_tiers: raw.damage_tiers.unwrap_or_default(),
+            heal_tiers: raw.heal_tiers.unwrap_or_default(),
+            shield_tiers: raw.shield_tiers.unwrap_or_default(),
+            ammo_tiers: raw.ammo_tiers.unwrap_or_default(),
+            crit_tiers: raw.crit_tiers.unwrap_or_default(),
+            multicast_tiers: raw.multicast_tiers.unwrap_or_default(),
+            burn_tiers: raw.burn_tiers.unwrap_or_default(),
+            poison_tiers: raw.poison_tiers.unwrap_or_default(),
+            regen_tiers: raw.regen_tiers.unwrap_or_default(),
+            lifesteal_tiers: raw.lifesteal_tiers.unwrap_or_default(),
             skills,
             enchantments,
             description: raw.description_cn.unwrap_or_default(),
-            image: img,
         }
     }
 }
@@ -179,13 +205,13 @@ pub struct TierInfo {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterSubItem {
+    pub id: Option<String>,
     pub name: String,
     pub name_en: Option<String>,
     pub tier: Option<String>,
     pub current_tier: Option<String>,
     pub tags: Option<Vec<String>>,
     pub tiers: Option<HashMap<String, Option<TierInfo>>>,
-    pub image: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -197,7 +223,6 @@ pub struct MonsterData {
     pub level: Option<serde_json::Value>,
     pub skills: Option<Vec<MonsterSubItem>>,
     pub items: Option<Vec<MonsterSubItem>>,
-    pub image: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -226,42 +251,72 @@ pub struct DbState {
 
 fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &str, fallback_name_en: &str, current_tier: &str, override_size: Option<&str>) -> serde_json::Value {
     let mut desc = Vec::new();
-    let mut image = "".to_string();
     let mut name_cn = fallback_name_cn.to_string();
     let mut name_en = fallback_name_en.to_string();
     let mut cooldown = None;
     let mut size = override_size.map(|s| s.to_string());
+    let mut id = "".to_string();
+    let mut tiers = serde_json::Map::new();
 
     if let Some(item) = item_data {
         name_cn = item.name_cn;
         name_en = item.name;
-        image = item.image;
+        id = item.uuid;
         if size.is_none() {
             size = item.size;
         }
         if !item.description.is_empty() {
-            desc.push(item.description);
+            desc.push(item.description.clone());
         }
-        for s in item.skills {
-            desc.push(s);
+        for s in &item.skills {
+            desc.push(s.clone());
         }
         cooldown = item.cooldown;
+
+        // Parse multiples tiers if available
+        if !item.available_tiers.is_empty() {
+            let avail_list: Vec<&str> = item.available_tiers.split('/').collect();
+            let cd_list: Vec<&str> = item.cooldown_tiers.split('/').collect();
+            
+            for (i, t_name) in avail_list.iter().enumerate() {
+                let mut t_info = serde_json::Map::new();
+                t_info.insert("description".to_string(), serde_json::Value::Array(desc.iter().map(|s| serde_json::Value::String(s.clone())).collect()));
+                t_info.insert("extra_description".to_string(), serde_json::Value::Array(vec![]));
+                
+                let cd_val = if i < cd_list.len() {
+                    let ms: f32 = cd_list[i].trim().parse().unwrap_or(0.0);
+                    if ms > 0.0 { Some(format!("{:.1}s", ms / 1000.0)) } else { None }
+                } else if !cd_list.is_empty() && !cd_list[0].is_empty() {
+                    // Repeat last cd value if more tiers exist
+                    let ms: f32 = cd_list.last().unwrap().trim().parse().unwrap_or(0.0);
+                    if ms > 0.0 { Some(format!("{:.1}s", ms / 1000.0)) } else { None }
+                } else if i == 0 {
+                    cooldown.map(|c| format!("{:.1}s", c))
+                } else {
+                    None
+                };
+                
+                t_info.insert("cd".to_string(), cd_val.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+                tiers.insert(t_name.to_lowercase(), serde_json::Value::Object(t_info));
+            }
+        }
     }
 
-    desc.retain(|s| !s.is_empty());
+    if tiers.is_empty() || !tiers.contains_key(&current_tier.to_lowercase()) {
+        let mut t_info = serde_json::Map::new();
+        t_info.insert("description".to_string(), serde_json::Value::Array(desc.into_iter().map(serde_json::Value::String).collect()));
+        t_info.insert("extra_description".to_string(), serde_json::Value::Array(vec![]));
+        t_info.insert("cd".to_string(), cooldown.map(|c| serde_json::Value::String(format!("{:.1}s", c))).unwrap_or(serde_json::Value::Null));
+        
+        tiers.insert(current_tier.to_lowercase(), serde_json::Value::Object(t_info));
+    }
     
     let tier_label = format!("{}+", current_tier);
-    let mut tiers = serde_json::Map::new();
-    let mut tier_info = serde_json::Map::new();
-    tier_info.insert("description".to_string(), serde_json::Value::Array(desc.into_iter().map(serde_json::Value::String).collect()));
-    tier_info.insert("extra_description".to_string(), serde_json::Value::Array(vec![]));
-    tier_info.insert("cd".to_string(), cooldown.map(|c| serde_json::Value::String(format!("{:.1}s", c))).unwrap_or(serde_json::Value::Null));
-    
-    tiers.insert(current_tier.to_lowercase(), serde_json::Value::Object(tier_info));
     
     let mut sub = serde_json::Map::new();
     sub.insert("name".to_string(), serde_json::Value::String(name_cn));
     sub.insert("name_en".to_string(), serde_json::Value::String(name_en));
+    sub.insert("id".to_string(), serde_json::Value::String(id));
     sub.insert("tier".to_string(), serde_json::Value::String(tier_label));
     sub.insert("current_tier".to_string(), serde_json::Value::String(current_tier.to_string()));
     
@@ -272,7 +327,6 @@ fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &st
     });
     
     sub.insert("size".to_string(), final_size.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
-    sub.insert("image".to_string(), serde_json::Value::String(image));
     sub.insert("tiers".to_string(), serde_json::Value::Object(tiers));
     
     serde_json::Value::Object(sub)
@@ -747,9 +801,31 @@ pub fn run() {
                     for (name, m) in db_monsters {
                         let mut enriched_m = m.clone();
                         if let Some(m_obj) = enriched_m.as_object_mut() {
-                            // 强制设置图片路径（使用角色图）
-                            let img = format!("images_monster_char/{}.webp", name);
-                            m_obj.insert("image".to_string(), serde_json::Value::String(img));
+                            // 强制设置图片路径（使用角色图），增加陷阱类前缀回退逻辑
+                            let mut img_name = name.clone();
+                            let img_path = resources_path.join("resources").join(format!("images_monster_char/{}.webp", img_name));
+                            if !img_path.exists() {
+                                // 1. 尝试去除 _Day 序列后缀 (如 快乐杰克南瓜_Day8 -> 快乐杰克南瓜)
+                                if let Some(idx) = img_name.find("_Day") {
+                                    let base = &img_name[0..idx];
+                                    if resources_path.join("resources").join(format!("images_monster_char/{}.webp", base)).exists() {
+                                        img_name = base.to_string();
+                                    }
+                                }
+                                
+                                // 2. 尝试剥离陷阱类前缀 (如 毒素 吹箭枪陷阱 -> 吹箭枪陷阱)
+                                if !resources_path.join("resources").join(format!("images_monster_char/{}.webp", img_name)).exists() {
+                                    if let Some(space_pos) = img_name.rfind(' ') {
+                                        let base_name = &img_name[space_pos + 1..];
+                                        let base_path = resources_path.join("resources").join(format!("images_monster_char/{}.webp", base_name));
+                                        if base_path.exists() {
+                                            img_name = base_name.to_string();
+                                        }
+                                    }
+                                }
+                            }
+                            let img_rel = format!("images_monster_char/{}.webp", img_name);
+                            m_obj.insert("image".to_string(), serde_json::Value::String(img_rel));
                             
                             // Enrich items
                             if let Some(items) = m_obj.get_mut("items").and_then(|v| v.as_array_mut()) {
@@ -770,8 +846,17 @@ pub fn run() {
                                             if id.is_empty() {
                                                 item_obj.insert("id".to_string(), serde_json::Value::String(found_item.uuid.clone()));
                                             }
-                                            // 更新 image
-                                            item_obj.insert("image".to_string(), serde_json::Value::String(found_item.image.clone()));
+                                            // 注入升级数据
+                                            item_obj.insert("cooldown_tiers".to_string(), serde_json::Value::String(found_item.cooldown_tiers.clone()));
+                                            item_obj.insert("available_tiers".to_string(), serde_json::Value::String(found_item.available_tiers.clone()));
+                                            item_obj.insert("damage_tiers".to_string(), serde_json::Value::String(found_item.damage_tiers.clone()));
+                                            item_obj.insert("heal_tiers".to_string(), serde_json::Value::String(found_item.heal_tiers.clone()));
+                                            item_obj.insert("shield_tiers".to_string(), serde_json::Value::String(found_item.shield_tiers.clone()));
+
+                                            // 强制使用 id.webp 格式作为图片路径
+                                            let webp_img = format!("images/{}.webp", found_item.uuid);
+                                            item_obj.insert("image".to_string(), serde_json::Value::String(webp_img));
+                                            
                                             // 更新 size
                                             if let Some(s) = found_item.size {
                                                 let norm = s.split(" / ").next().unwrap_or(&s).to_string();
@@ -800,8 +885,17 @@ pub fn run() {
                                             if id.is_empty() {
                                                 skill_obj.insert("id".to_string(), serde_json::Value::String(found_skill.uuid.clone()));
                                             }
-                                            // 更新 image
-                                            skill_obj.insert("image".to_string(), serde_json::Value::String(found_skill.image.clone()));
+                                            // 注入升级数据
+                                            skill_obj.insert("cooldown_tiers".to_string(), serde_json::Value::String(found_skill.cooldown_tiers.clone()));
+                                            skill_obj.insert("available_tiers".to_string(), serde_json::Value::String(found_skill.available_tiers.clone()));
+                                            skill_obj.insert("damage_tiers".to_string(), serde_json::Value::String(found_skill.damage_tiers.clone()));
+                                            skill_obj.insert("heal_tiers".to_string(), serde_json::Value::String(found_skill.heal_tiers.clone()));
+                                            skill_obj.insert("shield_tiers".to_string(), serde_json::Value::String(found_skill.shield_tiers.clone()));
+
+                                            // 强制使用 id.webp 格式作为图片路径
+                                            let webp_img = format!("images/{}.webp", found_skill.uuid);
+                                            skill_obj.insert("image".to_string(), serde_json::Value::String(webp_img));
+                                            
                                             // 更新 size
                                             if let Some(s) = found_skill.size {
                                                 let norm = s.split(" / ").next().unwrap_or(&s).to_string();
@@ -1238,30 +1332,68 @@ pub fn run() {
                                 match scan_and_identify_monster_at_mouse() {
                                     Ok(Some(monster_name)) => {
                                         log_to_file(&format!("Success! Valid monster found: {}", monster_name));
-                                        // 识别成功，查找对应的天数
+                                        
+                                        // 关键修复：处理陷阱类并列名称
+                                        let lookup_name = if monster_name.contains('|') {
+                                            monster_name.split('|').next().unwrap_or(&monster_name).to_string()
+                                        } else {
+                                            monster_name.clone()
+                                        };
+
                                         if let Some(db_state) = handle_mouse.try_state::<DbState>() {
                                             if let Ok(monsters) = db_state.monsters.read() {
-                                                if let Some(entry) = monsters.get(&monster_name) {
-                                                    if let Some(day_str) = entry.get("available").and_then(|v| v.as_str()) {
-                                                        // 格式如 "Day 10"
-                                                        if day_str.starts_with("Day ") {
-                                                            if let Ok(day) = day_str[4..].parse::<u32>() {
-                                                                match handle_mouse.emit("auto-jump-to-monster", serde_json::json!({
-                                                                    "day": day,
-                                                                    "monster_name": monster_name
-                                                                })) {
-                                                                    Ok(_) => {},
-                                                                    Err(e) => println!("Failed to emit auto-jump-to-monster: {}", e),
+                                                // 首先尝试通过 Key 获取 Entry，如果不行，尝试遍历匹配 name_zh
+                                                let entry_opt = monsters.get(&lookup_name)
+                                                    .or_else(|| {
+                                                        monsters.values().find(|v| {
+                                                            v.get("name_zh").and_then(|nz| nz.as_str()) == Some(&lookup_name)
+                                                        })
+                                                    });
+
+                                                if let Some(entry) = entry_opt {
+                                                    let target_name_zh = entry.get("name_zh").and_then(|v| v.as_str()).unwrap_or(&monster_name);
+                                                    let mut candidate_days: Vec<u32> = Vec::new();
+                                                    
+                                                    // 寻找所有具有相同中文名的怪物条目（解决同名不同天数问题）
+                                                    for (_, v) in monsters.iter() {
+                                                        if let Some(n_zh) = v.get("name_zh").and_then(|val| val.as_str()) {
+                                                            if n_zh == target_name_zh {
+                                                                if let Some(d_str) = v.get("available").and_then(|val| val.as_str()) {
+                                                                    if d_str.starts_with("Day ") {
+                                                                        let num_part = d_str[4..].trim_end_matches('+');
+                                                                        if let Ok(d_num) = num_part.parse::<u32>() {
+                                                                            candidate_days.push(d_num);
+                                                                        }
+                                                                    }
                                                                 }
-                                                                
-                                                                // 更新并保存状态
-                                                                let mut state = load_state();
-                                                                state.day = day;
-                                                                save_state(&state);
-                                                                
-                                                                println!("自动跳转到 Day {} (怪物: {})", day, monster_name);
                                                             }
                                                         }
+                                                    }
+                                                    
+                                                    if !candidate_days.is_empty() {
+                                                        candidate_days.sort();
+                                                        candidate_days.dedup();
+
+                                                        let current_day = load_state().day;
+                                                        let target_day = if candidate_days.contains(&current_day) {
+                                                            current_day
+                                                        } else {
+                                                            *candidate_days.iter().min_by_key(|&&d| (d as i32 - current_day as i32).abs()).unwrap()
+                                                        };
+
+                                                        match handle_mouse.emit("auto-jump-to-monster", serde_json::json!({
+                                                            "day": target_day,
+                                                            "monster_name": monster_name // 使用包含 | 的原始名称
+                                                        })) {
+                                                            Ok(_) => {},
+                                                            Err(e) => println!("Failed to emit auto-jump-to-monster: {}", e),
+                                                        }
+                                                        
+                                                        let mut state = load_state();
+                                                        state.day = target_day;
+                                                        save_state(&state);
+                                                        
+                                                        println!("自动跳转到 Day {} (识别: {}, 候选天数: {:?})", target_day, lookup_name, candidate_days);
                                                     }
                                                 }
                                             }

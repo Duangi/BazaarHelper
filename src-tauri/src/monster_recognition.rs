@@ -1,6 +1,6 @@
 use image::{DynamicImage, GenericImageView};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock};
 use rayon::prelude::*;
@@ -56,6 +56,7 @@ struct TemplateCache {
 struct MonsterEntry {
     image: Option<String>,
     available: Option<String>,
+    name_zh: Option<String>,
 }
 
 static TEMPLATE_CACHE: OnceLock<Vec<TemplateCache>> = OnceLock::new();
@@ -84,8 +85,8 @@ fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i
         return Ok((Vec::new(), Vec::new(), 0, 0));
     }
 
-    // 初始化 ORB (nfeatures=1000)
-    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
+    // 初始化 ORB (增加特征点数量到 2000，提高对细节丰富或模糊怪物的识别精细度)
+    let mut orb = ORB::create(2000, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     // 提取特征点和描述符
@@ -144,8 +145,8 @@ fn extract_features_from_dynamic_image(img: &DynamicImage) -> Result<Mat, opencv
         return Ok(Mat::default());
     }
 
-    // 初始化 ORB (nfeatures=1000)
-    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
+    // 初始化 ORB (截图也同样增加到 2000 个特征点)
+    let mut orb = ORB::create(2000, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     let mut keypoints = Vector::<KeyPoint>::new();
@@ -177,7 +178,8 @@ fn match_orb_descriptors(desc1: &Mat, desc2: &Mat) -> Result<usize, opencv::Erro
         if m.len() == 2 {
             let m0 = m.get(0)?;
             let m1 = m.get(1)?;
-            if m0.distance < 0.75 * m1.distance {
+            // 适度放宽比例阈值 (从 0.75 到 0.8)，增加某些特征点不明显怪物的匹配数
+            if m0.distance < 0.8 * m1.distance {
                 good_matches += 1;
             }
         }
@@ -197,41 +199,29 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
     let _ = LOADING_PROGRESS.set(progress.clone());
     
     // Define both paths
-    let cache_file = cache_dir.join("monster_features_opencv.bin");
-    let bundled_cache = resources_dir.join("monster_features_opencv.bin");
+    let cache_file = cache_dir.join("monster_features_opencv_v2.bin");
+    let bundled_cache = resources_dir.join("monster_features_opencv_v2.bin");
 
-    // 1. 优先从资源目录加载（预打包的缓存），并强制覆盖本地缓存
+    // 1. 优先从资源目录加载（预打包的缓存）
     if bundled_cache.exists() {
-        log_to_file(&format!("Found bundled cache file at {:?}. Forcing overwrite of local cache.", bundled_cache));
+        log_to_file(&format!("Found bundled cache file at {:?}. Using it.", bundled_cache));
         if let Ok(data) = std::fs::read(&bundled_cache) {
-            // Force replace logic
-            let _ = std::fs::create_dir_all(&cache_dir);
-            if let Err(e) = std::fs::write(&cache_file, &data) {
-                 log_to_file(&format!("Failed to write to local cache: {}", e));
-            } else {
-                 log_to_file("Local cache overwritten successfully.");
-            }
-
-            // Load directly from the bundled data
-             if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
-                 log_to_file(&format!("Loaded {} templates from BUNDLED cache", cached_templates.len()));
-                 println!("从预打包缓存加载了 {} 个怪物特征点模板", cached_templates.len());
-
-                 if let Ok(mut p) = progress.lock() {
+            if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
+                if !cached_templates.is_empty() {
+                    log_to_file(&format!("Loaded {} templates from bundled cache", cached_templates.len()));
+                    if let Ok(mut p) = progress.lock() {
                         p.loaded = cached_templates.len();
                         p.total = cached_templates.len();
                         p.is_complete = true;
+                    }
+                    let _ = TEMPLATE_CACHE.set(cached_templates);
+                    return Ok(());
                 }
-                let _ = TEMPLATE_CACHE.set(cached_templates);
-                return Ok(());
-             } else {
-                 log_to_file("Failed to deserialize bundled cache (corruption?)");
-             }
+            }
         }
     }
 
-    // 2. 尝试从 AppData 缓存加载 (旧逻辑)
-    // let cache_file = cache_dir.join("monster_features_opencv.bin");
+    // 2. 尝试从 AppData 缓存加载
     if cache_file.exists() {
         log_to_file(&format!("Found cache file at {:?}", cache_file));
         if let Ok(data) = std::fs::read(&cache_file) {
@@ -271,16 +261,100 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
     let monsters: HashMap<String, MonsterEntry> = serde_json::from_str(&json_content)
         .map_err(|e| format!("解析 monsters_db.json 失败: {}", e))?;
 
-    let mut image_tasks = Vec::new();
+    // 预处理：建立一个“中文名 -> 图片路径”的映射，用于补全那些没有图片的词条
+    let mut name_to_path: HashMap<String, PathBuf> = HashMap::new();
     for (key, entry) in monsters.iter() {
-        if let (Some(rel_path), Some(day)) = (&entry.image, &entry.available) {
-            // 使用角色图进行识别（images_monster_char）
-            let char_path = rel_path.replace("images_monster/", "images_monster_char/");
-            let full_path = resources_dir.join(&char_path);
-            if full_path.exists() {
-                image_tasks.push((key.clone(), day.clone(), full_path));
+        // 1. 检查数据库中定义的 image 字段
+        if let Some(rel_path) = &entry.image {
+            let p = resources_dir.join(rel_path);
+            if p.exists() {
+                name_to_path.insert(key.clone(), p.clone());
             } else {
-                log_to_file(&format!("Missing image: {:?}", full_path));
+                let char_path = resources_dir.join(rel_path.replace("images_monster/", "images_monster_char/"));
+                if char_path.exists() {
+                    name_to_path.insert(key.clone(), char_path);
+                }
+            }
+        }
+        
+        // 2. 检查以 key 为名的直接图片 (e.g. 绿洲守护神_Day9.webp)
+        let char_path_key = resources_dir.join(format!("images_monster_char/{}.webp", key));
+        if char_path_key.exists() {
+            name_to_path.insert(key.clone(), char_path_key);
+        }
+
+        // 3. 检查以 name_zh 为名的直接图片 (e.g. 绿洲守护神.webp)
+        if let Some(name_zh) = entry.name_zh.as_ref() {
+            let char_path_name = resources_dir.join(format!("images_monster_char/{}.webp", name_zh));
+            if char_path_name.exists() {
+                name_to_path.insert(key.clone(), char_path_name);
+            } else {
+                // 特殊处理：如果带前缀（如 "毒素 吹箭枪陷阱"），尝试查找基础名称 "吹箭枪陷阱.webp"
+                if let Some(space_pos) = name_zh.rfind(' ') {
+                    let base_name = &name_zh[space_pos + 1..];
+                    let base_path = resources_dir.join(format!("images_monster_char/{}.webp", base_name));
+                    if base_path.exists() {
+                        name_to_path.insert(key.clone(), base_path);
+                    }
+                }
+            }
+        }
+    }
+
+    let mut image_tasks = Vec::new();
+    let mut seen_names = HashSet::new();
+
+    for (key, entry) in monsters.iter() {
+        if let Some(day) = &entry.available {
+            let mut found_path = name_to_path.get(key).cloned();
+            
+            if found_path.is_none() {
+                let clean_key = if key.contains("_Day") {
+                    key.split("_Day").next().unwrap_or(key).to_string()
+                } else {
+                    key.clone()
+                };
+                found_path = name_to_path.get(&clean_key).cloned();
+                if found_path.is_none() {
+                    for (mapped_name, path) in name_to_path.iter() {
+                        if mapped_name.starts_with(&clean_key) {
+                            found_path = Some(path.clone());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if let Some(path) = found_path {
+                let mut clean_name = if key.contains("_Day") {
+                    key.split("_Day").next().unwrap_or(key).to_string()
+                } else {
+                    key.clone()
+                };
+
+                // 特殊处理陷阱类：将所有陷阱变体统一为基础名称（如 "毒素 吹箭枪陷阱" -> "吹箭枪陷阱"）
+                // 这样它们会共享同一个 ORB 模板，避免前缀不同导致无法识别
+                if clean_name.contains("陷阱") {
+                    if let Some(space_pos) = clean_name.rfind(' ') {
+                        clean_name = clean_name[space_pos + 1..].to_string();
+                    }
+                }
+
+                // 去重：如果已经添加过同名怪物的特征提取任务，且路径相同，则跳过
+                if seen_names.contains(&clean_name) {
+                    continue;
+                }
+
+                if let Ok(metadata) = std::fs::metadata(&path) {
+                    if metadata.len() > 0 {
+                        seen_names.insert(clean_name.clone());
+                        image_tasks.push((clean_name, day.clone(), path));
+                    }
+                }
+            } else {
+                 if day == "Day 10+" {
+                     log_to_file(&format!("Missing Day 10+ monster image: {}", key));
+                 }
             }
         }
     }
@@ -384,11 +458,21 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
         log_to_file(&format!("Found window: {}, App: {}", window.title(), window.app_name()));
         (window.capture_image().map_err(|e| e.to_string())?, window.x(), window.y())
     } else {
-        log_to_file("Window not found, capturing primary monitor.");
-        // 如果找不到窗口，就截全屏（主显示器）
+        log_to_file("Window not found, capturing monitor under cursor.");
+        // Find monitor containing the mouse
         let monitors = Monitor::all().map_err(|e| e.to_string())?;
         if monitors.is_empty() { return Err("No monitor found".into()); }
-        (monitors[0].capture_image().map_err(|e| e.to_string())?, monitors[0].x(), monitors[0].y())
+        
+        let target_monitor = monitors.into_iter().find(|m| {
+             let mx = m.x();
+             let my = m.y();
+             let mw = m.width();
+             let mh = m.height();
+             mouse_x >= mx && mouse_x < mx + mw as i32 &&
+             mouse_y >= my && mouse_y < my + mh as i32
+        }).ok_or("Mouse is not within any monitor bounds")?;
+
+        (target_monitor.capture_image().map_err(|e| e.to_string())?, target_monitor.x(), target_monitor.y())
     };
 
     let mut img = DynamicImage::ImageRgba8(screenshot);
@@ -404,15 +488,16 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
     let half_size = crop_size / 2;
     
     // 确保不越界
+    // 使用 saturating_sub 防止 usize/u32 减法溢出 (panic at img_w - crop_x)
     let crop_x = (rel_x - half_size).max(0) as u32;
     let crop_y = (rel_y - half_size).max(0) as u32;
     
     // 实际裁剪宽度（处理边缘情况）
-    let crop_w = if crop_x + crop_size as u32 > img_w { img_w - crop_x } else { crop_size as u32 };
-    let crop_h = if crop_y + crop_size as u32 > img_h { img_h - crop_y } else { crop_size as u32 };
+    let crop_w = if crop_x + crop_size as u32 > img_w { img_w.saturating_sub(crop_x) } else { crop_size as u32 };
+    let crop_h = if crop_y + crop_size as u32 > img_h { img_h.saturating_sub(crop_y) } else { crop_size as u32 };
 
     if crop_w < 50 || crop_h < 50 {
-        return Err("裁剪区域太小".into());
+        return Err("裁剪区域太小或鼠标已移出窗口范围".into());
     }
 
     let cropped_img = img.crop(crop_x, crop_y, crop_w, crop_h);
@@ -468,15 +553,27 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
     
     // 阈值检查: 匹配数 > 25 且 Top1 > 1.5 * Top2
     if top1.1 > 25 && (top1.1 as f32 > 1.5 * top2_score) {
-        // 7. 黑名单检查（重复出现的怪物）
-        let ignored_monsters = vec!["快乐杰克南瓜", "绿洲守护神"];
-        if ignored_monsters.contains(&top1.0.as_str()) {
-            println!("识别到重复出现怪物 '{}'，跳过自动跳转。", top1.0);
-            return Ok(None);
-        }
-        
         println!("鼠标指向识别成功: {} (匹配: {}, 2nd: {})", top1.0, top1.1, top2_score);
-        return Ok(Some(top1.0.clone()));
+        
+        // 关键改进：处理“陷阱”类多重匹配
+        // 如果识别结果包含“陷阱”，则寻找所有同类型的陷阱变体并一起作为结果返回
+        let base_name = if top1.0.contains("_Day") {
+            top1.0.split("_Day").next().unwrap_or(&top1.0).to_string()
+        } else {
+            top1.0.clone()
+        };
+
+        if base_name.contains("陷阱") {
+            if base_name.contains("吹箭枪陷阱") {
+                return Ok(Some("毒素 吹箭枪陷阱|黑曜石 吹箭枪陷阱|炽焰 吹箭枪陷阱".to_string()));
+            } else if base_name.contains("铁蒺藜陷阱") {
+                return Ok(Some("炽焰 铁蒺藜陷阱|黑曜石 铁蒺藜陷阱|毒素 铁蒺藜陷阱".to_string()));
+            } else if base_name.contains("滚石陷阱") {
+                return Ok(Some("毒素 滚石陷阱|黑曜石 滚石陷阱|炽焰 滚石陷阱".to_string()));
+            }
+        }
+
+        return Ok(Some(base_name));
     }
 
     Ok(None)

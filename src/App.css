@@ -730,6 +730,8 @@ html, body, #root {
   border-radius: 4px;
   padding: 8px;
   transition: transform 0.2s;
+  position: relative;
+  cursor: pointer;
 }
 
 .progression-inline-values {
@@ -757,10 +759,6 @@ html, body, #root {
 .sub-item-card.progression-active {
   background: rgba(255, 205, 25, 0.05);
   box-shadow: inset 0 0 10px rgba(255, 205, 25, 0.1);
-}
-
-.sub-item-card {
-  cursor: pointer;
 }
 
 .sub-item-card:hover {
@@ -826,6 +824,40 @@ html, body, #root {
   font-weight: 900;
   margin-top: 2px;
   text-shadow: 0 0 5px rgba(63, 200, 247, 0.4);
+}
+
+.sub-item-cd-progression {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  line-height: 1;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cd-step {
+  font-size: calc(18px * var(--font-scale, 1));
+  font-weight: 900;
+}
+
+.cd-arrow {
+  font-size: 12px;
+  color: #888;
+  margin: 1px 0;
+  display: flex;
+  justify-content: center;
+  /* 移除 transform: rotate(90deg)，直接使用 ↓ 即可 */
+}
+
+.cd-unit {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 2px;
 }
 
 .sub-item-desc {
@@ -1679,6 +1711,10 @@ html, body, #root {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   background: rgba(0, 0, 0, 0.2);
   align-items: center;
+}
+
+.item-details-v2.progression-active {
+  background: rgba(255, 205, 25, 0.03);
 }
 
 .details-left {
