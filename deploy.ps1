@@ -1,9 +1,9 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.1.2"  # <--- 版本号
+$NEW_VERSION = "1.2.0"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
-$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新来了：\n1. 插件迎来了一个新的名字！源自游戏名中文直译。同时在主界面和设置页面新增免费提示。2.更新了中途启动插件时，获取不到手牌信息的bug。\n 3.现在可以通过物品的图片大小直观的看到大中小的区别了！  \n\n💡 ⚡ 本软件完全免费开源，禁止喂食黄牛\n作者：B站@这是李Duang啊。\n如果你是花钱买的，请立刻退款并给差评，别让黄牛赚了你的奶茶钱！🥤"
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新来了：\n 更新内容太多了。都去看最新视频！  \n"
 
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
@@ -40,6 +40,14 @@ if (Test-Path "src-tauri/target/release/bundle/nsis") {
 # 执行构建 (此时不强制签名，只生成exe)
 npm run tauri build
 if ($LASTEXITCODE -ne 0) { throw "Build failed" }
+
+# 为方便测试，把 DLL 也复制到 release 目录下的 loose exe 旁边
+$releaseDir = "src-tauri/target/release"
+$dllSource = "C:\opencv\build\x64\vc16\bin\opencv_world4120.dll"
+if (Test-Path $dllSource) {
+    Copy-Item $dllSource -Destination "$releaseDir\opencv_world4120.dll" -Force
+    Write-Host "✅ [Dev] Copied opencv DLL to target/release for testing." -ForegroundColor Cyan
+}
 
 # 4. 定位安装包
 $bundlePath = "src-tauri/target/release/bundle/nsis"

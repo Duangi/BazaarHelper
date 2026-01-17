@@ -1,656 +1,656 @@
 {
-  "凯沃斯雄蜂": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a70b5d17432c7e5dc6373c723c10e096398c9980@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ecb54ad632226d4393ffa3085b9e88a697902cfe@256.webp?v=2",
-    "out": "images_monster/23fc515e-32a9-53ce-987c-d9c684e8b385.jpg",
-    "status": "ok_composed"
-  },
-  "火灵": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/518c4b846c394ca256b673ec0c1bbefec81bc2b2@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f8685bd8ee4db9767ce1f25d2dc39659a2952b0@256.webp?v=2",
-    "out": "images_monster/73898c79-179d-508e-ae92-35b3be05283d.jpg",
-    "status": "ok_composed"
-  },
-  "獠牙英格狼": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/446ebfd5529b5eab6a9c2a1bba743e87ab3ac1f7@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a635a2b649cb1800f3c62ca47e6d010c1ba8d30a@256.webp?v=2",
-    "out": "images_monster/54a20e51-0d56-5758-8972-0a1718b95f20.jpg",
-    "status": "ok_composed"
-  },
-  "食蕉兽": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/09e879c410ace46f0a8dcbdc8d574c57a7420359@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fce8c94be1d65098b8e8714ae9ab690184daae73@256.webp?v=2",
-    "out": "images_monster/956005bb-6cb7-5c65-b2bb-187cfd7295af.jpg",
-    "status": "ok_composed"
-  },
-  "怨念和服": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7af0accb6147e300aebd364e6b3fbd1d0f87a885@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/421f53fe2a324af4e4229f768bad5174b42565ec@256.webp?v=2",
-    "out": "images_monster/0da14af9-8550-5db6-a572-2c1822cc6cca.jpg",
-    "status": "ok_composed"
-  },
-  "毒蛇": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bde625de3f8e7dd514fcf883e802cf393a7a74e9@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9eeab869a8051cde954054b87a00c0bf269e397d@256.webp?v=2",
-    "out": "images_monster/c99e9ffe-74c2-5e22-ba4e-7356b0f944f1.jpg",
-    "status": "ok_composed"
-  },
-  "暴走破碎机": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/85f994c6bee93f235a7759c14ebad0939c48f72b@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cccf18eb23c69165b12cb410d8a7d2da7976b8c4@256.webp?v=2",
-    "out": "images_monster/4d201915-94b2-5d77-ad1b-3d5a0b65dbe9.jpg",
-    "status": "ok_composed"
-  },
-  "椰子蟹": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47daed6ef1f0da00b07b43f23e31334f21d7598@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3aaa59be528e39b66465ba0014161b30fbb763d9@256.webp?v=2",
-    "out": "images_monster/d1a64f18-3a57-53f5-9dc2-fcc8c9f275ce.jpg",
-    "status": "ok_composed"
-  },
-  "蛮猪战士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/49779d1f1fdc018ccd76b80798bb17be4c0193dd@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fc6a092a78e79d87661cf90d2e4758e505d3abb3@256.webp?v=2",
-    "out": "images_monster/544b93ea-f7b5-57c9-8f8d-d450bd1d0678.jpg",
-    "status": "ok_composed"
-  },
-  "贪婪窃贼": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/672c54489bc22bab74555c2c076e6fd99ba69881@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8b1f1a99992c9eac1f76006f7dfdc3ed25ac08b@256.webp?v=2",
-    "out": "images_monster/37b06a0a-51d0-56aa-a95d-6a1f91b5a7dc.jpg",
-    "status": "ok_composed"
-  },
-  "怪奇以太匠": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/15a237c0a01fab9f122e617cd6aece6f781d2353@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e6806cf540b83658fd1dffda15efdcae002ea99e@256.webp?v=2",
-    "out": "images_monster/02233aaf-9549-5768-a51f-6a3302525c39.jpg",
-    "status": "ok_composed"
-  },
-  "腹语者": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e2eba1ca87cf5e0fca3367fd4ea3c77749d9e02@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1661200c08e681c08bcc66c67a26f7a0abb78ca6@256.webp?v=2",
-    "out": "images_monster/d5ef98e1-8c0a-5a8c-b8f9-564274e28714.jpg",
-    "status": "ok_composed"
-  },
-  "初学学徒": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7153547e4f7e27ea13599e89e12e9aa3b477e770@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29d374ede44b9726364f6049469d0a968ec51b35@256.webp?v=2",
-    "out": "images_monster/328b3b10-6a14-585c-94da-57d2111e2ba6.jpg",
-    "status": "ok_composed"
-  },
-  "焰风勇士": {
-    "status": "ok_composed",
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d32af032925d0e7d3ffa30599eee78c65b32c4e2@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1ee967bc7f5ec18f9cee165c7e9819249fdcfcd3@256.webp?v=2",
-    "out": "images_monster/60d93839-19d6-5ec3-9ff6-1658860144b9.jpg"
-  },
-  "产品演示员": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5d8b15b92ff9f5ada9352827f0914469d3a048df@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/50120d28f59e64e3507134a6a3a969799a93a82d@256.webp?v=2",
-    "out": "images_monster/0c5b0647-de52-5a93-b982-f82198aed3a0.jpg",
-    "status": "ok_composed"
-  },
-  "街头玩家": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa249a3a844c82f9e9f5a4b22566385478dcdb05@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/af42735bc6abb615f7a49363fd460af4562cdb70@256.webp?v=2",
-    "out": "images_monster/55bfe228-18e5-5c63-ad66-1f215bf413e5.jpg",
-    "status": "ok_composed"
-  },
-  "霜猴勇士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d20461179ae3753b1fc561276d06a8c299a432f1@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/704641f52cb4d6c75086ff0454dfe9b088df7228@256.webp?v=2",
-    "out": "images_monster/875ff03e-bc07-5b9d-b0f4-8a9f5179544c.jpg",
-    "status": "ok_composed"
-  },
-  "巨蚊": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d151ba8963e4b8f0e225a4e9331dfcc314829251@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b9cb066014969aec16b4967a0cb419dea60febe8@256.webp?v=2",
-    "out": "images_monster/0e406174-4f7d-58c4-b122-7277a194ea34.jpg",
-    "status": "ok_composed"
-  },
-  "飞车暴徒": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/264ce593944ba1909e0fc72ca6037d59ab9dc7fc@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/53c3255c4f9df7429a5c604bc440bd20cebc51d3@256.webp?v=2",
-    "out": "images_monster/729031e3-f9e9-5dc8-9ff8-91964e17d321.jpg",
-    "status": "ok_composed"
-  },
-  "变异烘焙师": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f6bc9fdadbd414fb6e22678aaae1f22b34a2662f@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c3c3613e09550a3ee1eb96a02029da693d752124@256.webp?v=2",
-    "out": "images_monster/2207a271-3e41-59eb-921e-249c23cdae24.jpg",
-    "status": "ok_composed"
-  },
-  "荒原旋舞者": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b1d33161aa1347be833413513ea8f999bfd5cfdd@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa17f72b64faf6781629a71ee22761a99d02647c@256.webp?v=2",
-    "out": "images_monster/6ae10a6c-d4eb-521f-8aed-88a3deb63dc1.jpg",
-    "status": "ok_composed"
-  },
-  "锅炉斗士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/276f85c58c17a0e1b86b695bb56963e4535cbdf3@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6facd66f258a1fc841db89914022cb6a1bebe3a3@256.webp?v=2",
-    "out": "images_monster/4b94183f-e053-5f16-b15c-f7608409166a.jpg",
-    "status": "ok_composed"
-  },
-  "血礁奇兵": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/86fc58f4ee86b6f55384791903e9d66f04580d88@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/34e59487716100f2bf6e1e31eb534b3eb7e51b77@256.webp?v=2",
-    "out": "images_monster/26b35d14-554e-56fe-b03f-d3c21d231925.jpg",
-    "status": "ok_composed"
-  },
-  "退休人员": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/94fbe93931dfe064c9931ef32044a2633ffd3c51@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/97e93533bd767b19542d509f87838b8d8a0087d3@256.webp?v=2",
-    "out": "images_monster/5652a536-0aa8-5541-958a-08eead9171e2.jpg",
-    "status": "ok_composed"
-  },
-  "乡巴佬蜥蜴": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e9421b4f17645f21b33e5e208984acc575737537@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/76d202ae1b1866430cf0b375f32d4996b46f47b5@256.webp?v=2",
-    "out": "images_monster/58ab30a5-5535-5b59-bf6a-82517fe54aa5.jpg",
-    "status": "ok_composed"
-  },
-  "阿海克萨": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9b1d817ebe61de01db371e1a257f5f504ac99570@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/760720e2c11db1f157e0adc4325ddc753dc6b78d@256.webp?v=2",
-    "out": "images_monster/55297d18-f05a-5cb5-9004-c4a00db40154.jpg",
-    "status": "ok_composed"
-  },
-  "马力亚纳斯王子": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/414abda573fbc45e86ed45f180604bfde556a282@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/57e250b23dba70660a7dde51d11d8958b50f5bd0@256.webp?v=2",
-    "out": "images_monster/469eb2dc-12d4-5d88-b4aa-05544b5e9287.jpg",
-    "status": "ok_composed"
-  },
-  "舞火大师": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/75bb63679be81dc8bc7b01e468bda4229772da74@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/da432282b980a4aff64fe18882f753b6e0cf4eb8@256.webp?v=2",
-    "out": "images_monster/1f3af327-4745-575b-a264-7c88c27c0629.jpg",
-    "status": "ok_composed"
-  },
-  "剑齿虎": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d3b96cd47b3bcc9d3af67a3e151a174414425b55@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/646bb37cae9b6a935fdf5d44a523fb7ae0dd13b5@256.webp?v=2",
-    "out": "images_monster/8caf7091-faaa-5ee5-af04-4cf5195fc2d9.jpg",
-    "status": "ok_composed"
-  },
-  "发条爷爷": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bf1cd75bdee1dede04aa6ecef6ee9f7f4125a118@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fb60487d4f65b0f679dea9d405fa00c54e2ad7c0@256.webp?v=2",
-    "out": "images_monster/35711fe2-e894-5b54-8f6f-ac8debba9011.jpg",
-    "status": "ok_composed"
-  },
-  "精致决斗士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b1af065f134e584bb7fe53e8993753185eacd6b1@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2194fe18b3ce181560123e0c39f9e01672525822@256.webp?v=2",
-    "out": "images_monster/48cb220d-3bf3-5d73-b98f-fe854ed12472.jpg",
-    "status": "ok_composed"
-  },
-  "凯沃斯指挥官": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/dfb6ae7d4b2ee00edd5abf1768ee8be52f5a7087@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/830cc6594e20d87c92e7b3cb85885f415d8154f2@256.webp?v=2",
-    "out": "images_monster/8d4f826b-a2d4-5e2d-825e-2e887b14f913.jpg",
-    "status": "ok_composed"
-  },
-  "哈库维火箭兵": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e4d7a17164fac8dac30d1e1fd8e4356a3ba21da7@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d15d5e45176f6413980214d43307bdd2c6f3eb04@256.webp?v=2",
-    "out": "images_monster/d39225b6-7c36-5132-9939-4148953eda96.jpg",
-    "status": "ok_composed"
-  },
-  "地狱使者": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e2da652f911eca1cf51f253170e9f8bde4957fce@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/31a97a9d968b507e8b4c4411c865fdaf661994fd@256.webp?v=2",
-    "out": "images_monster/b51b75a7-9fa7-5e10-9867-bb58b1822cd7.jpg",
-    "status": "ok_composed"
-  },
-  "垃圾镇镇长": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/61a2e92d4e1d21f68f798a673ba67901fbbc69c1@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54f6a091b7fbbfb0b2b99aef01ca84daedd9f6c5@256.webp?v=2",
-    "out": "images_monster/214d83f3-bcef-5cee-a677-934b9e0950b6.jpg",
-    "status": "ok_composed"
-  },
-  "辣火狂徒": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a93e60b2b025bf71af2cdc57a08dd1118ad404ae@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7110ced4706f5d0a923052fb6678cd9e7f42d371@256.webp?v=2",
-    "out": "images_monster/5d8c0f0e-0d70-5692-be2e-90a5a0d34186.jpg",
-    "status": "ok_composed"
-  },
-  "改装小队": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5df7219545c7a6f90faccc6036db556969ea4cf9@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cf6934daa9f73d8db5b3a84763fd0764a2c37de5@256.webp?v=2",
-    "out": "images_monster/c9307725-484b-5ada-aefe-f535b953490b.jpg",
-    "status": "ok_composed"
-  },
-  "戈尔贡贵妇": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7fac789e30a403af5501ba0068e8315e8edd549d@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f952778358767071ba84b50b95901987ef624c9@256.webp?v=2",
-    "out": "images_monster/a2927ff1-ee9a-5cff-837c-8cfcec429f8b.jpg",
-    "status": "ok_composed"
-  },
-  "动物饲养员": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f7abb08d0281f73253a6ad991ab0cee62d1c37e@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/10814d3f839d9352bd22650d2aa46118b534892c@256.webp?v=2",
-    "out": "images_monster/fcd928be-5755-5762-a9d9-4d483e0eecce.jpg",
-    "status": "ok_composed"
-  },
-  "英格恐狼": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fd6a935782dd2f5783a4ca1821d504091e2907dd@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f8c47b50839d67b2e6335be59b478aa85f0b782b@256.webp?v=2",
-    "out": "images_monster/29167e72-2e16-5077-8e2a-7cef6238a9f9.jpg",
-    "status": "ok_composed"
-  },
-  "三明治艺术家": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ab1b90f7ecad6ed4b3cd71d5038717483598d4c2@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d4551c51ced16c5998f1008db868fa4ecae65fa@256.webp?v=2",
-    "out": "images_monster/02bb905b-0df7-5f0c-95b8-b45987179304.jpg",
-    "status": "ok_composed"
-  },
-  "垃圾魔像": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/80c6261f6d1e07d878937a4734fadc3393e0c347@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8694c27204bdac4b6ee32eb6a174a0be3ad06af@256.webp?v=2",
-    "out": "images_monster/2c687f9e-08ab-54a4-a1ab-2de5e57e6eac.jpg",
-    "status": "ok_composed"
-  },
-  "恶蚊": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/05a3169c8dd4c8eadebbd11c828d8f878df05a53@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d2dd8181bc7f9414608378f11b08be6089c8a607@256.webp?v=2",
-    "out": "images_monster/f3deb57d-f00e-5962-98d9-f8745f2e0c17.jpg",
-    "status": "ok_composed"
-  },
-  "基石泣妖": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/346cd612fbec7543ee5d09cc98848a7ac5743895@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c1f45f4cf8bcf27f17473df9ac30af82056495f3@256.webp?v=2",
-    "out": "images_monster/8ffc0f2b-da8a-5f91-87ec-64a73e3a6042.jpg",
-    "status": "ok_composed"
-  },
-  "放贷鲨": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/68fca07e06f25a098de74a55372597d6abf575ab@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/27ab12f0495f881b7e3e8e6fe5a6f4d36d4c87e4@256.webp?v=2",
-    "out": "images_monster/a93745db-b8c3-54c3-b80f-8ee77d3b8a26.jpg",
-    "status": "ok_composed"
-  },
-  "地狱大魔神": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7c0cb89ca0324b104e196d4933b8868ab337884c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ee0ac84d5cb1d67bb969154d70411392b38dab87@256.webp?v=2",
-    "out": "images_monster/7da4fc6c-4969-5082-a011-1028a70fe4f0.jpg",
-    "status": "ok_composed"
-  },
-  "领班": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5265dde5702137430686010d886a621ca43a527a@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5fffc42b99b1a0fc5bb4844f8138b73e31769597@256.webp?v=2",
-    "out": "images_monster/40649500-5263-5a77-b4a6-af52d7050404.jpg",
-    "status": "ok_composed"
-  },
-  "巫妖": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6f1cb096256622225f44564b3af0733afa32e569@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/98c5c18dcdeee500165ecdd8347bc75013d8d9a8@256.webp?v=2",
-    "out": "images_monster/4054878f-9cba-539a-ac47-27cdf06eae7d.jpg",
-    "status": "ok_composed"
-  },
-  "毒蛇暴君": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8d26dc33b3f05d9202da1a7a69e080eb3e6da895@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a7a252167ec63bc3e318b1197e9787ed01a1352@256.webp?v=2",
-    "out": "images_monster/dd68d3f5-858e-5f04-a6ff-f8639ad85a19.jpg",
-    "status": "ok_composed"
-  },
-  "皂沫中士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3fed3ad9a72f78790f993be300df8734d67e3b4b@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3adbfabc7c1dc2d243a9cfed896da9678ee75695@256.webp?v=2",
-    "out": "images_monster/b6fdd63d-42e1-5db4-97e5-8818d34ad749.jpg",
-    "status": "ok_composed"
-  },
-  "幽灵辣椒": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5014ea90b860cc596fd75786b2b7515594c55b33@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47e103b5ed5490f1bd6b4b0201a1e2cc8a78b3d@256.webp?v=2",
-    "out": "images_monster/a93ab259-1c9b-567d-a8f9-12e616945a75.jpg",
-    "status": "ok_composed"
-  },
-  "快乐杰克南瓜": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7e39e1b2ca082e11de05017dfc421b4c26f41a5c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b22f9e9c896aaecd25a120d796c1f0c397fb208f@256.webp?v=2",
-    "out": "images_monster/e9a93130-3b61-50d2-92cd-3209dbfe5922.jpg",
-    "status": "ok_composed"
-  },
-  "载宝海龟": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f36d15fd906301c76b45ed2d7645647420cc5f39@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6d05aef9b2a964d4c332b038cfb5dd3ed8eba4b7@256.webp?v=2",
-    "out": "images_monster/02c07df1-b5c0-5c40-be78-6657755ca995.jpg",
-    "status": "ok_composed"
-  },
-  "寒霜查尔斯": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/13e5218c352d56669f332ab6093e1cb01d4f5a79@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8eac0b71ae126c06e8e19a9bcd6d0e89ba77302f@256.webp?v=2",
-    "out": "images_monster/869e266b-8d11-51cc-ac89-e39f085e40a9.jpg",
-    "status": "ok_composed"
-  },
-  "附属部队士兵": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/84cc300dcc150f3b47d20cb35d5a9c1027a8733f@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2f905b7a561161d30106db003faec527d1521bdf@256.webp?v=2",
-    "out": "images_monster/eaab6674-aad0-530c-a495-b0bb343d8ebe.jpg",
-    "status": "ok_composed"
-  },
-  "暴徒": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e7e88c2fc0846012bfc56eb70d0384d85a50552d@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6788043ead6bf45251b2b89c65381f283f808450@256.webp?v=2",
-    "out": "images_monster/aa2b6e83-a6c8-5fb8-ad16-c1a8587e037a.jpg",
-    "status": "ok_composed"
-  },
-  "辉耀海盗": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a3ffc180bbfd3fda869d7fcc3f6b1821c166afff@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a2a6eb38fb2e66e83aa2ebc8021d6feb7f020a5e@256.webp?v=2",
-    "out": "images_monster/35672643-62c4-57ff-9d26-f864c13c16a5.jpg",
-    "status": "ok_composed"
-  },
-  "云顶军官": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a1ad5af0e3b8b51d4646cb0d1bf7819feb05f2db@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29832cf0b4c92c3117a2af0d807dc540bd94c5d4@256.webp?v=2",
-    "out": "images_monster/771fe0a9-c5e5-5e4c-bec8-8ab4c6cae678.jpg",
-    "status": "ok_composed"
-  },
-  "史都": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9bb269933a6d1ce0ff4746a7583166780f2f761c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/161a60b5798b340a078767d71a7fbdb691547519@256.webp?v=2",
-    "out": "images_monster/851e9340-090e-5ed6-8045-776b96ab961b.jpg",
-    "status": "ok_composed"
-  },
-  "宇宙鹏鸟": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bea9991a971b0003ffeb1ae2710e3cf9004f2614@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0789a148533631e396b515a3439dc60e40c38207@256.webp?v=2",
-    "out": "images_monster/283f1e65-73d1-5f8f-b54a-c29841b3ba60.jpg",
-    "status": "ok_composed"
-  },
-  "地狱飞艇": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30a1d4ecd624915983411df99b6fa0fc0ec35559@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/01c74c82a35e18ebd80ef1252b4c4c1dcd0d76f2@256.webp?v=2",
-    "out": "images_monster/0fb32528-d30c-5b80-ade8-978cf606f195.jpg",
-    "status": "ok_composed"
-  },
-  "流浪暗礁": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/14ad9d5109a872ae3986d9af80dc112792c52c11@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/306279880d487fb961b2d5374cbd2d9a7339a248@256.webp?v=2",
-    "out": "images_monster/50217a34-a30a-5871-8d84-80aa06e1daa9.jpg",
-    "status": "ok_composed"
-  },
-  "防卫机甲": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/678cb60ca008e69241cb81e3cb8ae661dddd2838@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2accec299766e17d63659b58f7d2ede65726053e@256.webp?v=2",
-    "out": "images_monster/6869474f-44cd-562d-b190-bfe550f2b599.jpg",
-    "status": "ok_composed"
-  },
-  "驾驶督导": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2f36b3d05497946cafab5726a96ba4e5bcaa6561@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/60e84d0f3fe06605f7d272a827586c7b9f23f664@256.webp?v=2",
-    "out": "images_monster/ad6cf936-7912-579b-8836-24b24ff24569.jpg",
-    "status": "ok_composed"
-  },
-  "漩涡博士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/685dbc1b9f3c9965835908c68dd95de84a6bdc64@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8503a1da069dc1c707b61e73e34905f66c5342af@256.webp?v=2",
-    "out": "images_monster/0a0df46a-09b4-52ed-a445-a2feefeaa299.jpg",
-    "status": "ok_composed"
-  },
-  "焚毁机器人": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7fa205c32f19c68aeed589becd3efd1a886ef2d6@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e32c291801eadf1abf81d5106dfd06aac63bfb2@256.webp?v=2",
-    "out": "images_monster/7d1e4e09-c5e8-5b21-bc38-a99b02fa4288.jpg",
-    "status": "ok_composed"
-  },
-  "绿洲守护神": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/231b103deffab76e21f97a41698dfca5570cc1dd@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/db2df50c77239af66aa48a4b70e934d1793ad0c8@256.webp?v=2",
-    "out": "images_monster/e10d8d75-6b35-5304-9e79-63c85409cd08.jpg",
-    "status": "ok_composed"
-  },
-  "巨龙": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3d53c22b6bce743c543469c47acfc3dd136fb564@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8110ca0034c33eac07e4a404e2d6cdf1530d605d@256.webp?v=2",
-    "out": "images_monster/076fb3ec-5f89-5a5e-8552-e66c6c5d6aef.jpg",
-    "status": "ok_composed"
-  },
-  "云顶海军上将": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3831ee75070afe0f94b436c986ef08c4904b8960@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f1ab562b5afdad7a73c81a551e989ed232f566a@256.webp?v=2",
-    "out": "images_monster/4a1bad7c-54ef-5837-ae98-cdfd914f84d8.jpg",
-    "status": "ok_composed"
-  },
-  "精英决斗者": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30fbbf59170e684b867528cb8b7a534f46fb4592@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/72b9872f966fafc18c2193f708d8127def5f15be@256.webp?v=2",
-    "out": "images_monster/95022f47-0821-5097-bb6e-931db0300548.jpg",
-    "status": "ok_composed"
-  },
-  "血礁船长": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/517a0ce43d2fe5f0871b2a5a53190929b48ef11d@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8bfd3e4bfa2c633766b268dc7f8a4f6093f84fc@256.webp?v=2",
-    "out": "images_monster/2ef29f88-6742-56c5-bfc9-3b7868797024.jpg",
-    "status": "ok_composed"
-  },
-  "恐惧之形": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f07201da669784f32a38fbff943b9778d800863@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8f6df48bdebd8733429b5e6ea6aef3974cbebac@256.webp?v=2",
-    "out": "images_monster/b0bfa97b-baea-52a8-8314-16e829612c93.jpg",
-    "status": "ok_composed"
-  },
-  "流浪岛屿": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b6c24e48f31ea41b26bdaaccfa2ebbd839ec2fcf@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a864ebabdea492263a363c851070f1b1bb11b1e@256.webp?v=2",
-    "out": "images_monster/71939b79-7966-5542-9ae1-a50fa890d622.jpg",
-    "status": "ok_composed"
-  },
-  "武器平台": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c019c745bda336053d70a76190dc8ce86717efe9@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8605d2f6a43b015e90b75dfdddb52b2d7f0499ae@256.webp?v=2",
-    "out": "images_monster/75ee9b8a-7f7a-5c32-a67e-84ea21e3cf29.jpg",
-    "status": "ok_composed"
-  },
-  "耶丹": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7543353101b183ed038c9d61cee6f01c9a9974db@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c435272eab50324b20d9e530ad68be540a2abda0@256.webp?v=2",
-    "out": "images_monster/bcd167a7-f46b-55ba-94cc-3988732a0394.jpg",
-    "status": "ok_composed"
-  },
-  "菲罗斯汗": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/027d135ee17d93fcce024eadc7f7cbd9ee93d4d7@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/810ca9123ae0679b71c3b5f4c8d664432b1dc2b7@256.webp?v=2",
-    "out": "images_monster/647f22d5-9093-5ab8-ad3f-9dfca8a867d5.jpg",
-    "status": "ok_composed"
-  },
-  "基石亡灵": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5d036ab5ef55c13e33b92ce3257abbad376152d7@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6417c47a3e42361b3982321c8d1f947f4e2067cb@256.webp?v=2",
-    "out": "images_monster/06a17a0f-6955-5498-a5cf-714010265db7.jpg",
-    "status": "ok_composed"
-  },
-  "虚空骑士": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1179afe622b9d1304f21038ca7fc2b5554eb9f9a@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a6378705c899f4c14e67d837f1205a5803437721@256.webp?v=2",
-    "out": "images_monster/eeee4fdc-6825-5fd3-9655-acc45e6ecdcb.jpg",
-    "status": "ok_composed"
-  },
-  "哈洛大哥": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6704e970f0829537fd3d685f63196eba8360c2b1@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f2f1fbf1f10f6361cf1203bb09b71c09f0c85e49@256.webp?v=2",
-    "out": "images_monster/5b8c94e3-dd66-5793-96ec-ebb44c02cf78.jpg",
-    "status": "ok_composed"
-  },
-  "庞大实验体": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/763ca28a1d55f608759059a272248e38d98d9e90@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e11a2ca0a1619107f8a01964fba751b07d9d14ff@256.webp?v=2",
-    "out": "images_monster/415f4298-7af2-50d2-bc45-b058e2e94e8e.jpg",
-    "status": "ok_composed"
-  },
-  "炼金大师": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5eb3d0fbdb0c1c5dc8a5582a736b74596c9913fb@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/acfc22b7ea602ecc92553c86508c2a55b066b52f@256.webp?v=2",
-    "out": "images_monster/26303c32-5bd6-5ff2-a345-7915995f08e6.jpg",
-    "status": "ok_composed"
-  },
-  "地狱空艇": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7a385394902ff711ebc64c7df493e9fdba35e616@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/850276bbb711c13d29e00f3ad5ee15a423485317@256.webp?v=2",
-    "out": "images_monster/55c11d46-218d-54b6-a2b7-245765f512dd.jpg",
-    "status": "ok_composed"
-  },
-  "垃圾泰坦": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/31b61d52ed6d17a4977715e9a539d24e254ba99c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54c31435e8aeec420a23f6228f134054336bec09@256.webp?v=2",
-    "out": "images_monster/4ec09778-101c-5a62-a87e-e3305e197a2f.jpg",
-    "status": "ok_composed"
-  },
-  "废土领主": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/39287290a855710f77e59e5315b68dcf0083140c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a00dbe31598ca9fdba1b195f7ee02fce7885904@256.webp?v=2",
-    "out": "images_monster/837936d7-1120-51dc-847c-ffb8dae88e7e.jpg",
-    "status": "ok_composed"
-  },
-  "巨龟托图加": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3b3a2a614df0c7d53929bce5dbb8f532035e78aa@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f0c12546361122b9928835993adb596f1aa3b12@256.webp?v=2",
-    "out": "images_monster/24c6d3dc-8fbc-5db7-ac16-c1384aec5915.jpg",
-    "status": "ok_composed"
-  },
-  "测试对象阿尔法": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0fc90a0a0dd71181a1644c9650e5eca36f2377f8@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/360aa1c4ceb4df7290ca970c6593e7764cc3b4ad@256.webp?v=2",
-    "out": "images_monster/1bbf3d9c-6686-5c53-8850-2738677cbae6.jpg",
-    "status": "ok_composed"
-  },
-  "机甲暴龙": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8db87602b0402386ac745e6dfdd9687e6568872b@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bf45f46dc13b2202da585459b99083778f1cec66@256.webp?v=2",
-    "out": "images_monster/16f566d0-5bd6-5258-988b-8e87b7e71d42.jpg",
-    "status": "ok_composed"
-  },
-  "杜利机甲": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/434279c462f2ecb4c9b62dba4e7704cab8920bdf@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a582ba3f8dc63e82b902d0c83e210b4229d2d4c@256.webp?v=2",
-    "out": "images_monster/2bb9e695-74b1-521b-bc73-e322e41cfd6a.jpg",
-    "status": "ok_composed"
-  },
-  "沃卡斯打手": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/de95b2b3c0f0c7559eeeeb54a5f9607c0cc595c1@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b32b58f2a50dda2397aa6d8acd8da8e46d0284d0@256.webp?v=2",
-    "out": "images_monster/f0788237-1d2b-566d-9dfc-ff1152883c79.jpg",
-    "status": "ok_composed"
-  },
-  "觉醒元初体": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/956d4a09033a72cc4352e7401119b9c2bcbd3e44@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0277de2dded43aea83df3b02dd7e728490c54713@256.webp?v=2",
-    "out": "images_monster/8de5e112-32ff-5b46-b880-9a79c8aea6cd.jpg",
-    "status": "ok_composed"
-  },
-  "吉布斯": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8688ac2896df720317221b10284f47a993c40328@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a21e8822489678c8696d4331e7fe9a5143f1159@256.webp?v=2",
-    "out": "images_monster/ba49b850-478e-52a3-95fe-57d080f412ec.jpg",
-    "status": "ok_composed"
-  },
-  "地产大亨": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/205b9979f2d49f0bc15e240e04f25331ed110418@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f45beaf4a82327dcd092fcef474be13e17fd5d0c@256.webp?v=2",
-    "out": "images_monster/834f4c7b-fc25-5f50-a3bb-0918a95e9c34.jpg",
-    "status": "ok_composed"
-  },
-  "阿肯大人": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5a172f8f910df76ccc363b612c0c5ce402182c67@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/51e7a82920274bf709e0cf79c0a4359d25c1a132@256.webp?v=2",
-    "out": "images_monster/66d63581-63bc-5cf5-bca0-9b81ae686837.jpg",
-    "status": "ok_composed"
-  },
-  "虚空巨像": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fcfa46f3c2a1b4573318585dadf587c52640515c@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d891e5ba1dc65f2880e2e2a6ac5a038be7ce42a@256.webp?v=2",
-    "out": "images_monster/1563c571-8a36-505e-913c-c249c0bcb871.jpg",
-    "status": "ok_composed"
-  },
-  "霜猴霸王": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/16c4053dd9793bd0f586f7c8dc43ae440fc7ff68@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/03152a397f530e5613da32810fb3dd6c4534acba@256.webp?v=2",
-    "out": "images_monster/5555add2-ec44-53c2-92d9-f46e25338067.jpg",
-    "status": "ok_composed"
-  },
-  "八臂达维": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/93c303075932e7a19b3407ea54eda2b90d29149e@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c77313632296160587acaeeb70a7bd31f5e283be@256.webp?v=2",
-    "out": "images_monster/5f80cd1e-7c16-5b58-a7f5-bed03a4d14ac.jpg",
-    "status": "ok_composed"
-  },
-  "觉醒街区": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b246e4a308bad81c46135257b5fd8567fef71a43@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/92bd5cb9b50819dd5556565f445bf774b448da8f@256.webp?v=2",
-    "out": "images_monster/e472b53d-d188-5cfb-b2a5-8477b461da08.jpg",
-    "status": "ok_composed"
-  },
-  "魔古洛斯": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/83e3993294f1b3746795fbb87137e4f9a3bb0933@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ab0efbf57f644b32dbc6381c4ba725637ca7e4c1@256.webp?v=2",
-    "out": "images_monster/703f153f-7b5b-558e-9126-5c4802e42ed7.jpg",
-    "status": "ok_composed"
-  },
-  "虚空魔像": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/03f86a44c672a82825e7573ec63c65e406fa6ea8@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b87b6ad225a9c318696eae1641a85b35baec335@256.webp?v=2",
-    "out": "images_monster/ac0f987f-ded7-5b6f-a40e-83449fd9761a.jpg",
-    "status": "ok_composed"
-  },
-  "吹箭枪陷阱": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/82d24de3f6e46af83673a7ba4207b369af473829@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b36f9a99bec75197849619eab0bb384966cf31c7@256.webp?v=2",
-    "out": "images_monster/862635c0-dd5f-55e4-a8b7-80dcf872ff15.jpg",
-    "status": "ok_composed"
-  },
-  "神话典守": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a91b8fab999f5fe0abd39df3a42a408f5d2be7bc@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f1f6a32aef1568af4a62ed43611ae8bd6b81dabf@256.webp?v=2",
-    "out": "images_monster/481c64d9-2f9d-5c5c-a4d7-2522cc4745d1.jpg",
-    "status": "ok_composed"
-  },
-  "拟形怪": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/007ec1b26f6081aa7fc2c5c8e6bd30c89fff3ccb@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3c629fecb51a5557c9dc990254be3e2fa36b0d30@256.webp?v=2",
-    "out": "images_monster/ff3be542-f578-555c-b0f7-d44f667e3ccd.jpg",
-    "status": "ok_composed"
-  },
-  "碧心守护神": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b65eec425ff2cfe2fa81263e42822dfb18edd686@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ef4a350a8a015b26edc114b213a1105d0c2a7366@256.webp?v=2",
-    "out": "images_monster/bd6550c5-d502-5c23-a6f9-3c497b9fdb42.jpg",
-    "status": "ok_composed"
-  },
-  "铁蒺藜陷阱": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c4e12383633236b7749e555a5c5eedeff8b5afcc@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b40599390313e0ce6aaef19f5f99480c5df0e97@256.webp?v=2",
-    "out": "images_monster/02f9ec9d-aebb-5105-9de7-3f19227bccae.jpg",
-    "status": "ok_composed"
-  },
-  "柯玛兹": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/de08ce8432424c64ba54b7a03cce118690ad997a@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/502394921888cbef18187a34e5012db83f34fb2a@256.webp?v=2",
-    "out": "images_monster/d19d600a-62aa-5eec-9f11-0b5efa252b6e.jpg",
-    "status": "ok_composed"
-  },
-  "滚石陷阱": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/61aa697102523dc79a300d76d881ad82f0cd5ef5@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2de20a13eaa39b4a71d50f554145e8854f7f0470@256.webp?v=2",
-    "out": "images_monster/b836a0c0-acc8-5640-af95-490d3354a41e.jpg",
-    "status": "ok_composed"
-  },
-  "赏金猎人": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8df1bfa73e7597559f13102a722ae3168c7391b@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/862ca906b7486f4a919dc1a22e1ced0aaf1525d7@256.webp?v=2",
-    "out": "images_monster/a5daeedd-4b85-597f-9035-66ea6fad72a3.jpg",
-    "status": "ok_composed"
-  },
-  "阿莱帕·坦提乌斯": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a2d4c9037be058fd250302c9276a8c79678ff755@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e9653c3df757c5459e18fb126f08d20312892d6c@256.webp?v=2",
-    "out": "images_monster/4f682021-489e-5791-8f78-4e43bc87f068.jpg",
-    "status": "ok_composed"
-  },
-  "黑牛先生": {
-    "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/327a4807b02b65c8ee2b99f21d65e96285cd737f@256.webp?v=2",
-    "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7403205a0ac8974fa078e38ae8dcb8625dcda27f@256.webp?v=2",
-    "out": "images_monster/d4c24623-1fb9-5f67-9ea4-f41c6b9567b9.jpg",
-    "status": "ok_composed"
+  "Banannibal": {
+    "background": "images_monster_bg\\Banannibal_bg.webp",
+    "character": "images_monster_char\\Banannibal_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSGQAAAABPwAUiD91K4eISMFBJMlWM4uC2WCAh4L8oyBG8O+Ch4eI/k/ArcvYO7IdC2Y3999WjkX/z/WeMYIFV7AABshpO02dZCJTXcRabEABbFsoGC4NicET0FkQWwNYkiZoIw3z9HofVlA4INgAAADwBQCdASoUABQAPl0sk0gDAYCAAMC4jmALEfNDaGgFo5v0DLAN5pAVhN11ERN/GiI5waW4+ou5AAD+7WmMDYi3WVPwdn11xEsPPOh0setZNzM4jYEP0vRosYr78Wb/Ps5Tp10djx7FTrx9oLuGxT/7O7/6vqQHsFw9NHK1j5/Mdj+DD0h60qn5Ir2T0YDWQ1JmJN3ZhSPRqQxlGM8x9elXJcw5D0D6KKq7i/fb1EdiSjrD158q783eZ+AuwBT2hMIafiwJHG01UBW2ikpi9GMTHrXPXwAAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fce8c94be1d65098b8e8714ae9ab690184daae73@256.webp?v=2"
+  },
+  "Fanged Inglet": {
+    "background": "images_monster_bg\\Fanged_Inglet_bg.webp",
+    "character": "images_monster_char\\Fanged_Inglet_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDMAAAABD9D/iAiwiiTZSb9EThKQgASkIIPPZABJyIzof9AAm3AlX4Slgf2A9oTwh4C3sQDWqwcAVlA4IBgBAACwBgCdASoUABQAPl0slEiCgIAAwLiOYAnTKDxzXDe0RlNsBz4HoA3kABLranZrX4aH6cV1/L9xoBdl3PMMAAD+7m4g6Oe3z6GIKHzz1NEXdIu3YljTnlu6CfOgESrRzlSVjY6HLdnnkbAimyfRmNeDhjzrwR7/XpXdD3puUML0Yjngt9PXzX/4L/i5yS0PN81GORf6v2ibtz92VX6sL3iXrfpUuMWSd2RvYfb4Fzzx1EjZuiyiecG7ZHfCe/w97Q6CV9bJpvs4YVmnZx+rr9/vx/PfCn3T/DsLxYcq+US2MTQCzjKWWP+ygmJm6uCk1SGBYnddbsu0PUXmAg4q8N/l2BWW9cyHWEkh0NXUBjh/tdiMqBZ8AAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a635a2b649cb1800f3c62ca47e6d010c1ba8d30a@256.webp?v=2"
+  },
+  "Kyver Drone": {
+    "background": "images_monster_bg\\Kyver_Drone_bg.webp",
+    "character": "images_monster_char\\Kyver_Drone_char.webp",
+    "background_url": "data:image/webp;base64,UklGRj4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC0AAAABD9D/iAgwiiRJSu6+bg/XHw0EMlBD4B00RPQ//aZLuHlskdjfhHP4HCQEwEoAVlA4IOoAAACQBQCdASoUABQAPl0slEiCgIAAwLiOQAnTLs9VBgG8uAMYsRpjwoSg+CYk7dqXPX1+b+eOgAD+/RhlEFNnjfb+em3aCsxQwfxrJS/idS7/DyEAaV97tNnwHZIP8FW6DHzHxr/Xl16QYdbmfBDNZT8/Kl3AYLvk4AC2fDLTkFEDjrLe0bIlF8mkpMvNGfWPLaouT4Ssb6eokGXy4r6RzJW22X0jN/pI7t/8HF1MEfCx/f3A0k1Q/+L6M6/4IwJptvCT2a+BEOvIPySXgNqQKXAczyA5yC4snQTSxZdc3I0uXYrtJeQ47pPBAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ecb54ad632226d4393ffa3085b9e88a697902cfe@256.webp?v=2"
+  },
+  "Pyro": {
+    "background": "images_monster_bg\\Pyro_bg.webp",
+    "character": "images_monster_char\\Pyro_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC8AAAABD9D/iAiwiSTZSr8vCyqwRYaUFxGiBxnIi+h/UAHaKn5ECQi4QDjcfI+8O9ZZAQBWUDgg+gAAALAGAJ0BKhQAFAA+XSyTSIKAqoDAuI6gCxHzQ+N6rbhnANsBz6umO7ygAxkxJf+I8lKyxpCWSKbz6WKY+QqAAP7+oGcjBgXOkuGe0lQbyGU1Z1PGYMiWSVmX5Xf60QGNwi62NqiVKqN7FWSapSjRBoEeIy5KT3drwRBMhzDvnSzFntBbdNgD0q7H3zP/XatHX/XJ5NJnsXvtzuYO6Rq2EDuYAk3GJqjvWXwqnlfhUjaG9lUB9tDNDxxXSCBvESLn8St5Da6LcyVByo28u/TiYPsB+9+M/xbeD9v7+z5c639aVVwf8nzGW2LpW/2Qa4BACbcgHiY8H9AAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f8685bd8ee4db9767ce1f25d2dc39659a2952b0@256.webp?v=2"
+  },
+  "Haunted Kimono": {
+    "background": "images_monster_bg\\Haunted_Kimono_bg.webp",
+    "character": "images_monster_char\\Haunted_Kimono_char.webp",
+    "background_url": "data:image/webp;base64,UklGRoQBAABXRUJQVlA4IHgBAACQCACdASoUABQAPl0sk0iCgKqAwLiOwAnTM0P4CCt8jH2tL6ltsBuFN459ADpLG+A1dPO99H7/QN+Ani30E0d+51InDVbOpqgJTGWPcAD+/k+3Xla1W3q2etpbBkWn1sOrPMeYXMSb5w0xmIXWKfo/80DoK1nr5yWZWGPqLrX45dmAKKJhziv3maV/2qqb4WLbrijYXiliIvuvzGw+e50ZVzdFC7T4+VCpmJCA3mAVxUJlt7frx4bMa9/GEw7h0MHdqMsPXrTZ8bv/qkzaHvznjtoT+f+JZFb+1mHjfZXiEsZ0eZ/f2vd/xpDbQIMBn+P+WvTx1/Iwizl3HHopB7GIjDyGZEAUAlFCB7V9eBr4CbOEQKLKav9lL87vCRNb5s7nUuj3stDuT6/WY3NFYfs8KvgbXG+9fGpaUPHKvR+IP9vZraGxFYQf6f0YBZiPaJo1D05bRxa7pPtEl24z/nkTTBg4GdmpFml2AkmwwIIWfUHBuJmYd2AA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/421f53fe2a324af4e4229f768bad5174b42565ec@256.webp?v=2"
+  },
+  "Viper": {
+    "background": "images_monster_bg\\Viper_bg.webp",
+    "character": "images_monster_char\\Viper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRuQAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSB4AAAABD9D/iAgYiCRjXwEVRBFNfBEi+p81AAAFjgUtiBdWUDggoAAAAJAEAJ0BKhQAFAA+XSqUSIKAqoDAuIwBajbLX4wC3ZqDrp6Z8MurXpFVKRgjIAD+fkFGGtJsgTaNLMgAzynw2cwX4ainNIRjLwkOuPrV68GXQlSM5cv1pShGLB3wStCRuCHXoQ1/12F4Jyy7ASbi+1hRMQKxBec2fUJ5alGyTrs3d/Lv/yjZuyRU7isMdR5rCECAqRJ8D+vW4wqN7WAAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9eeab869a8051cde954054b87a00c0bf269e397d@256.webp?v=2"
+  },
+  "Coconut Crab": {
+    "background": "images_monster_bg\\Coconut_Crab_bg.webp",
+    "character": "images_monster_char\\Coconut_Crab_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCAAAAABD9D/iAioaRtJsqbaciAsf5z3UIjof8Y7PuOuOLbOAlZQOCAiAQAA8AYAnQEqFAAUAD5dKJJHg39VgADAuI5gCdMoR+MKtsJABbgPPA6mDeQSI+C/h3fSsFaNzkYxuVZLSkxFjN19oAD++W6LvPbK3KawIAM1IJBQxDHhvdzc2rVij385+gADAb8axnMVOPxvlqgTVrpSQf8uaZKAzGXuQNXfe3Rl5cPM4vmt+s25vHaLJm3HBXtuPLR+S2eP14D/X/iTr7Q+XxJzD7aaeXuUTU18PwJsiYzAZPNFKU0ws47x3IMjcJdmWH2b99oVrUiuz8BBPfVSnexnupVvn+DXXdok5fob4OFl9BO8SqB7e834rYBAQKHkMpIsFwcR3fX3k+28sm+t398GQDg1wXOxyuWcnaphjb/XWq7y337x9KdZ+LWwjZAAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3aaa59be528e39b66465ba0014161b30fbb763d9@256.webp?v=2"
+  },
+  "Rogue Scrapper": {
+    "background": "images_monster_bg\\Rogue_Scrapper_bg.webp",
+    "character": "images_monster_char\\Rogue_Scrapper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRggBAABXRUJQVlA4IPwAAACwBQCdASoUABQAPl0qk0gDAYCAAMC4jAE6ZQZmoiS2qrJcAWlo+2Nt6ziLzyxwBwDVR6lg+QAA/pwwZHL11kPFsyAf7cDy/vU8U8o8SC2JkDrvl2lGUQeA6RYEEbDM0xBzinruPQZ7X7kjM/BEjX9esaJp79SlRwCItMEvd4tYmdIpUiqdVAjIPqW0UXeEL6ySJ1IePcM65B3O5Nkh6SD7Nvinj8BtPAsZ6Y2OxATfu8XqqW778CKTL+9bcvQRMahGxZynWqw+ZOlGd60xdTX9zKPwvuMzZzfUgPJo1fs8/8dZm2OPeF3+BA0Vx0a89TjKI9MiADuqde4AAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cccf18eb23c69165b12cb410d8a7d2da7976b8c4@256.webp?v=2"
+  },
+  "Boarrior": {
+    "background": "images_monster_bg\\Boarrior_bg.webp",
+    "character": "images_monster_char\\Boarrior_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpABAABXRUJQVlA4IIQBAADwBgCdASoUABQAPl0sk0iCgKqAwLiOwAnTKEdXem01L1IPQA8sb2OiIKCflahfZ8qP8cwOZ4Y1NlqPlhLz9ulAAP73bzOeYrqIi8pr0xEXzTLT7XM+30bcuwW9v7p5+NTLGKXbzu3u03ObKEzG+xb39ISVj39n+JzBcNF4IrNalmJO5SsxtKcM/MY8osv3BqXsMHS3YiSCw69BGfP+vtfE4PLkxfAyTdSCbxhrViXF4of4B/22P63hGwnVxzLXMS2f/CnX/VeKLlGKjj8Js5NnwoaN/+EvPz/wlKnn1D5SLlJkDIMxbOblMKT0wG1Kxhfh4fXKY9zNoGz59Pv0/BDcpntKrzOHe+MDT/WpwY69dxdCuxZ8uF2lS/5S0fyGc/TFmz6/F9gXBkplqnSnTkx85I+aD8FVSt8/PaFj+/vQq2s6hhNRerJFpxKM0GA9WMrH+ToaYln/rkeXHFAaHWvDLwUAeTwmDSKeXH6YOQMhm1/a177CerB08QhMrbHio8ozlAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fc6a092a78e79d87661cf90d2e4758e505d3abb3@256.webp?v=2"
+  },
+  "Covetous Thief": {
+    "background": "images_monster_bg\\Covetous_Thief_bg.webp",
+    "character": "images_monster_char\\Covetous_Thief_char.webp",
+    "background_url": "data:image/webp;base64,UklGRh4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCIAAAABD9D/iAgghGxFOxGEEE4YoQR8HM0hRPQ/3ennhaXDVTAFVlA4INYAAADwBACdASoUABQAPl0okkeDf1WAAMC4jAFSRwDZVWTEAtLKgWldY/MwHafmyns0exIA/v1PZ45SLkA38kwT50On76nnBLIuw2kOSiy/vzrdkzASZ3ti+zz0LWzQXnaGuuhqf2Ypjuhhv1FrX3aXYDT8RRCVecNj9OidtLs/v40TUd0SS+TO08Zm4BSnZY7wxZnVbwBdfAFBAzi2c4HoKLT6f5Kl9rD72JQLrrX+WPoHIuw/yhxTFoctr77JWGJHygFZECh/kLoJs/+RoBUj4bpUDRhNEAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8b1f1a99992c9eac1f76006f7dfdc3ed25ac08b@256.webp?v=2"
+  },
+  "Eccentric Etherwright": {
+    "background": "images_monster_bg\\Eccentric_Etherwright_bg.webp",
+    "character": "images_monster_char\\Eccentric_Etherwright_char.webp",
+    "background_url": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCsAAAABD9D/iAiwiiQrTnN+g4MnBHJpi9hIiYSI/qer6DzJJy0KYJL8CAYjCfECAFZQOCBeAAAA8AMAnQEqFAAUAD5dLJNIqoUBVSuBcRgCxH1XBe+CNdiFsbxOiQozwAD51ijb7jP3gzkXB1QYL/q73s0jGbJSxYGezdQI6GQ6v+qmd1qRRzAe0Z6EB3dB7QGir/gAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e6806cf540b83658fd1dffda15efdcae002ea99e@256.webp?v=2"
+  },
+  "Ventriloquist": {
+    "background": "images_monster_bg\\Ventriloquist_bg.webp",
+    "character": "images_monster_char\\Ventriloquist_char.webp",
+    "background_url": "data:image/webp;base64,UklGRm4BAABXRUJQVlA4IGIBAADwBgCdASoUABQAPl0sk0iCgKqAwLiOgAsR8cgrEILsr9ADywvYyK8D2uPdAwlHBFTW+0Nfofd+ikkFh9waV7AAAP7tKdVsftEBt9N0zjy3G4W48eoti655IssJBloG0/jMMrtzTiNb+P4eXX3F/qt5zBf7ygnx+/hFTnq4jFg75pwvdZoOJsSHdkvrNObfV5hiS/OzV3h1KmVYeDVq3B698Y4tb/9zf/GYUTvrHGcBWA8uuiVo7hTtzR/d26Amy01643kzxM/PjFv1M8r/IjAWb/+wxxG4w23SJvw4vh1udWrEhz84D5hSz6MMpg45kfUfg27lrY+fPKNFrAsEtxyW37mNNBve6awSxNVFLSy6WvfOJ8HwMf0eaeGb6TOBrlH1nWuurfvdZa6w7k8NagKQ0uaMof0zfdHw+gluP+9m0H8/m0KtWF7UOoydzf05/BeFm1GgCGpuluNbE68QdeIAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1661200c08e681c08bcc66c67a26f7a0abb78ca6@256.webp?v=2"
+  },
+  "Dabbling Apprentice": {
+    "background": "images_monster_bg\\Dabbling_Apprentice_bg.webp",
+    "character": "images_monster_char\\Dabbling_Apprentice_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSB0AAAABD9D/iAiYadvG2lUYhTr00yBE9D+zXqEMQAlYNwBWUDgg9AAAAJAGAJ0BKhQAFAA+WSiRR4N/qoAAwLCOIAnTKC1d6lfqAtwG8KbycRIImxhDUbNZvLw6oLkms1njP7XLKTgA/vXe/g6tNR+olvVjY5VVpsZbNzubv6oGhEWOjsTX+PxoIaq5lP3pydTbnDjtzbdTiqL+iUASiESNlC992ZftbPjoiXNoNwVFYTYTzT4Goz2edR3hVjDBh+OLg45xIwSrC75JZdsesprOCK3CxSPZNVc3GNWd+mG03pl6+3CHoc21fhubmvwWVlAKzSARC7TH9nRuK7w3qlvt4rkx2chPPgMMSCVLO99O3ry4tNIs2cc/mzJpvAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29d374ede44b9726364f6049469d0a968ec51b35@256.webp?v=2"
+  },
+  "Tempest Bravo": {
+    "background": "images_monster_bg\\Tempest_Bravo_bg.webp",
+    "character": "images_monster_char\\Tempest_Bravo_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDMAAAABD9D/iAiwimy7ySahdwl8o6L7QgpusBFZEf2PQAQLS2NgADTNFvHkZievPs37V42GBgAAVlA4IKgAAACwBACdASoUABQAPl0slEiCgIAAwLiOIAsR9aQpgU5FTnRuRFPmoKQ+Gj35AilAAP796oyRpmTSlVKO82b+lczIldTnzHuGFEdnSUIZ7CpfHXSuN8uiH1s7Qt69E+dZF/UdhBPWF4FT9Zish/fm+3iTQ/7D6S7ClVAjrmUu5kbtZ39LOkV2Zg/iOsGBygMohnpz0cXs53GI2GZ1YpyCh520CO1N0UcAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1ee967bc7f5ec18f9cee165c7e9819249fdcfcd3@256.webp?v=2"
+  },
+  "Frost Street Challenger": {
+    "background": "images_monster_bg\\Frost_Street_Challenger_bg.webp",
+    "character": "images_monster_char\\Frost_Street_Challenger_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCYAAAABD9D/iAgwiiRJSs6+7sshYhCARNQQSIjof/oMCBcv3JFgZP+eA1ZQOCDmAAAAEAUAnQEqFAAUAD5dKpNIgoCqgMC4jmAJ0gcYnHZMoCyIMrmtlqs7ZhSNDLqEvfF6AAD+vo6RhIQROY/AQNV8PkHSEPSYUs7ILbd2ebQhR2eWLOr23Jdx9WkDPI4f1peLrrAhTNGM5L/xzTNfsfs73A3/xC78qUl2LjsyjPs0X4hpKqj/0igfN/BVCqvVURBCYebgVbbeOUZ23D0KslEPWx7R/ZJnol4GEZNVYLwL0H8onMXX98uHdJD8W/CimUTUUTFn1k9BQ84B2ACtXfm0gnVgyuTyhmF1bXVAmL9mqWnEWuaXAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/704641f52cb4d6c75086ff0454dfe9b088df7228@256.webp?v=2"
+  },
+  "Product Demonstrator": {
+    "background": "images_monster_bg\\Product_Demonstrator_bg.webp",
+    "character": "images_monster_char\\Product_Demonstrator_char.webp",
+    "background_url": "data:image/webp;base64,UklGRp4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSEMAAAABF9D/iAg4aiNJkqIvBgMoamb3f+YyG8RNIqL/kSR3Ax7bhvhO/fwJNUEPXNWAyhNtgNXABlhtA7YFrwbaYG78J7kBAFZQOCA0AQAAEAgAnQEqFAAUAD5dLJNIgoCqgMC4jsAJ0zNDA3qv4QcIEYA4pXTAPQA8sL2PPKZMAEzwFi276Y0BVaeBbIctKF94x9KxS/58AAD+6vJeUNPC6nYTPvgZuENeZSiHjZeSYRLuyC+xCGwOzIqZq1nZ3es73yIA0zNRP5cOIFBLGQ+P4yMVHsvtV32dy9dN5n8Zia7pEXKl/+iMxaOCDBe/AQqnuIcf9P+dYBc4uNtr5o+4Zv/4hF3bJqk4LVezsR/Nz/xpC8ysR1jLRb+XMI4YektStHfM3VqCOrWFVrYrCk86EQPZuHj72TB0mUulB3ZAX6FxwsbcnGbHE3Vf/oExwBQJMFTz+C1ok27d4m35nf8HNA7cHsEPgvoxLPa0dfl/5AOQH1evRJ58lDbhxSlv4FCAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/50120d28f59e64e3507134a6a3a969799a93a82d@256.webp?v=2"
+  },
+  "Street Gamer": {
+    "background": "images_monster_bg\\Street_Gamer_bg.webp",
+    "character": "images_monster_char\\Street_Gamer_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC4AAAABD9D/iAiwiiTZSb9A+nsW0IGZJ4XkO4OGiP7nMYFeJHjHCPaaMBZzDYqfXgADVlA4IBIBAACwBgCdASoUABQAPl0slEiCgIAAwLiOgAnTM0O0EHbsl3jryjiaICfuOO2d7Ds/cFXDAuqMRorjvlyVNMlCYAD6NuJovCZ/xgNxxx2dTpYnPKn4/p17laCoyGq75t49pdRLWhKZOFWsxiTcBaJGiust8LW4wZHeSJXpVZURw3rbtBAgI699v/47MktVcBZyv9bJLtXj9XjIWsMI2dHyPnNGf/IroIbp9pMFqff4NPWPqMUnilJ96ph1QB1ofEbsJlnNKvLmwH/zvs9Beb1MX/4HX8DY3pKWNjwK1/vSR5BVjlngCtJjvYzfluyty3zAdf/+9mtqFgjpuZulCiVfIF5e4wdEMr21IYDW4d7XAJRJAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/af42735bc6abb615f7a49363fd460af4562cdb70@256.webp?v=2"
+  },
+  "Giant Mosquito": {
+    "background": "images_monster_bg\\Giant_Mosquito_bg.webp",
+    "character": "images_monster_char\\Giant_Mosquito_char.webp",
+    "background_url": "data:image/webp;base64,UklGRh4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSB8AAAABD9D/iAgoZCRJqqzBGizqwO89CBH9T3t8BZoijrgUAFZQOCDYAAAA0AQAnQEqFAAUAD5dLJNIgoCqgMC4jAE6ZaHLchh5n+yg7kjQsOGKdbURj5wAXOAA/ujSahUetLKnxvWv5vK6OpsSRxR8UZaH4RmGdt/2uTpnYtnocIm/Y9RvfoD7JJKlQxGmtvnQR362/qpDplywIcBkImpzhKK+R03O9U3+nH3K5U94hsL9X/dwp4l6pdBG8FI3vDEiJ5cAYAgFLOl3v/UR/fc+1ZAGm/CpoAGeBpvwOBK5gJiVS9RQRgVh1BhEvjLjMpMchcckUIvYM9zEmDf8fstPAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b9cb066014969aec16b4967a0cb419dea60febe8@256.webp?v=2"
+  },
+  "Hoverbike Hooligan": {
+    "background": "images_monster_bg\\Hoverbike_Hooligan_bg.webp",
+    "character": "images_monster_char\\Hoverbike_Hooligan_char.webp",
+    "background_url": "data:image/webp;base64,UklGRloBAABXRUJQVlA4IE4BAADQBgCdASoUABQAPl0sk0iCgKqAwLiOoAnTM0OZi2CT8FN9bHTAN5OIhoMvBq57ciHY0VdkCHNBWxk5yc8ZgkAA9plje0En9ssrnid7oEZaLwrR4JWxwdzTNi7PY0rnnl1//WuvKBT1BjWe1+aaWipggUmxqk6THoq1iXyZPNgVIaTaKLpBGy4fbyHBamBOlfNxWCVmtvTD9mRYaBA7bUo0KpoIcnnm4B7Tsn/+QZAK/DCeOml+vrrrKsvH+wVuJCN4rlG8dv2qFhMlA1itwH5/4+43mixDLiYilZBqsWHMuQPmuSyrCFuZEayyzJZogxyzzu7mRNThr7HOqRKAS+NYEZu8gtm2Eo8Y7jNwvfGI6mXPtH3Qs/pBvLAA4wZGiFdo0IIhkHeYmHT87fNHswZhc+1JEjuM3qvJE9pILiTalYAgfgttLKoMWQ8gAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/53c3255c4f9df7429a5c604bc440bd20cebc51d3@256.webp?v=2"
+  },
+  "Mutant Baker": {
+    "background": "images_monster_bg\\Mutant_Baker_bg.webp",
+    "character": "images_monster_char\\Mutant_Baker_char.webp",
+    "background_url": "data:image/webp;base64,UklGRj4BAABXRUJQVlA4IDIBAACwBgCdASoUABQAPl0slEiCgIAAwLiOgAnTKEfJWgJYA3ixEAKcEMe8ahB4U3AJIXkHbdh9qxLvEuXu5AJ9KAD+/VbGKvjaQ+63eVvHIU9W4xMsN5uGDgNtP/SObrbgcn4g1F/ZlIWkjwSb/uVwrDZlBTyjvXfjPnkfleyx4CU9kx5+WwnytR35uLlz7xze1ic+j3cTIuuMWqJJmfiAM+vkpF6iifBRIdveg4Wg4I6GTGeuXIpii9112ZREiAmoEWy+o4CEOPXY39zAfw//heGKdLuaJRax9PbiehgVhxR1WZfj+7P321ZrI2gGCVcPa6U9Fq13zttqJfelRI/iZezCA5X17f7BlKW0JN31D38BOfH41OaCz9gkB5cN8JAk1g53s/duGbiyFKRoMD5BiCPBAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c3c3613e09550a3ee1eb96a02029da693d752124@256.webp?v=2"
+  },
+  "Boilerroom Brawler": {
+    "background": "images_monster_bg\\Boilerroom_Brawler_bg.webp",
+    "character": "images_monster_char\\Boilerroom_Brawler_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCUAAAABJ9D/iAioiSSFeSSAgqQAC/i3lSrqiP5PgHCbhFZv8AA6CW8LAFZQOCAqAQAAUAYAnQEqFAAUAD5dLJRIgoCAAMC4jkAJ0yhHmPGbnIaDbI3aBvKpEeBSpH5eb5M77JPszLiGVc49yAAA/vK+BzeWsvflxvnVCZ6CkwIXPt8QWTbT73eCWndSqTZXxfg4xrrj4pucUf3jhaDo31Au/nTfXkZIw+ttWIFCBvap9rblHoBpIgpsuwtK0WpY8uwo+S3St/9A+m5Tb87msCmMjX5INwamabpACn27Gp/2f3soz4ehrzUWwFcEf2AlDEDQ9fukimNzHr1otwdZnTRh62ZECF3/qlrtiBL75EW8fyGv7BwjZi9Dk+tNSasQjzc20FkLgTfEsQFf4fjDylFaYbVqVTmGbVAGDtE/yIYh1MIarlEiLi5hBWGsl1LaDIBx9/ajwTRxyvAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6facd66f258a1fc841db89914022cb6a1bebe3a3@256.webp?v=2"
+  },
+  "Outlands Dervish": {
+    "background": "images_monster_bg\\Outlands_Dervish_bg.webp",
+    "character": "images_monster_char\\Outlands_Dervish_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCoAAAABD9D/iAgwim27yUlWVUSWBUQwKIt3ioaI/qe/6OL2nDAa9B1gB0iQfABWUDggBgEAANAFAJ0BKhQAFAA+XSyUSIKAgADAuI7ACdMuN/baY22d2NbxP+0npAANsfkGlLag1zZEyaJhqAAAyhc6TXG5a0lswzwEs5SxlUByFXSudveoBwVU143+v19yVc2qwQSDi5pSfMvp5bbCP+WHcOTdBL9JalAQV/kCLeEv7YPLkqrf4UERxaiGTKaqf8Xw+J5Nkx/9/eeLl2b8eq9h73Idi9UgO5r1uVkdfRSYbr/WLIt8Yp2p2x3sYBYwtLyLX4oj77omi11k3t5Bu8E00c8AaVPkVSqpuheQMnzbmkimGiK3gIalMuC1L/xKvoH5r0MsXQYXPNOYxfvmYtMMqHS9kPfGmwAAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa17f72b64faf6781629a71ee22761a99d02647c@256.webp?v=2"
+  },
+  "Bloodreef Raider": {
+    "background": "images_monster_bg\\Bloodreef_Raider_bg.webp",
+    "character": "images_monster_char\\Bloodreef_Raider_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC8AAAABD9D/iAiwrW1bxv4/mlHAGCpFqCyRWMH0ENH/9HMm0wEuEdhBgpsWzMk7hCf5AgBWUDggtAAAAPADAJ0BKhQAFAA+XSyUSIKAgADAuIwBWAAeyFwuBbWtgZR576ZA0zwA/vvtupzcUDLAfd/m7ktcYJF9cvtf0ri3db4iANltGzIgLbm2GqaZzQM39+SWg1Hwz1MJCNPlu9sXnNNN+LkTKZ1Lh0xrtsByTChXephpnTk8aK9eOdlt1JNcDEXT2uGctXfn/FtQ35k0DY4R1wqJbpraNn+wN8eWd1JqbvtkbEFmFFox5u4kLDAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/34e59487716100f2bf6e1e31eb534b3eb7e51b77@256.webp?v=2"
+  },
+  "Retiree": {
+    "background": "images_monster_bg\\Retiree_bg.webp",
+    "character": "images_monster_char\\Retiree_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpgBAABXRUJQVlA4IIwBAADwCACdASoUABQAPl0sk0iCgKqAwLiOwAnTLVQC+Z8Qa8XVG/sHsazgH6gfqrwYHUc+gB5XHsSfuURrwTkOI/3YkO6ysMj2Nk61Fz0JI2QoAADifvdFx5h6T9RLe+ssI5mc8gm7QGzl66+g8cDY50voY/1Vdv3EfIv3aLpvLr14R8PFDnqrXFn+V1vMfVXg7k88dkf6cKdaPhF+WJWXS0NBPJ4gTIZnPOWp0p2ooU8hTgbQQffWxsVsGxVtk1jmk93jvJdlleH2qa9mhpMytll8on6HPP8X8ejGLUK48HvEsayqmHnSAdqL8u35sJrE1TsvaEhxNE/4QUXl7L4q21wsCueZmv5AE3a1r3NvLUt0ygaSLmfRCXos+pVV2Ys2pTl0o2mdoeZuNOka3kSAU+F1ypcN4axI/k9pawp/AaU5m+UrY+38o6BWa9tBcr7tWrtx5LO/2LnYgWPQetS5H+ogwgqX/GqdPtvGSSvO58Xca/YiYn3bS0hG81p4OYVu6gbVSR4IxHIlHD4AAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/97e93533bd767b19542d509f87838b8d8a0087d3@256.webp?v=2"
+  },
+  "Ahexa": {
+    "background": "images_monster_bg\\Ahexa_bg.webp",
+    "character": "images_monster_char\\Ahexa_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpoBAABXRUJQVlA4II4BAADwBwCdASoUABQAPl0slEiCgIAAwLiOwAnTKEficZudxuds7+qt6Z89l7FX7keliUzTxlj/GB1M0QbPO67hY2rEgHFkyNc0XgAA/mVSTcT3XtDvpmuim82NKfKol+ySmjDpCmZ/ImBVdranYSA1yKFOq/4mq64Br5gZKsgGSquvmPgKfrPk/C7UzVVDvfCLvpZwjoy1StDD2+J/6a/G2Z5p/+MXeWlQceC+i5N9sKnOz6JD/kAwnyd+EPI53/e0vyuEZX7qgtDVOOnWWeaOhLzfhk55DAjLy//5TJZdc8r/YbKlo+EzQDy0/3Dl1wvwyE9lRQ77P43IFnlitPntll9IXQ/xbH4/beq5FL5hc6TL/zC6cIE7fToKsPw0o+9NTWcwv/7P9nqZm9rMev/5UVyI4rylqTsdYYWspoJ0V3f0LL+zBcN7aFlfbDF5OCrp4n+ksdE9ufPKR53rRm+qv697r+mdUeerTa/9gAvOu4xgn2uujOVNOQwmSeZP9fkMHoGdgkpwCEqKdEQ1PAAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/760720e2c11db1f157e0adc4325ddc753dc6b78d@256.webp?v=2"
+  },
+  "Hellbilly": {
+    "background": "images_monster_bg\\Hellbilly_bg.webp",
+    "character": "images_monster_char\\Hellbilly_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlgBAABXRUJQVlA4IEwBAABwBgCdASoUABQAPl0slEiCgIAAwLiOwAnTKEcDegcUe8j1M/QA6UkiLAy8AdGytiyW0UYOMEJMQK6CRTgA/r4cW+fOxfHmqTXxneuthtvSLVAR8L0I2GQ8B2HEdMB077TO+rvsJ1xj3y1n247aIL1lhMkUi87zz5Tt27vjcaIORPVbvruxUJMe0E+Vl/JGDenxh25b+7UhHIBX0Bd9y+BgM9s+J3o/eTiKIAt53cZ/P/DznpJwAoqC1KumOerLe0/yXwVI4e4qitdjdc9r/y5X5oFgKbgNGeSJ16a1rmhru1s+BzhdXKRtDWq28IZr2p1QMz8B+gCzPAFmhu/MDBtGAOps/ZypsbelPzF60KoMvaAYGntrySZyG2/4OTEY/d2uTeLGnJdp4tcH+TjzfFkHzwvpuMgKh6Vk26bUsRtw6ON3Fzin1982FXgAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/76d202ae1b1866430cf0b375f32d4996b46f47b5@256.webp?v=2"
+  },
+  "Prince Marianas": {
+    "background": "images_monster_bg\\Prince_Marianas_bg.webp",
+    "character": "images_monster_char\\Prince_Marianas_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmIBAABXRUJQVlA4IFYBAACwBwCdASoUABQAPl0qk0gCgNUAwLiOwAnTKEcDejfjBGKPw7ogOgBvDv6q+wB0mb4AzqA3RIyL6QmoHtnQ0h+rQKXSMIm4AP7pW5ndQLUIFIAZxGc0YDTOoNd5veoOjrmgkUtv9WTd/wDp98Q/7ZU/o+pIezmvRbFGqFw6p2FvGkQQdN/vTrDfPiVDf0AY6S9HfrwId5rHqcFrVro5APpliZy6OA0CX7hV7atURJvLsk8HtJJmv7qDyTze/+VTpnssRPOBaMBOR/E/8ydY2FetpEB7f1/w79ID4k/y/4OwbfEkZ4D+J7vhV5DFt89If5/5Hs1yO+UHq4+HA6mp8fTrMTm/7l+d1gxga46yejn0G2x3fEX6JULF/gjYLH+ekaWEQHy7teUDmQHZrGF3Uo6zTgxu8RxOhs1XguGm9OzbvP9RB3j2AjjToVASqCaiRmN9QeTHQAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/57e250b23dba70660a7dde51d11d8958b50f5bd0@256.webp?v=2"
+  },
+  "Flame Juggler": {
+    "background": "images_monster_bg\\Flame_Juggler_bg.webp",
+    "character": "images_monster_char\\Flame_Juggler_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSBwAAAABD9D/iAiYadvGvUeq0Ep/DCL6n0BxSvzKCNgAVlA4IO4AAACwBQCdASoUABQAPl0qk0gCgNUAwLiOgAnTM0NO2gNsBzKv7AWrkAofD/aJDxoNdZ1qOr6auAAA/tlDukkcpYGrwRowi2k6jaYXaR/Lqw45iPtY8B/K89ItPbZQtnzPTWvgdAl5O7827mG+EnAKFfatQluzA/y4ImP4pb/G8+waN9PZNP89OMOuLkeFw6ND5DgpR97tOSvXlQJp5OcNub5aR1YKWayTLNOlSjcn6qj7Jqmcj5I2BRXb3QmbRnoqxYADYiOQ62D/zGBpiwvYpfSrWX+5S1matL1LK8ohRlu7XygVW3ZucJPIOtjLF0AA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/da432282b980a4aff64fe18882f753b6e0cf4eb8@256.webp?v=2"
+  },
+  "Grandfather Klok": {
+    "background": "images_monster_bg\\Grandfather_Klok_bg.webp",
+    "character": "images_monster_char\\Grandfather_Klok_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDkAAAABD9D/iAiwiWzbyZJzqKiR8qW9oaRCAlbwgRY6PET0P/2jFmvdkrgf6fBtjcjes9i58jyvqZkxghwAVlA4IPQAAABQBQCdASoUABQAPl0qk0gCgNUAwLiOIArDKEfPhpI5W5COc3x54OSGwAiC/Tp76F0NcgAA/vpx0vQIjsnb4wuFhQL9miZKL0b9WVkeEH035z9hFbh81Wj/fgAcTkTWst5+lqYgGAZkn7tmhIsl5hiR39wqhm4mq35p45ridsfob4GdwjTHT3c1UoRU7nVTDagse6twarmT0e9glu/umUxiQkRQfsmZw/wteQH1XKg6hBdj3X/hYAsqhMjCiZLeO6xXpHmTva7vGqSOJ1UuNHcQaE+E1Kde6pSWKM4AiJy0+GeZjovl1KU0I85lldWql3b/AAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fb60487d4f65b0f679dea9d405fa00c54e2ad7c0@256.webp?v=2"
+  },
+  "Preening Duelist": {
+    "background": "images_monster_bg\\Preening_Duelist_bg.webp",
+    "character": "images_monster_char\\Preening_Duelist_char.webp",
+    "background_url": "data:image/webp;base64,UklGRl4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCwAAAABF9D/iAgwhCRJUs4HsEaDsP5Ae4cQ0f9F8M9+RCAsmAXiQCOuuwEJMbS3DlZQOCAMAQAAMAcAnQEqFAAUAD5dLJNIAwGAgADAuI5ACdMuN11oM5F4Awi38A5QDLAP1V9LD2eQGQHz/LJLa4meJlVV5puU7HVAAP67pRYw69WBUnIoI1XqHhPqtcmvzVXE0YKDZbXWniV3SOQ22wnqI+2NSQvQ0s9KA//ASNlOGX6LpSJenv7x9tkrAEFKtpCJno65f4ixS4TATkd6kQSgrro6j9teAMHAEGR4qhISKpCSNMGevNsSHfEYDnxf+1JACUTge4/1JvOWC3SAXWWA7Oz0niujQvZjOQ1aQlndH9f0O2XiC/UElPP3XLA1XcnP/vqmN93IOKUjMfrEPWJFrHazrrEputmWOWDtmEHP7wAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2194fe18b3ce181560123e0c39f9e01672525822@256.webp?v=2"
+  },
+  "Sabretooth": {
+    "background": "images_monster_bg\\Sabretooth_bg.webp",
+    "character": "images_monster_char\\Sabretooth_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlwBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC8AAAABD9D/iAioqm0bOmYR1PDHnw4KiCKKeHrMESL6n3wOgFlEEMSk8dAFgPe2i8rKDQBWUDggBgEAAFAFAJ0BKhQAFAA+XSyUSIKAgADAuI5gCsMyRUBqJxEThS1MBbdSGobHUp7v3c8UEFK4wAD+9n2gi1zq8Pe1Na0G6ovn65l/nBMBAw+M81NQuBBNNjmJIxxf26z1DUodlxNtcsgExW76bf8lesLF2+LSKJfMVADdZx9zDf+OvSrk2/ij827E2j6N5NZYHdNo7DoVaX+Z1wK+vV6Qrpmg4tOjs7NNTQQ6bRISa1AtPA2WMk3ulUFo9lGK5qCjKq2A6golSAEDn81Cb/Ts0Doe9mlyWFHj6WVj0CfXU9wcLg3y69zzEPrKUZcatw2Q6oD9CUxGGSxEhbpDHAAMuDndNnTNoUp3YAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/646bb37cae9b6a935fdf5d44a523fb7ae0dd13b5@256.webp?v=2"
+  },
+  "Harkuvian Rocket Trooper": {
+    "background": "images_monster_bg\\Harkuvian_Rocket_Trooper_bg.webp",
+    "character": "images_monster_char\\Harkuvian_Rocket_Trooper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRowBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSD0AAAABF9D/iAgwaNtIUmZmAewy6twDodAW8T0YIvoftr0DUKAHOkagABTz4btgKgB1sO4A9HvFVDNQA1cAsu0NAFZQOCAoAQAAsAYAnQEqFAAUAD5dLJNIgoCqgMC4jmAJ0ygx6dgOgz3JnTFt5E/1RFmBh9ORXoxg9SEGXLmJK8r9tjzH4bAAzJ1C+DLgTYNnlDH1vDua/dJCfHmT6KcjzdUKTWUiBWQM5uO8IzQZfYDdSHtjmOyhokmOeOOia/4rhrIf/jSPohrSRn2qfiIe6REg8q+w3Aj4lMJn8GsDTmv6dt/MBbZ/PyrjjPaSO2UZp/BSmSDrpoVKBrSqp3LrEgStb3bergBb9oTRj7Kd9uPPuaVLNfkkS1OdcqwliGS0PSROOu8XCxXIZpXlhJsi3TlnmSsO2nLKw0xs8zX5gaXn4N+PwL+oq+AXj0QW9eivovPKeJt9CfqnvbtW32FDOzxiQC6A2IXGqd0q948gAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d15d5e45176f6413980214d43307bdd2c6f3eb04@256.webp?v=2"
+  },
+  "Infernal Envoy": {
+    "background": "images_monster_bg\\Infernal_Envoy_bg.webp",
+    "character": "images_monster_char\\Infernal_Envoy_char.webp",
+    "background_url": "data:image/webp;base64,UklGRhgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCYAAAABD9D/iAgoaiQpKnitDC6xyEDsLhoi+j8Byhggnt8bOCPkPaEpAVZQOCDMAAAAsAUAnQEqFAAUAD5dKJNHgwGAwADAuI4gCdMoMnSggyQABab/Y7wefqqd3bIVl5C6FfHDKtzAAP78rAyTx43sHfNAw+pPTsqBHJGJ1LMIcrIyoNBB03ecf6CuiOmeWvFrmuc2d93N9+yDY88kC8GoiVVrhwn4NYdcfTLGRP3e1hQcEYpxEzYcC+OpX1mubLrSV0VxH3B9FsTEoGTBaD9g8D2Xajnepg/AIs/vlwoSanlH/BsUSt9vVU1N23Y3VV4gKx9CZkHB5/5N4CAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/31a97a9d968b507e8b4c4411c865fdaf661994fd@256.webp?v=2"
+  },
+  "Kyver Commander": {
+    "background": "images_monster_bg\\Kyver_Commander_bg.webp",
+    "character": "images_monster_char\\Kyver_Commander_char.webp",
+    "background_url": "data:image/webp;base64,UklGRogBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDwAAAABH/D+/4iIA9tIkhoNGvPISPsv8w8GEUNE/yfAqBwLp9YCCUBAwRkoOstLie3MMkGGT2UABw4yS5vz+AFWUDggJgEAAHAHAJ0BKhQAFAA+XSqTSAKA1QDAuI6ACdMoR6bzW5AGA2wHM6fsB7gN5V9BrpXQGlYfrFDFPszyX4GjM+03ShJHv2SAAP0CRt2sVukj8dbz5brPbAxoKrnr6xVIhVU066PBZoXVO6r9UYVPRCAYhY4LPqGab6r9LSWx9DrkK8IMrwEKy8s93Y4+MsyUZXNTmROAYb0duY0V5w5CZOCV0d41rkwmwBLq/N6WIGoK8ArIX+/UOuSwvVgYa+dUVBNfzhjYbhJroV/X/n/TnNuMSR9zTH/Jvg64mgUBT0DNRuV4P7siPSQu9tzYFvx+9uF8QY+HaIgcs+QkyUgiydq/JIv9z/wqaGsXHk3+1tRlNUb6rIqNSb8DAgwuSHz7FcHZHCAJzcgAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/830cc6594e20d87c92e7b3cb85885f415d8154f2@256.webp?v=2"
+  },
+  "Gorgon Noble": {
+    "background": "images_monster_bg\\Gorgon_Noble_bg.webp",
+    "character": "images_monster_char\\Gorgon_Noble_char.webp",
+    "background_url": "data:image/webp;base64,UklGRuwAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDAAAAABD9D/iAioqm0bOmZfvAiWLyEEoJWAWk0ZIvqfmd8CKmdElm3bAL0QIaEFJKopfABWUDgglgAAALAEAJ0BKhQAFAA+XSyUSIKAgADAuIwBWGbIA0gbroiP9yOlmADzT/AyiSGYAvgA/vLofDh9vnBOQqRS/Bw0QPq1Z7K4WbodkMcd5UHxZlg/bnoIiOpAX/F/hTUYPvI2Oqvk56pSMLVuxxLbQIUTpxGl6i4psWFGOPd/6pGB+Edcy//TZAS74jyg2xOBZcFiPfuEs3QAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f952778358767071ba84b50b95901987ef624c9@256.webp?v=2"
+  },
+  "Mod Squad": {
+    "background": "images_monster_bg\\Mod_Squad_bg.webp",
+    "character": "images_monster_char\\Mod_Squad_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnQBAABXRUJQVlA4IGgBAACQBgCdASoUABQAPl0qkkgCgNUAwLiOwAnTLjdXC+SVbeQyADpMSVWePseNPeBieV87dYPkVHR/x41r1j6cAP7qVpIu8iZzyRbOVevx6xIxn1vJ3ojqRDKWQKfj4QzCagg47p+P8+mQ/FINGDc6WGa4Xlmr/1ocSlMBfrbVv07IX9PYxXRK1TXnab3bR/dbhon61py6IMAk0KUElrbnnDNx6KRWll9hLP//iKOzF/RR9KrVHq5teHTxDMrXP2Cr7Hi7hCV/ryrT1XGcNaepK9Rv2RgHdU8tqYnSXVeW9Tm2smcvNX6bKGRJzu/ev+cvkMIUiLraOwTJYEt37EIj3W1hvhaqQGc7UD+W/x4392euAWC4EwiKv0dGo8q4pNi+LlxmYPPvFhkszLdmb5Ny8ATrNNLgipk+9KpX96erG5V5NDjsff/3/8G91Tk6nrBL3X/QNTtbV5M563L87BYAYeKYq4nt5ohYAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cf6934daa9f73d8db5b3a84763fd0764a2c37de5@256.webp?v=2"
+  },
+  "Trashtown Mayor": {
+    "background": "images_monster_bg\\Trashtown_Mayor_bg.webp",
+    "character": "images_monster_char\\Trashtown_Mayor_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlABAABXRUJQVlA4IEQBAACQBgCdASoUABQAPl0sk0iCgKqAwLiOgAnTKEYA41OL/JlWAvUkiFAvViW8n/N9KmKblam7t4hu7WHhi5gAAP78LHygS2RqRE9VJyLGGRT0cSAvfzlRhLaB7oshPdY9f8xYDPzGPZfn7pimlhZ/fUmZny1L+f/PKwJvdT4d5wGvXns18HAoDpZJN/99maZbl2Z/Y/h3uBBPrTbvtp8Ohb9siQPptI7NKkQrPJ8Un3J/+d6nEDHuqlX+TFPWAg05xqh5TMYF9+nCj+2NJAvHjRM1EU/oe78BA9/9XO/wwvqmXf5/jibFI48S9iFU/xADslgJzn2XjJ/vhu8veLCVjJe50/BpsyeXnDXaexaF5NC1TecXUXEytbFkNrmQSKWbzEmBuWvdehARGTibMrUUpo+9j/4UcaMF+4nZEEyPhcfHQUqAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54f6a091b7fbbfb0b2b99aef01ca84daedd9f6c5@256.webp?v=2"
+  },
+  "Scovyle": {
+    "background": "images_monster_bg\\Scovyle_bg.webp",
+    "character": "images_monster_char\\Scovyle_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC8AAAABD9D/iAgwiiTbSf8ciEfcYI8TmpCAvIj+B1Psgks8oYM9c4NvTcT/Cd6AkwD0CABWUDggHgEAADAHAJ0BKhQAFAA+XSqUSAKAqoDAuI5gCdMoR1d7N+AF9PbCixWmk70ARJAVrk7nWnb5QP/89sQuJm0zlPaxEPxBAAD+9MCUP/GKb7F4lFJ66ijrVUeUo6nX0+Za+uryk8RaFUHCuR5docGjeO/aWlyhjws2S2FV1xuQZFkOSvj8Mw+AXbhRyUA83/lUlxNXfjLl3MPUGNj/2i1dTv/zJ8P0KXVtpZOWTZk7dPIUuQBvZYaz2PHDts2ExUkQKR8F++g775tpj1fY8JLeO2WMCRXE+36394U146NH1IlAUs3sEITuJCzcT/WUMrJp+n1TyN5mzDRoXx7v6Ir96+8+o7TZgRGoHdLIr/OUCo8f2slJc7fypzVqx7EeOaV6sAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7110ced4706f5d0a923052fb6678cd9e7f42d371@256.webp?v=2"
+  },
+  "Dire Inglet": {
+    "background": "images_monster_bg\\Dire_Inglet_bg.webp",
+    "character": "images_monster_char\\Dire_Inglet_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCUAAAABD9D/iAggattG3m/7D8IBOAgHreyPQkT/84EAEVDInFSzoP0vAFZQOCDoAAAA0AUAnQEqFAAUAD5dKpNIAwGAgADAuI5ACdMzJDW6WoiMwmw00vDFHrDfaek76pv3+fw0SAf1AAD+40+kCRwQrWLLp5F3vveqK/e6VgHH1q2DgEV8pWFHntpqkxwmqL+K5bOrHSLSPjIz3lr3FZUSMBUiwP9ZMe9sDhP4EwwK3/Yujee2ShI78NaDzrzR+Igod6GNuoYFFLkoxeNNHnaxAWWU2oNoYAG9Lwx45Uw2iqj4HpM6pxMHgsSpas1u80U+DjO3K0jxDOhbFY/5bcAlBb5jbJLT54sbn2adlUSOtSVcgCZ4AsgAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f8c47b50839d67b2e6335be59b478aa85f0b782b@256.webp?v=2"
+  },
+  "Zookeeper": {
+    "background": "images_monster_bg\\Zookeeper_bg.webp",
+    "character": "images_monster_char\\Zookeeper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRh4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSB4AAAABD9D/iAgoaiRFKuCFbbSzh4SI/qevQNB2wiCtcgBWUDgg2gAAAPAEAJ0BKhQAFAA+XSyUSIKAgADAuIwBWCP/xbERjwdUg0ky0oi2kIEIyM3vQoWLAAD+6Sgw31BFuH2MzM73J9NKOMxF0v7e5cF0wwmbYYJSdT1PoAFeMC4ifZcoNceSHaIENxeR3rio/ryTVME3omPgQkCye4HK66+8/8QzUyV4v9nzv+yhgCyyH8XMabR4r1qPs1AMsZQbq38de+pYgkvryqbE8OIXHmdcTpbhQoK9Zux/bFD8FM8RHQa9NeoqqYl0yIQI15Yfacx36XHfpqWPOVhwoBx4gAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/10814d3f839d9352bd22650d2aa46118b534892c@256.webp?v=2"
+  },
+  "Foundation Weeper": {
+    "background": "images_monster_bg\\Foundation_Weeper_bg.webp",
+    "character": "images_monster_char\\Foundation_Weeper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSGQAAAABcFzbttKUAyOIj72KNO8uFeSfg1sFETEBtgX/USsHFXcSdUHSybiCFqOKxsgYFGqAkq1rEBAVQEa2RsYqlFCpw+bIyOZUjLtwEWgYCBBwZ5f76+P1/f5+3/fl8nwej9f747AEVlA4ILoAAABwBQCdASoUABQAPl0qk0gDAYCAAMC4jAE6ZQjst4AB6nBF8OFwCT3ENvL/yB+prACZIR3AAP75yi/FI6tVbLqRkv+suE7ZcXgbRM4/Zm9hjXEX/nQ1Loi5ZuV4/6/mnKEQyBmXKJRWNFVTvsOaKTtwpixxuhuq5Ku+CSnA4cPToovV/EY1Nslplv7LJZRjRmuKWaUYNlY99Jmt4GQyhC8DxKA6/M/hZvrGUR593mYVaEQNtekiHtF/4AA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c1f45f4cf8bcf27f17473df9ac30af82056495f3@256.webp?v=2"
+  },
+  "Sandwich Artist": {
+    "background": "images_monster_bg\\Sandwich_Artist_bg.webp",
+    "character": "images_monster_char\\Sandwich_Artist_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDEAAAABD9D/iAgwqm2ryuYPDYhgFKe2YYgzbaUtI/ofEMEMBMALdXTdWr7Dc8YMdvdvuK8BAFZQOCD4AAAAMAYAnQEqFAAUAD5dKpNIAoDVAMC4jkALEe434mgznwZaWQP1m4GsBjIQmCjcppQIu/eB0JxHS3LayAD+/kk/fUYfd8zXDeTx2yHw1ijKy0tIx93eAFOxgATvtjl2713Dq1IjVVvR/xqZThNiJHj0ecrv0mRB2QrAgRnnztcTHILneIUVf2szr+4oU58ybzO/y/1Ug5bixEB09lVFwOh2+SBOOQFzbtbDRCuXLMD/uf6XOBBjDP77cUqhrsOq7e3Nh6DboqBqkU/mZ7h+PHU0TbPA+tfd/iv2FYZdADWj7vtBUDegPfv5xFJcqIvH4ZI9E/jtbznEQAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d4551c51ced16c5998f1008db868fa4ecae65fa@256.webp?v=2"
+  },
+  "Trash Golem": {
+    "background": "images_monster_bg\\Trash_Golem_bg.webp",
+    "character": "images_monster_char\\Trash_Golem_char.webp",
+    "background_url": "data:image/webp;base64,UklGRl4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDIAAAABH9D/iAgwqm1byfk61kAaAM1DbeYOCSL6PwH81Bkyx4zgPGeu8+HUHfKwrGD2DSz0BFZQOCAGAQAAUAYAnQEqFAAUAD5dLJRIgoCAAMC4joAJ0yhHT/49sIp3uAN4a3lEBiuBn2B8RVeKJS0yNxvPOsSDhqAA/th4MjDu/AMI8D017Kvq+E8Xu1ZDEWDUB5ctHtUFK1ci6XBsgyFym1/K/1dtiGtcmVYRTZF8I/HDq2R/5KNXz/+TaveTx3OCZfzs4TPhfmve5Uhz5hySI+2YhHk4TutEHRhpIhjw3HU0UP+X7cAlaY1lUSaLwUptelS9xhX+wXwfXopZQ1Z+xpN1Y3n4Vl4/IsTW/mP68Im/AzocUZjtXOlxpOpUTovlmu3kxPWOIQGdGu/H44/Svz3tGknLghRBzcPPfzHjK0AAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8694c27204bdac4b6ee32eb6a174a0be3ad06af@256.webp?v=2"
+  },
+  "Dire Mosquito": {
+    "background": "images_monster_bg\\Dire_Mosquito_bg.webp",
+    "character": "images_monster_char\\Dire_Mosquito_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCYAAAABD9D/iAgoaCSpGXozhqyXglk8RPQ/SUDK8vZv0p0HwlcgRQLmS1ZQOCAWAQAAsAYAnQEqFAAUAD5dLJRIgoCAAMC4jkAJ0yhIEIrbQDBAP2Vy0DpaSJFDD45S0y/9avdjse1+n6MUm+wolAAA/un+hr2I6AYcpagYMDjFg5/PlP0ZcQNFvOq/M/nhL8TqWd54y50TCgJgcHy2Uz5JC1P4pkfuCwCQRygysj4+QrC5+dqR6HLr/ZVxrTw9MoMv+6bCqrxHaa1NVy4miAy3YM87B43WLC7GWEG4pPqd7b3IjXJF2YGyZQlRjR9kt6jk05Y8i9Hv7cS72J0xkdiPEfLhDUWXq+OP6TBUI5FuJQaR8KA0QEkbRxcmKOOQj2AyKW2P4YJ8Es2Wa+zBT9lLKB9SgEWmrwZDRTLZImxaXec9hIOAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d2dd8181bc7f9414608378f11b08be6089c8a607@256.webp?v=2"
+  },
+  "Loan Shark": {
+    "background": "images_monster_bg\\Loan_Shark_bg.webp",
+    "character": "images_monster_char\\Loan_Shark_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkwBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDwAAAABD9D/iAg4qm3bTXZ67xHwp3HAsDcXaMkIGThAAT4j+h+USliD/ZD7xCiVLa9QIezw50pV+h3j7zvGsJVWUDgg6gAAAPAFAJ0BKhQAFAA+XSiTSAMBgIAAwLiMATpmZeApALsA3lwiQwm944NzglE15R3ksOzsjQxmMvgAAP79i5R+XT8mAybc/sk1F2uFVTBlUyyElXerARArqgVav+/08i3ayoDSTQZF5bGJoodfPVGzTNQjQ7gUjh4/w2dPvZ9sbZeoT9tcKUe8dmXKsKNHQUJBAmKgqGlLdelRT/6gb1IpgPYo4WlSXSYSynPw3dp1BnkwOeWEmdoYVxKZryTy6lAn0ebIPvfmjNAU1vPqYr71eXEkifVzDy6H6rg+lG1RIgedfqg5EeALpFSAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/27ab12f0495f881b7e3e8e6fe5a6f4d36d4c87e4@256.webp?v=2"
+  },
+  "Foreman": {
+    "background": "images_monster_bg\\Foreman_bg.webp",
+    "character": "images_monster_char\\Foreman_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmQBAABXRUJQVlA4IFgBAABwBgCdASoUABQAPl0slEiCgIAAwLiOYAnTNaRDkGOf/0wDny/YpJVj47BuzR1GsTVPWEoXgtSbqy81PAAA/vkJD03/W7o7LH90zGYlWOwLAeO+FtP1xwk3hYXM5vVP/lQ3QmrhXr+lICrc52NHg0BETs8yHSxuW5x9sweB/KWIA36L2FuLR0FPItyqR+p6g3efBGSA1dYksB3uTOxsXz728nhsG70UPH1krtCkc/rR03K41jVxcI3om/w3X9huo4PynxpTJyv5l/v7LzGwUvH/9xhotqN332KQtNWPPXk+LDEcN1M2XgXUBkItXjC3McdBzBbgy7wx4MDDOyIQiLgjnH9ke/1S9oCD+5BieXn0vHvv90l8RtOodf/tH6Bmt6ytjNHWglH7PgHkDP9XZduXMwCqPfrTnLlPtYZp1dBbzx5wTImTYWv3rBSqpNTAsEgRmGFAJcTYAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5fffc42b99b1a0fc5bb4844f8138b73e31769597@256.webp?v=2"
+  },
+  "Infernal": {
+    "background": "images_monster_bg\\Infernal_bg.webp",
+    "character": "images_monster_char\\Infernal_char.webp",
+    "background_url": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABQBACdASoUABQAPl0qk0gCgNUAwLiMATplvgJkA8DC53WRPOIMxRoSfF7wAP7dZjuacNFIM65YgSaaQCIfwBiwQ/19sXYmQ/3Tj2psKQn7rVKFLwwX2U2uUlQE435tZIilX5hBu0Z4e2ZBvVYT/kOwGx/6ktIwAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ee0ac84d5cb1d67bb969154d70411392b38dab87@256.webp?v=2"
+  },
+  "Lich": {
+    "background": "images_monster_bg\\Lich_bg.webp",
+    "character": "images_monster_char\\Lich_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnQBAABXRUJQVlA4IGgBAABwCACdASoUABQAPl0slEiCgIAAwLiOoAnTKEdojVNzmwzqN4B3oHszfsB1M3WQegB0nvk3Ey4GBlHc0MSK8Heu9uWbGufi3OPIEgZAAP77oLLVC9TxdpHfkidbMPUyZhjkW4hg+c+kQSBQSCbTV1J8Rk7YMgeP88ctyuAnMaoL3UpxsUiuBuX6a15p6675HsnU31DOTjmlX4/9rjMHiyHyWKEdMJJI8VJ3CLPuSGCFmTnZAaNK8lS+li/dEPORlc87SMXP4p0vW20z4C3onqyARWr0pggPfhqLeUo2Z57kcdsW20AnsQ6L5aFUJ7yt1hcOo4cavyRuzft/lrgcCml0sItZe7IEu3/OeCvtPziiscPfNSOkMx9+Am45VeGvJ8IKITeqrrjRNA7AiF6IRp9Lkf7kq8mOsGBgV6V3OLreFcNGK4ldCfjt4H20A3GZPs9S8NDtjm7svnPcMhnyrElScjMWPMYQAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/98c5c18dcdeee500165ecdd8347bc75013d8d9a8@256.webp?v=2"
+  },
+  "Sergeant Suds": {
+    "background": "images_monster_bg\\Sergeant_Suds_bg.webp",
+    "character": "images_monster_char\\Sergeant_Suds_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlIBAABXRUJQVlA4IEYBAADwBgCdASoUABQAPl0slEiCgIAAwLiOwAnTKEgX+qu1u9QG4A3jPnzPYrIiwMUmSp8Ua1otgc9bC6bDqEowHNDgAP7sJRp/oQNbtystbukEPvXBPxjLe3e4NE+EmNfrXRFx8evk/GPboVJ8ErW+7/ZzMqzoB3MkVOGE7d0J85D+pU+RxBH+2zRa+cgh4ne0PUIZfCxcVQvkEIelHZlqTQm1zPzyQmoxqHWMwY8bbbBsNpPQY1/s+740OCaKH+7WZIMqmHSCqemTHOT60DQQ0rD8sFzLpI319aCff+EOQTphAhmHlQyLObvxfahu/DGN5wMzhpyf/zMproK3B8b0eCIxpdMwquPDyGImiPog6ApMa/5ri7fPomXFO/Wv5YcKuiNVXD8R+ktbIJymSQEz5+XXAkq4SkkNGsEwmuBffQffOZQA4G8QAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3adbfabc7c1dc2d243a9cfed896da9678ee75695@256.webp?v=2"
+  },
+  "Viper Tyrant": {
+    "background": "images_monster_bg\\Viper_Tyrant_bg.webp",
+    "character": "images_monster_char\\Viper_Tyrant_char.webp",
+    "background_url": "data:image/webp;base64,UklGRvAAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSEMAAAABD9D/iAg4qm1bbU6YOUMcRgCKiCimGRnoqrN6qYiI/ieyfK0w4HdS/JEqBMAXdR/5+4o/R9Z7FyhOO8BOkEv+FXwAAFZQOCCGAAAAMAQAnQEqFAAUAD5dLJNIAwGAgADAuIwBWCP/wD0Q+NLO62+urtnF8p7AAP7+vl8nl0RJPHCW42GMROSv+CDYP3x/9RPYXGsXd+aI7Jj6UjVj0oTTzeoZXDIxc6Ie/K76dZ+vFzMI+KY93tCsLLB+2EESha5qT7Cizw83+X6uBiwQdsEgAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a7a252167ec63bc3e318b1197e9787ed01a1352@256.webp?v=2"
+  },
+  "Ghost Pepper": {
+    "background": "images_monster_bg\\Ghost_Pepper_bg.webp",
+    "character": "images_monster_char\\Ghost_Pepper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnABAABXRUJQVlA4IGQBAABQBwCdASoUABQAPl0slEiCgIAAwLiOwAnTKEd6ed8QYkC3qvQBvAG8YeSqTKQYGUGX44avqmYpH2KS1XnME0OiLwAAAP79KXqc9otN6zDMAD3/SHQRZNynd5UON3fWs0ZKCUIsZSTOcV2/vTY+2tDmjLTsTfCjr4As703vp/DkApX85EZtd0zJP0D5JCstoL/Fp4EKbxLz60xmDwiX4V32k9IHMMe07RJnxjeyNyWRI0NcfAdkMhFf+O49oP2+/PcMN52RHi2bbwYwNRu6mcte96x6g/2iD/uumVQ2nSw9Wa1W083tKJbJ+3P1UnOU705Xq5zwa1vcXJ7p6JHt0zpTAULdFP9NNHQtZcJSs1j3MA1ZZA/BkF4y6Xwi+38lXKH+i9jS652abrjCu/K8l3IAtMHl/CCfyAOuMTtgBmqaVX/5gt+ZU57PWxdpQPX5Fair21ZSasLBfRRGPmVMRR7Pw4AAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47e103b5ed5490f1bd6b4b0201a1e2cc8a78b3d@256.webp?v=2"
+  },
+  "Joyful Jack": {
+    "background": "images_monster_bg\\Joyful_Jack_bg.webp",
+    "character": "images_monster_char\\Joyful_Jack_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkwBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDIAAAABD9D/iAiwiW07ys2rsu+CIiCCKFOjDBmYYbAQ0f/kZkcuYUUVM/KIKo7hJQPm8Lv4AFZQOCD0AAAA0AUAnQEqFAAUAD5dLJRIgoCAAMC4jiALszNDmYuSwkAEsZ7zQAzGGjt9XnTIfdUcKYAdAwlq4AD+9v1N8BRcPf2l5FTFbYUgnVM2eppJWyyN89JpCd3rbWkESvh8YZoSp1NMN9Iv5lJ/r/Yn/v1I22bRk2+9ex/FF/M+THhDGW3MjAw12Ka3GnB021/rcAPc4uecx691FkOfBulTYuCYCpPshBkmAqztoeWgbGmL6x8iEbRVlYfHCN0Jv7oLp7Eo+3+Ku3ila9byF7UNkNSV4B+5sX/zewCFfElTku5rU7oFIJfuQnF8D3ZMcrc5gJS2DIAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b22f9e9c896aaecd25a120d796c1f0c397fb208f@256.webp?v=2"
+  },
+  "Treasure Turtle": {
+    "background": "images_monster_bg\\Treasure_Turtle_bg.webp",
+    "character": "images_monster_char\\Treasure_Turtle_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCgAAAABD9D/iAioim2bWt78CyCKwEIoR4aI/qcVoAOD6BHAiTLTpy+JcHcFVlA4IOQAAABQBgCdASoUABQAPl0sk0iCgKqAwLiOQArC85ejcIQ8e21bJgIj4MFOtkd3u11oZ+xjtBUld6i/UrtkAAD+CyIKV4OmggpXTAWAfvzDdUKLXmM5VmMgpdgbW91RoeTcqOuxcUjR3/VcmyRXLdCj1+2GPv0vGv/nfrP/x4tWWBC9ndgLuBGWALw3EP3WcCGZNetvVBMu2PvTe/JKGHqzB+cv7aDd9Hrh9lJm80fuQzd8zIsqXfGrfraMB7KYWR4zY6T67lq2neCthY9tf4mmMvtu4X9/AqakPECXyU77NjgAp6OwAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6d05aef9b2a964d4c332b038cfb5dd3ed8eba4b7@256.webp?v=2"
+  },
+  "Annex Trooper": {
+    "background": "images_monster_bg\\Annex_Trooper_bg.webp",
+    "character": "images_monster_char\\Annex_Trooper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDQAAAABD9D/iAiwqm3bxrzv6xFAA783hk8VNDEkEkE5HSL6n8DWrWc4Xl2Cp2OMCfcVgC/bSRQ/VlA4IOAAAAAwBQCdASoUABQAPl0qk0gCgNUAwLiOIAnTKEgpgU4o/KoMDRerFHqW/4PBGiv3/ZHmAAD+6ya7fbLT2jchibL2ENH2L3MwoGVvXDrI14XDNQ/PtGhhZWak/Lb3UfiOkpxHfe5/V3kZk4osTtdTp+ucHfkKR4z9i67tmNfubRXdfzYO+1CcQ9xEAyVf31vsTH6Y/9aSikLjj+PZWysF1r9GM4bhlvSuMYaZWePIEloUIphSEggpy0PlJf9t4oF/0g73C8gcRdKqEcfwxhFaeHGxpjzU1jiktneZuTyaZt4AAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2f905b7a561161d30106db003faec527d1521bdf@256.webp?v=2"
+  },
+  "Chilly Charles": {
+    "background": "images_monster_bg\\Chilly_Charles_bg.webp",
+    "character": "images_monster_char\\Chilly_Charles_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDkAAAABF9D/iAiwjSTJSaPBkwG9wtf5h0MKEf3P4LdqVQFog7/dN7eAooCAOGlV3lN1fp1wXMdZQQzX1wIAVlA4IAYBAAAQBgCdASoUABQAPl0qk0gCgNUAwLiOYAnTMOSKLMcWjZJxEjBl+IV3W7yYsZwPCDPHMuXmWrO9NYAA/vXWmF2aDn5Vkhsfa1tbRP+U8WO/6qgbpgGHHKDx22efoxU7u/8vnTavFS2QLZlTDE0oqf6qNspwFXC9JH7j9DU4YW/7L9hOV//M/H4nfy9Al3rje8iann9pR/zf9MzXHd6INRm/Qev+M1qdU/v9JerrqQn/e6dlc9qowUZ4BB/oOheF7gPpYl+6bFrteJ1bhdGwVFYAU9+WmW4+MpIK9YJF6JqPpM+b94IwvOjDQF8v4/Ej4bwoc/W9x2iSTyZhmuq03vKjMhLpAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8eac0b71ae126c06e8e19a9bcd6d0e89ba77302f@256.webp?v=2"
+  },
+  "Thug": {
+    "background": "images_monster_bg\\Thug_bg.webp",
+    "character": "images_monster_char\\Thug_char.webp",
+    "background_url": "data:image/webp;base64,UklGRiYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCUAAAABD9D/iAgoaiQpqt3leiIBCUjEPRYi+p9I0NLyu/AWkLBsAGcBAFZQOCDaAAAAkAYAnQEqFAAUAD5dKpNIAwGAgADAuI4gCxHuN6d8CbCvNbZTnldMrAMcA6QpyhbEnOmpAfkiwh4P2puKAAD+7FiE1SqjLeV9nxNY/fj/rSxej+b/EOljLtTY0lqb/2WRhzapdizkXYLl/sGoAx9HJvBMp6ztQ7Tn3VVP4pOTi6BFVFKaIqaD5Ta4h4qmFsdJa3k498WJcS9kIJQMdPYH6slmY79EuXM6BwKViKLLWa9iCsv0yFUjbpI+4ukofw8OQZUiDzxV7Y1OFS5WUBeCnukqphwKOqSgAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6788043ead6bf45251b2b89c65381f283f808450@256.webp?v=2"
+  },
+  "Radiant Corsair": {
+    "background": "images_monster_bg\\Radiant_Corsair_bg.webp",
+    "character": "images_monster_char\\Radiant_Corsair_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDQAAAABD9D/iAgwjWyr1SHjgsPSCZKuQFLW7yvHHiL6n2cPqwt4AYIsUgN8HB5YeIvg9XwFvzotVlA4IOgAAAAwBgCdASoUABQAPl0ok0gDAYCAAMC4jmALEfWiQKZ27AXaTvIpETBfkR1wUcls0XXXUj+yJBMlL0ZAAP72iLjoFEPx+bs1ega5ue4I8Z8xNyda3v6t73ytFkt3HXSv4Ngu7b8JjclzXsmsXOxhWmWmZi8oCf/jsE797od/rNReJzq6BA3gTl7wO4we6eG//yJDzflL82teNIJ1JRmY4f92t6d4+5v9awY0BS+DiWwr0OZq1fwt1dGSvdiMJZpLO+kGiXLPxUd31Js/GLcDuPMuepMVSnCQqS/kIDQWU5iSQxVRrbgKWAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a2a6eb38fb2e66e83aa2ebc8021d6feb7f020a5e@256.webp?v=2"
+  },
+  "Cloudtop Officer": {
+    "background": "images_monster_bg\\Cloudtop_Officer_bg.webp",
+    "character": "images_monster_char\\Cloudtop_Officer_char.webp",
+    "background_url": "data:image/webp;base64,UklGRhABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSB4AAAABD9D/iAgoZiQJ6tnXaKzB+vudBhH9Tz5KgGIL0wxWUDggzAAAANAFAJ0BKhQAFAA+XSiTSAMBgIAAwLiOQAsR7jdXem3RuMzAUru3Qjyln2Tfw0jofyEotE/pzgAA/vwU9QhymXHDga1XCxhXU+0ke4K88i/kQOVfhzr+ySIZhMYsO764/80LI/P4fG/+LRIDsyuXXv9RC/i0m7JjB6ED2eh3YKLmCP+M/qJqwV20tgeV6e+fJnPbNCvPDuAGLi7LdOBL71B7hbBW7T1582gLooCzEuCe53tlRDqiS+bVlOqDrtblYV4e08jFTnVV1gAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29832cf0b4c92c3117a2af0d807dc540bd94c5d4@256.webp?v=2"
+  },
+  "Cosmic Roc": {
+    "background": "images_monster_bg\\Cosmic_Roc_bg.webp",
+    "character": "images_monster_char\\Cosmic_Roc_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSD0AAAABF9D/iAgwiGSrzVEEIOnhIO2jJ1UCiv+Ph4j+xzCzmQD9qi8O6r4ilACl5oS6fAlQklCCIHXgTIDCMLMJAFZQOCDgAAAAUAUAnQEqFAAUAD5dLJRIgoCAAMC4jmALEfNDUHrtuFSrAMoQqClCAGUFBTD7+rCp11NQAP7s16cVKZmYNYwXk6Y6PkzyVznb0fZO5M0CZVlhhDbbNnTWecAA/BKto3SJjUJxZvYmv+uLNhSf3P6dMTfliOW7AaAdNzZNOdAm8B2ezusa3NiIjlJ1lcwXj/YY+yvuE+swX+I/y3u+dKqrNTT2Xtz38RqMaCI1f2kEnyEl04KlVtaZaR/bayVV68j/Pw3+TJ0Ow6FfyOVdJJHJPBhCXVCc70MuT6Oeu+8AAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0789a148533631e396b515a3439dc60e40c38207@256.webp?v=2"
+  },
+  "Stew": {
+    "background": "images_monster_bg\\Stew_bg.webp",
+    "character": "images_monster_char\\Stew_char.webp",
+    "background_url": "data:image/webp;base64,UklGRtQAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSD0AAAABD9D/iAgwqm1bycEdpgytCFGI4jIik0sPL0KHiP7nGXuBpCNaMiKQSQD+QKLTV4CYz1IHh8inEkInkPIDAFZQOCBwAAAAUAQAnQEqFAAUAD5dLJRIgoCAAMC4jADxSAQsfWM/pJnI+IwqZ92KSJGpnAD+5Zl4lQc3oV5hoPtH4fn3oqi9//V3H/7Yx7/6pbvKjxUAzlGcwrEr99JdhWDDCvFa+BA3T9y7NqdyjcjOzMF2hRAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/161a60b5798b340a078767d71a7fbdb691547519@256.webp?v=2"
+  },
+  "Bouncertron": {
+    "background": "images_monster_bg\\Bouncertron_bg.webp",
+    "character": "images_monster_char\\Bouncertron_char.webp",
+    "background_url": "data:image/webp;base64,UklGRl4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDcAAAABD9D/iAgwiiTbyfz8yQaiBK4ZzmhBxJOALIR9PET0P/lraEkE4DLIHAHuSDqyPVqk5M1AT18DAFZQOCAAAQAA0AUAnQEqFAAUAD5dLJNIgoCqgMC4joAJ0zJcgF7faA91MBj4vK2dfdw96MhYtu0zrT6RQeLogAD+qhp9BtPys0LQui867KRjwy7u4uh4xUtPnYcordfjEzyMeujWtF7reokYOOlNEGV9OZ9J0b2Ad/HTpvf/0qqw/fF48G3isUf9C5W5t/Q62obj/833etuf8l51rLdL8pWoc2Ucv0jkVtzbcevaMMSUm9r/eNk9krzpuz1OJKTpKAg7lUmccGiX5Uq9XPT7/np+9c8afZjtcz6zYiDERpMenKhRtQGbD0shOoO6sFWZ2m2DJsgs6tao+kupSxGgIauqx7+ZwAAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2accec299766e17d63659b58f7d2ede65726053e@256.webp?v=2"
+  },
+  "Car Conductor": {
+    "background": "images_monster_bg\\Car_Conductor_bg.webp",
+    "character": "images_monster_char\\Car_Conductor_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgQBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDsAAAABF9D/iAgwaBvJUa5BeD67ewfg20A7xF8hRPQ/JGkmwK6RoI60ukZawBK3iifA/tgLluyiYg0YCTBJmgBWUDggogAAAPAEAJ0BKhQAFAA+XSqTSAMBgIAAwLiOQAnTLdY5J2wD0OmpcuMKVybDLkeeoL467AD++y9uR5KBbyh4r0REThg6hznNNeR6J/Mz8LL991jz1Vs7B9REoGMidlUEkQ7tzSzVBBP3BlFwkIbFsogtJZSf+IlJ76J3882YbnyGtHlBq6s95529zN5e3fDX7LZYwWpDZRv+m0fdTeosSnWY2xAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/60e84d0f3fe06605f7d272a827586c7b9f23f664@256.webp?v=2"
+  },
+  "Infernal Frigate": {
+    "background": "images_monster_bg\\Infernal_Frigate_bg.webp",
+    "character": "images_monster_char\\Infernal_Frigate_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSE8AAAABD9D/iAi4rW1biS7uGhE6XVhIG3TAogKHmJCcRWxtaBeTTjkR/Q8SsEDAp8wN20fPfwU2wpCCjfFHLikiyAaI0pbXXJou9my0IiWQCagAAFZQOCAiAQAA8AUAnQEqFAAUAD5dLJNIgoCqgMC4jqAJ0yhHmG6jBgPWS0x3eUwC2D/ETRoRKYgyWjGm5chqUgAA/r1xq89n1+98yp3HvX4Jx/rrCYd5KI5k2wYjRCr8xzmZNovlBYD9kJjm2UwYIRn6+Zs1n3f3qkcQDP/k2WUES36py3/0ipb7Z1qn7b9GxnOq12rP+j6ov3NfzectAwE9+FqTQa+VMZJdg0ul1x85V6v6307XexC0DAglG5IxA2TmAJqMP1H5ttjZEA822wA2vBicz7Qdgf6c+U56NYVW+6LdRIAK/SmnQEbb0OEgeNLezb8xOkVVlz/POFSA3O4lDun8AKj/4Yf1uS3kSS53P/mqKQxpHb7w6rLCsNNRyYqNWf2wU1BWAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/01c74c82a35e18ebd80ef1252b4c4c1dcd0d76f2@256.webp?v=2"
+  },
+  "Burninator Bot": {
+    "background": "images_monster_bg\\Burninator_Bot_bg.webp",
+    "character": "images_monster_char\\Burninator_Bot_char.webp",
+    "background_url": "data:image/webp;base64,UklGRhoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDkAAAABF9D/iAiwaSTJUZ/j1fsmt3vMHvFHzyCi/zEz8y2AP8ZX6BjQLYCBWgALQwsdC2Bxx+AgCuDMzBcAVlA4ILoAAACQBQCdASoUABQAPl0slEiCgIAAwLiOQAnTKEePDZ84QzW2z56QA9EIOMb1WokIuepoJOoBmAD+699MIKS73Jx/5djoz2HUbBxsg8Uxkjem4fdtL9etzumGfL8y7v77ewARJowEZEjvYdwPXONPRtWNpemSJMTSvjgq8k72gznDLmRT2rSu0Iuqie+iM2/2PNw6u47NCV/ZYvYXTJbTQtPvY8vp7K/ULIrAi8qpi7NtlqTWrOymNMKAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e32c291801eadf1abf81d5106dfd06aac63bfb2@256.webp?v=2"
+  },
+  "Dr. Vortex": {
+    "background": "images_monster_bg\\Dr__Vortex_bg.webp",
+    "character": "images_monster_char\\Dr__Vortex_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnoBAABXRUJQVlA4IG4BAAAwBwCdASoUABQAPl0slEiCgIAAwLiOwAnTKEdPLYoVG2AuzveQDlAMcFMq8YQ8Lnno/Y8bHvLUA9WjaVagNQNzjvQA/vgeFfrhuuVnGqA6EAHloeLmtX+CuRbfGNqyco++KHzE4DEvX8XQuHorySOkr6fqrTK33y5kSeTU1q+Ibq9PEeoV9LTydTS7n/E215Jl979/zdGW58/j2m0+zLv5gNGuZ1cHf9Ob9GHhr5qVJtA646fZlh9/CeCnl5v49p6OTeGY10pIrhZSv978vErVJ3+mMePKa04DILkLZf1gVKGby2Swgnu91gO3TS0zcLV7ZLIT+0Teisgcarvzr3nQ3G+9DBHXhn7mPGUMl5aIkH1Hu0Cr/hLtNYXFLH2X6xtfFvJP51K5wNCm3RDbTDVR9gcEch1et9AcSsGpYB3dJ0Wwbh6qSwR1VDYDAXjV2jDPvu4XzhUgsuyP5N3dNlR6MXTlk+OtiQ8i8s6rQAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8503a1da069dc1c707b61e73e34905f66c5342af@256.webp?v=2"
+  },
+  "Oasis Guardian": {
+    "background": "images_monster_bg\\Oasis_Guardian_bg.webp",
+    "character": "images_monster_char\\Oasis_Guardian_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCkAAAABF3D//4iIQUEjSc3SfL0EqklsfgEJEf2fgKsbIPwX9dyByseqSMo+GgBWUDggtgAAAFAEAJ0BKhQAFAA+XSqSR4MBgMAAwLiOIAnTKDN1gkzRAYY2HrAFGFKt1AAA/vFALIPL0/sZWbKHmuCVMgNfpNzZ3gXKV5XQAMgSrz/6tYX/5a1T4w7UygxoP8psxfP/lK/6R63UvZ/ck7hCJ0isvfxFGFBiNHqb/p5o6n/g9lxVjEg2QGcvWNB0kglEDKKimN6Gnxp2ZH3bl2twtRXhlCQrq3xzM0oWMJTs9R2Y1LOUpKF6U3AA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/db2df50c77239af66aa48a4b70e934d1793ad0c8@256.webp?v=2"
+  },
+  "Wandering Shoal": {
+    "background": "images_monster_bg\\Wandering_Shoal_bg.webp",
+    "character": "images_monster_char\\Wandering_Shoal_char.webp",
+    "background_url": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSBwAAAABD9D/iAiYadvG/QJ7sAclov/hFIwHUAAAAAAAVlA4IEwAAADQAgCdASoUABQAPl0slEiCgIAAwLiMAYG4LMu32VjoAP71w67QPs80vgkN/uj8mf5WrvkEO5MqcqIwh8PxzPzvKtwk7XZh2f7UlIAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/306279880d487fb961b2d5374cbd2d9a7339a248@256.webp?v=2"
+  },
+  "Dragon": {
+    "background": "images_monster_bg\\Dragon_bg.webp",
+    "character": "images_monster_char\\Dragon_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDUAAAABD9D/iAgwiiTbSX/ickMCStIRV8kAkhCACVxF9D8cgUAgKJOCY8A+B9VWe/jr4yvGgveuAABWUDgg3gAAALAFAJ0BKhQAFAA+XSqTSAMBgIAAwLiOIAnS9Rv6rAOeAAPR9+xKNCOT7yNvcdSQc0uYiJkhgAD+w0uBkI3Mhy3I2acAUJtgJeZrapDncmHWFIOJgRnhM1QgD/9kn/h+HUi2HVOIIdH6ejXDz1MW9z3ZuIHIJZoDe7inKXDRyd7daiCFdHCca0ZdogNXuPUcnDZ/lJO4+T2yLGrmog5jSTRZP3MZ3YkqELcDdaT2g5qYh+b/6ujyjcELT9W9JsotAq76/f9iS0i1TzRKpW/FUoyk04NMIzlHryV/eZwAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8110ca0034c33eac07e4a404e2d6cdf1530d605d@256.webp?v=2"
+  },
+  "Bloodreef Captain": {
+    "background": "images_monster_bg\\Bloodreef_Captain_bg.webp",
+    "character": "images_monster_char\\Bloodreef_Captain_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC4AAAABD9D/iAgwiCTJSX8ORAkvFaTgBJkR/Y9Hx03+QiDaUfQAE2FFvKsjCEGnI/wJVlA4ILIAAADwBACdASoUABQAPl0okkgDAYDAAMC4jkAJ0zHGAL5gCHMy1Jvl4uBCdEK4ycFNI8QA/ujH39wLOxWVOON1to6iOsQI8v1C6bZGVksH/xE3ZLMj6ZFOnk/8pzvX6+UZlIJ5Fd237GWVDEYAxGmjA13BPgJZzk29X+4E8SBVFnv6s4m+ShMEe+H54r0vrjfxn+IyIe9qVkAGp1C/hYqzfKH15Fy+nDp3C9mAj3+8uj9EAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8bfd3e4bfa2c633766b268dc7f8a4f6093f84fc@256.webp?v=2"
+  },
+  "Cloudtop Admiral": {
+    "background": "images_monster_bg\\Cloudtop_Admiral_bg.webp",
+    "character": "images_monster_char\\Cloudtop_Admiral_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSBoAAAABD9D/iAgoatsGSvsaf8z3EET0P/kIOglkMlZQOCAAAQAAEAYAnQEqFAAUAD5dKpJIAoDVAMC4joAJ0yhHc2wDkB8gNsBdnO8ngNLSR0Ec9z/5RkrwLJu241QAAP7rsAQBEbJ8KxzmEO1v2tl5jIcxIJAOjhG85FpuYjI8xrOOoRpZrfCN9XLlIEhEQ77jgnv1v/zRHcUjolN2GKkyLqeJ7slXUgkf/R5JJTiN2/DVH/VuHUhjOsH+6Sj9NfP/3apeyfiU9NQiGWcCJQyZXcX8+IrkahyRElnlD1bnKE0PQFLXVT83BxvzxlDHKignAU30Z+4q7WeYOqgXYdTz2Be3FwDO19H1PFSdDwLGBhLE7xx6MAhORp1AuqfkQ0MXzGlcAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f1ab562b5afdad7a73c81a551e989ed232f566a@256.webp?v=2"
+  },
+  "Elite Duelist": {
+    "background": "images_monster_bg\\Elite_Duelist_bg.webp",
+    "character": "images_monster_char\\Elite_Duelist_char.webp",
+    "background_url": "data:image/webp;base64,UklGRg4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCIAAAABD9D/iAgoaCSpGXr3jRKkoiGi/xl8MhN0wDsIt6NXnw4AVlA4IMYAAADQBQCdASoUABQAPlUmkUeDfoAAwKiMAWI9CQH/WHgNtQBXZXj7JysrKwrEC3bX0mz4UwjSXP+QAP75qVSYg4wLm1Hwi6KvZBrEITBwkoB57TdREJMH554eUwoW91kqrjCK18GSrQHltFjG9ElTeHn6in79QDovwwDeQ7pVJ5+CV/Vm0DLNdQa1B14nStJNQkRIePcH4HRv+68r90d0Z1/TmEO/3RFkiuOUo2AZWi/EJWkPNFhSKjwl4jXWyR+oGEQAdpoAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/72b9872f966fafc18c2193f708d8127def5f15be@256.webp?v=2"
+  },
+  "Roaming Isle": {
+    "background": "images_monster_bg\\Roaming_Isle_bg.webp",
+    "character": "images_monster_char\\Roaming_Isle_char.webp",
+    "background_url": "data:image/webp;base64,UklGRioBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC0AAAABD9D/iAiwiSSrUvMnfFKQQEiINGScxXMS0f/AIviywwUIkonyACY7m8VPKAAAVlA4INYAAAAwBQCdASoUABQAPl0okkgDAYDAAMC4jmAJ0y43mfszK/7JOAXMId/adnXkQPWYNKolMAD+0Nbf6QmL8sD+1Y5PED+JV+M5WMOyBnx8M1X0erFpQuHtilu8iG3Vd5UKhF3bn/5cSJcpfmNS09776QhlWR/8YR7+Wc1yul1+gt0dN3nGizE1l/jqKymhn0zXNYoO/urhEBPe5Kga+yzpZP6mHqMz1IyRn+Z/+NYZTemb+jM+j93CedCvVng2kPqmS/xlX+TjsXUItCQmFCtHDJQxO4zNmAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a864ebabdea492263a363c851070f1b1bb11b1e@256.webp?v=2"
+  },
+  "Terrorform": {
+    "background": "images_monster_bg\\Terrorform_bg.webp",
+    "character": "images_monster_char\\Terrorform_char.webp",
+    "background_url": "data:image/webp;base64,UklGRg4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDMAAAABD9D/iAgwiiRJUc7vmBScFAZZK+kkrLgVEdH/jKpSZDyWjU3+4B+r6bBWdWJXdiEiKToAVlA4ILQAAAAQBQCdASoUABQAPl0qkkeDAIAAwLiOQAnTKBr8ADyRYk6FYoEfs9f2i4JwEh39+Q2gAP7iIrPhAIAdmbv4C4bMXXXhEGANxeNrWXlgU/anqEYhD2+6v9mGgdezW/r5z6/xpDN0C5TQAUCcMVJJdW1ZHuMryjfphjxFl0PmzDR7NOUX2TnpW1y/ESUZ0KOhZpZdBwsev+fqE1gLkmnIQGpVPKjrbAXB207zUTUBHESgU2UDKgA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8f6df48bdebd8733429b5e6ea6aef3974cbebac@256.webp?v=2"
+  },
+  "Ferros Khan": {
+    "background": "images_monster_bg\\Ferros_Khan_bg.webp",
+    "character": "images_monster_char\\Ferros_Khan_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDsAAAABF9D/iAi4iiTJUgVlRcz98/RzB1gYIvof/93dcGYICldMGWUmeM85BZfbb2LkxqJ7Z/I7yrGF87+7CwBWUDgg9gAAADAGAJ0BKhQAFAA+XSyUSIKAgADAuI5ACxH4UGd9LmrFle8ckR+F+lcU/a78564mrCRj+pz/ZUXNqAAA/vxeWfzrRf5wS5Clvvbz3db77ypt44sW7GcedV8000y1O8w+JB9KnDFLB4zMaG3YuRdWxjZMmV/f/y4Veex3vpfm6tIg+Ik2iWG1YwIxfouzoP9dmDjoOqVb4kch//PsXqEo+WhdB7PAJO0C/e/ZTsrTK4KYLEHLB/1Y4yneu1z5sgBMkv31n5c8JOeF9WYJ2qsCdqyomk3juTiuf8D/SXxkDAYgmdgoXfycwGGk4m4kUB4/65i28JwAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/810ca9123ae0679b71c3b5f4c8d664432b1dc2b7@256.webp?v=2"
+  },
+  "Weapons Platform": {
+    "background": "images_monster_bg\\Weapons_Platform_bg.webp",
+    "character": "images_monster_char\\Weapons_Platform_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSEgAAAABD9D/iAi4qW3bic7/FTmnEgnUlFjBAQqiEKwEG8jIacZGRP+jlziAQ4sE6KnBn5Uklf9CoRbloNeIRfLWSlYz5lSTzinWvw1WUDggIgEAAHAGAJ0BKhQAFAA+XSyUSIKAgADAuI5gCdMoRwIuC2AGSwbzKAyo/6duoDr/U0IZ8uuWFsyzHLl7pjINOAD2uOQmvjUJPenOWPs3nnNIYNYs9xGKUjTunk0c6e5nb9GIFNv4ndZYSt14SnBpLJ5I5XISUI78E35GmttS9ewcEH/8WnLwIo+hfAE//kn1rvgrAmX3NWNfP6NMf/w8ebAkt/ctrTqxU3WW4pSSOByAEvZQ0FroQTaM1luju37luUk1Om2EBGzyfMnFvnXycXd24Y4pdgZQEeAtc3QMLDzoVtVYPSuZzHzOLUvvrT7PCZbRtqp9/3+/LNoP0DVPweoIImO9YeZRuN/fPaZscHM7hZYuTffU8dq5quLY7opHfGvcoAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8605d2f6a43b015e90b75dfdddb52b2d7f0499ae@256.webp?v=2"
+  },
+  "Yerdan": {
+    "background": "images_monster_bg\\Yerdan_bg.webp",
+    "character": "images_monster_char\\Yerdan_char.webp",
+    "background_url": "data:image/webp;base64,UklGRhYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDMAAAABD9D/iAiwimy7ySahg4TqACREIhL4REYVGdH/AEHDOtzi3iVcoS00W4YxIjigyfBD4wQAVlA4ILwAAADwBACdASoUABQAPl0qlEgCgKqAwLiOQAnTKEcDe6J5J3j4Bhlbh/ncy4nw9bpvlwAA/vvgi7Rx5gZ+/0l2NqFFg+NeZF05T5CALUkdAr8z0LNdMTjDrPuvwOJAx3XYeU9gWXMOEFwevs9VCw/ffev7oN14J9Cv8d1BvUYtQLSyVSlnKnAfXlHxQ1I3ScUZJcsdlfmm7LgD+5Iqxq3O/swZAV6MjI5LFXus/6pMHTnwfa5gx6Kzat935eTAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c435272eab50324b20d9e530ad68be540a2abda0@256.webp?v=2"
+  },
+  "Foundation Revenant": {
+    "background": "images_monster_bg\\Foundation_Revenant_bg.webp",
+    "character": "images_monster_char\\Foundation_Revenant_char.webp",
+    "background_url": "data:image/webp;base64,UklGRvIAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCQAAAABD9D/iAgoiG0buvadCuKJIYY40r0MEf3Pv1CWjPJ3AG+jDhpWUDggqAAAAFAEAJ0BKhQAFAA+XSqTSAMBgIAAwLiMAQTgB8lQJexdi3/Q3grXIw87XwAA/vpgjuiu82YxRf5mzyicmlfdE88460Z2Frc37ftfWfdEvnocAu2o9thwz9MJMAgWepRm/o04Whms5zl1ycG4o+VNidG1fn4zuJjdZNUVCcCp3fT/E3/xR7wuUeSs+olcydx16IV2tcgniJxdawuF49QgU8PYSl8K+xAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6417c47a3e42361b3982321c8d1f947f4e2067cb@256.webp?v=2"
+  },
+  "Void Knight": {
+    "background": "images_monster_bg\\Void_Knight_bg.webp",
+    "character": "images_monster_char\\Void_Knight_char.webp",
+    "background_url": "data:image/webp;base64,UklGRqIBAABXRUJQVlA4IJYBAABwCACdASoUABQAPl0slEiCgIAAwLiOwAnTKEdQeMfjN+KscAlgD0APLH9jr9gP2j9rsmYf2A0kAMBmFt1rACd4D3fJFca8GvGAnQIAAP7YRBaIBCGb5diKd/aCLBnLTMCOaNjtxgi9pQ5nQm2Bms7pYuMPxaR6yKHKzUvv5p2u439r3yV4pgFQ1q7+ZjU8+ULKr6ce6BnW2zBvtr39ofqhC9YhKsKDiuOFQf2OFHb8rDdFnmyZ1YudGKLGtElHLh0EH32kcv5U5C+whQENJSzVHJ24EyWLP//Wk/1cyerzfO0/v/302IIM9tBPj2zkJTV0yJf9GbLqpM1IyNOLien2yJP7b4icWB6cqSKIqBN+hAO23qyBoqznd6ZOGIeCIYq4P2ci7DPzT8k/2HI/+IoRJrYF82U/wRW+zfotJ/ar3SGc/BZpRtRQJJrXowvTbJ52Tgl+H2vr+ZrD0kDRhQdMdaCAqTGjlXNN2Ksn9cw9P+OoQt3/7GYdVDMcICe//E7Bv/J//Kpvbjpdr5yMwmPkUYyswAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a6378705c899f4c14e67d837f1205a5803437721@256.webp?v=2"
+  },
+  "Boss Harrow": {
+    "background": "images_monster_bg\\Boss_Harrow_bg.webp",
+    "character": "images_monster_char\\Boss_Harrow_char.webp",
+    "background_url": "data:image/webp;base64,UklGRuwAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCQAAAABD9D/iAioiSQpuvC/k4E8JCENF6SToyCi/wnzmHuMrSwJ+QpWUDggogAAAFAEAJ0BKhQAFAA+XSiSR4N/VYAAwLiMACeAAdctf6TUOWRbw1snSL59+AAA/vZafWDubj3zCTjlMvmrOvjl492G3yOtTzofhIxu+CG4o1sRg7urjcVM1dLGoMSmpxtX86+yBAZ+/+vXT2NL3yJIgoXaUFPc6C9fiFhok/QZMQF5/iYUtHQBxezRSQoZeDPb1eUO0ls4uwQLUU2xU5wcY8OAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f2f1fbf1f10f6361cf1203bb09b71c09f0c85e49@256.webp?v=2"
+  },
+  "Hulking Experiment": {
+    "background": "images_monster_bg\\Hulking_Experiment_bg.webp",
+    "character": "images_monster_char\\Hulking_Experiment_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSE4AAAABD9D/iAiwqa29yZeEkh4BdCY25hw04CETIw6aATwxMeMAJZzYiOh/gINzTgfQngM8ocn5mHt1r+R/JNeEOGIG3QL8iW8hdQEeLE7uOQBWUDggxgAAAJAFAJ0BKhQAFAA+XSqTR4MAgADAuI5gCdMoR5mNPMS+v+A8k75gv80lOKPrj4TBaGqlwPkAAP767HuQNPbcuzKqHy8WdmLCNHmZI5x0t/rwBKXWdAyJTzf21qGv4R9rDY+RCnIKVEo/eXLkcxKC93k6ot7mkF8A0TtEIdSUb2fFNbmVxon/SbIK83EAd3zHUJWYSCivPoYVLZUS3ivuobqTcShZQaLv/KS2ZPS4PqN01t2AAXWvcgWh2rqJxd7KoXqO6gAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e11a2ca0a1619107f8a01964fba751b07d9d14ff@256.webp?v=2"
+  },
+  "Master Alchemist": {
+    "background": "images_monster_bg\\Master_Alchemist_bg.webp",
+    "character": "images_monster_char\\Master_Alchemist_char.webp",
+    "background_url": "data:image/webp;base64,UklGRvgAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCoAAAABD9D/iAgwiCTJSX8mJwVISApxiqyI/gdAp5voqMgRLjZ+0OsCOHj5ODNWUDggqAAAALAEAJ0BKhQAFAA+WSiTR4MAwADAsI4gCw/fVWS4BpcrjrY3OPEZJn0HZ2AoniwA/vv1U+cJ5IAw9B9GsqGcAfjKMSTa0LWLzYqPWb7Nm48DJge1NVwlN2xqP5BpR3dIKsX0yLS7SniSIpUBe1vKac9q4dRTisnaEEi8VvR+cQJEg0gYXIiY/9v61J6XzQz/6Pt9BBSA01kPe9XZNu8raRIN5c5MQKAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/acfc22b7ea602ecc92553c86508c2a55b066b52f@256.webp?v=2"
+  },
+  "Infernal Dreadnought": {
+    "background": "images_monster_bg\\Infernal_Dreadnought_bg.webp",
+    "character": "images_monster_char\\Infernal_Dreadnought_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkgBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDUAAAABD9D/iAiwiSTZSr//C189CcSIuEIVIbggRHZE/wMnIQXoZi9cE/eT8P4JK+Up1SOb9lcgCgBWUDgg7AAAAPAFAJ0BKhQAFAA+XSyUSIKAgADAuI5ACdMuNwHurt8DTAN5lAWF6NAQXWKDtBv7WFT9dEyQCn0AAPqPM4S6gKctrGsjm9PZsInUxj6XG1pxFFBbayDaUPQheJ+hbwRi4/Yqv/If/wztr5cpelvuYf1qbB46/+TUe6ELb/1LUh3zMP4QAcfe/h3ynnksZ9WTE8KEN2RPPPqyCq/HgiTpWS1c+NaoJueFxrotk6VpLO899ibDhZaqjc/rxJwlca7gOtIabccJlow1rBbo25xMFzdj5Z2uQCb9iWKZHadpgJ1qdT7HrtCPnvdMrQAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/850276bbb711c13d29e00f3ad5ee15a423485317@256.webp?v=2"
+  },
+  "Lord of the Wastes": {
+    "background": "images_monster_bg\\Lord_of_the_Wastes_bg.webp",
+    "character": "images_monster_char\\Lord_of_the_Wastes_char.webp",
+    "background_url": "data:image/webp;base64,UklGRi4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDEAAAABD9D/iAiwimwryMLXgxRvSEK0h0mMYgBDmMYMEf1Pwm9SPB0E2JL7GrXaeYn+zUAWAFZQOCDWAAAA0AQAnQEqFAAUAD5dLJNIgoCqgMC4jmAJ0zNDAZBrn/wCqY/99NNLTBYfVXfPn+YA9EZI5+PVn/UxqRz0fgRh6OHOeD2JrLiOtuKreyGbWRGQoWCgpgNQhBLxv/0OPl45MmX/E3uFlD7nSrVBYelR0f+5/qG3/hiwc6A5XR+XRE+wQK9yYwmwaC9DbZwIELQ4N5FRNHhwzFFEcUsO9/8od23/yg0AmAFbKGRcxb7DuilwcXaNqi2CG/AIA0PACtRGCm8ufbmS/0O3BF3zT0EXXhJWQAAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a00dbe31598ca9fdba1b195f7ee02fce7885904@256.webp?v=2"
+  },
+  "Test Subject Alpha": {
+    "background": "images_monster_bg\\Test_Subject_Alpha_bg.webp",
+    "character": "images_monster_char\\Test_Subject_Alpha_char.webp",
+    "background_url": "data:image/webp;base64,UklGRloBAABXRUJQVlA4IE4BAADwBgCdASoUABQAPl0slEiCgIAAwLiOYAnTKEgQfs2wzrMYDMRvV60wDeQSItB4kriIs8fcQdEioT7WJ0wOKwwsAP79s27dlbN8jesWJdOMg4H4Wd89uOD4tGVYxtMw2gCvlHW51rubT2a3F/6gYKBmNmmScUvzYzZ6b/C+Qx8uIKMttWsT4u5wSmSiuEa6l8Oq1drGDATNhcLbArq7LY71nAbhsbsFrl+e0yurwCSXJQfUu/wJybX37gpiJLtwkXOBK7LmYURu7DUaR+uaHUn45Ww2e9jTDEFE+c6ZiCyifVlmVDqkjXE0wxSldSofWrqW2q8OrQjIv/QyOhVuc4IJAAbcM3WH/RDHZZBQCGpvzrNWgpmNRS6nD+OzKoEjsVHrauwOIFmTMwE6cYUEunHOsxCDb7DEVD3QTRYSqfE7he2K/vw7hAaj1HlKgAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/360aa1c4ceb4df7290ca970c6593e7764cc3b4ad@256.webp?v=2"
+  },
+  "Tortuga": {
+    "background": "images_monster_bg\\Tortuga_bg.webp",
+    "character": "images_monster_char\\Tortuga_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnABAABXRUJQVlA4IGQBAADQBwCdASoUABQAPl0slEiCgIAAwLiOgAnTKEe09i5c+oDbAc9j6AN4d58T2NawAggNXMQakNRmxijChK/sMnOdgZOj5YPtAAD++Qlmwc46kzcBovrRX4JG9+pN/P9EAn1oXfpEZ/Phf3HJydPWfte8tSHYo6af5H83co17gbG2KVDhwblvlXFJCuQ5UcmjCzQt+gLNrqjox7GrSLjd05SPZi2dQ/OURNO+YmeMAgnpqnMKx3Tw1SEoiWZBqbnB5QRCDXc1qrL0h+FKgFfkEvh698HMuMK3tTclO7eW0Y5LpD7fz433+D1TNvIPz84VNYrB/6/apqlQmuCjjMu3Hwmq3Rquwb9sq2r6/ygdd7OqWRT4sAbwR/CDiV8de0MsJB/9hg+R+rqjyO7I1IZM9JdrtHi83nC0Ocey68SAW+7/XyojwbBrGYLc5ta549oBJL8zlZsf+RYEzp77/dDlvGru/fwAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f0c12546361122b9928835993adb596f1aa3b12@256.webp?v=2"
+  },
+  "Trash Titan": {
+    "background": "images_monster_bg\\Trash_Titan_bg.webp",
+    "character": "images_monster_char\\Trash_Titan_char.webp",
+    "background_url": "data:image/webp;base64,UklGRhABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSD4AAAABD9D/iAiwiW07yv2p9qRPtQnABTaQggAk7ThBCB2IiOh/vnO6hvSs9p7i5ZLxBu+la6CMACXzFwClQRTfAlZQOCCsAAAAkAQAnQEqFAAUAD5dLJRIAoCqgMC4jiAJ0yhILPoF4oBEdE/IrAOwCB/FUgX4AP7uJQs83o9HTnMBsan4OYa91kpxaoUrPG48feavL5ZLmliRqGKJrbA2ZCTP/e8/hN8wwJ+VDK7D2gR4Sj2DcfhPl+tJw6uCJhwXlWCtlZMVQtTHGd7jKbgNS/fshwDIn96MiKMzgICUNiZkFexrQqns5r3TEmsjJlIyjcAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54c31435e8aeec420a23f6228f134054336bec09@256.webp?v=2"
+  },
+  "Awakened Primordial": {
+    "background": "images_monster_bg\\Awakened_Primordial_bg.webp",
+    "character": "images_monster_char\\Awakened_Primordial_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSD8AAAABD9D/iAiwrW1bxjY/P1KCjDKEQm1QhQamEiwNCLUa0f8o5f2sm9xSimwUIfIejq8le36Sfcv2ldvDkuV4hwAAVlA4IBQBAADQBgCdASoUABQAPl0sk0iCgKqAwLiOwAnTKEfKf7zEqEBtgOeSsmIiPQv+KDk3PrHoS24Z31R6eAgms5isWFgA/vt89yt9h+pDKYlOS3OD9P4nufGBos+AiHWgRQBobIFKlyseh7fXvVpsznfIw/KNbQzYrLv5UisX5veL338DI6fy6IqClc+pr/78w5f9pW7t61ADJTRwYlKTixzK7tq0BjTQYIZxx2irBcztkBkjcr2XNtUu0kutE3Nzik5ATD5VrGfpIAF0pu2/uJdvnjT8kPQ6p56mQZY9yR0bj+qRZN/IAHgNsuNOH4S0R8uVFrS98Xv7cpHd4CC5j4HJfj5ZGWoPqu/OMKXaolYOYU+e/KhAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0277de2dded43aea83df3b02dd7e728490c54713@256.webp?v=2"
+  },
+  "Dooltron": {
+    "background": "images_monster_bg\\Dooltron_bg.webp",
+    "character": "images_monster_char\\Dooltron_char.webp",
+    "background_url": "data:image/webp;base64,UklGRk4BAABXRUJQVlA4IEIBAADQBgCdASoUABQAPl0slEiCgIAAwLiOwAnTKEdXezcVPk1tlNwB/4L4xIiIKgTPx398iRfb1ul2Nn7PIjbtnAAA/pgkXEVYHHRISyuK36Mrrfd/zSmy3+qdNGkAcjEiBc66y0xjUF7t3MBMxdWEDJoW4q59YFeDxAuYU96zPmogexdiNbO2aROWAFrPpL4o/wPEnYrc78sEt3FQQ01n9QEkM7Z9h6SzXB+Ri0Mjv7Rysnvuch6G3jjnHPeZghxw+stZt5Zbs6B/TJdz5r9/dFMwzHVXrOuV+ETxvwTAvIh3pe/37SeW4NN90xO9/7mOAg7JVoExURXA6IsrEnfHd/9Z6EeQNf6mzL3fZofbf5DfPT6XhTUZAwZKrbbVCxDfoxyl8xjkJuaGTRkKzfH2sc7jKawriM47GSeiifBFhpIrcYAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a582ba3f8dc63e82b902d0c83e210b4229d2d4c@256.webp?v=2"
+  },
+  "Rex Spex": {
+    "background": "images_monster_bg\\Rex_Spex_bg.webp",
+    "character": "images_monster_char\\Rex_Spex_char.webp",
+    "background_url": "data:image/webp;base64,UklGRj4BAABXRUJQVlA4IDIBAADwBgCdASoUABQAPl0qkkgCgNUAwLiOYAnTLjgQj9iVbfA9AH/RvkHybimWeRYhN4j0hLKWV7pW4gnzfCbZxrmQAP71mOgzpwC6l/WfpU7p54MI8v4TRadbrHewlMvXIPPbZ8GsjyKjNzqzobnUmBMUEb1wyp9pBTGRuCNX/vo254fkH+77XMiA/8vw4jN4CiYeYpSdo1CmD/HlAxNsdvf0vvCH1z5nV9lC2wk8WUxB2Kbhy+t/XHXFPX1j6G9u4LMMDTJPx9pxsW+XpjoHw7ArZA7ATQk+8zZohgTDcTMaLlaO+XgNiz33ffVe0d6d/ZyObGwzSJEc0WyyhvFg1OyJNBLgv+jiWdnUiniNhmc+1M12ywgdqsM+STY/w38Z0mTF42LTRfuO4KvCo5HHYnUsAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bf45f46dc13b2202da585459b99083778f1cec66@256.webp?v=2"
+  },
+  "Volkas Enforcer": {
+    "background": "images_monster_bg\\Volkas_Enforcer_bg.webp",
+    "character": "images_monster_char\\Volkas_Enforcer_char.webp",
+    "background_url": "data:image/webp;base64,UklGRloBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCcAAAABD9D/iAgoiiSpmUuEH5KQhwyk4SVaiOh/IoVDwfnMwV5Cp7IbzwIAVlA4IAwBAAAwBgCdASoUABQAPl0sk0iCgKqAwLiOQAnTKDfZ8Yc3N0K7tAawFIKF3sLWslP8SSiAxmb3BedlzavAAP73wboPs481UodTpHN+4Ezt+fPn31tmfjjxYBkHbvdRlUH1hKFEgDZ9XqxBLf/MGrzwHA97NvwGIROAYRwKgYq3/M4Ix9sPV+kD4ci/8MQ7VN+JL4vYl21L/K+yH/yb+qZ0OFcALI0sh5QngvcZhwXploTmDVGkzhCbLy6VN1eYtsfdCVXGn13Cjj6VP6A51jM6dAqhi4aOl60aYA0SbGNBywjyTeOZOOdEL37X8FrzOTr8qv/ydIGTlmE2PMrUoJSqkYzfLaxuQcTFBijavgAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b32b58f2a50dda2397aa6d8acd8da8e46d0284d0@256.webp?v=2"
+  },
+  "Frost Street Champion": {
+    "background": "images_monster_bg\\Frost_Street_Champion_bg.webp",
+    "character": "images_monster_char\\Frost_Street_Champion_char.webp",
+    "background_url": "data:image/webp;base64,UklGRlwBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSC0AAAABD9D/iAiwiSTZSr//hi8kRA42cIIUxIKHiP5nXt99cbCD3MWpCOLXqAgVHgAAVlA4IAgBAACQBgCdASoUABQAPl0ok0eDAYDAAMC4jkAJ0yhHA3i3CGbg7i2YzVDCAuMVP1f6qXzhylnoQyHZxlPvS0NMAP73WGQ1QvvTvZOzyy9N2fdKN+okFCb2s7aAHZBYI7wXHEtcAM0rwqhfxbfx6Nneef/eso5K+vHZ5Oxb/JfP+TBwfpY1SWQYh4l4u6LGSTFAaOnSpdxQF1dT8tyflpVpedl5KSLvfktbKMH/KJAQpp5vvoV5Isf/P/G4DRINf7m/mc0rvFuafdIG462jE1J8zQmXwhVVXovR3wVPU6jfK6fw4NDfhOHn38nJlQ1J1kC0GBu7k9pwLUs4YiQs4PXTnZXCrJrgQuyAAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/03152a397f530e5613da32810fb3dd6c4534acba@256.webp?v=2"
+  },
+  "Gibbus": {
+    "background": "images_monster_bg\\Gibbus_bg.webp",
+    "character": "images_monster_char\\Gibbus_char.webp",
+    "background_url": "data:image/webp;base64,UklGRiIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDwAAAABD9D/iAg4qm3baTb9jVgYqE5YSEFJh2kkxEaGUZMVRxH9j9/oSHz5h5bPKOE5qGNeAs87UAa7iYnXCg1WUDggwAAAALAFAJ0BKhQAFAA+XSqTSAMBgIAAwLiOIAnTKC1Ru2d2Z7zmAv/9UNk8hmE5Afi9O5Ln4i6eAAD+6fdZyT317/ShnA93V1vjnX2xtdbwisW/EyTkB6JK8qSQvLCxa/VAiS9qUkK4tWHwQJUbQcTlu4AsFOcAkzYtRHhtYsy/HKd5HNbsk1fQNCdTohs4Sr6ONewHH5qM3uQKFytzvdVz3A6lRm0EPvR+WVr1pGAo+BU6cUcfZ+jN+REf0RxCkUJAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a21e8822489678c8696d4331e7fe9a5143f1159@256.webp?v=2"
+  },
+  "Property Baron": {
+    "background": "images_monster_bg\\Property_Baron_bg.webp",
+    "character": "images_monster_char\\Property_Baron_char.webp",
+    "background_url": "data:image/webp;base64,UklGRmYBAABXRUJQVlA4IFoBAABwBwCdASoUABQAPl0slEiCgIAAwLiOwAnTKEeZ+Z8UhQR4DMZvXH9AG8Abx6RDwVXYNyUJrJqekVeVUEvDVTRIIz4GAAD+1z2bcR2aY0/5MEE2QBng7HOjiuc0h7vC2u0Fqh+7ICii5t287/7rffnA669d9wlDcwZ3QHOdUG4KIUymrWY7Wl3Bj5V3zyYPnBKofmf9tiSwXQyCW7pcHJ4WOEP6dmXlmNufKqcaRmk1bpbRrC4/rUu2cxSnC9pba6RV8M9MDAM4+qHLNRkfz/x/zMKxG/yBb5o6tGiCmn79lL1zXz4v9O3qhNrXytT20J1DKPBQ0at8HxTa4ad9nUj+WYvClCZDi92YiCLE4IlOxIO/yNWuDN8Aev3rV5rNgHqz+t50slxuyfl/I6ZalaVH+P1fR+UCiy3S7gxSqO1T3DJ/XFk3z3PABjhD4JbAxrWv3pHbMfN5D0AA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f45beaf4a82327dcd092fcef474be13e17fd5d0c@256.webp?v=2"
+  },
+  "Void Colossus": {
+    "background": "images_monster_bg\\Void_Colossus_bg.webp",
+    "character": "images_monster_char\\Void_Colossus_char.webp",
+    "background_url": "data:image/webp;base64,UklGRigBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSBcAAAABD9D/iAgoaNuGSZkX/dkQRPQ/CQLzDABWUDgg6gAAADAFAJ0BKhQAFAA+XSqTSAKA1QDAuI5gCdMoR7WKovSWsABm1ST5ElB7W5twFCDM2ZQAAP7zqx1z/Bg3SxMXyd+SOm+ILQVwfD3k2lQYIf4EKC1OMB0wlYKOLTxWgXo6t4PxRrA+Vf5CHFw5PqamH/cWm4jwoU/sIT6nn9z3Ki8ycTM1V8O844atnp2gOIS8+vZCFbSJkb94dkz6PUV8QqvAcRb4CdUYlpl0zoBNYsjJn0aE/YO4nxK+bO+4sG7IpewcyW/ZRqKghmy5g4fbaYFA750GauT7W/loLVtazf1tFRjvszGMunAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d891e5ba1dc65f2880e2e2a6ac5a038be7ce42a@256.webp?v=2"
+  },
+  "Awakened District": {
+    "background": "images_monster_bg\\Awakened_District_bg.webp",
+    "character": "images_monster_char\\Awakened_District_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgwBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCcAAAABD9D/iAgwiiQpUs6PGyQgBv+mYFdDRP9ThoXlN3C2G4HkLkgEagcAVlA4IL4AAACwBQCdASoUABQAPl0okkeDAMAAwLiMATplBm8rAkLGeA58ABr8sfizPJzPHPKfD38Mur5jKQAAzYZJkUizCKwH1Pe/CQrukColUdEHZ1HiYOptFcdRtIrL0U4ugL4VTml4ZoWBHWqdrFUik5V2ZR6bb8/+dHQVYeKUCaHhEQMdSYLnsZSaaTLTgBWt6yyNl5kWMW85syqNiTlkvuuGnmWDBZP6gbIPav90WmVKKFtiYNiwD6L446qvcS+NUawA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/92bd5cb9b50819dd5556565f445bf774b448da8f@256.webp?v=2"
+  },
+  "Eight Arm Davvy": {
+    "background": "images_monster_bg\\Eight_Arm_Davvy_bg.webp",
+    "character": "images_monster_char\\Eight_Arm_Davvy_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCAAAAABD9D/iAigiSS14QUllMhAGiQR/Q8oQGMBgUn4AAAAAFZQOCDwAAAA8AUAnQEqFAAUAD5dKpNIAoDVAMC4jmAJ0y1T43qvD+0NTTWAyr+rolEjmc67YX00TDxdtl6YwAAA/o3T187urNBK31EXwk8FCze5vHhH3nsoEOZKeJvTCy5AJvlyHZ4ewcpQXOxHN2L/uM+3ZsVDiO+agpc//HOPjL5w7t00bJUXnZBlaEi0Jf/sb6j/F+GKpf7/DQIOwH+V8liUsX+k7tM4tYOkcZdRS7f5ICuPpW7rcEJgQlmRZCvX/Fd2wFot5+PlWnx8smp70vUr/o5nXc/pzw/2cihAYPZzAFS2/Rinatg4F1SUgfDjfQQvjOAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c77313632296160587acaeeb70a7bd31f5e283be@256.webp?v=2"
+  },
+  "Lord Arken": {
+    "background": "images_monster_bg\\Lord_Arken_bg.webp",
+    "character": "images_monster_char\\Lord_Arken_char.webp",
+    "background_url": "data:image/webp;base64,UklGRgoBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDgAAAABD9D/iAiwiWzbyZJzkPCHigqN3wupRQqDIHRE9D/URAkIhAXs5sf7d5g2+epr6zQXb0FNgrnMAVZQOCCsAAAA8AQAnQEqFAAUAD5dKpRIAoCqgMC4jAE6ZQjgYZ+CWkcp0w6TtZOKd4Hg3aHwV9MAAP69m+KN97HJSnhL3W1p7lllTstOSBER8BYvgUGpWMbIXaVFPGl59S6YPT18UL9O6cN/DizZ9/VJYDx2ZUvEpabRgfWnNBtV76XLzboLoD8jFhol5qiIFdfGffQ6N/M7wHh3EIp1jTN5zLGsNWx8uPRlUZRYQkD7RQAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/51e7a82920274bf709e0cf79c0a4359d25c1a132@256.webp?v=2"
+  },
+  "Morguloth": {
+    "background": "images_monster_bg\\Morguloth_bg.webp",
+    "character": "images_monster_char\\Morguloth_char.webp",
+    "background_url": "data:image/webp;base64,UklGRpoBAABXRUJQVlA4II4BAAAQCQCdASoUABQAPl0slEiCgIAAwLiOwAnTKEcDeq73e+Fc2tc6ADzAfqT+s3vAaZX6AHlW+x55VRM27usOHLWwsOidjwaV4iwlLawzpQxUcIAA/vy3udqV9uJzHNJMA9Zg6yjpxz70B4++HnvV//E4vZVb/atWvbvRv5k73u7d+AJW37MTrd/bk7QTrOiULtjCakk9mGqaUmK0jzacwNNmghbIFFhQSOI3mr6r08SbASwnEJ+Aia2zUmo/j/lUlesV3ljdxJc6ZevGlcyAm5JgLAngSBwoSvwq6an7EpxmOm9dWdobJtXQrOC3uGsIO2sDvsaM74cI+3C4ON4CjvCBTe44HYc5x/z/cuGjbEX9Uv/ogt9MBeAb8w30fgkY7PubSNFr4TxnnMm8wZUU9MSJaHgBlDnJr4FctvYjIYJnXYGrXsRq7X1LD3uVxHfGG0FG38Xe7QYeqn9Hn0r60emMO3lCJF6Wz7028/bIO/VoTdA0gGlmLlWxY6TZN0vBizRUXm0kFX2z1h2mLdAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ab0efbf57f644b32dbc6381c4ba725637ca7e4c1@256.webp?v=2"
+  },
+  "Void Golem": {
+    "background": "images_monster_bg\\Void_Golem_bg.webp",
+    "character": "images_monster_char\\Void_Golem_char.webp",
+    "background_url": "data:image/webp;base64,UklGRi4BAABXRUJQVlA4ICIBAADQBgCdASoUABQAPl0slEiCgIAAwLiOwAnTKEfRi5NbaRYKr64umgbyCV4HvMIURr61Wcu8/xpq7i+9TOc8DAAA/vgePI2upT52G/HMa0oojcny+QeSfL/VpBoDhJ0M5J7LSrueNtyhtcPQEZGAeqGPSmWBy8/ogRZq+PlErBKSZmTbdrKP7GKDnHovNB6S8oyICHsAo24tUpACOmYMyuROuyYkDHkvQ8VmjvAFXCvNyV2G3L7GNiqCUEAxgGDvM/4McQNZUWNCyvIJq/DgI+lPhD8/cRYevrPvJvz54Tm28TQ9ozNbWgCfXkrP8Z510Kff3f8fYpV7x7T7n0+7h5RYB9ATE0r+fO8rkVJDGVQNkAI09ycq0k+5VO3Pny93TnAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b87b6ad225a9c318696eae1641a85b35baec335@256.webp?v=2"
+  },
+  "Blowguns Trap": {
+    "background": "images_monster_bg\\Blowguns_Trap_bg.webp",
+    "character": "images_monster_char\\Blowguns_Trap_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnYBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDMAAAABD9D/iAgwim0ryFkxbwXY4A9JXBqDKNrECEYwZkT/A/jIMpmc/AflvYjZZdkhcONpxS4AVlA4IBwBAABQBgCdASoUABQAPl0slEiCgIAAwLiOIAnTLewr7zOAxbHTJRyciGj8yMNYHMFa7KWtFcdxfHu5+cUiQAD+9fmNHfLBI2GcPodrdffiUJt8YJOeDt5W+b5eJrihuPs4irbx+Fkp4HRnwcssAVtUu6yxkiF0QDmTnN82Qne+oy7C1ILhIJ04yeJmmQe6NXOlQW2ASK+5uw3snu0zh8BgK4cklvi9sW1tNbJSHD5NTJTAe15Y4A44DEyA2iEMFzDNq8qCO30TgWAA3YFwekCiQ8FSMznMWQuBbtoCtF7zicvIqYd/lz/fl3oLq9052RnyxyN81Fn5//A8APh/8//geDJKEBuEk3jfCcNaEtGN9CUpToTur2QzsNsNdIRgAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b36f9a99bec75197849619eab0bb384966cf31c7@256.webp?v=2"
+  },
+  "Mythkeeper": {
+    "background": "images_monster_bg\\Mythkeeper_bg.webp",
+    "character": "images_monster_char\\Mythkeeper_char.webp",
+    "background_url": "data:image/webp;base64,UklGRtABAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCwAAAABD9D/iAioim2bWt4+aaCKapKIpowOEf2vQXgJ2CEHcbDI6DoIJwCR+AnzAlZQOCB+AQAAkAkAnQEqFAAUAD5dLJNIgoCqgMC4jsAJ0yhHUHl/Dn75GHHWd+S+1X3AYYD9dv1J9kD+V+wDeAPQA/YD0x/Ys8qUmewy8PDkFa+6rLJ/qxQYBt2aMAD+6x5nbRmkmc9G//ZD6110UnKkVD345dGi0ekTAltjcx2KNXhMCZYddeQJfSLqqe2Nf/jXnubhRHD88JSucij6imVRBw2COQlDVvf/WbZfe8RMSCj9kX0oSqSbp+a2yc9HJkmMJL9Vrob9TSc7EzirIy101t8I+eFkzKv3AMZoagV7fHpgBNZLEinF0iYlrM9hw7hlbinV99/3zOWtfAhprEQMTDtQ2/P5/+EiWRbl3+FDYUHzPW7dRvQMV/QU0KiteBH1T8E+KRyODICCT8XiUf/WpfTEOTl+8hIBf1HtMY5VRBr2CagyC3xrA/iAUE2N/mc8zQba+fqGc9z421pCHwWHiMiy5T73sbOtAygWu//4EsnzC5e+8k8NxmM1Nq//2LQUMnAAAA==",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f1f6a32aef1568af4a62ed43611ae8bd6b81dabf@256.webp?v=2"
+  },
+  "Caltrops Trap": {
+    "background": "images_monster_bg\\Caltrops_Trap_bg.webp",
+    "character": "images_monster_char\\Caltrops_Trap_char.webp",
+    "background_url": "data:image/webp;base64,UklGRjYBAABXRUJQVlA4ICoBAADwBgCdASoUABQAPl0slEiCgIAAwLiOwAnTKEfK+kxIDbNeKTkgG8Plez7qyFfp/i4jbX8iUmRL2sAWxfxIhdgAAP7+FI9ucEKB3Oj28qEyD1h+ic2GrYul5TamR8D9Dkd9OQXu7+bX+2omxbwVY6hiqw2y2RTaOCM+9VCHz8qsQYuqimhy/KSEy9Q2qlSsbaBagK0LbS1nZobAPHbMslSWrKOftWom6a+IGjQbzmFsRh0VcyuFhTKAff5kZn1MhdHnG39rjRYV24KpLQRzzmDXC+MM/jAYCK5xYijG7IeDkz+RKW7qB3LR3/g48bhU0guBX6jAwRfvazoYzOBwl2xpXoEqJLAJeHZgsZLou9dOan4hrRvklwSgmZFn5u44j8SPiCICISn6vXgA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b40599390313e0ce6aaef19f5f99480c5df0e97@256.webp?v=2"
+  },
+  "Greenheart Guardian": {
+    "background": "images_monster_bg\\Greenheart_Guardian_bg.webp",
+    "character": "images_monster_char\\Greenheart_Guardian_char.webp",
+    "background_url": "data:image/webp;base64,UklGRm4BAABXRUJQVlA4IGIBAABwBwCdASoUABQAPl0slEiCgIAAwLiOwAnTKEdeeO8IZxcZDQlrcppgHlgexL5NxMqhE1E7/SyqwtUSFLMv0LgHqCccwAD+3f6v/x/aubJE51Pm/pLGlxSbUmZY1KLavcZjsdY3kd4jKaHlgD+GDYonC/cZbcYa4ALOuw/PgltLQ0WqNgeJjvI3olQ9LbQzi/7lQ7Upsnn4H+GBp6+riud/4oZb+J7+j0eNu1yFl6R8HeHInh/58P8iAPazMgfic/rNvj+cU3GHeA0r/W3OzSTAgW8Yt8zxC3A2edpT+mIREYYY7g9sZ/g+tLpP70flPzJ+H1xdPkuo9LH/IhUImrs9/JiZ3f8QH1/w9zrCTd7HcULfn9RTkQtUUTnq3oyXMkXDvdzDlf84XcP1j1alPLjcT/SAJwd/hjFhIUgZXKQOU1wUzg9K9mfXEclxWrEizRlnEjkwfONzVK6qFbCl+wh/MAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ef4a350a8a015b26edc114b213a1105d0c2a7366@256.webp?v=2"
+  },
+  "Mimic": {
+    "background": "images_monster_bg\\Mimic_bg.webp",
+    "character": "images_monster_char\\Mimic_char.webp",
+    "background_url": "data:image/webp;base64,UklGRkIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCgAAAABD9D/iAiwiiTZSb+cSBr4Qgf+xWADBxH9T3+2LaN/gM6le3gT+h0BVlA4IPQAAACwBQCdASoUABQAPl0slEgCgKqAwLiOYAnTKEcDDfc4LzO7QAEsk/bfSm6rBMrl6yEH1PMJQ9gA/vf8Bw7arOJiEuzGtPkWntBD2mwAvunllIV+4/BTRdW79tFkyVGcGWj/+BBud7xtPrn/4lGyUcjqVBkod19Rk/rDtNKve8P3C4jOobfe0XEHzCHPq/nTc+rSI7L50i75677Tt1gXJ6RD/rLiJ9D+RGWx5qAx+vVTYmTH0OGTXR2GrntUsrXOnBzzNW0puDMLHXe2Y8yYyrYTeOFAg1120rjpd7G0E6d+rykWBvUqQdxyE1DfPEKCjgFQtgAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3c629fecb51a5557c9dc990254be3e2fa36b0d30@256.webp?v=2"
+  },
+  "Boulder Trap": {
+    "background": "images_monster_bg\\Boulder_Trap_bg.webp",
+    "character": "images_monster_char\\Boulder_Trap_char.webp",
+    "background_url": "data:image/webp;base64,UklGRk4BAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDAAAAABD9D/iAiwaSTJcbzOvjfxxQ9k9cguov8BJDoygZUdyzww3Mm65jPe+u7rN41/RwBWUDgg+AAAADAGAJ0BKhQAFAA+XSqTSAKA1QDAuI5gCdMoR1AKszwDAbYC7MwFjSEcWWwfrxm4Sj81sA3rM6CB/AAA/o2sc84SlQ83nN1Pwj+VJWYL5qOgMqrPCvVjua/4ldkbPPetCKPwgVLR1QiimfHxOVKLw6r6Mz1/e5mkNILvtfL3Sdn7CV4yEIeP+aEGLdoRAsg9is2Os3lhi4O5HmWRw6nQ1vGmDrImPyO/4DoSCt1jLTzh7ktKrc0Ub5dLjZ8BbdZo9Cwik7Jn5rIuBYYPROyu/bUJ+o9PivZzz0aT/KQ2VBzbK0VnGKchGmKjxlTJjNM6KnmbTf8dFYAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2de20a13eaa39b4a71d50f554145e8854f7f0470@256.webp?v=2"
+  },
+  "Qomatz": {
+    "background": "images_monster_bg\\Qomatz_bg.webp",
+    "character": "images_monster_char\\Qomatz_char.webp",
+    "background_url": "data:image/webp;base64,UklGRiQBAABXRUJQVlA4IBgBAABQBQCdASoUABQAPl0qk0gCgNUAwLiOwAsR6EfR+mn4XERIF+Aj040bBuUGI9K5F//h/AAA/ukUXK+G8wMI2IvgVN/qcYJiDM9eN7vj6rMtSTh7xWLD+dtHjJ+Fm+mrSA5S/eGOcuRiIJyBIMxfshE5AUZ1poY1FOCbCU8KeVTyOYKylhFVlBpBuPyBCOfF82tzo4Xucu9pfIyd7kfwCJoZv/F+TN//DV2j4P2F3jZ2Sl/D/zTzHVPqNX8vOOAdSiZMReJrIRY2B6mUYS7CgD3THjpDY4sOu+AoFHoJuT4gNWn6/6hkjCHDHc5YrZ8sVUBRprwEzjETgtjU140+D8AA18Jnq40P/FhISFthEOUROO+L6a1HAAAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/502394921888cbef18187a34e5012db83f34fb2a@256.webp?v=2"
+  },
+  "Aleppa Tantius": {
+    "background": "images_monster_bg\\Aleppa_Tantius_bg.webp",
+    "character": "images_monster_char\\Aleppa_Tantius_char.webp",
+    "background_url": "data:image/webp;base64,UklGRnIBAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSCEAAAABD9D/iAgoaiRJ6aWD38k+3wsaIvqf9H+YDnmpTlPyoRQAVlA4ICoBAAAQBgCdASoUABQAPl0sk0iCgKqAwLiOoAnTKEcDbVVtM75L0k3kVkz+CdoJTa5pG+NnAAjSts549cAA/uuJjvmAe8kYEpqVHsdPb07IFWyaHPXJHVZ/NKqdYtLAfM/NWMEnwYN7rSf6NmJ0mUW8M56dMDnM+9doGBf/0qE5Rnt5sxmDKb9yrdeH0yT703I0dfXTE+ORh/M5zfLo93HbqDhvnLPx/57aBUCzXJWMembp9bWfxUgHUe8fiOGThNz6gigXkhUXGyTzDEi+UV1rmoBlPqtiYWR8lk/+KG836+7sP11jEKsl/ZMO1VlLPL8E5YIfqRw1ed/t8x0lVctb7ePGbLHqFRpMxSIlejPuUy3rRqbL0Y9yUzf3dwsMRHsiAwUYWayOqQ4CcKAA",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e9653c3df757c5459e18fb126f08d20312892d6c@256.webp?v=2"
+  },
+  "Bounty Hunter": {
+    "background": "images_monster_bg\\Bounty_Hunter_bg.webp",
+    "character": "images_monster_char\\Bounty_Hunter_char.webp",
+    "background_url": "data:image/webp;base64,UklGRq4AAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSBYAAAABD9D/iAiQSdtk3/yrHlMQ0f80RX0AVlA4IHIAAADQBACdASoUABQAPl0qk0eDAIAAwLiMATpfhU0AOFo3faORCbjshAEBmhCFIEIQAAD++calozPylns/HFRf2fttpz4vuJAAfMouSAYLCBEk///I7gM5sOLc0JAdiJEAie50neXGBI4hI9hmY8cFUQ2EAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/862ca906b7486f4a919dc1a22e1ced0aaf1525d7@256.webp?v=2"
+  },
+  "Mr. Moo": {
+    "background": "images_monster_bg\\Mr__Moo_bg.webp",
+    "character": "images_monster_char\\Mr__Moo_char.webp",
+    "background_url": "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAABwBACdASoUABQAPl0qk0gCgNUAwLiMATpmaHLQHibeuB1zlv6Re7+izOtQZAD+3S3XvOsdNznTudKZI8JsTu2azGbBzhcwsdNCbTjbz4dl3f4ojw8kwSiYcgHiLphts4wRxBmO7VV8nBOL26D4gHSGOIfGYXzk0gUhwNR6Zy1WSmk2+L8V49jmRVqdvuk9q6UjbGqFXBKkwTpYlmUeYrB+F8AiMmVhXFhB3F1qfJqz2mc/Y9qcKb3AADT8xf6AAAA=",
+    "character_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7403205a0ac8974fa078e38ae8dcb8625dcda27f@256.webp?v=2"
   }
 }

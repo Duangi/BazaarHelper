@@ -4,12 +4,32 @@ use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use regex::Regex;
-use std::io::{Read, BufRead, BufReader, Seek, SeekFrom};
+use std::io::{Read, BufRead, BufReader, Seek, SeekFrom, Write};
 use std::fs::File;
 use std::{thread, time};
 use tokio;
+use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON};
+
+use crate::monster_recognition::scan_and_identify_monster_at_mouse;
 
 pub mod monster_recognition;
+
+// --- Logger Helper ---
+pub fn log_to_file(msg: &str) {
+    if let Ok(mut exe_path) = std::env::current_exe() {
+        exe_path.pop();
+        exe_path.push("app_debug.txt");
+        if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(exe_path) {
+            let _ = writeln!(f, "[{}] {}", get_time_str(), msg);
+        }
+    }
+}
+
+fn get_time_str() -> String {
+    let now = std::time::SystemTime::now();
+    let duration = now.duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
+    format!("{}", duration.as_secs()) // Simple timestamp
+}
 
 // --- Data Models ---
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -18,6 +38,8 @@ pub struct PersistentState {
     pub inst_to_temp: HashMap<String, String>,
     pub current_hand: HashSet<String>,
     pub current_stash: HashSet<String>,
+    #[serde(default)]
+    pub detection_hotkey: Option<i32>,
 }
 
 impl Default for PersistentState {
@@ -27,6 +49,7 @@ impl Default for PersistentState {
             inst_to_temp: HashMap::new(),
             current_hand: HashSet::new(),
             current_stash: HashSet::new(),
+            detection_hotkey: Some(VK_RBUTTON.0 as i32),
         }
     }
 }
@@ -123,9 +146,9 @@ impl From<RawItem> for ItemData {
 
         let img = raw.image.unwrap_or_else(|| {
             if !raw.id.is_empty() {
-                format!("images/{}.jpg", raw.id)
+                format!("images/{}.webp", raw.id)
             } else {
-                format!("images/{}.jpg", name_cn)
+                format!("images/{}.webp", name_cn)
             }
         });
 
@@ -290,16 +313,16 @@ async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-#[tauri::command]
-#[allow(dead_code)]
-async fn clear_monster_cache() -> Result<(), String> {
-    let cache_dir = get_cache_path().parent().unwrap().to_path_buf();
-    let cache_file = cache_dir.join("monster_features.bin");
-    if cache_file.exists() {
-        std::fs::remove_file(cache_file).map_err(|e| e.to_string())?;
-    }
-    Ok(())
-}
+// #[tauri::command]
+// #[allow(dead_code)]
+// async fn clear_monster_cache() -> Result<(), String> {
+//     let cache_dir = get_cache_path().parent().unwrap().to_path_buf();
+//     let cache_file = cache_dir.join("monster_features.bin");
+//     if cache_file.exists() {
+//         std::fs::remove_file(cache_file).map_err(|e| e.to_string())?;
+//     }
+//     Ok(())
+// }
 
 #[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
@@ -376,6 +399,40 @@ fn lookup_item(tid: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<Item
     None
 }
 
+fn lookup_item_by_name(name_cn: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<ItemData> {
+    // 先在物品库中查找完整名字
+    for item in &items_db.list {
+        if item.name_cn == name_cn {
+            return Some(item.clone());
+        }
+    }
+    // 再在技能库中查找完整名字
+    for skill in &skills_db.list {
+        if skill.name_cn == name_cn {
+            return Some(skill.clone());
+        }
+    }
+    
+    // 如果找不到，尝试去除空格及空格之前的前缀（如"毒性蔓延 獠牙" -> "獠牙"）
+    if let Some(space_pos) = name_cn.rfind(' ') {
+        let base_name = &name_cn[space_pos + 1..];
+        
+        // 用基础名字再查找一次
+        for item in &items_db.list {
+            if item.name_cn == base_name {
+                return Some(item.clone());
+            }
+        }
+        for skill in &skills_db.list {
+            if skill.name_cn == base_name {
+                return Some(skill.clone());
+            }
+        }
+    }
+    
+    None
+}
+
 // --- Commands ---
 #[tauri::command]
 fn get_all_monsters(state: State<'_, DbState>) -> Result<serde_json::Map<String, serde_json::Value>, String> {
@@ -437,6 +494,19 @@ fn update_day(day: u32) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn get_detection_hotkey() -> Option<i32> {
+    load_state().detection_hotkey
+}
+
+#[tauri::command]
+fn set_detection_hotkey(hotkey: i32) {
+    let mut state = load_state();
+    state.detection_hotkey = Some(hotkey);
+    save_state(&state);
+    println!("[Config] Detection hotkey updated to: {}", hotkey);
+}
+
 fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
     let start_pos = if retro { content.rfind("NetMessageRunInitialized").unwrap_or(0) } else { 0 };
     let slice = &content[start_pos..];
@@ -474,6 +544,8 @@ fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32
 // --- App Run ---
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    log_to_file("=================== App Started ===================");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
@@ -605,8 +677,8 @@ pub fn run() {
                                 m_entry.insert("available".to_string(), serde_json::Value::String(day_label.clone()));
                                 m_entry.insert("health".to_string(), m_obj.get("max_health").cloned().unwrap_or(0.into()));
                                 
-                                let img = monster_img_lookup.get(name_zh).cloned()
-                                    .unwrap_or_else(|| format!("images_monster/{}.jpg", name_zh));
+                                // 使用角色图路径（中文名.webp）
+                                let img = format!("images_monster_char/{}.webp", name_zh);
                                 m_entry.insert("image".to_string(), serde_json::Value::String(img));
 
                                 // Loadout Items
@@ -675,17 +747,35 @@ pub fn run() {
                     for (name, m) in db_monsters {
                         let mut enriched_m = m.clone();
                         if let Some(m_obj) = enriched_m.as_object_mut() {
+                            // 强制设置图片路径（使用角色图）
+                            let img = format!("images_monster_char/{}.webp", name);
+                            m_obj.insert("image".to_string(), serde_json::Value::String(img));
+                            
                             // Enrich items
                             if let Some(items) = m_obj.get_mut("items").and_then(|v| v.as_array_mut()) {
                                 for item_val in items {
                                     if let Some(item_obj) = item_val.as_object_mut() {
-                                        if !item_obj.contains_key("size") {
-                                            let id = item_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                            if let Some(found) = lookup_item(id, &items_db, &skills_db) {
-                                                if let Some(s) = found.size {
-                                                    let norm = s.split(" / ").next().unwrap_or(&s).to_string();
-                                                    item_obj.insert("size".to_string(), serde_json::Value::String(norm));
-                                                }
+                                        let id = item_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                        let name_cn = item_obj.get("name").and_then(|v| v.as_str()).unwrap_or("");
+                                        
+                                        // 如果 id 为空，尝试通过中文名查找
+                                        let found = if id.is_empty() && !name_cn.is_empty() {
+                                            lookup_item_by_name(name_cn, &items_db, &skills_db)
+                                        } else {
+                                            lookup_item(id, &items_db, &skills_db)
+                                        };
+                                        
+                                        if let Some(found_item) = found {
+                                            // 更新 id
+                                            if id.is_empty() {
+                                                item_obj.insert("id".to_string(), serde_json::Value::String(found_item.uuid.clone()));
+                                            }
+                                            // 更新 image
+                                            item_obj.insert("image".to_string(), serde_json::Value::String(found_item.image.clone()));
+                                            // 更新 size
+                                            if let Some(s) = found_item.size {
+                                                let norm = s.split(" / ").next().unwrap_or(&s).to_string();
+                                                item_obj.insert("size".to_string(), serde_json::Value::String(norm));
                                             }
                                         }
                                     }
@@ -695,13 +785,27 @@ pub fn run() {
                             if let Some(skills) = m_obj.get_mut("skills").and_then(|v| v.as_array_mut()) {
                                 for skill_val in skills {
                                     if let Some(skill_obj) = skill_val.as_object_mut() {
-                                        if !skill_obj.contains_key("size") {
-                                            let id = skill_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                            if let Some(found) = lookup_item(id, &items_db, &skills_db) {
-                                                if let Some(s) = found.size {
-                                                    let norm = s.split(" / ").next().unwrap_or(&s).to_string();
-                                                    skill_obj.insert("size".to_string(), serde_json::Value::String(norm));
-                                                }
+                                        let id = skill_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                        let name_cn = skill_obj.get("name").and_then(|v| v.as_str()).unwrap_or("");
+                                        
+                                        // 如果 id 为空，尝试通过中文名查找
+                                        let found = if id.is_empty() && !name_cn.is_empty() {
+                                            lookup_item_by_name(name_cn, &items_db, &skills_db)
+                                        } else {
+                                            lookup_item(id, &items_db, &skills_db)
+                                        };
+                                        
+                                        if let Some(found_skill) = found {
+                                            // 更新 id
+                                            if id.is_empty() {
+                                                skill_obj.insert("id".to_string(), serde_json::Value::String(found_skill.uuid.clone()));
+                                            }
+                                            // 更新 image
+                                            skill_obj.insert("image".to_string(), serde_json::Value::String(found_skill.image.clone()));
+                                            // 更新 size
+                                            if let Some(s) = found_skill.size {
+                                                let norm = s.split(" / ").next().unwrap_or(&s).to_string();
+                                                skill_obj.insert("size".to_string(), serde_json::Value::String(norm));
                                             }
                                         }
                                     }
@@ -727,8 +831,10 @@ pub fn run() {
             // Log Monitor Thread
             let thread_items_db = db_state.items.clone();
             let thread_skills_db = db_state.skills.clone();
+            let log_handle = handle.clone();
             
             thread::spawn(move || {
+                let handle = log_handle;
                 let log_path = get_log_path();
                 let prev_path = get_prev_log_path();
                 
@@ -874,6 +980,7 @@ pub fn run() {
                     inst_to_temp: inst_to_temp.clone(),
                     current_hand: current_hand.clone(),
                     current_stash: current_stash.clone(),
+                    detection_hotkey: load_state().detection_hotkey,
                 });
 
                 // Initial UI Sync after loading/backfilling
@@ -919,7 +1026,12 @@ pub fn run() {
                             day: current_day, 
                             inst_to_temp: inst_to_temp.clone(), 
                             current_hand: current_hand.clone(), 
-                            current_stash: current_stash.clone() 
+                            current_stash: current_stash.clone(),
+                            // Preserve hotkey setting from disk logic if necessary, but here we are in a reset state.
+                            // However, we shouldn't lose the hotkey setting just because the log was truncated.
+                            // We should load the *existing* state to get the hotkey, or just set it to default if we can't.
+                            // Better: read the current state from disk before overwriting.
+                            detection_hotkey: load_state().detection_hotkey, 
                         });
                     }
                     
@@ -1094,11 +1206,83 @@ pub fn run() {
                                 inst_to_temp: inst_to_temp.clone(),
                                 current_hand: current_hand.clone(),
                                 current_stash: current_stash.clone(),
+                                detection_hotkey: load_state().detection_hotkey,
                             });
                         }
                         last_file_size = current_file_size;
                     }
                     thread::sleep(time::Duration::from_millis(500));
+                }
+            });
+
+            // 启动鼠标监听线程 (识别怪物)
+            let handle_mouse = handle.clone();
+            std::thread::spawn(move || {
+                let mut last_trigger = time::Instant::now();
+                loop {
+                    // 读取配置的按键
+                    let hotkey = {
+                        let state = load_state();
+                        state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32)
+                    };
+                    
+                    unsafe {
+                        // 检测按键按下
+                        if (GetAsyncKeyState(hotkey) as i16) < 0 {
+                            if last_trigger.elapsed() > time::Duration::from_millis(500) {
+                                last_trigger = time::Instant::now();
+                                
+                                log_to_file("Hotkey pressed, starting scan...");
+
+                                // 尝试识别
+                                match scan_and_identify_monster_at_mouse() {
+                                    Ok(Some(monster_name)) => {
+                                        log_to_file(&format!("Success! Valid monster found: {}", monster_name));
+                                        // 识别成功，查找对应的天数
+                                        if let Some(db_state) = handle_mouse.try_state::<DbState>() {
+                                            if let Ok(monsters) = db_state.monsters.read() {
+                                                if let Some(entry) = monsters.get(&monster_name) {
+                                                    if let Some(day_str) = entry.get("available").and_then(|v| v.as_str()) {
+                                                        // 格式如 "Day 10"
+                                                        if day_str.starts_with("Day ") {
+                                                            if let Ok(day) = day_str[4..].parse::<u32>() {
+                                                                match handle_mouse.emit("auto-jump-to-monster", serde_json::json!({
+                                                                    "day": day,
+                                                                    "monster_name": monster_name
+                                                                })) {
+                                                                    Ok(_) => {},
+                                                                    Err(e) => println!("Failed to emit auto-jump-to-monster: {}", e),
+                                                                }
+                                                                
+                                                                // 更新并保存状态
+                                                                let mut state = load_state();
+                                                                state.day = day;
+                                                                save_state(&state);
+                                                                
+                                                                println!("自动跳转到 Day {} (怪物: {})", day, monster_name);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Ok(None) => {
+                                        // Scan successful but no monster found
+                                        log_to_file("Scan complete, no monster matched.");
+                                    }
+                                    Err(e) => {
+                                        let err_msg = format!("Monster Scan Failed: {}", e);
+                                        println!("[Error] {}", err_msg);
+                                        log_to_file(&format!("Error: {}", err_msg));
+                                        // Emit error to frontend for toast
+                                        let _ = handle_mouse.emit("scan-error", e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    thread::sleep(time::Duration::from_millis(100));
                 }
             });
 
@@ -1110,8 +1294,11 @@ pub fn run() {
             get_template_loading_progress,
             get_current_day,
             update_day,
+            get_detection_hotkey,
+            set_detection_hotkey,
             start_template_loading,
-            clear_monster_cache,
+            crate::monster_recognition::check_opencv_load, 
+            // clear_monster_cache,
             restore_game_focus
         ])
         .run(tauri::generate_context!())

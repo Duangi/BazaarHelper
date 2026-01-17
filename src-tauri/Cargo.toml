@@ -32,9 +32,12 @@ tauri-plugin-process = "2"
 # 图像处理和截图
 xcap = "0.0.11"  # 跨平台截图
 image = "0.25"   # 图像处理（裁剪、缩放等）
-imageproc = "0.25"  # 图像处理算法
+imageproc = "0.25"  # 图像处理算法 (保留用于调试工具)
 anyhow = "1.0.100"
 clap = { version = "4.5.54", features = ["derive"] }
 rayon = "1.10"
 bincode = "1.3"
-windows = { version = "0.62.2", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation", "Win32_Graphics_Gdi"] }
+windows = { version = "0.62.2", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_Input_KeyboardAndMouse"] }
+
+# OpenCV 核心绑定 (用于 ORB 特征匹配)
+opencv = "0.92"

@@ -637,6 +637,36 @@ html, body, #root {
   border: 2px solid var(--c-golden);
   background: #000;
   margin-right: 12px;
+  position: relative;
+}
+
+/* 怪物图片双层叠加容器 */
+.monster-image-layers {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* 背景图层 */
+.monster-layer-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* 角色图层（叠在背景上方） */
+.monster-layer-char {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
 }
 
 .monster-avatar-v2 {

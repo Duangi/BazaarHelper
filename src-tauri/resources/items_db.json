@@ -1689,7 +1689,7 @@
       },
       {
         "en": "If you have 5 or more unique Types, this item's Cooldown is reduced by 5000 seconds.",
-        "cn": "如果拥有的类型不少于5个，此物品的冷却时间就缩短5000秒。"
+        "cn": "如果拥有的类型不少于5个，此物品的冷却时间就缩短5秒。"
       }
     ],
     "enchantments": {
@@ -5148,7 +5148,7 @@
     "skills": [
       {
         "en": "Poison 4, Burn 4, and Freeze an item for 500 second(s)",
-        "cn": "造成4剧毒、4灼烧，并冻结一件物品500秒"
+        "cn": "造成4剧毒、4灼烧，并冻结一件物品0.5秒"
       },
       {
         "en": "This has +1 Multicast for each other Aquatic item you have.",
@@ -5260,7 +5260,7 @@
     "skills": [
       {
         "en": "Freeze adjacent items for 1/500 second(s)",
-        "cn": "冻结相邻物品1/500秒"
+        "cn": "冻结相邻物品1/0.5秒"
       },
       {
         "en": "Cleanse half your Burn",
@@ -6710,7 +6710,7 @@
     "skills": [
       {
         "en": "Freeze an item for 500/1 second(s)",
-        "cn": "冻结一件物品500/1秒"
+        "cn": "冻结一件物品0.5/1秒"
       },
       {
         "en": "Charge adjacent items 1 second(s)",
@@ -7348,7 +7348,7 @@
       },
       {
         "en": "If you have only 1 Tech item this item's Cooldown is reduced by 3000 seconds.",
-        "cn": "如果只拥有1件科技物品，就使其冷却时间缩短3000秒。"
+        "cn": "如果只拥有1件科技物品，就使其冷却时间缩短3秒。"
       }
     ],
     "enchantments": {
@@ -7456,7 +7456,7 @@
       },
       {
         "en": "Non-Tech item Cooldowns are increased by 1000/2000 second(s).",
-        "cn": "非科技物品的冷却时间延长1000/2000秒。"
+        "cn": "非科技物品的冷却时间延长1/2秒。"
       }
     ],
     "enchantments": {
@@ -8416,11 +8416,11 @@
     "skills": [
       {
         "en": "Reduce another Tool's Cooldown by 1000 second for the fight",
-        "cn": "另一件工具的冷却时间缩短1000秒（限本场战斗）"
+        "cn": "另一件工具的冷却时间缩短1秒（限本场战斗）"
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each adjacent Tool.",
-        "cn": "每有一件相邻的工具，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一件相邻的工具，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -8740,7 +8740,7 @@
       },
       {
         "en": "When this destroys an item, reduce the cooldowns of your other items by 500/1000 second(s) for the fight.",
-        "cn": "此物品摧毁另一件物品时，其他物品的冷却时间缩短500/1000秒（限本场战斗）。"
+        "cn": "此物品摧毁另一件物品时，其他物品的冷却时间缩短0.5/1秒（限本场战斗）。"
       }
     ],
     "enchantments": {
@@ -9807,7 +9807,7 @@
       },
       {
         "en": "Your items Slow for 1000 more second.",
-        "cn": "己方物品的减速时间延长1000秒。"
+        "cn": "己方物品的减速时间延长1秒。"
       }
     ],
     "enchantments": {
@@ -10015,7 +10015,7 @@
     "skills": [
       {
         "en": "Freeze an item for 500 seconds",
-        "cn": "冻结一件物品500秒"
+        "cn": "冻结一件物品0.5秒"
       },
       {
         "en": "When you Slow or Poison, Charge this 2 seconds.",
@@ -11531,7 +11531,7 @@
     "skills": [
       {
         "en": "When any item is used, increase its cooldown by 500/1000 second.",
-        "cn": "使用任意物品时，令其冷却时间延长500/1000秒。"
+        "cn": "使用任意物品时，令其冷却时间延长0.5/1秒。"
       }
     ],
     "enchantments": {
@@ -11690,7 +11690,7 @@
     "skills": [
       {
         "en": "Freeze 1/2/3 item(s) for 500 second(s)",
-        "cn": "冻结1/2/3件物品500秒"
+        "cn": "冻结1/2/3件物品0.5秒"
       },
       {
         "en": "When an adjacent item Poisons, Charge this 1 second(s).",
@@ -18743,7 +18743,7 @@
       },
       {
         "en": "For each adjacent Dinosaur or Relic, this item's Cooldown is reduced by 1000 second.",
-        "cn": "每有一个相邻的恐龙或遗物，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一个相邻的恐龙或遗物，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -19711,7 +19711,7 @@
       },
       {
         "en": "For each adjacent Aquatic item, this item's Cooldown is reduced by 1000 second.",
-        "cn": "每有一件相邻的水系物品，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一件相邻的水系物品，此物品的冷却时间就缩短1秒。"
       },
       {
         "en": "This has + Multicast equal to its ammo.",
@@ -23069,7 +23069,7 @@
     "skills": [
       {
         "en": "When you use an adjacent Food, Freeze an item for 500 second(s).",
-        "cn": "使用相邻食物时，冻结一件物品500秒。"
+        "cn": "使用相邻食物时，冻结一件物品0.5秒。"
       },
       {
         "en": "Chilled: When you Freeze, deal 100/200 Damage.",
@@ -27286,7 +27286,7 @@
       },
       {
         "en": "If you have 7 or more items, this item's Cooldown is reduced by 2000 seconds.",
-        "cn": "如果持有的物品不少于7件，此物品的冷却时间就缩短2000秒。"
+        "cn": "如果持有的物品不少于7件，此物品的冷却时间就缩短2秒。"
       }
     ],
     "enchantments": {
@@ -27653,7 +27653,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each adjacent Friend.",
-        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -32059,7 +32059,7 @@
       },
       {
         "en": "This item's Cooldown is increased by 1000 second for each Tech item you have",
-        "cn": "每拥有一件科技物品，此物品的冷却时间就提高1000秒"
+        "cn": "每拥有一件科技物品，此物品的冷却时间就提高1秒"
       }
     ],
     "enchantments": {
@@ -32279,7 +32279,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 3000 seconds if you have at least 3 other Dinosaurs, Tools or Relics.",
-        "cn": "如果除此物品外，还拥有至少3件恐龙、工具或遗物，那么此物品的冷却时间就缩短3000秒。"
+        "cn": "如果除此物品外，还拥有至少3件恐龙、工具或遗物，那么此物品的冷却时间就缩短3秒。"
       }
     ],
     "enchantments": {
@@ -32387,7 +32387,7 @@
       },
       {
         "en": "Your Potions' Cooldowns are reduced by 500/1000/1500 seconds.",
-        "cn": "药水的冷却时间缩短500/1000/1500秒。"
+        "cn": "药水的冷却时间缩短0.5/1/1.5秒。"
       }
     ],
     "enchantments": {
@@ -33293,7 +33293,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each other Relic you have.",
-        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1000秒。"
+        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1秒。"
       },
       {
         "en": "When you sell this, Enchant your leftmost item with Obsidian.",
@@ -33841,7 +33841,7 @@
       },
       {
         "en": "Reduce the Cooldown of adjacent items by 1000/2000 second(s) for the fight",
-        "cn": "相邻物品的冷却时间缩短1000/2000秒（限本场战斗）"
+        "cn": "相邻物品的冷却时间缩短1/2秒（限本场战斗）"
       },
       {
         "en": "Ammo: 1",
@@ -45342,7 +45342,7 @@
     "skills": [
       {
         "en": "Freeze an item for 500 second(s)",
-        "cn": "冻结一件物品500秒"
+        "cn": "冻结一件物品0.5秒"
       }
     ],
     "enchantments": {
@@ -56522,7 +56522,7 @@
     "skills": [
       {
         "en": "Increase an enemy item's Cooldown by 1000 second(s) for the fight",
-        "cn": "使敌人物品的冷却时间延长1000秒（限本场战斗）"
+        "cn": "使敌人物品的冷却时间延长1秒（限本场战斗）"
       },
       {
         "en": "Ammo: 2/3/4",
@@ -60899,7 +60899,7 @@
       },
       {
         "en": "Increase this item's Cooldown by 4000/3000/2000 second(s) for the fight",
-        "cn": "此物品的冷却时间延长4000/3000/2000秒（限本场战斗）"
+        "cn": "此物品的冷却时间延长4/3/2秒（限本场战斗）"
       }
     ],
     "enchantments": {
@@ -61322,7 +61322,7 @@
     "skills": [
       {
         "en": "Your Tools' Cooldowns are reduced by 1000 second(s).",
-        "cn": "工具的冷却时间缩短1000秒。"
+        "cn": "工具的冷却时间缩短1秒。"
       },
       {
         "en": "When you use a Tool, Charge a Vehicle or Drone 1/2 second(s).",
@@ -62465,7 +62465,7 @@
       },
       {
         "en": "While your enemy is Burned, the Cooldown of your Vehicles is reduced by 1000 second.",
-        "cn": "敌方承受灼烧时，己方载具的冷却时间缩短1000秒。"
+        "cn": "敌方承受灼烧时，己方载具的冷却时间缩短1秒。"
       },
       {
         "en": "Ammo: 1/2/3",
@@ -63341,7 +63341,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each adjacent Friend.",
-        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -64243,11 +64243,11 @@
     "skills": [
       {
         "en": "All Weapon Cooldowns are increased by 1000/1500 second(s).",
-        "cn": "所有武器的冷却时间延长1000/1500秒。"
+        "cn": "所有武器的冷却时间延长1/1.5秒。"
       },
       {
         "en": "Your non-Weapon item Cooldowns are decreased by 1000/1500 second(s).",
-        "cn": "非武器物品的冷却时间缩短1000/1500秒。"
+        "cn": "非武器物品的冷却时间缩短1/1.5秒。"
       }
     ],
     "enchantments": {
@@ -68030,7 +68030,7 @@
     "skills": [
       {
         "en": "Freeze 1/2/3 item(s) for 500 second(s)",
-        "cn": "冻结1/2/3件物品500秒"
+        "cn": "冻结1/2/3件物品0.5秒"
       },
       {
         "en": "This stops Flying",
@@ -72443,7 +72443,7 @@
       },
       {
         "en": "For each adjacent Flying item, this item's Cooldown is reduced by 2000 seconds.",
-        "cn": "每有一件相邻的飞行物品，此物品的冷却时间就缩短2000秒。"
+        "cn": "每有一件相邻的飞行物品，此物品的冷却时间就缩短2秒。"
       }
     ],
     "enchantments": {
@@ -73416,7 +73416,7 @@
       },
       {
         "en": "While you are Shielded, this item's Cooldown is reduced by 2000 seconds.",
-        "cn": "拥有护盾时，此物品的冷却时间缩短2000秒。"
+        "cn": "拥有护盾时，此物品的冷却时间缩短2秒。"
       }
     ],
     "enchantments": {
@@ -74055,7 +74055,7 @@
       },
       {
         "en": "Reduce this item's Cooldown by 1000 second for the fight",
-        "cn": "此物品的冷却时间缩短1000秒（限本场战斗）"
+        "cn": "此物品的冷却时间缩短1秒（限本场战斗）"
       },
       {
         "en": "While this is Flying, this has +1 Multicast.",
@@ -74603,7 +74603,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each other Relic you have.",
-        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1000秒。"
+        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1秒。"
       },
       {
         "en": "When you sell this, Enchant your leftmost item with Toxic.",
@@ -76915,7 +76915,7 @@
       },
       {
         "en": "If you have another Tech item, this item's Cooldown is reduced by 2000 second(s).",
-        "cn": "如果拥有另一件科技物品，此物品的冷却时间就缩短2000秒。"
+        "cn": "如果拥有另一件科技物品，此物品的冷却时间就缩短2秒。"
       }
     ],
     "enchantments": {
@@ -78134,7 +78134,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each adjacent Friend.",
-        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -78669,7 +78669,7 @@
       },
       {
         "en": "The Freeze item to the left Freezes 500 more seconds.",
-        "cn": "此物品左侧的冻结物品再多冻结500秒。"
+        "cn": "此物品左侧的冻结物品再多冻结0.5秒。"
       }
     ],
     "enchantments": {
@@ -82977,7 +82977,7 @@
       },
       {
         "en": "All item Cooldowns are increased by 1000/2000 second(s).",
-        "cn": "所有物品的冷却时间延长1000/2000秒。"
+        "cn": "所有物品的冷却时间延长1/2秒。"
       },
       {
         "en": "Your items with a Cooldown of 8 seconds or greater have +1 Multicast.",
@@ -83196,7 +83196,7 @@
       },
       {
         "en": "When you Crit, reduce this item's Cooldown by 1000 second(s) for the fight and this starts Flying.",
-        "cn": "造成暴击时，此物品的冷却时间缩短1000秒（限本场战斗），同时此物品开始飞行。"
+        "cn": "造成暴击时，此物品的冷却时间缩短1秒（限本场战斗），同时此物品开始飞行。"
       }
     ],
     "enchantments": {
@@ -84187,7 +84187,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each adjacent Friend.",
-        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1000秒。"
+        "cn": "每有一个相邻的伙伴，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -87674,7 +87674,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each other Relic you have.",
-        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1000秒。"
+        "cn": "每拥有另一件遗物，此物品的冷却时间就缩短1秒。"
       },
       {
         "en": "When you sell this, Enchant your leftmost item with Fiery.",
@@ -90515,7 +90515,7 @@
       },
       {
         "en": "This item's Cooldown is reduced by 1000 second for each Flying item you have.",
-        "cn": "每拥有一件飞行物品，此物品的冷却时间就缩短1000秒。"
+        "cn": "每拥有一件飞行物品，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -91059,7 +91059,7 @@
       },
       {
         "en": "Freeze an item for 500 second(s)",
-        "cn": "冻结一件物品500秒"
+        "cn": "冻结一件物品0.5秒"
       },
       {
         "en": "Chilled: This has +1 Multicast",
@@ -91167,7 +91167,7 @@
     "skills": [
       {
         "en": "When an enemy uses an item, Freeze it for 500/1 second(s).",
-        "cn": "敌人使用物品时，使其冻结500/1秒。"
+        "cn": "敌人使用物品时，使其冻结0.5/1秒。"
       }
     ],
     "enchantments": {
@@ -93297,7 +93297,7 @@
       },
       {
         "en": "If you are a Cult Member, reduce this item's cooldown by 1000 second.",
-        "cn": "如果你是教团成员，此物品的冷却时间就缩短1000秒。"
+        "cn": "如果你是教团成员，此物品的冷却时间就缩短1秒。"
       }
     ],
     "enchantments": {
@@ -93629,7 +93629,7 @@
       },
       {
         "en": "If you have a Medium Tool, this item's cooldown is reduced by 2000 seconds.",
-        "cn": "如果拥有一件中型工具，此物品的冷却时间就缩短2000秒。"
+        "cn": "如果拥有一件中型工具，此物品的冷却时间就缩短2秒。"
       }
     ],
     "enchantments": {
@@ -97162,7 +97162,7 @@
       },
       {
         "en": "At the start of each fight, increase an enemy item's Cooldown by 3000/6000 seconds for the fight.",
-        "cn": "每场战斗开始时，使一件敌方物品的冷却时间延长3000/6000秒（限本场战斗）。"
+        "cn": "每场战斗开始时，使一件敌方物品的冷却时间延长3/6秒（限本场战斗）。"
       }
     ],
     "enchantments": {
@@ -97270,7 +97270,7 @@
       },
       {
         "en": "When you use a Chilled item, Freeze 1/2 item(s) for 500 seconds.",
-        "cn": "使用霜冻物品时，冻结1/2件物品500秒。"
+        "cn": "使用霜冻物品时，冻结1/2件物品0.5秒。"
       },
       {
         "en": "At the start of day, get a Sorbet.",

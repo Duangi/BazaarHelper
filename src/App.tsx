@@ -59,7 +59,8 @@ interface MonsterData {
   skills?: MonsterSubItem[]; 
   items?: MonsterSubItem[]; 
   image?: string;
-  displayImg?: string; 
+  displayImg?: string;
+  displayImgBg?: string;
 }
 
 type TabType = "hand" | "stash" | "monster";
@@ -145,6 +146,10 @@ export default function App() {
   
   // 存储当前屏幕缩放比例，用于坐标转换
   const currentScale = useRef(1);
+
+  // 新增：识别热键状态
+  const [detectionHotkey, setDetectionHotkey] = useState<number | null>(null);
+  const [isRecordingHotkey, setIsRecordingHotkey] = useState(false);
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -159,6 +164,20 @@ export default function App() {
   const [updateStatus, setUpdateStatus] = useState<"none" | "checking" | "available" | "downloading" | "ready">("none");
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // 监听扫描错误
+  useEffect(() => {
+    const unlisten = listen<string>("scan-error", (event) => {
+      console.error("[Backend Error]", event.payload);
+      setErrorMessage(`识别错误: ${event.payload}`);
+      // 3秒后自动清除
+      setTimeout(() => setErrorMessage(null), 5000);
+    });
+    return () => {
+      unlisten.then(f => f());
+    };
+  }, []);
 
   // 置顶/取消置顶功能
   const togglePin = (uuid: string, e: React.MouseEvent) => {
@@ -293,6 +312,42 @@ export default function App() {
     const saved = localStorage.getItem("plugin-height");
     return saved ? parseInt(saved, 10) : 700;
   });
+
+  // 辅助函数：将虚拟键码转换为可读文本
+  const getHotkeyLabel = (code: number) => {
+    if (code >= 65 && code <= 90) return `Key ${String.fromCharCode(code)}`;
+    if (code >= 48 && code <= 57) return `Key ${code - 48}`;
+    if (code >= 112 && code <= 123) return `F${code - 111}`;
+    
+    switch(code) {
+      case 1: return "鼠标左键";
+      case 2: return "鼠标右键";
+      case 4: return "鼠标中键";
+      case 5: return "鼠标侧键1 (后退)";
+      case 6: return "鼠标侧键2 (前进)";
+      case 8: return "BackSpace";
+      case 9: return "Tab";
+      case 13: return "Enter";
+      case 16: return "Shift";
+      case 17: return "Ctrl";
+      case 18: return "Alt";
+      case 20: return "CapsLock";
+      case 27: return "Esc";
+      case 32: return "Space";
+      case 33: return "PageUp";
+      case 34: return "PageDown";
+      case 35: return "End";
+      case 36: return "Home";
+      case 37: return "Left";
+      case 38: return "Up";
+      case 39: return "Right";
+      case 40: return "Down";
+      case 45: return "Insert";
+      case 46: return "Delete";
+      case 192: return "~";
+    }
+    return `Unknown (${code})`;
+  };
 
   // 图片路径处理函数
   const getImg = async (path: string | null | undefined) => {
@@ -447,8 +502,12 @@ export default function App() {
     let unlistenMonster: any = null;
     let unlistenDay: any = null;
     let unlistenSync: any = null;
+    let unlistenAutoJump: any = null;
     
     const setupListeners = async () => {
+      // 0. 加载热键配置
+      invoke<number | null>("get_detection_hotkey").then(setDetectionHotkey);
+
       // 1. 怪物识别触发
       unlistenMonster = await listen<number | null>('trigger-monster-recognition', async (event) => {
         console.log("收到自动识别触发事件, Day:", event.payload);
@@ -461,6 +520,30 @@ export default function App() {
         setTimeout(async () => {
            await handleAutoRecognition(dayNum);
         }, 500);
+      });
+
+      // 1.5 自动识别并跳转事件 (auto-jump-to-monster)
+      unlistenAutoJump = await listen<{ day: number; monster_name: string }>('auto-jump-to-monster', async (event) => {
+          const { day, monster_name } = event.payload;
+          console.log(`收到自动跳转事件: Day ${day}, Monster: ${monster_name}`);
+          
+          // 1. 自动展开插件
+          if (isCollapsed) {
+              setIsCollapsed(false);
+          }
+
+          // 2. 跳转到对应天数
+          setCurrentDay(day);
+          const dayLabel = day >= 10 ? "Day 10+" : `Day ${day}`;
+          setSelectedDay(dayLabel);
+
+          // 3. 高亮匹配的怪物 (设置 Identify 和 Expand)
+          // 覆盖之前的匹配结果
+          setIdentifiedNames([monster_name]);
+          setExpandedMonsters(new Set([monster_name]));
+
+          // 4. 切换到怪物 Tab
+          setActiveTab("monster");
       });
 
       // 2. 天数更新
@@ -498,8 +581,9 @@ export default function App() {
       if (unlistenMonster) unlistenMonster();
       if (unlistenDay) unlistenDay();
       if (unlistenSync) unlistenSync();
+      if (unlistenAutoJump) unlistenAutoJump();
     };
-  }, []); // 仅在挂载时运行一次，不再依赖 currentDay
+  }, [isCollapsed]); // 添加依赖以确保 isCollapsed 更新有效 (但要注意闭包陷阱，最好用 ref 或函数式更新)
 
   // 基础环境侦测：分辨率适配
   useEffect(() => {
@@ -620,18 +704,33 @@ export default function App() {
   };
 
   const processMonsterImages = async (m: MonsterData) => {
-    const displayImg = await getImg(m.image);
+    // Use name_zh to derive image paths, ignoring m.image
+    let filename = `${m.name_zh}.webp`;
+    // Hardcoded exception handling
+    if (m.name_zh === '绿洲守护神') {
+      filename = '绿洲守护神_Day9.webp';
+    }
+
+    // Character image path
+    const displayImg = await getImg(`images_monster_char/${filename}`);
+    
+    // Background image path
+    const displayImgBg = await getImg(`images_monster_bg/${filename}`);
+    
     if (m.name_zh === '快乐杰克南瓜') {
       console.log('[DEBUG] 快乐杰克南瓜 image processing:', {
         name_zh: m.name_zh,
         available: m.available,
-        image: m.image,
-        displayImg: displayImg
+        derivedFilename: filename,
+        displayImg: displayImg,
+        displayImgBg: displayImgBg
       });
     }
+
     return {
       ...m,
       displayImg: displayImg,
+      displayImgBg: displayImgBg,
       skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
         ...s, 
         displayImg: await getImg(s.image) 
@@ -1138,6 +1237,41 @@ export default function App() {
         invoke("restore_game_focus").catch(() => {});
       }}
     >
+      {/* 3. 全局错误提示 Toast */}
+      {errorMessage && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#ff4d4f',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '14px',
+          fontWeight: 600
+        }}>
+          <span>⚠ {errorMessage}</span>
+          <button 
+            onClick={() => setErrorMessage(null)}
+            style={{ 
+              background: 'transparent', 
+              border: 'none', 
+              color: '#fff', 
+              cursor: 'pointer',
+              fontSize: '16px' 
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {!isCollapsed && (
         <>
           <div className="resize-handle-width" onMouseDown={handleResizeWidth} title="左右拖动调整宽度" />
@@ -1207,14 +1341,15 @@ export default function App() {
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <label>数据缓存</label>
-                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={async () => {
+                  {/* <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={async () => {
                     try {
                       await invoke("clear_monster_cache");
                       setStatusMsg("野怪特征缓存已清空，请手动重启插件以重新加载。");
                     } catch (e) {
                       setStatusMsg("清空失败: " + e);
                     }
-                  }}>清空野怪特征缓存</button>
+                  }}>清空野怪特征缓存</button> */}
+                  <span style={{ fontSize: '12px', color: '#888' }}>已启用内置缓存</span>
                 </div>
               </div>
               
@@ -1253,6 +1388,80 @@ export default function App() {
                 </div>
               </div>
               <div className="setting-tip">调整后将实时影响所有文字大小</div>
+
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label>怪物识别按键</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ padding: '2px 8px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsRecordingHotkey(true);
+                    }}
+                  >
+                    {isRecordingHotkey ? "请按键..." : (detectionHotkey ? getHotkeyLabel(detectionHotkey) : "未设置")}
+                  </button>
+                </div>
+                {isRecordingHotkey && (
+                  <div 
+                    style={{ 
+                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                      display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                    }}
+                    onMouseDown={(e) => {
+                      // 阻止默认行为（比如上下文菜单）
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // 根据 MouseEvent.button 映射到虚拟键码 (简单映射)
+                      // 0: Left -> 1 (VK_LBUTTON)
+                      // 1: Middle -> 4 (VK_MBUTTON)
+                      // 2: Right -> 2 (VK_RBUTTON)
+                      // 3: Back -> 5 (VK_XBUTTON1)
+                      // 4: Forward -> 6 (VK_XBUTTON2)
+                      let vk = 0;
+                      switch(e.button) {
+                        case 0: vk = 1; break;
+                        case 1: vk = 4; break;
+                        case 2: vk = 2; break;
+                        case 3: vk = 5; break;
+                        case 4: vk = 6; break;
+                      }
+                      if (vk > 0) {
+                        setDetectionHotkey(vk);
+                        invoke("set_detection_hotkey", { hotkey: vk });
+                        setIsRecordingHotkey(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // 如何在JS中获取 Windows VK Code?
+                      // 其实 keyCode 属性虽然被废弃，但在大部分现代浏览器 + Windows WebView2 环境下
+                      // 其实大部分都能对应上 Windows 的 Virtual Key Code。
+                      // 如 F2 -> 113, A -> 65
+                      if (e.keyCode) {
+                        setDetectionHotkey(e.keyCode);
+                        invoke("set_detection_hotkey", { hotkey: e.keyCode });
+                        setIsRecordingHotkey(false);
+                      }
+                    }}
+                    // 使 div 能获取焦点以接收键盘事件
+                    tabIndex={0}
+                    ref={(el) => el?.focus()}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                    <button 
+                      style={{ marginTop: '20px', padding: '5px 15px' }}
+                      onClick={(e) => { e.stopPropagation(); setIsRecordingHotkey(false); }}
+                    >取消</button>
+                  </div>
+                )}
+                <div className="setting-tip">默认: 鼠标右键 (VK: 2)</div>
+              </div>
 
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
@@ -1430,7 +1639,14 @@ export default function App() {
                   </div>
 
                   <div className="monster-list-v2">
-                    {manualMonsters.map((m, i) => {
+                    {manualMonsters.sort((a, b) => {
+                      // 识别成功的怪物排在前面
+                      const aIdentified = identifiedNames.includes(a.name_zh);
+                      const bIdentified = identifiedNames.includes(b.name_zh);
+                      if (aIdentified && !bIdentified) return -1;
+                      if (!aIdentified && bIdentified) return 1;
+                      return 0;
+                    }).map((m, i) => {
                       const isIdentified = identifiedNames.includes(m.name_zh);
                       const isExpanded = expandedMonsters.has(m.name_zh);
                       
@@ -1438,7 +1654,10 @@ export default function App() {
                         <div key={i} className={`monster-card-v2 ${isIdentified ? 'identified-glow' : ''} ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleMonsterExpand(m.name_zh)}>
                           <div className="monster-header-v2">
                             <div className="avatar-wrap">
-                              <img src={m.displayImg} className="monster-avatar-v2" alt="" />
+                              <div className="monster-image-layers">
+                                <img src={m.displayImgBg} className="monster-layer-bg" alt="" />
+                                <img src={m.displayImg} className="monster-layer-char" alt="" />
+                              </div>
                             </div>
                             <div className="monster-info-v2">
                               <div className="monster-name-zh">
