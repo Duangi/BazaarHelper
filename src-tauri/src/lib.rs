@@ -44,6 +44,7 @@ pub struct RawItem {
     pub starting_tier: Option<String>,
     pub heroes: Option<String>,
     pub tags: Option<String>,
+    pub size: Option<String>,
     pub cooldown: Option<f32>,
     pub skills: Option<Vec<RawSkill>>,
     pub enchantments: Option<serde_json::Value>,
@@ -59,6 +60,7 @@ pub struct ItemData {
     pub name_cn: String,
     pub tier: String,
     pub tags: String,
+    pub size: Option<String>,
     pub processed_tags: Vec<String>,
     pub heroes: Vec<String>,
     pub cooldown: Option<f32>,
@@ -119,7 +121,13 @@ impl From<RawItem> for ItemData {
         }
         // Removed .sort() to keep JSON order
 
-        let img = raw.image.unwrap_or_else(|| format!("images/{}.jpg", name_cn));
+        let img = raw.image.unwrap_or_else(|| {
+            if !raw.id.is_empty() {
+                format!("images/{}.jpg", raw.id)
+            } else {
+                format!("images/{}.jpg", name_cn)
+            }
+        });
 
         ItemData {
             uuid: raw.id,
@@ -127,6 +135,7 @@ impl From<RawItem> for ItemData {
             name_cn,
             tier: raw.starting_tier.clone().unwrap_or_else(|| "Bronze".to_string()),
             tags: raw.tags.unwrap_or_default(),
+            size: raw.size,
             processed_tags,
             heroes,
             cooldown: raw.cooldown.map(|c| c / 1000.0), // ms to s
@@ -190,6 +199,60 @@ pub struct DbState {
     pub items: Arc<RwLock<ItemDb>>,
     pub skills: Arc<RwLock<SkillDb>>,
     pub monsters: Arc<RwLock<serde_json::Map<String, serde_json::Value>>>,
+}
+
+fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &str, fallback_name_en: &str, current_tier: &str, override_size: Option<&str>) -> serde_json::Value {
+    let mut desc = Vec::new();
+    let mut image = "".to_string();
+    let mut name_cn = fallback_name_cn.to_string();
+    let mut name_en = fallback_name_en.to_string();
+    let mut cooldown = None;
+    let mut size = override_size.map(|s| s.to_string());
+
+    if let Some(item) = item_data {
+        name_cn = item.name_cn;
+        name_en = item.name;
+        image = item.image;
+        if size.is_none() {
+            size = item.size;
+        }
+        if !item.description.is_empty() {
+            desc.push(item.description);
+        }
+        for s in item.skills {
+            desc.push(s);
+        }
+        cooldown = item.cooldown;
+    }
+
+    desc.retain(|s| !s.is_empty());
+    
+    let tier_label = format!("{}+", current_tier);
+    let mut tiers = serde_json::Map::new();
+    let mut tier_info = serde_json::Map::new();
+    tier_info.insert("description".to_string(), serde_json::Value::Array(desc.into_iter().map(serde_json::Value::String).collect()));
+    tier_info.insert("extra_description".to_string(), serde_json::Value::Array(vec![]));
+    tier_info.insert("cd".to_string(), cooldown.map(|c| serde_json::Value::String(format!("{:.1}s", c))).unwrap_or(serde_json::Value::Null));
+    
+    tiers.insert(current_tier.to_lowercase(), serde_json::Value::Object(tier_info));
+    
+    let mut sub = serde_json::Map::new();
+    sub.insert("name".to_string(), serde_json::Value::String(name_cn));
+    sub.insert("name_en".to_string(), serde_json::Value::String(name_en));
+    sub.insert("tier".to_string(), serde_json::Value::String(tier_label));
+    sub.insert("current_tier".to_string(), serde_json::Value::String(current_tier.to_string()));
+    
+    // Normalize size if it exists
+    let final_size = size.map(|s| {
+        let normalized = s.split(" / ").next().unwrap_or(&s).to_string();
+        normalized
+    });
+    
+    sub.insert("size".to_string(), final_size.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("image".to_string(), serde_json::Value::String(image));
+    sub.insert("tiers".to_string(), serde_json::Value::Object(tiers));
+    
+    serde_json::Value::Object(sub)
 }
 
 fn get_log_path() -> PathBuf {
@@ -447,101 +510,219 @@ pub fn run() {
 
             let handle = app.handle().clone();
             let resources_path = app.path().resource_dir().unwrap();
-            
-            // Initial DB Load
             let db_state = app.state::<DbState>();
             
-            let monsters_possible_paths = [
-                resources_path.join("resources").join("monsters_db.json"),
-                resources_path.join("monsters_db.json"),
-            ];
-            
-            for path in &monsters_possible_paths {
-                if path.exists() {
-                    match std::fs::read_to_string(path) {
-                        Ok(json) => {
-                            match serde_json::from_str::<serde_json::Value>(&json) {
-                                Ok(serde_json::Value::Object(monsters)) => {
-                                    println!("[Init] Successfully loaded {} monsters from {:?}", monsters.len(), path);
-                                    *db_state.monsters.write().unwrap() = monsters;
-                                    break;
-                                }
-                                Ok(_) => println!("[Error] monsters_db.json is not an object at {:?}", path),
-                                Err(e) => println!("[Error] Failed to parse monsters_db.json at {:?}: {}", path, e),
-                            }
-                        }
-                        Err(e) => println!("[Error] Failed to read monsters_db.json at {:?}: {}", path, e),
-                    }
-                }
-            }
-
+            // 1. Load Items DB
             let items_possible_paths = [
                 resources_path.join("resources").join("items_db.json"),
                 resources_path.join("items_db.json"),
             ];
             for path in &items_possible_paths {
                 if path.exists() {
-                    match std::fs::read_to_string(path) {
-                        Ok(json) => {
-                            match serde_json::from_str::<Vec<RawItem>>(&json) {
-                                Ok(raw_list) => {
-                                    let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                                    let mut id_map = HashMap::new();
-                                    let mut tag_set = std::collections::HashSet::new();
-                                    for (index, item) in items_list.iter().enumerate() {
-                                        id_map.insert(item.uuid.clone(), index);
-                                        for tag in &item.processed_tags {
-                                            tag_set.insert(tag.clone());
-                                        }
-                                    }
-                                    let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
-                                    unique_tags.sort();
-                                    
-                                    let count = items_list.len();
-                                    let mut db = db_state.items.write().unwrap();
-                                    db.list = items_list;
-                                    db.id_map = id_map;
-                                    db.unique_tags = unique_tags;
-                                    println!("[Init] Successfully loaded {} items from {:?}", count, path);
-                                    break;
-                                }
-                                Err(e) => println!("[Error] Failed to parse items_db.json at {:?}: {}", path, e),
+                    if let Ok(json) = std::fs::read_to_string(path) {
+                        if let Ok(raw_list) = serde_json::from_str::<Vec<RawItem>>(&json) {
+                            let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                            let mut id_map = HashMap::new();
+                            let mut tag_set = std::collections::HashSet::new();
+                            for (index, item) in items_list.iter().enumerate() {
+                                id_map.insert(item.uuid.clone(), index);
+                                for tag in &item.processed_tags { tag_set.insert(tag.clone()); }
                             }
+                            let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
+                            unique_tags.sort();
+                            let count = items_list.len();
+                            let mut db = db_state.items.write().unwrap();
+                            db.list = items_list;
+                            db.id_map = id_map;
+                            db.unique_tags = unique_tags;
+                            println!("[Init] Successfully loaded {} items from {:?}", count, path);
+                            break;
                         }
-                        Err(e) => println!("[Error] Failed to read items_db.json at {:?}: {}", path, e),
                     }
                 }
             }
 
+            // 2. Load Skills DB
             let skills_possible_paths = [
                 resources_path.join("resources").join("skills_db.json"),
                 resources_path.join("skills_db.json"),
             ];
             for path in &skills_possible_paths {
                 if path.exists() {
-                    match std::fs::read_to_string(path) {
-                        Ok(json) => {
-                            match serde_json::from_str::<Vec<RawItem>>(&json) {
-                                Ok(raw_list) => {
-                                    let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                                    let mut id_map = HashMap::new();
-                                    for (index, item) in skills_list.iter().enumerate() {
-                                        id_map.insert(item.uuid.clone(), index);
-                                    }
-                                    let count = skills_list.len();
-                                    let mut db = db_state.skills.write().unwrap();
-                                    db.list = skills_list;
-                                    db.id_map = id_map;
-                                    println!("[Init] Successfully loaded {} skills from {:?}", count, path);
-                                    break;
-                                }
-                                Err(e) => println!("[Error] Failed to parse skills_db.json at {:?}: {}", path, e),
-                            }
+                    if let Ok(json) = std::fs::read_to_string(path) {
+                        if let Ok(raw_list) = serde_json::from_str::<Vec<RawItem>>(&json) {
+                            let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                            let mut id_map = HashMap::new();
+                            for (index, item) in skills_list.iter().enumerate() { id_map.insert(item.uuid.clone(), index); }
+                            let count = skills_list.len();
+                            let mut db = db_state.skills.write().unwrap();
+                            db.list = skills_list;
+                            db.id_map = id_map;
+                            println!("[Init] Successfully loaded {} skills from {:?}", count, path);
+                            break;
                         }
-                        Err(e) => println!("[Error] Failed to read skills_db.json at {:?}: {}", path, e),
                     }
                 }
             }
+
+            // 3. Load Monster Image Map
+            let monster_img_map_path = resources_path.join("resources").join("images_monster_map.json");
+            let mut monster_img_lookup = HashMap::new();
+            if let Ok(json) = std::fs::read_to_string(&monster_img_map_path) {
+                if let Ok(serde_json::Value::Object(map)) = serde_json::from_str::<serde_json::Value>(&json) {
+                    for (name, info) in map {
+                        if let Some(out) = info.get("out").and_then(|v| v.as_str()) {
+                            monster_img_lookup.insert(name, out.replace("\\", "/"));
+                        }
+                    }
+                }
+            }
+
+            // 4. Load & Merge Monsters (Export First, then DB)
+            let monsters_export_path = resources_path.join("resources").join("monsters_export.json");
+            let monsters_db_path = resources_path.join("resources").join("monsters_db.json");
+            
+            let mut final_monsters = serde_json::Map::new();
+            let mut export_by_day: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
+            
+            // Move locks outside to be used by both Export and Fallback
+            let items_db = db_state.items.read().unwrap();
+            let skills_db = db_state.skills.read().unwrap();
+
+            if monsters_export_path.exists() {
+                if let Ok(json) = std::fs::read_to_string(&monsters_export_path) {
+                    if let Ok(serde_json::Value::Array(exports)) = serde_json::from_str::<serde_json::Value>(&json) {
+                        for m_val in exports {
+                            if let Some(m_obj) = m_val.as_object() {
+                                let level = m_obj.get("level").and_then(|v| v.as_u64()).unwrap_or(0);
+                                let day_label = if level >= 10 { "Day 10+".to_string() } else { format!("Day {}", level) };
+                                let name_zh = m_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
+                                let name_en = m_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
+                                
+                                let mut m_entry = serde_json::Map::new();
+                                m_entry.insert("name".to_string(), serde_json::Value::String(name_en.to_string()));
+                                m_entry.insert("name_zh".to_string(), serde_json::Value::String(name_zh.to_string()));
+                                m_entry.insert("available".to_string(), serde_json::Value::String(day_label.clone()));
+                                m_entry.insert("health".to_string(), m_obj.get("max_health").cloned().unwrap_or(0.into()));
+                                
+                                let img = monster_img_lookup.get(name_zh).cloned()
+                                    .unwrap_or_else(|| format!("images_monster/{}.jpg", name_zh));
+                                m_entry.insert("image".to_string(), serde_json::Value::String(img));
+
+                                // Loadout Items
+                                let mut items_list = Vec::new();
+                                if let Some(loadout) = m_obj.get("loadout_items").and_then(|v| v.as_array()) {
+                                    for it_val in loadout {
+                                        if let Some(it_obj) = it_val.as_object() {
+                                            let id = it_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                            let tier_raw = it_obj.get("tier").and_then(|v| v.as_str()).unwrap_or("Bronze");
+                                            let tier = tier_raw.split(" / ").next().unwrap_or(tier_raw);
+                                            let it_name_cn = it_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
+                                            let it_name_en = it_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
+                                            let it_size = it_obj.get("size").and_then(|v| v.as_str());
+                                            
+                                            let item_data = lookup_item(id, &items_db, &skills_db);
+                                            items_list.push(construct_monster_sub_item(item_data, it_name_cn, it_name_en, tier, it_size));
+                                        }
+                                    }
+                                }
+                                m_entry.insert("items".to_string(), serde_json::Value::Array(items_list));
+
+                                // Loadout Skills
+                                let mut skills_list = Vec::new();
+                                if let Some(loadout) = m_obj.get("loadout_skills").and_then(|v| v.as_array()) {
+                                    for sk_val in loadout {
+                                        if let Some(sk_obj) = sk_val.as_object() {
+                                            let id = sk_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                            let tier_raw = sk_obj.get("tier").and_then(|v| v.as_str()).unwrap_or("Bronze");
+                                            let tier = tier_raw.split(" / ").next().unwrap_or(tier_raw);
+                                            let sk_name_cn = sk_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
+                                            let sk_name_en = sk_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
+                                            let sk_size = sk_obj.get("size").and_then(|v| v.as_str());
+                                            
+                                            let skill_data = lookup_item(id, &items_db, &skills_db);
+                                            skills_list.push(construct_monster_sub_item(skill_data, sk_name_cn, sk_name_en, tier, sk_size));
+                                        }
+                                    }
+                                }
+                                m_entry.insert("skills".to_string(), serde_json::Value::Array(skills_list));
+
+                                export_by_day.entry(day_label).or_default().push(serde_json::Value::Object(m_entry));
+                            }
+                        }
+                    }
+                }
+            }
+
+            let mut db_by_day: HashMap<String, Vec<(String, serde_json::Value)>> = HashMap::new();
+            if monsters_db_path.exists() {
+                if let Ok(json) = std::fs::read_to_string(&monsters_db_path) {
+                    if let Ok(serde_json::Value::Object(monsters)) = serde_json::from_str::<serde_json::Value>(&json) {
+                        for (name, data) in monsters {
+                            let day = data.get("available").and_then(|v| v.as_str()).unwrap_or("").to_string();
+                            if !day.is_empty() { db_by_day.entry(day).or_default().push((name, data)); }
+                        }
+                    }
+                }
+            }
+
+            // Consolidate: Prioritize monsters_db, then supplement with monsters_export
+            for i in 0..21 {
+                let day_label = if i >= 10 { "Day 10+".to_string() } else { format!("Day {}", i) };
+                
+                // First check if Day exists in monsters_db
+                if let Some(db_monsters) = db_by_day.get(&day_label) {
+                    for (name, m) in db_monsters {
+                        let mut enriched_m = m.clone();
+                        if let Some(m_obj) = enriched_m.as_object_mut() {
+                            // Enrich items
+                            if let Some(items) = m_obj.get_mut("items").and_then(|v| v.as_array_mut()) {
+                                for item_val in items {
+                                    if let Some(item_obj) = item_val.as_object_mut() {
+                                        if !item_obj.contains_key("size") {
+                                            let id = item_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                            if let Some(found) = lookup_item(id, &items_db, &skills_db) {
+                                                if let Some(s) = found.size {
+                                                    let norm = s.split(" / ").next().unwrap_or(&s).to_string();
+                                                    item_obj.insert("size".to_string(), serde_json::Value::String(norm));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // Enrich skills
+                            if let Some(skills) = m_obj.get_mut("skills").and_then(|v| v.as_array_mut()) {
+                                for skill_val in skills {
+                                    if let Some(skill_obj) = skill_val.as_object_mut() {
+                                        if !skill_obj.contains_key("size") {
+                                            let id = skill_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                                            if let Some(found) = lookup_item(id, &items_db, &skills_db) {
+                                                if let Some(s) = found.size {
+                                                    let norm = s.split(" / ").next().unwrap_or(&s).to_string();
+                                                    skill_obj.insert("size".to_string(), serde_json::Value::String(norm));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        final_monsters.insert(name.clone(), enriched_m);
+                    }
+                } 
+                // Then supplement with Export if Day doesn't exist in DB (or if you want to merge, but user said "switch back")
+                else if let Some(exports) = export_by_day.get(&day_label) {
+                    for m in exports {
+                        if let Some(name_zh) = m.get("name_zh").and_then(|v| v.as_str()) {
+                            final_monsters.insert(name_zh.to_string(), m.clone());
+                        }
+                    }
+                }
+            }
+            let monster_count = final_monsters.len();
+            *db_state.monsters.write().unwrap() = final_monsters;
+            println!("[Init] Successfully consolidated {} monsters (Export prioritized by day)", monster_count);
 
             // Log Monitor Thread
             let thread_items_db = db_state.items.clone();
@@ -562,8 +743,8 @@ pub fn run() {
                 let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
                 
                 // Initialize state from cache
-                let cache_path = get_cache_path();
-                let has_cache = cache_path.exists();
+                let _cache_path = get_cache_path();
+                let _has_cache = _cache_path.exists();
                 let state_init = load_state();
                 
                 let mut inst_to_temp = state_init.inst_to_temp;
@@ -583,96 +764,117 @@ pub fn run() {
                 let mut hour_count: u32 = 0;
                 let mut is_sync = false;
 
-                // --- Initial Backfill if no cache ---
-                if !has_cache {
-                    println!("[LogMonitor] No cache found, backfilling from logs...");
-                    let files_to_process = vec![prev_path, log_path.clone()];
-                    for path in files_to_process {
-                        if !path.exists() { continue; }
-                        if let Ok(file) = File::open(&path) {
-                            let reader = BufReader::new(file);
-                            for line in reader.lines() {
-                                if let Ok(l) = line {
-                                    let trimmed = l.trim();
-                                    
-                                    // REUSE LOGIC (SIMULATION - NO EMITS)
-                                    if trimmed.contains("NetMessageRunInitialized") {
-                                        current_day = 1; in_pvp = false; hour_count = 0;
-                                        inst_to_temp.clear(); current_hand.clear(); current_stash.clear();
-                                    }
-                                    if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
-                                    if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
-                                        current_day = current_day.saturating_add(1); in_pvp = false; hour_count = 0;
-                                    }
-                                    if trimmed.contains("State changed from [ChoiceState] to [") {
-                                        if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
-                                            hour_count = hour_count.saturating_add(1);
-                                            if hour_count >= 10 { current_day = current_day.saturating_add(1); hour_count = 0; }
-                                        }
-                                    }
+                // --- Initial Sync: Replay Logs to catch up with current state ---
+                println!("[LogMonitor] Initializing state from logs...");
+                
+                // Clear state for fresh scan (we'll recover inst_to_temp from logs too)
+                current_hand.clear();
+                current_stash.clear();
+                // inst_to_temp.clear(); // We keep cache as fallback, but logs will overwrite
 
-                                    if let Some(cap) = re_purchase.captures(trimmed) {
-                                        let iid = cap["iid"].to_string();
-                                        inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
-                                        let mut section = cap.name("sec").map(|s| s.as_str().to_string());
-                                        if section.is_none() || section.as_ref().unwrap() == "" {
-                                            if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
-                                                if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
-                                                else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                let files_to_process = vec![prev_path, log_path.clone()];
+                for path in files_to_process {
+                    if !path.exists() { continue; }
+                    if let Ok(file) = File::open(&path) {
+                        let reader = BufReader::new(file);
+                        for line in reader.lines() {
+                            if let Ok(l) = line {
+                                let trimmed = l.trim();
+                                
+                                // Reset everything if we see a new run start
+                                if trimmed.contains("NetMessageRunInitialized") {
+                                    current_day = 1; in_pvp = false; hour_count = 0;
+                                    inst_to_temp.clear();
+                                    current_hand.clear();
+                                    current_stash.clear();
+                                    is_sync = false;
+                                }
+
+                                if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
+                                if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
+                                    current_day = current_day.saturating_add(1); in_pvp = false; hour_count = 0;
+                                }
+                                if trimmed.contains("State changed from [ChoiceState] to [") {
+                                    if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
+                                        hour_count = hour_count.saturating_add(1);
+                                        if hour_count >= 10 { current_day = current_day.saturating_add(1); hour_count = 0; }
+                                    }
+                                }
+
+                                if let Some(cap) = re_purchase.captures(trimmed) {
+                                    let iid = cap["iid"].to_string();
+                                    inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
+                                    let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                                    if section.is_none() || section.as_ref().unwrap() == "" {
+                                        if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
+                                            if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
+                                            else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                                        }
+                                    }
+                                    if let Some(s) = section {
+                                        if s == "Player" || s == "Hand" { current_hand.insert(iid); }
+                                        else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); }
+                                    }
+                                }
+                                if let Some(cap) = re_moved_to.captures(trimmed) {
+                                    let iid = cap["iid"].to_string();
+                                    if cap["tgt"].contains("StorageSocket") {
+                                        current_stash.insert(iid.clone()); current_hand.remove(&iid);
+                                    } else if cap["tgt"].contains("Socket") {
+                                        current_hand.insert(iid.clone()); current_stash.remove(&iid);
+                                    }
+                                }
+                                if let Some(cap) = re_sold.captures(trimmed) {
+                                    let iid = cap["iid"].to_string(); 
+                                    current_hand.remove(&iid); current_stash.remove(&iid);
+                                }
+                                if let Some(cap) = re_removed.captures(trimmed) {
+                                    let iid = cap["iid"].to_string(); 
+                                    current_hand.remove(&iid); current_stash.remove(&iid);
+                                }
+                                if trimmed.contains("Cards Disposed:") {
+                                    for mat in re_item_id.find_iter(trimmed) {
+                                        let iid = mat.as_str().to_string(); 
+                                        current_hand.remove(&iid); current_stash.remove(&iid);
+                                    }
+                                }
+                                if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") { 
+                                    is_sync = true; 
+                                }
+                                if is_sync {
+                                    if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
+                                    else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                                    else if let Some(cap) = re_section.captures(trimmed) {
+                                        if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
+                                            let sec_val = &cap["val"];
+                                            if sec_val == "Hand" || sec_val == "Player" { 
+                                                current_hand.insert(last_iid.clone()); 
+                                                current_stash.remove(&last_iid);
+                                            }
+                                            else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
+                                                current_stash.insert(last_iid.clone()); 
+                                                current_hand.remove(&last_iid);
+                                            }
+                                            else {
+                                                current_hand.remove(&last_iid); 
+                                                current_stash.remove(&last_iid);
                                             }
                                         }
-                                        if let Some(s) = section {
-                                            if s == "Player" || s == "Hand" { current_hand.insert(iid); }
-                                            else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); }
-                                        }
+                                        last_iid.clear(); cur_owner.clear();
                                     }
-                                    if let Some(cap) = re_moved_to.captures(trimmed) {
-                                        let iid = cap["iid"].to_string();
-                                        if cap["tgt"].contains("StorageSocket") {
-                                            current_stash.insert(iid.clone()); current_hand.remove(&iid);
-                                        } else if cap["tgt"].contains("Socket") {
-                                            current_hand.insert(iid.clone()); current_stash.remove(&iid);
-                                        }
-                                    }
-                                    if let Some(cap) = re_sold.captures(trimmed) {
-                                        let iid = cap["iid"].to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
-                                    }
-                                    if let Some(cap) = re_removed.captures(trimmed) {
-                                        let iid = cap["iid"].to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
-                                    }
-                                    if trimmed.contains("Cards Disposed:") {
-                                        for mat in re_item_id.find_iter(trimmed) {
-                                            let iid = mat.as_str().to_string(); current_hand.remove(&iid); current_stash.remove(&iid);
-                                        }
-                                    }
-                                    if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") { is_sync = true; }
-                                    if is_sync {
-                                        if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
-                                        else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
-                                        else if let Some(cap) = re_section.captures(trimmed) {
-                                            if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
-                                                let sec_val = &cap["val"];
-                                                if sec_val == "Hand" || sec_val == "Player" { current_hand.insert(last_iid.clone()); current_stash.remove(&last_iid); }
-                                                else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { current_stash.insert(last_iid.clone()); current_hand.remove(&last_iid); }
-                                                else { current_hand.remove(&last_iid); current_stash.remove(&last_iid); }
-                                            }
-                                            last_iid.clear(); cur_owner.clear();
-                                        }
-                                        else if trimmed.contains("Finished processing") { is_sync = false; }
-                                    }
+                                    else if trimmed.contains("Finished processing") { is_sync = false; }
                                 }
                             }
                         }
                     }
-                    save_state(&PersistentState {
-                        day: current_day,
-                        inst_to_temp: inst_to_temp.clone(),
-                        current_hand: current_hand.clone(),
-                        current_stash: current_stash.clone(),
-                    });
-                } else {
-                    println!("[LogMonitor] Loading from cache (current_day: {})", current_day);
                 }
+
+                save_state(&PersistentState {
+                    day: current_day,
+                    inst_to_temp: inst_to_temp.clone(),
+                    current_hand: current_hand.clone(),
+                    current_stash: current_stash.clone(),
+                });
 
                 // Initial UI Sync after loading/backfilling
                 let init_handle = handle.clone();

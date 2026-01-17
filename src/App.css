@@ -248,6 +248,19 @@ html, body, #root {
   font-style: italic;
 }
 
+.settings-announcement-text {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  font-size: calc(14px * var(--font-scale, 1));
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+  color: #e6edf3;
+}
+
 .bulk-controls {
   display: flex;
   gap: 10px;
@@ -739,12 +752,30 @@ html, body, #root {
   border-radius: 4px;
   overflow: hidden;
   background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sub-item-img-wrap.size-small {
+  width: 20px;
+  height: 40px;
+}
+
+.sub-item-img-wrap.size-medium {
+  width: 40px;
+  height: 40px;
+}
+
+.sub-item-img-wrap.size-large {
+  width: 60px;
+  height: 40px;
 }
 
 .sub-item-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: fill;
 }
 
 .sub-item-title-row {
@@ -1135,49 +1166,164 @@ html, body, #root {
   position: relative;
 }
 
-/* 更新检查界面样式 */
+/* 更新检查界面/公告栏样式 */
 .update-screen {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: transparent !important;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* 确保不产生任何边框或外层阴影 */
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .update-content {
   text-align: center;
-  padding: 40px;
-  background: rgba(30, 25, 20, 0.7);
-  border-radius: 12px;
-  border: 2px solid var(--c-golden);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  width: 400px;
-  min-height: 250px;
+  padding: 36px;
+  background: #2b2621;
+  border-radius: 16px;
+  border: 3px solid var(--c-golden);
+  /* 彻底移除 box-shadow，防止在某些 Windows 缩放或透明模式下产生黑色方块/残影 */
+  box-shadow: none !important;
+  width: 95%;
+  max-width: 560px;
+  height: auto;
+  min-height: 500px;
+  max-height: 96vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: auto;
+  position: relative;
+  z-index: 100;
 }
 
-.update-content h1 {
+.bulletin-title {
   color: var(--c-golden);
-  font-size: calc(32px * var(--font-scale, 1));
-  margin-bottom: 30px;
-  text-shadow: 0 2px 8px rgba(255, 205, 25, 0.5);
+  font-size: calc(34px * var(--font-scale, 1));
+  margin: 0 0 24px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  letter-spacing: 5px;
+  flex-shrink: 0;
 }
 
-.update-message {
-  color: #e8e8e8;
-  font-size: calc(16px * var(--font-scale, 1));
-  margin-bottom: 30px;
-  min-height: 24px;
-  white-space: pre-line; /* 支持换行符 */
-  line-height: 1.6;
+.bulletin-body {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 205, 25, 0.25);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 28px;
+  text-align: left;
+  overflow-y: auto;
+  min-height: 300px;
 }
 
-.update-btn, .skip-btn {
-  padding: 12px 24px;
-  margin: 8px;
-  font-size: calc(16px * var(--font-scale, 1));
+.bulletin-text {
+  color: #e6edf3;
+  line-height: 1.7;
+  font-size: calc(14px * var(--font-scale, 1));
+}
+
+.bulletin-text p {
+  margin: 0 0 12px 0;
+}
+
+.bulletin-text p:last-child {
+  margin-bottom: 0;
+}
+
+.bulletin-loading {
+  color: #8b949e;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.version-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.current-v {
+  color: #8b949e;
+  font-size: calc(12px * var(--font-scale, 1));
+}
+
+.update-status-tag {
+  font-size: calc(12px * var(--font-scale, 1));
+}
+
+.bulletin-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.enter-btn {
+  background: var(--c-golden);
+  color: #1a1a1a;
+  padding: 10px 40px;
+  border-radius: 6px;
+  font-weight: bold;
   border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: calc(16px * var(--font-scale, 1));
+  box-shadow: 0 2px 8px rgba(255, 205, 25, 0.2);
+}
+
+.enter-btn:hover {
+  background: #ffdb4d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 205, 25, 0.4);
+}
+
+.update-now-btn {
+  background: #238636;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: calc(16px * var(--font-scale, 1));
+}
+
+.update-now-btn:hover {
+  background: #2ea043;
+  transform: translateY(-1px);
+}
+
+.pulsate {
+  animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+  0% { text-shadow: 0 0 0px rgba(56, 139, 253, 0); }
+  50% { text-shadow: 0 0 10px rgba(58, 166, 255, 0.6); color: #58a6ff; }
+  100% { text-shadow: 0 0 0px rgba(56, 139, 253, 0); }
+}
+
+.status-available { color: #58a6ff; font-weight: bold; }
+.status-checking { color: #8b949e; }
+.status-none { color: #3fb950; 
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1207,7 +1353,7 @@ html, body, #root {
 
 .update-available-info {
   margin-bottom: 25px;
-  font-size: 14px;
+  font-size: calc(14px * var(--font-scale, 1));
 }
 
 .status-checking { color: #aaa; }
@@ -1223,7 +1369,7 @@ html, body, #root {
 }
 
 .update-bar-text {
-  font-size: 12px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: var(--c-golden);
   margin-bottom: 8px;
   display: flex;
@@ -1346,7 +1492,7 @@ html, body, #root {
 }
 
 .pin-btn {
-  font-size: 16px;
+  font-size: calc(16px * var(--font-scale, 1));
   opacity: 0.1;
   transition: all 0.2s;
   filter: grayscale(1);
@@ -1374,8 +1520,6 @@ html, body, #root {
 }
 
 .image-box {
-  width: 44px;
-  height: 44px;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 6px;
   display: flex;
@@ -1383,12 +1527,41 @@ html, body, #root {
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 尺寸自适应 - 仅改变宽度，保持高度统一 */
+.image-box.size-small {
+  width: calc(22px * var(--font-scale, 1));
+  height: calc(44px * var(--font-scale, 1));
+  border-radius: 4px;
+}
+
+.image-box.size-medium {
+  width: calc(44px * var(--font-scale, 1));
+  height: calc(44px * var(--font-scale, 1));
+  border-radius: 6px;
+}
+
+.image-box.size-large {
+  width: calc(66px * var(--font-scale, 1));
+  height: calc(44px * var(--font-scale, 1));
+  border-radius: 8px;
+}
+
+/* 兼容没有指定 size 类的默认情况 */
+.image-box:not([class*="size-"]) {
+  width: calc(44px * var(--font-scale, 1));
+  height: calc(44px * var(--font-scale, 1));
 }
 
 .image-box img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  /* 使用 fill 确保铺满盒子不留黑边，用户明确要求拉伸且不裁切 */
+  object-fit: fill; 
+  display: block;
 }
 
 .card-center {
@@ -1405,19 +1578,24 @@ html, body, #root {
 }
 
 .name-cn {
-  font-size: 15px;
+  font-size: calc(17px * var(--font-scale, 1));
   font-weight: bold;
   color: #fff;
 }
 
 .tier-label {
-  font-size: 9px;
+  font-size: calc(11px * var(--font-scale, 1));
   font-weight: 800;
   padding: 1px 4px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
 }
+
+.tier-label.tier-bronze { color: #cd7f32; border: 1px solid rgba(205, 127, 50, 0.3); }
+.tier-label.tier-silver { color: #c0c0c0; border: 1px solid rgba(192, 192, 192, 0.3); }
+.tier-label.tier-gold { color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
+.tier-label.tier-diamond { color: #b9f2ff; border: 1px solid rgba(185, 242, 255, 0.3); }
 
 .tags-line {
   display: flex;
@@ -1426,7 +1604,7 @@ html, body, #root {
 }
 
 .tag-badge {
-  font-size: 10px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: #98a8fe;
   background: rgba(152, 168, 254, 0.15);
   padding: 0 6px;
@@ -1449,7 +1627,7 @@ html, body, #root {
 }
 
 .hero-badge {
-  font-size: 10px;
+  font-size: calc(12px * var(--font-scale, 1));
   color: var(--c-golden);
   background: rgba(255, 205, 25, 0.1);
   padding: 1px 6px;
@@ -1459,7 +1637,7 @@ html, body, #root {
 }
 
 .expand-chevron {
-  font-size: 14px;
+  font-size: calc(16px * var(--font-scale, 1));
   color: rgba(255, 255, 255, 0.2);
 }
 
@@ -1491,13 +1669,13 @@ html, body, #root {
 }
 
 .cd-value {
-  font-size: 18px;
+  font-size: calc(20px * var(--font-scale, 1));
   font-weight: 900;
   line-height: 1;
 }
 
 .cd-unit {
-  font-size: 8px;
+  font-size: calc(10px * var(--font-scale, 1));
   font-weight: bold;
   opacity: 0.6;
 }
@@ -1510,7 +1688,7 @@ html, body, #root {
 }
 
 .skill-item, .enchant-item {
-  font-size: 12.5px;
+  font-size: calc(14px * var(--font-scale, 1));
   line-height: 1.6;
   color: #ddd;
 }
@@ -1519,13 +1697,13 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: calc(14px * var(--font-scale, 1));
   line-height: 1.6;
   color: #ddd;
 }
 
 .enchant-badge {
-  font-size: 11px;
+  font-size: calc(12.5px * var(--font-scale, 1));
   font-weight: bold;
   padding: 1px 0;
   min-width: 52px;
@@ -1557,7 +1735,7 @@ html, body, #root {
 }
 
 .description-text {
-  font-size: 12px;
+  font-size: calc(14px * var(--font-scale, 1));
   color: #aaa;
   margin-top: 0;
   padding-top: 8px;

@@ -1,5 +1,10 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.1.1"  # <--- 版本号
+$NEW_VERSION = "1.1.2"  # <--- 版本号
+
+# 【新增】这里写你想对用户说的话（支持换行 \n）
+# 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新来了：\n1. 插件迎来了一个新的名字！源自游戏名中文直译。同时在主界面和设置页面新增免费提示。2.更新了中途启动插件时，获取不到手牌信息的bug。\n 3.现在可以通过物品的图片大小直观的看到大中小的区别了！  \n\n💡 ⚡ 本软件完全免费开源，禁止喂食黄牛\n作者：B站@这是李Duang啊。\n如果你是花钱买的，请立刻退款并给差评，别让黄牛赚了你的奶茶钱！🥤"
+
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
 $KEY_PATH = "src-tauri/tauri.key" # 密钥路径
@@ -77,7 +82,7 @@ if (Test-Path $sigFile) {
 Write-Host "[5/5] Generating update.json..."
 $updateData = @{
     version = $NEW_VERSION
-    notes = "Bazaar Helper v$NEW_VERSION"
+    notes = $ANNOUNCEMENT_TEXT
     pub_date = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     platforms = @{
         "windows-x86_64" = @{

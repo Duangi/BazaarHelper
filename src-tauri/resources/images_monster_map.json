@@ -2,655 +2,655 @@
   "凯沃斯雄蜂": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a70b5d17432c7e5dc6373c723c10e096398c9980@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ecb54ad632226d4393ffa3085b9e88a697902cfe@256.webp?v=2",
-    "out": "images_monster\\凯沃斯雄蜂.jpg",
+    "out": "images_monster/23fc515e-32a9-53ce-987c-d9c684e8b385.jpg",
     "status": "ok_composed"
   },
   "火灵": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/518c4b846c394ca256b673ec0c1bbefec81bc2b2@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f8685bd8ee4db9767ce1f25d2dc39659a2952b0@256.webp?v=2",
-    "out": "images_monster\\火灵.jpg",
+    "out": "images_monster/73898c79-179d-508e-ae92-35b3be05283d.jpg",
     "status": "ok_composed"
   },
   "獠牙英格狼": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/446ebfd5529b5eab6a9c2a1bba743e87ab3ac1f7@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a635a2b649cb1800f3c62ca47e6d010c1ba8d30a@256.webp?v=2",
-    "out": "images_monster\\獠牙英格狼.jpg",
+    "out": "images_monster/54a20e51-0d56-5758-8972-0a1718b95f20.jpg",
     "status": "ok_composed"
   },
   "食蕉兽": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/09e879c410ace46f0a8dcbdc8d574c57a7420359@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fce8c94be1d65098b8e8714ae9ab690184daae73@256.webp?v=2",
-    "out": "images_monster\\食蕉兽.jpg",
+    "out": "images_monster/956005bb-6cb7-5c65-b2bb-187cfd7295af.jpg",
     "status": "ok_composed"
   },
   "怨念和服": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7af0accb6147e300aebd364e6b3fbd1d0f87a885@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/421f53fe2a324af4e4229f768bad5174b42565ec@256.webp?v=2",
-    "out": "images_monster\\怨念和服.jpg",
+    "out": "images_monster/0da14af9-8550-5db6-a572-2c1822cc6cca.jpg",
     "status": "ok_composed"
   },
   "毒蛇": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bde625de3f8e7dd514fcf883e802cf393a7a74e9@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9eeab869a8051cde954054b87a00c0bf269e397d@256.webp?v=2",
-    "out": "images_monster\\毒蛇.jpg",
+    "out": "images_monster/c99e9ffe-74c2-5e22-ba4e-7356b0f944f1.jpg",
     "status": "ok_composed"
   },
   "暴走破碎机": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/85f994c6bee93f235a7759c14ebad0939c48f72b@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cccf18eb23c69165b12cb410d8a7d2da7976b8c4@256.webp?v=2",
-    "out": "images_monster\\暴走破碎机.jpg",
+    "out": "images_monster/4d201915-94b2-5d77-ad1b-3d5a0b65dbe9.jpg",
     "status": "ok_composed"
   },
   "椰子蟹": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47daed6ef1f0da00b07b43f23e31334f21d7598@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3aaa59be528e39b66465ba0014161b30fbb763d9@256.webp?v=2",
-    "out": "images_monster\\椰子蟹.jpg",
+    "out": "images_monster/d1a64f18-3a57-53f5-9dc2-fcc8c9f275ce.jpg",
     "status": "ok_composed"
   },
   "蛮猪战士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/49779d1f1fdc018ccd76b80798bb17be4c0193dd@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fc6a092a78e79d87661cf90d2e4758e505d3abb3@256.webp?v=2",
-    "out": "images_monster\\蛮猪战士.jpg",
+    "out": "images_monster/544b93ea-f7b5-57c9-8f8d-d450bd1d0678.jpg",
     "status": "ok_composed"
   },
   "贪婪窃贼": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/672c54489bc22bab74555c2c076e6fd99ba69881@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8b1f1a99992c9eac1f76006f7dfdc3ed25ac08b@256.webp?v=2",
-    "out": "images_monster\\贪婪窃贼.jpg",
+    "out": "images_monster/37b06a0a-51d0-56aa-a95d-6a1f91b5a7dc.jpg",
     "status": "ok_composed"
   },
   "怪奇以太匠": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/15a237c0a01fab9f122e617cd6aece6f781d2353@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e6806cf540b83658fd1dffda15efdcae002ea99e@256.webp?v=2",
-    "out": "images_monster\\怪奇以太匠.jpg",
+    "out": "images_monster/02233aaf-9549-5768-a51f-6a3302525c39.jpg",
     "status": "ok_composed"
   },
   "腹语者": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e2eba1ca87cf5e0fca3367fd4ea3c77749d9e02@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1661200c08e681c08bcc66c67a26f7a0abb78ca6@256.webp?v=2",
-    "out": "images_monster\\腹语者.jpg",
+    "out": "images_monster/d5ef98e1-8c0a-5a8c-b8f9-564274e28714.jpg",
     "status": "ok_composed"
   },
   "初学学徒": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7153547e4f7e27ea13599e89e12e9aa3b477e770@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29d374ede44b9726364f6049469d0a968ec51b35@256.webp?v=2",
-    "out": "images_monster\\初学学徒.jpg",
+    "out": "images_monster/328b3b10-6a14-585c-94da-57d2111e2ba6.jpg",
     "status": "ok_composed"
   },
   "焰风勇士": {
     "status": "ok_composed",
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d32af032925d0e7d3ffa30599eee78c65b32c4e2@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1ee967bc7f5ec18f9cee165c7e9819249fdcfcd3@256.webp?v=2",
-    "out": "images_monster\\焰风勇士.jpg"
+    "out": "images_monster/60d93839-19d6-5ec3-9ff6-1658860144b9.jpg"
   },
   "产品演示员": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5d8b15b92ff9f5ada9352827f0914469d3a048df@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/50120d28f59e64e3507134a6a3a969799a93a82d@256.webp?v=2",
-    "out": "images_monster\\产品演示员.jpg",
+    "out": "images_monster/0c5b0647-de52-5a93-b982-f82198aed3a0.jpg",
     "status": "ok_composed"
   },
   "街头玩家": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa249a3a844c82f9e9f5a4b22566385478dcdb05@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/af42735bc6abb615f7a49363fd460af4562cdb70@256.webp?v=2",
-    "out": "images_monster\\街头玩家.jpg",
+    "out": "images_monster/55bfe228-18e5-5c63-ad66-1f215bf413e5.jpg",
     "status": "ok_composed"
   },
   "霜猴勇士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d20461179ae3753b1fc561276d06a8c299a432f1@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/704641f52cb4d6c75086ff0454dfe9b088df7228@256.webp?v=2",
-    "out": "images_monster\\霜猴勇士.jpg",
+    "out": "images_monster/875ff03e-bc07-5b9d-b0f4-8a9f5179544c.jpg",
     "status": "ok_composed"
   },
   "巨蚊": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d151ba8963e4b8f0e225a4e9331dfcc314829251@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b9cb066014969aec16b4967a0cb419dea60febe8@256.webp?v=2",
-    "out": "images_monster\\巨蚊.jpg",
+    "out": "images_monster/0e406174-4f7d-58c4-b122-7277a194ea34.jpg",
     "status": "ok_composed"
   },
   "飞车暴徒": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/264ce593944ba1909e0fc72ca6037d59ab9dc7fc@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/53c3255c4f9df7429a5c604bc440bd20cebc51d3@256.webp?v=2",
-    "out": "images_monster\\飞车暴徒.jpg",
+    "out": "images_monster/729031e3-f9e9-5dc8-9ff8-91964e17d321.jpg",
     "status": "ok_composed"
   },
   "变异烘焙师": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f6bc9fdadbd414fb6e22678aaae1f22b34a2662f@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c3c3613e09550a3ee1eb96a02029da693d752124@256.webp?v=2",
-    "out": "images_monster\\变异烘焙师.jpg",
+    "out": "images_monster/2207a271-3e41-59eb-921e-249c23cdae24.jpg",
     "status": "ok_composed"
   },
   "荒原旋舞者": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b1d33161aa1347be833413513ea8f999bfd5cfdd@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/aa17f72b64faf6781629a71ee22761a99d02647c@256.webp?v=2",
-    "out": "images_monster\\荒原旋舞者.jpg",
+    "out": "images_monster/6ae10a6c-d4eb-521f-8aed-88a3deb63dc1.jpg",
     "status": "ok_composed"
   },
   "锅炉斗士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/276f85c58c17a0e1b86b695bb56963e4535cbdf3@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6facd66f258a1fc841db89914022cb6a1bebe3a3@256.webp?v=2",
-    "out": "images_monster\\锅炉斗士.jpg",
+    "out": "images_monster/4b94183f-e053-5f16-b15c-f7608409166a.jpg",
     "status": "ok_composed"
   },
   "血礁奇兵": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/86fc58f4ee86b6f55384791903e9d66f04580d88@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/34e59487716100f2bf6e1e31eb534b3eb7e51b77@256.webp?v=2",
-    "out": "images_monster\\血礁奇兵.jpg",
+    "out": "images_monster/26b35d14-554e-56fe-b03f-d3c21d231925.jpg",
     "status": "ok_composed"
   },
   "退休人员": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/94fbe93931dfe064c9931ef32044a2633ffd3c51@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/97e93533bd767b19542d509f87838b8d8a0087d3@256.webp?v=2",
-    "out": "images_monster\\退休人员.jpg",
+    "out": "images_monster/5652a536-0aa8-5541-958a-08eead9171e2.jpg",
     "status": "ok_composed"
   },
   "乡巴佬蜥蜴": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e9421b4f17645f21b33e5e208984acc575737537@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/76d202ae1b1866430cf0b375f32d4996b46f47b5@256.webp?v=2",
-    "out": "images_monster\\乡巴佬蜥蜴.jpg",
+    "out": "images_monster/58ab30a5-5535-5b59-bf6a-82517fe54aa5.jpg",
     "status": "ok_composed"
   },
   "阿海克萨": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9b1d817ebe61de01db371e1a257f5f504ac99570@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/760720e2c11db1f157e0adc4325ddc753dc6b78d@256.webp?v=2",
-    "out": "images_monster\\阿海克萨.jpg",
+    "out": "images_monster/55297d18-f05a-5cb5-9004-c4a00db40154.jpg",
     "status": "ok_composed"
   },
   "马力亚纳斯王子": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/414abda573fbc45e86ed45f180604bfde556a282@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/57e250b23dba70660a7dde51d11d8958b50f5bd0@256.webp?v=2",
-    "out": "images_monster\\马力亚纳斯王子.jpg",
+    "out": "images_monster/469eb2dc-12d4-5d88-b4aa-05544b5e9287.jpg",
     "status": "ok_composed"
   },
   "舞火大师": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/75bb63679be81dc8bc7b01e468bda4229772da74@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/da432282b980a4aff64fe18882f753b6e0cf4eb8@256.webp?v=2",
-    "out": "images_monster\\舞火大师.jpg",
+    "out": "images_monster/1f3af327-4745-575b-a264-7c88c27c0629.jpg",
     "status": "ok_composed"
   },
   "剑齿虎": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d3b96cd47b3bcc9d3af67a3e151a174414425b55@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/646bb37cae9b6a935fdf5d44a523fb7ae0dd13b5@256.webp?v=2",
-    "out": "images_monster\\剑齿虎.jpg",
+    "out": "images_monster/8caf7091-faaa-5ee5-af04-4cf5195fc2d9.jpg",
     "status": "ok_composed"
   },
   "发条爷爷": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bf1cd75bdee1dede04aa6ecef6ee9f7f4125a118@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fb60487d4f65b0f679dea9d405fa00c54e2ad7c0@256.webp?v=2",
-    "out": "images_monster\\发条爷爷.jpg",
+    "out": "images_monster/35711fe2-e894-5b54-8f6f-ac8debba9011.jpg",
     "status": "ok_composed"
   },
   "精致决斗士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b1af065f134e584bb7fe53e8993753185eacd6b1@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2194fe18b3ce181560123e0c39f9e01672525822@256.webp?v=2",
-    "out": "images_monster\\精致决斗士.jpg",
+    "out": "images_monster/48cb220d-3bf3-5d73-b98f-fe854ed12472.jpg",
     "status": "ok_composed"
   },
   "凯沃斯指挥官": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/dfb6ae7d4b2ee00edd5abf1768ee8be52f5a7087@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/830cc6594e20d87c92e7b3cb85885f415d8154f2@256.webp?v=2",
-    "out": "images_monster\\凯沃斯指挥官.jpg",
+    "out": "images_monster/8d4f826b-a2d4-5e2d-825e-2e887b14f913.jpg",
     "status": "ok_composed"
   },
   "哈库维火箭兵": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e4d7a17164fac8dac30d1e1fd8e4356a3ba21da7@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d15d5e45176f6413980214d43307bdd2c6f3eb04@256.webp?v=2",
-    "out": "images_monster\\哈库维火箭兵.jpg",
+    "out": "images_monster/d39225b6-7c36-5132-9939-4148953eda96.jpg",
     "status": "ok_composed"
   },
   "地狱使者": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e2da652f911eca1cf51f253170e9f8bde4957fce@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/31a97a9d968b507e8b4c4411c865fdaf661994fd@256.webp?v=2",
-    "out": "images_monster\\地狱使者.jpg",
+    "out": "images_monster/b51b75a7-9fa7-5e10-9867-bb58b1822cd7.jpg",
     "status": "ok_composed"
   },
   "垃圾镇镇长": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/61a2e92d4e1d21f68f798a673ba67901fbbc69c1@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54f6a091b7fbbfb0b2b99aef01ca84daedd9f6c5@256.webp?v=2",
-    "out": "images_monster\\垃圾镇镇长.jpg",
+    "out": "images_monster/214d83f3-bcef-5cee-a677-934b9e0950b6.jpg",
     "status": "ok_composed"
   },
   "辣火狂徒": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a93e60b2b025bf71af2cdc57a08dd1118ad404ae@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7110ced4706f5d0a923052fb6678cd9e7f42d371@256.webp?v=2",
-    "out": "images_monster\\辣火狂徒.jpg",
+    "out": "images_monster/5d8c0f0e-0d70-5692-be2e-90a5a0d34186.jpg",
     "status": "ok_composed"
   },
   "改装小队": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5df7219545c7a6f90faccc6036db556969ea4cf9@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/cf6934daa9f73d8db5b3a84763fd0764a2c37de5@256.webp?v=2",
-    "out": "images_monster\\改装小队.jpg",
+    "out": "images_monster/c9307725-484b-5ada-aefe-f535b953490b.jpg",
     "status": "ok_composed"
   },
   "戈尔贡贵妇": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7fac789e30a403af5501ba0068e8315e8edd549d@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f952778358767071ba84b50b95901987ef624c9@256.webp?v=2",
-    "out": "images_monster\\戈尔贡贵妇.jpg",
+    "out": "images_monster/a2927ff1-ee9a-5cff-837c-8cfcec429f8b.jpg",
     "status": "ok_composed"
   },
   "动物饲养员": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f7abb08d0281f73253a6ad991ab0cee62d1c37e@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/10814d3f839d9352bd22650d2aa46118b534892c@256.webp?v=2",
-    "out": "images_monster\\动物饲养员.jpg",
+    "out": "images_monster/fcd928be-5755-5762-a9d9-4d483e0eecce.jpg",
     "status": "ok_composed"
   },
   "英格恐狼": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fd6a935782dd2f5783a4ca1821d504091e2907dd@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f8c47b50839d67b2e6335be59b478aa85f0b782b@256.webp?v=2",
-    "out": "images_monster\\英格恐狼.jpg",
+    "out": "images_monster/29167e72-2e16-5077-8e2a-7cef6238a9f9.jpg",
     "status": "ok_composed"
   },
   "三明治艺术家": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ab1b90f7ecad6ed4b3cd71d5038717483598d4c2@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d4551c51ced16c5998f1008db868fa4ecae65fa@256.webp?v=2",
-    "out": "images_monster\\三明治艺术家.jpg",
+    "out": "images_monster/02bb905b-0df7-5f0c-95b8-b45987179304.jpg",
     "status": "ok_composed"
   },
   "垃圾魔像": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/80c6261f6d1e07d878937a4734fadc3393e0c347@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8694c27204bdac4b6ee32eb6a174a0be3ad06af@256.webp?v=2",
-    "out": "images_monster\\垃圾魔像.jpg",
+    "out": "images_monster/2c687f9e-08ab-54a4-a1ab-2de5e57e6eac.jpg",
     "status": "ok_composed"
   },
   "恶蚊": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/05a3169c8dd4c8eadebbd11c828d8f878df05a53@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d2dd8181bc7f9414608378f11b08be6089c8a607@256.webp?v=2",
-    "out": "images_monster\\恶蚊.jpg",
+    "out": "images_monster/f3deb57d-f00e-5962-98d9-f8745f2e0c17.jpg",
     "status": "ok_composed"
   },
   "基石泣妖": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/346cd612fbec7543ee5d09cc98848a7ac5743895@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c1f45f4cf8bcf27f17473df9ac30af82056495f3@256.webp?v=2",
-    "out": "images_monster\\基石泣妖.jpg",
+    "out": "images_monster/8ffc0f2b-da8a-5f91-87ec-64a73e3a6042.jpg",
     "status": "ok_composed"
   },
   "放贷鲨": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/68fca07e06f25a098de74a55372597d6abf575ab@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/27ab12f0495f881b7e3e8e6fe5a6f4d36d4c87e4@256.webp?v=2",
-    "out": "images_monster\\放贷鲨.jpg",
+    "out": "images_monster/a93745db-b8c3-54c3-b80f-8ee77d3b8a26.jpg",
     "status": "ok_composed"
   },
   "地狱大魔神": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7c0cb89ca0324b104e196d4933b8868ab337884c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ee0ac84d5cb1d67bb969154d70411392b38dab87@256.webp?v=2",
-    "out": "images_monster\\地狱大魔神.jpg",
+    "out": "images_monster/7da4fc6c-4969-5082-a011-1028a70fe4f0.jpg",
     "status": "ok_composed"
   },
   "领班": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5265dde5702137430686010d886a621ca43a527a@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5fffc42b99b1a0fc5bb4844f8138b73e31769597@256.webp?v=2",
-    "out": "images_monster\\领班.jpg",
+    "out": "images_monster/40649500-5263-5a77-b4a6-af52d7050404.jpg",
     "status": "ok_composed"
   },
   "巫妖": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6f1cb096256622225f44564b3af0733afa32e569@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/98c5c18dcdeee500165ecdd8347bc75013d8d9a8@256.webp?v=2",
-    "out": "images_monster\\巫妖.jpg",
+    "out": "images_monster/4054878f-9cba-539a-ac47-27cdf06eae7d.jpg",
     "status": "ok_composed"
   },
   "毒蛇暴君": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8d26dc33b3f05d9202da1a7a69e080eb3e6da895@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a7a252167ec63bc3e318b1197e9787ed01a1352@256.webp?v=2",
-    "out": "images_monster\\毒蛇暴君.jpg",
+    "out": "images_monster/dd68d3f5-858e-5f04-a6ff-f8639ad85a19.jpg",
     "status": "ok_composed"
   },
   "皂沫中士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3fed3ad9a72f78790f993be300df8734d67e3b4b@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3adbfabc7c1dc2d243a9cfed896da9678ee75695@256.webp?v=2",
-    "out": "images_monster\\皂沫中士.jpg",
+    "out": "images_monster/b6fdd63d-42e1-5db4-97e5-8818d34ad749.jpg",
     "status": "ok_composed"
   },
   "幽灵辣椒": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5014ea90b860cc596fd75786b2b7515594c55b33@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a47e103b5ed5490f1bd6b4b0201a1e2cc8a78b3d@256.webp?v=2",
-    "out": "images_monster\\幽灵辣椒.jpg",
+    "out": "images_monster/a93ab259-1c9b-567d-a8f9-12e616945a75.jpg",
     "status": "ok_composed"
   },
   "快乐杰克南瓜": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7e39e1b2ca082e11de05017dfc421b4c26f41a5c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b22f9e9c896aaecd25a120d796c1f0c397fb208f@256.webp?v=2",
-    "out": "images_monster\\快乐杰克南瓜.jpg",
+    "out": "images_monster/e9a93130-3b61-50d2-92cd-3209dbfe5922.jpg",
     "status": "ok_composed"
   },
   "载宝海龟": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f36d15fd906301c76b45ed2d7645647420cc5f39@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6d05aef9b2a964d4c332b038cfb5dd3ed8eba4b7@256.webp?v=2",
-    "out": "images_monster\\载宝海龟.jpg",
+    "out": "images_monster/02c07df1-b5c0-5c40-be78-6657755ca995.jpg",
     "status": "ok_composed"
   },
   "寒霜查尔斯": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/13e5218c352d56669f332ab6093e1cb01d4f5a79@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8eac0b71ae126c06e8e19a9bcd6d0e89ba77302f@256.webp?v=2",
-    "out": "images_monster\\寒霜查尔斯.jpg",
+    "out": "images_monster/869e266b-8d11-51cc-ac89-e39f085e40a9.jpg",
     "status": "ok_composed"
   },
   "附属部队士兵": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/84cc300dcc150f3b47d20cb35d5a9c1027a8733f@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2f905b7a561161d30106db003faec527d1521bdf@256.webp?v=2",
-    "out": "images_monster\\附属部队士兵.jpg",
+    "out": "images_monster/eaab6674-aad0-530c-a495-b0bb343d8ebe.jpg",
     "status": "ok_composed"
   },
   "暴徒": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e7e88c2fc0846012bfc56eb70d0384d85a50552d@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6788043ead6bf45251b2b89c65381f283f808450@256.webp?v=2",
-    "out": "images_monster\\暴徒.jpg",
+    "out": "images_monster/aa2b6e83-a6c8-5fb8-ad16-c1a8587e037a.jpg",
     "status": "ok_composed"
   },
   "辉耀海盗": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a3ffc180bbfd3fda869d7fcc3f6b1821c166afff@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a2a6eb38fb2e66e83aa2ebc8021d6feb7f020a5e@256.webp?v=2",
-    "out": "images_monster\\辉耀海盗.jpg",
+    "out": "images_monster/35672643-62c4-57ff-9d26-f864c13c16a5.jpg",
     "status": "ok_composed"
   },
   "云顶军官": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a1ad5af0e3b8b51d4646cb0d1bf7819feb05f2db@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/29832cf0b4c92c3117a2af0d807dc540bd94c5d4@256.webp?v=2",
-    "out": "images_monster\\云顶军官.jpg",
+    "out": "images_monster/771fe0a9-c5e5-5e4c-bec8-8ab4c6cae678.jpg",
     "status": "ok_composed"
   },
   "史都": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9bb269933a6d1ce0ff4746a7583166780f2f761c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/161a60b5798b340a078767d71a7fbdb691547519@256.webp?v=2",
-    "out": "images_monster\\史都.jpg",
+    "out": "images_monster/851e9340-090e-5ed6-8045-776b96ab961b.jpg",
     "status": "ok_composed"
   },
   "宇宙鹏鸟": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bea9991a971b0003ffeb1ae2710e3cf9004f2614@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0789a148533631e396b515a3439dc60e40c38207@256.webp?v=2",
-    "out": "images_monster\\宇宙鹏鸟.jpg",
+    "out": "images_monster/283f1e65-73d1-5f8f-b54a-c29841b3ba60.jpg",
     "status": "ok_composed"
   },
   "地狱飞艇": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30a1d4ecd624915983411df99b6fa0fc0ec35559@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/01c74c82a35e18ebd80ef1252b4c4c1dcd0d76f2@256.webp?v=2",
-    "out": "images_monster\\地狱飞艇.jpg",
+    "out": "images_monster/0fb32528-d30c-5b80-ade8-978cf606f195.jpg",
     "status": "ok_composed"
   },
   "流浪暗礁": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/14ad9d5109a872ae3986d9af80dc112792c52c11@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/306279880d487fb961b2d5374cbd2d9a7339a248@256.webp?v=2",
-    "out": "images_monster\\流浪暗礁.jpg",
+    "out": "images_monster/50217a34-a30a-5871-8d84-80aa06e1daa9.jpg",
     "status": "ok_composed"
   },
   "防卫机甲": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/678cb60ca008e69241cb81e3cb8ae661dddd2838@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2accec299766e17d63659b58f7d2ede65726053e@256.webp?v=2",
-    "out": "images_monster\\防卫机甲.jpg",
+    "out": "images_monster/6869474f-44cd-562d-b190-bfe550f2b599.jpg",
     "status": "ok_composed"
   },
   "驾驶督导": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2f36b3d05497946cafab5726a96ba4e5bcaa6561@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/60e84d0f3fe06605f7d272a827586c7b9f23f664@256.webp?v=2",
-    "out": "images_monster\\驾驶督导.jpg",
+    "out": "images_monster/ad6cf936-7912-579b-8836-24b24ff24569.jpg",
     "status": "ok_composed"
   },
   "漩涡博士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/685dbc1b9f3c9965835908c68dd95de84a6bdc64@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8503a1da069dc1c707b61e73e34905f66c5342af@256.webp?v=2",
-    "out": "images_monster\\漩涡博士.jpg",
+    "out": "images_monster/0a0df46a-09b4-52ed-a445-a2feefeaa299.jpg",
     "status": "ok_composed"
   },
   "焚毁机器人": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7fa205c32f19c68aeed589becd3efd1a886ef2d6@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0e32c291801eadf1abf81d5106dfd06aac63bfb2@256.webp?v=2",
-    "out": "images_monster\\焚毁机器人.jpg",
+    "out": "images_monster/7d1e4e09-c5e8-5b21-bc38-a99b02fa4288.jpg",
     "status": "ok_composed"
   },
   "绿洲守护神": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/231b103deffab76e21f97a41698dfca5570cc1dd@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/db2df50c77239af66aa48a4b70e934d1793ad0c8@256.webp?v=2",
-    "out": "images_monster\\绿洲守护神.jpg",
+    "out": "images_monster/e10d8d75-6b35-5304-9e79-63c85409cd08.jpg",
     "status": "ok_composed"
   },
   "巨龙": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3d53c22b6bce743c543469c47acfc3dd136fb564@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8110ca0034c33eac07e4a404e2d6cdf1530d605d@256.webp?v=2",
-    "out": "images_monster\\巨龙.jpg",
+    "out": "images_monster/076fb3ec-5f89-5a5e-8552-e66c6c5d6aef.jpg",
     "status": "ok_composed"
   },
   "云顶海军上将": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3831ee75070afe0f94b436c986ef08c4904b8960@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4f1ab562b5afdad7a73c81a551e989ed232f566a@256.webp?v=2",
-    "out": "images_monster\\云顶海军上将.jpg",
+    "out": "images_monster/4a1bad7c-54ef-5837-ae98-cdfd914f84d8.jpg",
     "status": "ok_composed"
   },
   "精英决斗者": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/30fbbf59170e684b867528cb8b7a534f46fb4592@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/72b9872f966fafc18c2193f708d8127def5f15be@256.webp?v=2",
-    "out": "images_monster\\精英决斗者.jpg",
+    "out": "images_monster/95022f47-0821-5097-bb6e-931db0300548.jpg",
     "status": "ok_composed"
   },
   "血礁船长": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/517a0ce43d2fe5f0871b2a5a53190929b48ef11d@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8bfd3e4bfa2c633766b268dc7f8a4f6093f84fc@256.webp?v=2",
-    "out": "images_monster\\血礁船长.jpg",
+    "out": "images_monster/2ef29f88-6742-56c5-bfc9-3b7868797024.jpg",
     "status": "ok_composed"
   },
   "恐惧之形": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/9f07201da669784f32a38fbff943b9778d800863@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/d8f6df48bdebd8733429b5e6ea6aef3974cbebac@256.webp?v=2",
-    "out": "images_monster\\恐惧之形.jpg",
+    "out": "images_monster/b0bfa97b-baea-52a8-8314-16e829612c93.jpg",
     "status": "ok_composed"
   },
   "流浪岛屿": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b6c24e48f31ea41b26bdaaccfa2ebbd839ec2fcf@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a864ebabdea492263a363c851070f1b1bb11b1e@256.webp?v=2",
-    "out": "images_monster\\流浪岛屿.jpg",
+    "out": "images_monster/71939b79-7966-5542-9ae1-a50fa890d622.jpg",
     "status": "ok_composed"
   },
   "武器平台": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c019c745bda336053d70a76190dc8ce86717efe9@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8605d2f6a43b015e90b75dfdddb52b2d7f0499ae@256.webp?v=2",
-    "out": "images_monster\\武器平台.jpg",
+    "out": "images_monster/75ee9b8a-7f7a-5c32-a67e-84ea21e3cf29.jpg",
     "status": "ok_composed"
   },
   "耶丹": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7543353101b183ed038c9d61cee6f01c9a9974db@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c435272eab50324b20d9e530ad68be540a2abda0@256.webp?v=2",
-    "out": "images_monster\\耶丹.jpg",
+    "out": "images_monster/bcd167a7-f46b-55ba-94cc-3988732a0394.jpg",
     "status": "ok_composed"
   },
   "菲罗斯汗": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/027d135ee17d93fcce024eadc7f7cbd9ee93d4d7@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/810ca9123ae0679b71c3b5f4c8d664432b1dc2b7@256.webp?v=2",
-    "out": "images_monster\\菲罗斯汗.jpg",
+    "out": "images_monster/647f22d5-9093-5ab8-ad3f-9dfca8a867d5.jpg",
     "status": "ok_composed"
   },
   "基石亡灵": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5d036ab5ef55c13e33b92ce3257abbad376152d7@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6417c47a3e42361b3982321c8d1f947f4e2067cb@256.webp?v=2",
-    "out": "images_monster\\基石亡灵.jpg",
+    "out": "images_monster/06a17a0f-6955-5498-a5cf-714010265db7.jpg",
     "status": "ok_composed"
   },
   "虚空骑士": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/1179afe622b9d1304f21038ca7fc2b5554eb9f9a@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a6378705c899f4c14e67d837f1205a5803437721@256.webp?v=2",
-    "out": "images_monster\\虚空骑士.jpg",
+    "out": "images_monster/eeee4fdc-6825-5fd3-9655-acc45e6ecdcb.jpg",
     "status": "ok_composed"
   },
   "哈洛大哥": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6704e970f0829537fd3d685f63196eba8360c2b1@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f2f1fbf1f10f6361cf1203bb09b71c09f0c85e49@256.webp?v=2",
-    "out": "images_monster\\哈洛大哥.jpg",
+    "out": "images_monster/5b8c94e3-dd66-5793-96ec-ebb44c02cf78.jpg",
     "status": "ok_composed"
   },
   "庞大实验体": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/763ca28a1d55f608759059a272248e38d98d9e90@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e11a2ca0a1619107f8a01964fba751b07d9d14ff@256.webp?v=2",
-    "out": "images_monster\\庞大实验体.jpg",
+    "out": "images_monster/415f4298-7af2-50d2-bc45-b058e2e94e8e.jpg",
     "status": "ok_composed"
   },
   "炼金大师": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5eb3d0fbdb0c1c5dc8a5582a736b74596c9913fb@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/acfc22b7ea602ecc92553c86508c2a55b066b52f@256.webp?v=2",
-    "out": "images_monster\\炼金大师.jpg",
+    "out": "images_monster/26303c32-5bd6-5ff2-a345-7915995f08e6.jpg",
     "status": "ok_composed"
   },
   "地狱空艇": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7a385394902ff711ebc64c7df493e9fdba35e616@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/850276bbb711c13d29e00f3ad5ee15a423485317@256.webp?v=2",
-    "out": "images_monster\\地狱空艇.jpg",
+    "out": "images_monster/55c11d46-218d-54b6-a2b7-245765f512dd.jpg",
     "status": "ok_composed"
   },
   "垃圾泰坦": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/31b61d52ed6d17a4977715e9a539d24e254ba99c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/54c31435e8aeec420a23f6228f134054336bec09@256.webp?v=2",
-    "out": "images_monster\\垃圾泰坦.jpg",
+    "out": "images_monster/4ec09778-101c-5a62-a87e-e3305e197a2f.jpg",
     "status": "ok_composed"
   },
   "废土领主": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/39287290a855710f77e59e5315b68dcf0083140c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a00dbe31598ca9fdba1b195f7ee02fce7885904@256.webp?v=2",
-    "out": "images_monster\\废土领主.jpg",
+    "out": "images_monster/837936d7-1120-51dc-847c-ffb8dae88e7e.jpg",
     "status": "ok_composed"
   },
   "巨龟托图加": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3b3a2a614df0c7d53929bce5dbb8f532035e78aa@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7f0c12546361122b9928835993adb596f1aa3b12@256.webp?v=2",
-    "out": "images_monster\\巨龟托图加.jpg",
+    "out": "images_monster/24c6d3dc-8fbc-5db7-ac16-c1384aec5915.jpg",
     "status": "ok_composed"
   },
   "测试对象阿尔法": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0fc90a0a0dd71181a1644c9650e5eca36f2377f8@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/360aa1c4ceb4df7290ca970c6593e7764cc3b4ad@256.webp?v=2",
-    "out": "images_monster\\测试对象阿尔法.jpg",
+    "out": "images_monster/1bbf3d9c-6686-5c53-8850-2738677cbae6.jpg",
     "status": "ok_composed"
   },
   "机甲暴龙": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8db87602b0402386ac745e6dfdd9687e6568872b@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/bf45f46dc13b2202da585459b99083778f1cec66@256.webp?v=2",
-    "out": "images_monster\\机甲暴龙.jpg",
+    "out": "images_monster/16f566d0-5bd6-5258-988b-8e87b7e71d42.jpg",
     "status": "ok_composed"
   },
   "杜利机甲": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/434279c462f2ecb4c9b62dba4e7704cab8920bdf@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/4a582ba3f8dc63e82b902d0c83e210b4229d2d4c@256.webp?v=2",
-    "out": "images_monster\\杜利机甲.jpg",
+    "out": "images_monster/2bb9e695-74b1-521b-bc73-e322e41cfd6a.jpg",
     "status": "ok_composed"
   },
   "沃卡斯打手": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/de95b2b3c0f0c7559eeeeb54a5f9607c0cc595c1@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b32b58f2a50dda2397aa6d8acd8da8e46d0284d0@256.webp?v=2",
-    "out": "images_monster\\沃卡斯打手.jpg",
+    "out": "images_monster/f0788237-1d2b-566d-9dfc-ff1152883c79.jpg",
     "status": "ok_composed"
   },
   "觉醒元初体": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/956d4a09033a72cc4352e7401119b9c2bcbd3e44@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0277de2dded43aea83df3b02dd7e728490c54713@256.webp?v=2",
-    "out": "images_monster\\觉醒元初体.jpg",
+    "out": "images_monster/8de5e112-32ff-5b46-b880-9a79c8aea6cd.jpg",
     "status": "ok_composed"
   },
   "吉布斯": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/8688ac2896df720317221b10284f47a993c40328@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6a21e8822489678c8696d4331e7fe9a5143f1159@256.webp?v=2",
-    "out": "images_monster\\吉布斯.jpg",
+    "out": "images_monster/ba49b850-478e-52a3-95fe-57d080f412ec.jpg",
     "status": "ok_composed"
   },
   "地产大亨": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/205b9979f2d49f0bc15e240e04f25331ed110418@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f45beaf4a82327dcd092fcef474be13e17fd5d0c@256.webp?v=2",
-    "out": "images_monster\\地产大亨.jpg",
+    "out": "images_monster/834f4c7b-fc25-5f50-a3bb-0918a95e9c34.jpg",
     "status": "ok_composed"
   },
   "阿肯大人": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/5a172f8f910df76ccc363b612c0c5ce402182c67@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/51e7a82920274bf709e0cf79c0a4359d25c1a132@256.webp?v=2",
-    "out": "images_monster\\阿肯大人.jpg",
+    "out": "images_monster/66d63581-63bc-5cf5-bca0-9b81ae686837.jpg",
     "status": "ok_composed"
   },
   "虚空巨像": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/fcfa46f3c2a1b4573318585dadf587c52640515c@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/0d891e5ba1dc65f2880e2e2a6ac5a038be7ce42a@256.webp?v=2",
-    "out": "images_monster\\虚空巨像.jpg",
+    "out": "images_monster/1563c571-8a36-505e-913c-c249c0bcb871.jpg",
     "status": "ok_composed"
   },
   "霜猴霸王": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/16c4053dd9793bd0f586f7c8dc43ae440fc7ff68@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/03152a397f530e5613da32810fb3dd6c4534acba@256.webp?v=2",
-    "out": "images_monster\\霜猴霸王.jpg",
+    "out": "images_monster/5555add2-ec44-53c2-92d9-f46e25338067.jpg",
     "status": "ok_composed"
   },
   "八臂达维": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/93c303075932e7a19b3407ea54eda2b90d29149e@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c77313632296160587acaeeb70a7bd31f5e283be@256.webp?v=2",
-    "out": "images_monster\\八臂达维.jpg",
+    "out": "images_monster/5f80cd1e-7c16-5b58-a7f5-bed03a4d14ac.jpg",
     "status": "ok_composed"
   },
   "觉醒街区": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b246e4a308bad81c46135257b5fd8567fef71a43@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/92bd5cb9b50819dd5556565f445bf774b448da8f@256.webp?v=2",
-    "out": "images_monster\\觉醒街区.jpg",
+    "out": "images_monster/e472b53d-d188-5cfb-b2a5-8477b461da08.jpg",
     "status": "ok_composed"
   },
   "魔古洛斯": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/83e3993294f1b3746795fbb87137e4f9a3bb0933@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ab0efbf57f644b32dbc6381c4ba725637ca7e4c1@256.webp?v=2",
-    "out": "images_monster\\魔古洛斯.jpg",
+    "out": "images_monster/703f153f-7b5b-558e-9126-5c4802e42ed7.jpg",
     "status": "ok_composed"
   },
   "虚空魔像": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/03f86a44c672a82825e7573ec63c65e406fa6ea8@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b87b6ad225a9c318696eae1641a85b35baec335@256.webp?v=2",
-    "out": "images_monster\\虚空魔像.jpg",
+    "out": "images_monster/ac0f987f-ded7-5b6f-a40e-83449fd9761a.jpg",
     "status": "ok_composed"
   },
   "吹箭枪陷阱": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/82d24de3f6e46af83673a7ba4207b369af473829@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b36f9a99bec75197849619eab0bb384966cf31c7@256.webp?v=2",
-    "out": "images_monster\\吹箭枪陷阱.jpg",
+    "out": "images_monster/862635c0-dd5f-55e4-a8b7-80dcf872ff15.jpg",
     "status": "ok_composed"
   },
   "神话典守": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a91b8fab999f5fe0abd39df3a42a408f5d2be7bc@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/f1f6a32aef1568af4a62ed43611ae8bd6b81dabf@256.webp?v=2",
-    "out": "images_monster\\神话典守.jpg",
+    "out": "images_monster/481c64d9-2f9d-5c5c-a4d7-2522cc4745d1.jpg",
     "status": "ok_composed"
   },
   "拟形怪": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/007ec1b26f6081aa7fc2c5c8e6bd30c89fff3ccb@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/3c629fecb51a5557c9dc990254be3e2fa36b0d30@256.webp?v=2",
-    "out": "images_monster\\拟形怪.jpg",
+    "out": "images_monster/ff3be542-f578-555c-b0f7-d44f667e3ccd.jpg",
     "status": "ok_composed"
   },
   "碧心守护神": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/b65eec425ff2cfe2fa81263e42822dfb18edd686@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/ef4a350a8a015b26edc114b213a1105d0c2a7366@256.webp?v=2",
-    "out": "images_monster\\碧心守护神.jpg",
+    "out": "images_monster/bd6550c5-d502-5c23-a6f9-3c497b9fdb42.jpg",
     "status": "ok_composed"
   },
   "铁蒺藜陷阱": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/c4e12383633236b7749e555a5c5eedeff8b5afcc@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/6b40599390313e0ce6aaef19f5f99480c5df0e97@256.webp?v=2",
-    "out": "images_monster\\铁蒺藜陷阱.jpg",
+    "out": "images_monster/02f9ec9d-aebb-5105-9de7-3f19227bccae.jpg",
     "status": "ok_composed"
   },
   "柯玛兹": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/de08ce8432424c64ba54b7a03cce118690ad997a@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/502394921888cbef18187a34e5012db83f34fb2a@256.webp?v=2",
-    "out": "images_monster\\柯玛兹.jpg",
+    "out": "images_monster/d19d600a-62aa-5eec-9f11-0b5efa252b6e.jpg",
     "status": "ok_composed"
   },
   "滚石陷阱": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/61aa697102523dc79a300d76d881ad82f0cd5ef5@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/2de20a13eaa39b4a71d50f554145e8854f7f0470@256.webp?v=2",
-    "out": "images_monster\\滚石陷阱.jpg",
+    "out": "images_monster/b836a0c0-acc8-5640-af95-490d3354a41e.jpg",
     "status": "ok_composed"
   },
   "赏金猎人": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a8df1bfa73e7597559f13102a722ae3168c7391b@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/862ca906b7486f4a919dc1a22e1ced0aaf1525d7@256.webp?v=2",
-    "out": "images_monster\\赏金猎人.jpg",
+    "out": "images_monster/a5daeedd-4b85-597f-9035-66ea6fad72a3.jpg",
     "status": "ok_composed"
   },
   "阿莱帕·坦提乌斯": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/a2d4c9037be058fd250302c9276a8c79678ff755@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/e9653c3df757c5459e18fb126f08d20312892d6c@256.webp?v=2",
-    "out": "images_monster\\阿莱帕·坦提乌斯.jpg",
+    "out": "images_monster/4f682021-489e-5791-8f78-4e43bc87f068.jpg",
     "status": "ok_composed"
   },
   "黑牛先生": {
     "background_url": "https://s.bazaardb.gg/v0/z10.0/encounter/327a4807b02b65c8ee2b99f21d65e96285cd737f@256.webp?v=2",
     "image_url": "https://s.bazaardb.gg/v0/z10.0/encounter/7403205a0ac8974fa078e38ae8dcb8625dcda27f@256.webp?v=2",
-    "out": "images_monster\\黑牛先生.jpg",
+    "out": "images_monster/d4c24623-1fb9-5f67-9ea4-f41c6b9567b9.jpg",
     "status": "ok_composed"
   }
 }

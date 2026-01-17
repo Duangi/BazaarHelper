@@ -15,6 +15,7 @@ interface ItemData {
   name: string;
   name_cn: string;
   tier: string;
+  size?: string;
   tags: string;
   processed_tags: string[];
   heroes: string[];
@@ -47,6 +48,7 @@ interface MonsterSubItem {
   tiers: Record<string, TierInfo | null>;
   image: string; 
   displayImg?: string; 
+  size?: string;
 }
 
 interface MonsterData { 
@@ -127,6 +129,7 @@ export default function App() {
   }); // 自定义字号
   const [showSettings, setShowSettings] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
 
@@ -379,17 +382,28 @@ export default function App() {
           console.log("[Update] 已经是最新版本 (v" + appVersion + ")，无需更新。");
           setUpdateStatus("none");
         }
-        
-        // 3.5秒后自动进入应用
-        setTimeout(() => {
-          enterApp();
-        }, 3500);
+
+        // 获取公告内容 (从 GitHub 代理)
+        const fallbackNotice = "🧠 脑子是用来构筑的，数据交给小抄记。\n\n💡 这只是个免费的记牌小工具，又不是考研资料，谁要是敢收你的费，请反手给他一个大逼兜！👊\n\n🍖 本小抄由 B站@这是李Duang啊 免费发放，付费获取的同学请立刻退款买排骨吃！";
+        try {
+          const res = await fetch("https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.notes) {
+              setAnnouncement(data.notes + "\n\n------------------\n\n" + fallbackNotice);
+            } else {
+              setAnnouncement(fallbackNotice);
+            }
+          } else {
+            setAnnouncement(fallbackNotice);
+          }
+        } catch (err) {
+          console.error("[App] 获取公告失败:", err);
+          setAnnouncement(fallbackNotice);
+        }
       } catch (error) {
         console.error("[App] 初始化加载更新失败:", error);
         setUpdateStatus("none");
-        setTimeout(() => {
-          enterApp();
-        }, 2000);
       }
     };
     
@@ -579,6 +593,12 @@ export default function App() {
 
     const monstersOnDay = Object.values(allMonsters).filter(m => m.available === targetDay);
     
+    console.log(`[DEBUG] Filtering monsters for ${targetDay}:`, monstersOnDay.length, 'found');
+    const jackMonster = monstersOnDay.find(m => m.name_zh === '快乐杰克南瓜');
+    if (targetDay === 'Day 7') {
+      console.log('[DEBUG] Day 7 快乐杰克南瓜:', jackMonster);
+    }
+    
     // 如果在该天数下没有找到怪物，可能是加载还没完成或者数据格式匹配问题
     if (monstersOnDay.length === 0 && Object.keys(allMonsters).length > 0 && targetDay !== "") {
        console.warn(`[MonsterTab] No monsters found for ${targetDay}, total monsters in DB: ${Object.keys(allMonsters).length}`);
@@ -600,9 +620,18 @@ export default function App() {
   };
 
   const processMonsterImages = async (m: MonsterData) => {
+    const displayImg = await getImg(m.image);
+    if (m.name_zh === '快乐杰克南瓜') {
+      console.log('[DEBUG] 快乐杰克南瓜 image processing:', {
+        name_zh: m.name_zh,
+        available: m.available,
+        image: m.image,
+        displayImg: displayImg
+      });
+    }
     return {
       ...m,
-      displayImg: await getImg(m.image),
+      displayImg: displayImg,
       skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
         ...s, 
         displayImg: await getImg(s.image) 
@@ -705,10 +734,11 @@ export default function App() {
     };
 
     if (!finalData) {
+      const sizeClassFallback = (item.size || 'Medium').split(' / ')[0].toLowerCase();
       return (
         <div className="sub-item-card tier-unknown">
            <div className="sub-item-header">
-              <div className="sub-item-img-wrap">
+              <div className={`sub-item-img-wrap size-${sizeClassFallback}`}>
                 <img src={item.displayImg} className="sub-item-img" />
               </div>
               <span className="sub-item-name">{item.name} (无描述)</span>
@@ -725,6 +755,7 @@ export default function App() {
       legendary: "#FF4500",
     };
     const borderColor = borderColorMap[currentTier] || borderColorMap.bronze;
+    const sizeClass = (item.size || 'Medium').split(' / ')[0].toLowerCase();
 
     return (
       <div 
@@ -733,7 +764,7 @@ export default function App() {
         onClick={toggleProgression}
       >
         <div className="sub-item-header">
-          <div className="sub-item-img-wrap" style={{ outline: `2px solid ${borderColor}` }}>
+          <div className={`sub-item-img-wrap size-${sizeClass}`} style={{ outline: `2px solid ${borderColor}` }}>
             <img src={item.displayImg} className="sub-item-img" />
           </div>
           <div className="sub-item-title-row">
@@ -901,8 +932,8 @@ export default function App() {
       let targetY = 0;
 
       if (showVersionScreen) {
-        targetW = 500;
-        targetH = 350;
+        targetW = 600;
+        targetH = 850;
         targetX = Math.round(pX / logicalScale + (pWidth / logicalScale - targetW) / 2);
         targetY = Math.round(pY / logicalScale + (pHeight / logicalScale - targetH) / 2);
       } else {
@@ -1044,20 +1075,50 @@ export default function App() {
 
   if (showVersionScreen) {
     return (
-      <div className="update-screen">
+      <div 
+        className="update-screen"
+        style={{ 
+          '--user-font-size': `${fontSize}px`,
+          '--font-scale': fontSize / 16 
+        } as any}
+      >
         <div className="update-content">
-          <h1>BazaarHelper</h1>
-          <div className="update-message">
-            {currentVersion ? `当前版本 v${currentVersion}` : "加载中..."}
+          <h1 className="bulletin-title" data-tauri-drag-region>集市小抄</h1>
+          
+          <div className="bulletin-body">
+            {announcement ? (
+              <div className="bulletin-text">
+                {announcement.split('\n').map((line, i) => (
+                  <p key={i}>{line}</p>
+                ))}
+              </div>
+            ) : (
+              <div className="bulletin-loading">正在获取最新公告...</div>
+            )}
           </div>
-          <div className="update-available-info">
-            {updateStatus === "checking" && <span className="status-checking">正在检查更新...</span>}
-            {updateStatus === "available" && <span className="status-available">检测到新版本 v{updateAvailable?.version}</span>}
-            {updateStatus === "none" && <span className="status-none">已是最新版本</span>}
+
+          <div className="version-info-row">
+            <span className="current-v">当前版本: v{currentVersion || "..."}</span>
+            <div className="update-status-tag">
+              {updateStatus === "checking" && <span className="status-checking">检查更新中...</span>}
+              {updateStatus === "available" && <span className="status-available pulsate">新版本 v{updateAvailable?.version} 可用</span>}
+              {updateStatus === "none" && <span className="status-none">已是最新版</span>}
+            </div>
           </div>
-          <button className="skip-btn" onClick={enterApp}>
-            进入应用
-          </button>
+
+          <div className="bulletin-actions">
+            {updateStatus === "available" && (
+              <button className="update-now-btn" onClick={() => {
+                // 如果有更新，可以引导去下载或直接触发更新逻辑
+                // 这里暂时保持原样，或者可以调用 installUpdate
+              }}>
+                立即更新
+              </button>
+            )}
+            <button className="enter-btn" onClick={enterApp}>
+              进入插件
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -1163,7 +1224,7 @@ export default function App() {
                   border: '1px solid rgba(255, 205, 25, 0.3)', 
                   color: '#ffcd19', 
                   padding: '8px', 
-                  fontSize: '12px',
+                  fontSize: 'calc(12px * var(--font-scale, 1))',
                   borderRadius: '4px',
                   marginTop: '10px',
                   position: 'relative'
@@ -1221,6 +1282,10 @@ export default function App() {
                           console.log("[Update] 远端 JSON 内容获取成功:", remoteJson);
                           console.log(`[Update] 远端版本: ${remoteJson.version}, 当前本地版本: ${currentVersion}`);
                           
+                          if (remoteJson.notes) {
+                            setAnnouncement(remoteJson.notes);
+                          }
+                          
                           if (remoteJson.version === currentVersion) {
                             console.log("[Update] 提示: 版本号完全一致，Tauri check() 必然返回 null");
                           }
@@ -1250,8 +1315,8 @@ export default function App() {
                   </button>
                 </div>
 
-                {updateStatus === "checking" && <div style={{ fontSize: '12px', color: '#999' }}>正在检查远端更新...</div>}
-                {updateStatus === "none" && <div style={{ fontSize: '12px', color: '#238636' }}>当前已经是最新版本</div>}
+                {updateStatus === "checking" && <div style={{ fontSize: 'calc(12px * var(--font-scale, 1))', color: '#999' }}>正在检查远端更新...</div>}
+                {updateStatus === "none" && <div style={{ fontSize: 'calc(12px * var(--font-scale, 1))', color: '#238636' }}>当前已经是最新版本</div>}
                 
                 {(updateStatus === "available" || updateStatus === "downloading" || updateStatus === "ready") && (
                   <div style={{ 
@@ -1260,7 +1325,7 @@ export default function App() {
                     padding: '10px', 
                     borderRadius: '6px' 
                   }}>
-                    <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#58a6ff' }}>
+                    <div style={{ fontSize: 'calc(13px * var(--font-scale, 1))', fontWeight: 'bold', marginBottom: '8px', color: '#58a6ff' }}>
                       发现新版本: v{updateAvailable?.version}
                     </div>
                     
@@ -1293,6 +1358,15 @@ export default function App() {
                   </div>
                 )}
               </div>
+
+              {announcement && (
+                <div className="setting-item" style={{ marginTop: '20px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', color: '#8b949e' }}>当前公告</label>
+                  <div className="settings-announcement-text">
+                    {announcement}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1402,13 +1476,20 @@ export default function App() {
                   {getSortedItems(activeTab === "hand" ? syncData.hand_items : syncData.stash_items).map(item => {
                     const isExpanded = expandedItems.has(item.uuid);
                     const tierClass = item.tier.split(' / ')[0].toLowerCase();
+                    const tierNameZh = {
+                      'bronze': '青铜+',
+                      'silver': '白银+',
+                      'gold': '黄金+',
+                      'diamond': '钻石+'
+                    }[tierClass] || tierClass;
                     const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+                    const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
 
                     return (
                       <div key={item.uuid} className={`item-card-container ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleExpand(item.uuid)}>
                         <div className={`item-card tier-${tierClass}`}>
                           <div className="card-left">
-                            <div className="image-box">
+                            <div className={`image-box size-${sizeClass}`}>
                               <img src={item.displayImg} alt={item.name} />
                             </div>
                           </div>
@@ -1416,7 +1497,7 @@ export default function App() {
                           <div className="card-center">
                             <div className="name-line">
                               <span className="name-cn">{item.name_cn}</span>
-                              <span className="tier-label">{item.tier.split(' / ')[0].toUpperCase()}+</span>
+                              <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
                             </div>
                             <div className="tags-line">
                               {item.processed_tags.slice(0, 3).map(t => (
