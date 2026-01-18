@@ -85,8 +85,8 @@ fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i
         return Ok((Vec::new(), Vec::new(), 0, 0));
     }
 
-    // 初始化 ORB (增加特征点数量到 2000，提高对细节丰富或模糊怪物的识别精细度)
-    let mut orb = ORB::create(2000, 1.2f32, 8, 31, 0, 2, 
+    // 初始化 ORB (维持在 1000 个特征点，平衡速度与精度)
+    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     // 提取特征点和描述符
@@ -145,8 +145,8 @@ fn extract_features_from_dynamic_image(img: &DynamicImage) -> Result<Mat, opencv
         return Ok(Mat::default());
     }
 
-    // 初始化 ORB (截图也同样增加到 2000 个特征点)
-    let mut orb = ORB::create(2000, 1.2f32, 8, 31, 0, 2, 
+    // 初始化 ORB (截图也同样使用 1000 个特征点)
+    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     let mut keypoints = Vector::<KeyPoint>::new();
@@ -520,7 +520,13 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
 
         use opencv::core::CV_8U;
         // 重建模板描述符
-        let mut template_desc = unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U).unwrap() };
+        let mut template_desc = match unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U) } {
+            Ok(m) => m,
+            Err(e) => {
+                log_to_file(&format!("OpenCV Error creating Mat for template {}: {}", template.name, e));
+                continue;
+            }
+        };
         if template.descriptors.len() == (template.descriptor_rows * template.descriptor_cols) as usize {
             unsafe {
                 std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len());

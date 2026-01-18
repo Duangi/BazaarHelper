@@ -1,0 +1,2697 @@
+[
+  {
+    "id": "5ded844c-5279-4c30-9198-309fba0b651b",
+    "name_en": "Bag of Jewels",
+    "name_cn": "珠宝袋",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "16e3ebba-d530-489c-8439-3b47a4182c09",
+    "name_en": "Katana",
+    "name_cn": "武士刀",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "1d8d4dea-aaf9-4041-aa54-ae133f552d55",
+    "name_en": "Blue Piggles R",
+    "name_cn": "蓝色小圆猪 R",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "ebc4187f-76b5-4f09-bcdf-7a430579e193",
+    "name_en": "Yeti Claw",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "b18e28e6-69a3-455a-8a5a-1a3170c76bb7",
+    "name_en": "Elemental Depth Charge",
+    "name_cn": "元素深水炸弹",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "846c1398-9cc2-4aac-bc84-adadd1382f42",
+    "name_en": "Green Piggles A",
+    "name_cn": "绿色小圆猪 A",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "599c27bd-2e78-45a6-9390-aeb349a20e29",
+    "name_en": "[LARGE ITEM TEMPLATE]",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "02f42044-50df-4c3a-abbd-942903953b79",
+    "name_en": "VIP Pass",
+    "name_cn": "VIP 通行证",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "4ddb3806-a5ee-4cfd-985f-19f184580ade",
+    "name_en": "Small Package",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "c7432844-9341-411b-8a1f-8662d46c181f",
+    "name_en": "Large Package",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "55584ba7-0c0a-4d91-8f90-f791c8fecdf9",
+    "name_en": "Cybernetic Implants",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "0ac69b6e-67fc-4e98-ba92-cf91a5d08d97",
+    "name_en": "Acid Sprayer",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "3664a729-7128-4d6d-96c6-1cd2bda15380",
+    "name_en": "Sonic Cannon",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "51967d0c-a6d9-4773-8c83-00b3dc91ac48",
+    "name_en": "Nanobot Green",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "35b7a978-275b-48f0-8e3d-9be2391c6a78",
+    "name_en": "Medium Package",
+    "name_cn": "中型包裹",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "18c26e82-be5f-40a8-86ba-0e15d0cba3f4",
+    "name_en": "Holo-Disguise Generator",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "03842226-6605-466f-9ea3-a8a2dbea67e1",
+    "name_en": "Atlas",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "3f48a184-3c29-4049-88c4-d28edd391bda",
+    "name_en": "Orange Piggles L",
+    "name_cn": "橙色小圆猪 L",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "ce7ff94f-29e4-4f2d-bca9-cca83eacf774",
+    "name_en": "Blue Piggles A",
+    "name_cn": "蓝色小圆猪 A",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "3191df3b-7e7d-4df9-9395-6fffd4207f6d",
+    "name_en": "Zoarcid",
+    "name_cn": "绵鳚",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "fdb8f063-d430-4391-9dc4-79b9f9bda25b",
+    "name_en": "Elixir of Immortality",
+    "name_cn": "不死灵药",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "3174b74a-9e67-4db7-ba98-0d4935b2586d",
+    "name_en": "Coupon",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "85a8c6f1-b74e-49f3-817b-680112b69ac0",
+    "name_en": "Assembly Line",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "477a0159-f7e4-4321-8167-3a7cb797f9ee",
+    "name_en": "Integrated HUD",
+    "name_cn": "集成式 HUD",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "bfa28eec-84de-41cb-bc5c-8de700a5d21f",
+    "name_en": "Focused Core",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "0485c154-ad8a-4a64-bc70-5a6a833d4af9",
+    "name_en": "Poison Blades",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "6b49b81d-aac0-4fb6-95f4-5bfc32a19dd3",
+    "name_en": "Show Globe",
+    "name_cn": "雪花玻璃球",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "03836263-2d57-4618-9e0e-550d9cffdf7d",
+    "name_en": "Flying Pig",
+    "name_cn": "飞猪",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "e833f9cf-39ac-44ca-a287-7bd6ddebc77e",
+    "name_en": "Orange Piggles A",
+    "name_cn": "橙色小圆猪 A",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "dd438f4e-77ea-4b7a-b59e-ae8906c49da8",
+    "name_en": "Augment Reagents",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "f40d7225-0671-4eab-a399-0dae3e6e5c7a",
+    "name_en": "Artificial Heart",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "2df8f38b-bb9f-4247-afe9-525067c9e29e",
+    "name_en": "Blue Piggles L",
+    "name_cn": "蓝色小圆猪 L",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "a4b95afc-4925-4bca-878d-cabd338388a2",
+    "name_en": "Green Piggles L",
+    "name_cn": "绿色小圆猪 L",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "9c21ee00-116d-4868-a215-3f9b57bc8657",
+    "name_en": "Yellow Piggles A",
+    "name_cn": "黄色小圆猪 A",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "25049e01-2fd1-4ad2-b1b4-e34f8fbd85df",
+    "name_en": "Javalin",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "96b9cc27-b148-4d71-ab5d-21a9c3b64998",
+    "name_en": "Mysterious Gift",
+    "name_cn": "神秘礼物",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "114ead49-ef5b-484f-a6d3-9f218d218234",
+    "name_en": "Plasma Whip",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "ac92c118-c073-465c-8d89-abafa0dcb144",
+    "name_en": "Genie Lamp",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "f53f1425-6c26-45a0-9fe9-4ac2ca22df5e",
+    "name_en": "Nanobot Orange",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "8eb2dc97-8f87-4651-8bb1-4ed8cd55f941",
+    "name_en": "Nanobot Red",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "3868bcee-4463-4c34-9a9b-b1ab1fa49260",
+    "name_en": "Yellow Piggles R",
+    "name_cn": "黄色小圆猪 R",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "75af1b66-8415-4db3-b836-c4ab752cd832",
+    "name_en": "Pyro Gauntlet",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "b3ab39e0-c40c-44e7-bda7-09cf9ad63ec9",
+    "name_en": "Sat-Comm",
+    "name_cn": "通讯卫星",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "49f2d11c-6c2b-465f-a7f4-90315dee7670",
+    "name_en": "DJ Circuit Breaker",
+    "name_cn": "断路器 DJ",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "bbdd06b6-c45a-43b6-8f6a-2a3c87ce5880",
+    "name_en": "Flame Signal",
+    "name_cn": "烽火",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "1e48bd28-cd41-49e9-9e22-b44da30ef6be",
+    "name_en": "Thieves Guild Medallion",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "80fb0457-0337-4df1-bcb1-9ad5b8a7840c",
+    "name_en": "Orange Piggles R",
+    "name_cn": "橙色小圆猪 R",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "c204f622-4000-40a4-9bf4-6aa53f768b1d",
+    "name_en": "Green Piggles R",
+    "name_cn": "绿色小圆猪 R",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "c7fc7738-bc2a-48ea-9665-f12765975671",
+    "name_en": "Nanobot Blue",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "273b7c90-a4be-4226-b374-94a7c01f07d9",
+    "name_en": "[SMALL ITEM TEMPLATE]",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "6cbeb04c-2806-42e5-942a-f79530063dbd",
+    "name_en": "Cyclops Eye",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "0585aba6-aee3-47f6-bd83-a29c56dc1fb1",
+    "name_en": "Old Barrel",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "a5fda359-ceb0-4b00-bcac-810c9cecef8e",
+    "name_en": "Critical Core",
+    "name_cn": "暴击核心",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "54c4526a-8fd0-4297-84d4-41e99710895e",
+    "name_en": "Ship [OnBuy] effectdata 2",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "a031a51e-7b07-4055-adff-a421d2ee8943",
+    "name_en": "[MEDIUM ITEM TEMPLATE]",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "6cf87784-bca9-4735-a431-15bc88c97f78",
+    "name_en": "Compass",
+    "name_cn": "",
+    "source": "items_db.json",
+    "type": "item"
+  },
+  {
+    "id": "",
+    "name_en": "冻结殴打",
+    "name_cn": "冻结殴打",
+    "source": "monsters_db.json (霜猴勇士)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "钻石狼牙",
+    "name_cn": "钻石狼牙",
+    "source": "monsters_db.json (剑齿虎)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "Shatter",
+    "name_cn": "碎裂",
+    "source": "monsters_db.json (巫妖)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "Minimalist",
+    "name_cn": "极简主义者",
+    "source": "monsters_db.json (暴徒)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "毒死蛟",
+    "name_cn": "毒死蛟",
+    "source": "monsters_db.json (流浪岛屿)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "敏锐眼光",
+    "name_cn": "敏锐眼光",
+    "source": "monsters_db.json (武器平台)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "码头绕索",
+    "name_cn": "码头绕索",
+    "source": "monsters_db.json (菲罗斯汗)",
+    "type": "monster_item"
+  },
+  {
+    "id": "8e02521d-4353-4a1d-9d2e-80f6f1e22f53",
+    "name_en": "Purifying Flames",
+    "name_cn": "净化烈焰",
+    "source": "monsters_db.json (基石亡灵)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "Keen Eye",
+    "name_cn": "敏锐眼光",
+    "source": "monsters_db.json (哈洛老大)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "a885b513-3fe3-4795-a10e-c2e4f6b5f1f6",
+    "name_en": "Parting Shot",
+    "name_cn": "诀别一击",
+    "source": "monsters_db.json (庞大实验体)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "上股工具",
+    "name_cn": "上股工具",
+    "source": "monsters_db.json (炼金大师)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "刮削利爪",
+    "name_cn": "刮削利爪",
+    "source": "monsters_db.json (测试对象阿尔法)",
+    "type": "monster_item"
+  },
+  {
+    "id": "32e45628-c864-4f99-a2e8-94efe6f37cdc",
+    "name_en": "静态加速",
+    "name_cn": "静态加速",
+    "source": "monsters_db.json (机甲暴龙)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "机械红焰蛮",
+    "name_cn": "机械红焰蛮",
+    "source": "monsters_db.json (杜利机甲)",
+    "type": "monster_item"
+  },
+  {
+    "id": "1df8d85a-9095-4ab9-952a-c668a4d5d51c",
+    "name_en": "带电外壳",
+    "name_cn": "带电外壳",
+    "source": "monsters_db.json (杜利机甲)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "寒冰爆发",
+    "name_cn": "寒冰爆发",
+    "source": "monsters_db.json (沃卡斯打手)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "5c6048f0-8cf1-4f37-8611-ba509a330660",
+    "name_en": "苏醒呼唤",
+    "name_cn": "苏醒呼唤",
+    "source": "monsters_db.json (觉醒元初体)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "76e1e841-8b6c-4871-a077-b17f4806675d",
+    "name_en": "高温弹壳",
+    "name_cn": "高温弹壳",
+    "source": "monsters_db.json (觉醒元初体)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "d08258b5-be49-410e-a650-4dfa01b35662",
+    "name_en": "提神寒气",
+    "name_cn": "提神寒气",
+    "source": "monsters_db.json (霜猴霸王)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "通入虚空",
+    "name_cn": "通入虚空",
+    "source": "monsters_db.json (虚空魔像)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 吹箭枪",
+    "name_cn": "毒素 吹箭枪",
+    "source": "monsters_db.json (毒素 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 锁匣",
+    "name_cn": "毒素 锁匣",
+    "source": "monsters_db.json (毒素 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 吹箭枪",
+    "name_cn": "黑曜石 吹箭枪",
+    "source": "monsters_db.json (黑曜石 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 锁匣",
+    "name_cn": "黑曜石 锁匣",
+    "source": "monsters_db.json (黑曜石 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 吹箭枪",
+    "name_cn": "炽焰 吹箭枪",
+    "source": "monsters_db.json (炽焰 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 锁匣",
+    "name_cn": "炽焰 锁匣",
+    "source": "monsters_db.json (炽焰 吹箭枪陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "魔杖",
+    "name_cn": "魔杖",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "长袍",
+    "name_cn": "长袍",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "祖特笛",
+    "name_cn": "祖特笛",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "失落神祗",
+    "name_cn": "失落神祗",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "熏香",
+    "name_cn": "熏香",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "护盾 灵质",
+    "name_cn": "护盾 灵质",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "真菌孢子",
+    "name_cn": "真菌孢子",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒液注射",
+    "name_cn": "毒液注射",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "虹吸护盾",
+    "name_cn": "虹吸护盾",
+    "source": "monsters_db.json (神话典守)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "沉重 獠牙",
+    "name_cn": "沉重 獠牙",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "寒冰 獠牙",
+    "name_cn": "寒冰 獠牙",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 獠牙",
+    "name_cn": "炽焰 獠牙",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 獠牙",
+    "name_cn": "黑曜石 獠牙",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "闪亮 獠牙",
+    "name_cn": "闪亮 獠牙",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "饕餮",
+    "name_cn": "饕餮",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "力量",
+    "name_cn": "力量",
+    "source": "monsters_db.json (拟形怪)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 獠牙",
+    "name_cn": "毒素 獠牙",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒液",
+    "name_cn": "毒液",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "罂粟花田",
+    "name_cn": "罂粟花田",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "翡翠",
+    "name_cn": "翡翠",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "守护神之壳",
+    "name_cn": "守护神之壳",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "守护神之怒",
+    "name_cn": "守护神之怒",
+    "source": "monsters_db.json (碧心守护神)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 铁蒺藜",
+    "name_cn": "炽焰 铁蒺藜",
+    "source": "monsters_db.json (炽焰 铁蒺藜陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 铁蒺藜",
+    "name_cn": "黑曜石 铁蒺藜",
+    "source": "monsters_db.json (黑曜石 铁蒺藜陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 铁蒺藜",
+    "name_cn": "毒素 铁蒺藜",
+    "source": "monsters_db.json (毒素 铁蒺藜陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "宇宙炫羽",
+    "name_cn": "宇宙炫羽",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 利爪",
+    "name_cn": "毒素 利爪",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "护盾 蛇首手杖",
+    "name_cn": "护盾 蛇首手杖",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "护盾 蛇怪之牙",
+    "name_cn": "护盾 蛇怪之牙",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 魔法石",
+    "name_cn": "毒素 魔法石",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "以太能量导体",
+    "name_cn": "以太能量导体",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "远古复仇",
+    "name_cn": "远古复仇",
+    "source": "monsters_db.json (柯玛兹)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 滚石",
+    "name_cn": "毒素 滚石",
+    "source": "monsters_db.json (毒素 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "毒素 绊索",
+    "name_cn": "毒素 绊索",
+    "source": "monsters_db.json (毒素 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 滚石",
+    "name_cn": "黑曜石 滚石",
+    "source": "monsters_db.json (黑曜石 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "黑曜石 绊索",
+    "name_cn": "黑曜石 绊索",
+    "source": "monsters_db.json (黑曜石 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 滚石",
+    "name_cn": "炽焰 滚石",
+    "source": "monsters_db.json (炽焰 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "炽焰 绊索",
+    "name_cn": "炽焰 绊索",
+    "source": "monsters_db.json (炽焰 滚石陷阱)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "左轮手枪",
+    "name_cn": "左轮手枪",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "投掷捕兽网",
+    "name_cn": "投掷捕兽网",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "弯刀",
+    "name_cn": "弯刀",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "通缉海报",
+    "name_cn": "通缉海报",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "闪光弹",
+    "name_cn": "闪光弹",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "断裂镣铐",
+    "name_cn": "断裂镣铐",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "伏击",
+    "name_cn": "伏击",
+    "source": "monsters_db.json (赏金猎人)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "安保无人机",
+    "name_cn": "安保无人机",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "坦提乌斯运输舰",
+    "name_cn": "坦提乌斯运输舰",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "火箭无人机",
+    "name_cn": "火箭无人机",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "卡拉飞艇",
+    "name_cn": "卡拉飞艇",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "喷气背包",
+    "name_cn": "喷气背包",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "闪电蝴蝶",
+    "name_cn": "闪电蝴蝶",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "紧急起飞",
+    "name_cn": "紧急起飞",
+    "source": "monsters_db.json (阿莱帕·坦提乌斯)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "",
+    "name_en": "燃烧子弹",
+    "name_cn": "燃烧子弹",
+    "source": "monsters_db.json (黑牛先生)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "汤姆冲锋枪",
+    "name_cn": "汤姆冲锋枪",
+    "source": "monsters_db.json (黑牛先生)",
+    "type": "monster_item"
+  },
+  {
+    "id": "",
+    "name_en": "双持",
+    "name_cn": "双持",
+    "source": "monsters_db.json (黑牛先生)",
+    "type": "monster_skill"
+  },
+  {
+    "id": "b1b9ff21-32ac-436a-bd3c-120563b26bea",
+    "name_en": "Some Like It Hot",
+    "name_cn": "热情如火",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3c90df05-0cf7-4555-bebc-4eedd5d46356",
+    "name_en": "Thrill of the Flight",
+    "name_cn": "凌空的刺激",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "41b9dac8-8020-4a0b-bd4e-c069b4cb1caf",
+    "name_en": "Honed Strike",
+    "name_cn": "锐化打击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b6334c78-623c-4662-8642-8e05555d873a",
+    "name_en": "Quick Freeze",
+    "name_cn": "急速冻结",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "36410add-d0de-4618-a099-ceb32a87c589",
+    "name_en": "Tiny Dancer",
+    "name_cn": "小小舞者",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a03e4ce6-4480-4edc-b612-8e1f6700cc26",
+    "name_en": "Flashy Pilot",
+    "name_cn": "炫技飞行员",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d6251362-7c11-4a7e-9d6d-97f445f2f828",
+    "name_en": "Burn Containment",
+    "name_cn": "灼烧遏制",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a2f2825f-81c5-498d-9541-b50c4ed9216a",
+    "name_en": "Time Traveler",
+    "name_cn": "时间旅行者",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "00f1ae18-33a6-499d-b2ea-319ac3debab9",
+    "name_en": "Left Eye",
+    "name_cn": "左眼",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0f1c6082-c742-4d6a-bf11-12ded9a8bb29",
+    "name_en": "Cult Member",
+    "name_cn": "教团成员",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b76e0b9a-481c-4128-9ed3-a290f3b21b4f",
+    "name_en": "Peaceful Eye",
+    "name_cn": "宁静之眼",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "5dcd2249-8e1c-47ff-aaba-ad2e2a44490c",
+    "name_en": "Master Sniper",
+    "name_cn": "狙击大师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8c16e6c8-2f44-4335-b31e-5b2268bf790e",
+    "name_en": "Finesse Shield",
+    "name_cn": "敏捷护盾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6f593cc1-b44a-43d6-a83b-a68fb477aef2",
+    "name_en": "Venomous Vitality",
+    "name_cn": "剧毒之血",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f1c3b934-254a-459f-9078-023edbcfcb03",
+    "name_en": "Healthy Hoarder",
+    "name_cn": "养生囤积狂",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c50a4b17-233d-4da5-a8ff-4c4561b6057e",
+    "name_en": "Rolling Boil",
+    "name_cn": "滚沸",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a89060ce-17fa-4706-9c6c-79c0834eeb2c",
+    "name_en": "Liquid Cooled",
+    "name_cn": "水冷",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d8e7fa0a-9127-4a11-a84e-d479a011a92d",
+    "name_en": "Improvised Poison",
+    "name_cn": "临时毒物",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3510040e-9d43-4e2a-867e-96cc6740a139",
+    "name_en": "Improvised Weaponry",
+    "name_cn": "临时军火",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "5f63004e-26dd-460d-b359-38a84ffa66c1",
+    "name_en": "Protein Powder",
+    "name_cn": "蛋白粉",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "71433809-d05a-4544-9959-aff20ae5db93",
+    "name_en": "Iron Sharpens Iron",
+    "name_cn": "锋铁共鸣",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "115c2677-6880-4400-af80-f5afa3d502fe",
+    "name_en": "Defense Grid",
+    "name_cn": "防御网格",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1e8293e9-c60f-464a-9d44-21e766978edc",
+    "name_en": "Improvised Burn",
+    "name_cn": "临时灼烧",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3dd2dbac-97ee-4fc4-ac31-4d885d19e2ed",
+    "name_en": "CPU Throttling",
+    "name_cn": "CPU 降频",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0dd4d40e-ac14-4a57-8c7f-9d47a5bdd38a",
+    "name_en": "Desperate Strike",
+    "name_cn": "绝望打击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "dff033fb-0fd4-4ae9-a9c2-ed8a81657d08",
+    "name_en": "Cash Deposits",
+    "name_cn": "现金存储",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "338b9fbe-0131-4d89-8661-13aa2dd0c9a1",
+    "name_en": "Submerged",
+    "name_cn": "潜水",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "13f4df45-8f29-4a48-8a2b-b8176e17c85d",
+    "name_en": "Retaliatory Toxins",
+    "name_cn": "反击毒素",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cb8e9ed1-764e-4fa5-a2b8-61c2eddcbf7e",
+    "name_en": "Grease Fire",
+    "name_cn": "油火焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c3f674a0-4025-45e1-b611-bf70fd6f279c",
+    "name_en": "Lifting",
+    "name_cn": "举重",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "2df5681c-8c5c-400a-baa0-ad73391cc085",
+    "name_en": "Flash Freeze",
+    "name_cn": "闪速冻结",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1d0b3080-14a8-41c5-9449-9b48f46d4726",
+    "name_en": "Makeshift Plate",
+    "name_cn": "简易餐盘",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "83cf85fa-f486-4486-ba76-c28f4db60677",
+    "name_en": "Valley Fever",
+    "name_cn": "谷地热症",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f6a49c4a-7ee7-4aa7-8162-392eee2d3835",
+    "name_en": "First Flames",
+    "name_cn": "初焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ccb56c81-a3fb-4cd4-bf53-67b19a82458d",
+    "name_en": "Reserve Collection",
+    "name_cn": "备用收藏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cf20ff77-7f51-42ca-8451-a3a1befe3d66",
+    "name_en": "Above the Clouds",
+    "name_cn": "云朵之上",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "760fd7aa-fce6-4779-818e-99ba51274010",
+    "name_en": "Like Clockwork",
+    "name_cn": "有条不紊",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0283b102-e0ef-4df4-b447-c5208049bf02",
+    "name_en": "Buffed and Polished",
+    "name_cn": "抛光加持",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "5e4892b5-2be7-4552-9a72-5770785a733d",
+    "name_en": "Table Setting",
+    "name_cn": "餐桌布置",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a9e56561-95d9-46c4-83e3-499e6b159013",
+    "name_en": "Alacrity",
+    "name_cn": "灵动",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "37efcae2-779d-4a60-95c6-0d663d7e0113",
+    "name_en": "Double Down",
+    "name_cn": "双倍押注",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f380f03c-3c71-4cae-b423-43fa31a5c3a3",
+    "name_en": "Big Guns",
+    "name_cn": "巨炮",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "19c967e5-f4c0-4c11-bb96-aa039369600a",
+    "name_en": "Large Appetites",
+    "name_cn": "胃口大开",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1c47afbe-2e26-4b63-b50c-1bff7d48b88b",
+    "name_en": "Creeping Chill",
+    "name_cn": "暗袭寒流",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f790df42-e8e6-4329-aaeb-8a757c02c326",
+    "name_en": "Vital Renewal",
+    "name_cn": "生命复苏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6550ba8c-8d90-41f8-82c8-a0af040458ce",
+    "name_en": "Depth Charge",
+    "name_cn": "深渊冲刺",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "edb9b01b-b4ce-4a77-848e-0a49b8a23c16",
+    "name_en": "Potent Potables",
+    "name_cn": "强效药液",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cda0b592-db91-4840-8ab1-ae5c261205e6",
+    "name_en": "Truffleholic",
+    "name_cn": "松露迷",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a3695c78-63e4-45a9-a2b9-9b2827325527",
+    "name_en": "Quality over Quantity",
+    "name_cn": "宁缺毋滥",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a14d3877-304f-415f-9bc6-520d4fe142c5",
+    "name_en": "High-Yield Investments",
+    "name_cn": "高回报投资",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8d41a164-2667-4df4-91ed-3da224b8c63a",
+    "name_en": "Focused Rage",
+    "name_cn": "凝聚之怒",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b0b38699-beb0-4012-b4f0-bc424f4ba787",
+    "name_en": "Prime Real Estate",
+    "name_cn": "优质房产",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e41f6a66-9257-45c3-b249-9f9ef0f93f3e",
+    "name_en": "Venomous Blade",
+    "name_cn": "毒刃",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f75b8938-1dbb-45c4-8bca-f3f06e7568cc",
+    "name_en": "Inspirational Cooking",
+    "name_cn": "灵感料理",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d179345d-953d-4c59-a324-5c2504951644",
+    "name_en": "Emergency Draught",
+    "name_cn": "应急治疗",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b5160cb5-5d92-420b-8883-b67e701b5e5f",
+    "name_en": "Righty Tighty",
+    "name_cn": "右手紧握",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ae686d2c-fce1-401a-8c65-f34fedcce740",
+    "name_en": "Line Cook",
+    "name_cn": "炉头厨师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a6cc6854-91aa-4a30-9936-33db1cf16119",
+    "name_en": "Firepower",
+    "name_cn": "火力强化",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "571b3909-e04c-454f-86ae-61cc46ea3066",
+    "name_en": "Calming Heals",
+    "name_cn": "抚慰疗愈",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "318e27ee-611e-4e8b-bf3b-ae9982494453",
+    "name_en": "The Best Defense",
+    "name_cn": "以攻为守",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "778da878-7748-4782-b348-d5e8df792882",
+    "name_en": "Food Coma",
+    "name_cn": "饭困",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fcb51ffd-6d25-4e74-871a-7dc0de2bae91",
+    "name_en": "Sparring Partner",
+    "name_cn": "格斗训练搭档",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3d75530d-ebad-46fa-a0da-04df6cdb9e5a",
+    "name_en": "Reinforced Steel",
+    "name_cn": "强化钢",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "de35c728-b2e6-4cf8-82a2-2a1a41d782fe",
+    "name_en": "Scramble Fighters",
+    "name_cn": "紧急起飞",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "bb534d6b-4e7e-4f77-950f-8a27e4eb038e",
+    "name_en": "Cherished Keepsake",
+    "name_cn": "珍藏宝物",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1798b189-818a-456d-b7c5-efddf8da15c2",
+    "name_en": "Advanced Synthetics",
+    "name_cn": "高分子复合材料",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "71d7c241-d0f1-4153-a628-f618526fce4b",
+    "name_en": "Experimental Chef",
+    "name_cn": "实验流大厨",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "529f2133-0d39-4827-9788-2b90c5356b7e",
+    "name_en": "Moth to a Flame",
+    "name_cn": "扑火飞蛾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6f64c35a-0005-4cbd-8734-867e7a2b5248",
+    "name_en": "Master Diver",
+    "name_cn": "潜水大师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "18cd63c6-6235-45f5-b4e9-74f19fcf9edc",
+    "name_en": "Tool Fight",
+    "name_cn": "工具斗法",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c2e26fae-a435-44ff-8613-8977247ee972",
+    "name_en": "Intrusion Countermeasures",
+    "name_cn": "反侵入协议",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3618e79d-de41-4c92-9ea5-55d1f79b8330",
+    "name_en": "Emergency Landing",
+    "name_cn": "紧急着陆",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8aa651d1-635f-4053-97cd-5ab0136156f6",
+    "name_en": "Long-term Investments",
+    "name_cn": "长期投资",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9d7c0a60-c957-4513-81d8-2ba957b58fb1",
+    "name_en": "Poisonous Opener",
+    "name_cn": "剧毒喷溅",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8509674b-3c4b-4250-9bb4-666ef7402654",
+    "name_en": "Alchemical Precision",
+    "name_cn": "化学精准",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d2a0ff45-b7bc-4a3a-9deb-8a7f9ef802f9",
+    "name_en": "Pure Imagination",
+    "name_cn": "纯粹想象",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d4471fb1-a60b-4f64-9c60-ae0e8c930306",
+    "name_en": "Pacifist",
+    "name_cn": "和平主义者",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "994de267-673b-4838-9302-1b3b47ab0934",
+    "name_en": "Boar Market",
+    "name_cn": "野猪交易所",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "08b801ea-e721-42a9-82e3-56ff3892c49c",
+    "name_en": "Deadly Waters",
+    "name_cn": "致命水域",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4fda14aa-365f-478f-8a27-b9b53c97c56a",
+    "name_en": "Mixed Message",
+    "name_cn": "混乱讯息",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "2b081d19-8f82-44fd-b6d2-0daeaf97a85e",
+    "name_en": "Frontline Logistics",
+    "name_cn": "前线勤务",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "69336595-1135-4e17-8192-247e0478d020",
+    "name_en": "Lefty Loosey",
+    "name_cn": "左侧连动",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3c9eefb8-f348-486b-9ec2-a4920f71bee4",
+    "name_en": "Well-Oiled Machine",
+    "name_cn": "上油机械",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6c3d41e4-1ca7-4be5-b0e2-6cadbbd2bd27",
+    "name_en": "Tools of the Trade",
+    "name_cn": "专业行头",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a3373cea-1bf8-4899-885f-e9e5fa178c5d",
+    "name_en": "Playtime",
+    "name_cn": "游戏时间",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "113091ab-c543-4745-9dc4-18ab1cdfb3b8",
+    "name_en": "Arbitrage",
+    "name_cn": "套利",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4225d131-791a-4ea4-ab0e-80a3343a3253",
+    "name_en": "Defensive Stance",
+    "name_cn": "防御姿态",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a80d8cc7-3472-45cb-ac33-11fe7e583e42",
+    "name_en": "Loaded Fury",
+    "name_cn": "狂怒上膛",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "546166b0-03bf-42e9-8370-9ad05d1f00c8",
+    "name_en": "Supply Cache",
+    "name_cn": "补给箱",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ef12c160-99ce-4171-a7ba-7fccaaafa239",
+    "name_en": "First Strike",
+    "name_cn": "先发制人",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a98aea6f-c1ee-4986-b6a1-7e6a5529199a",
+    "name_en": "Primal Rage",
+    "name_cn": "原始狂怒",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9215b678-2833-427b-bc97-75a90968c634",
+    "name_en": "Ravenous",
+    "name_cn": "饕餮",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "976d7de6-8191-44c4-8270-2ebc47775fe8",
+    "name_en": "Rear Shielding",
+    "name_cn": "后方防御",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b2cc190c-ddbd-487c-b99a-ed21150b6c10",
+    "name_en": "Chocoholic",
+    "name_cn": "巧克力迷",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "878440a6-99e8-4178-8d3f-38c94fb8c334",
+    "name_en": "Thirsty",
+    "name_cn": "口渴难耐",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c149f8da-b64e-46f4-bf80-f6f4cae88fbc",
+    "name_en": "Housewarming Gifts",
+    "name_cn": "乔迁礼物",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f1e354bd-d94c-48fa-b63e-5012f68129a9",
+    "name_en": "Letting off Steam",
+    "name_cn": "蒸汽宣泄",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ca3da34f-a982-4ae4-bea0-8dddac873650",
+    "name_en": "Stocked",
+    "name_cn": "库存充足",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e8d23247-5164-4096-a4cc-db5bb2a5277d",
+    "name_en": "I Would Eat That",
+    "name_cn": "到碗里来",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9ec041be-6f89-4e95-963d-1deb7460e1d0",
+    "name_en": "Circle of Life",
+    "name_cn": "生命循环",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6216741f-f7fe-4de0-82c0-3733263378f1",
+    "name_en": "Critical Protector",
+    "name_cn": "暴击防护者",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f3abf6be-b28d-42f5-a239-7208c2dcde25",
+    "name_en": "Outmaneuver",
+    "name_cn": "战术超越",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7f097b31-c29e-4082-a835-6d6457c2d536",
+    "name_en": "Start-Up Sequence",
+    "name_cn": "起步流程",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3728b5fe-43aa-4f77-b7a8-b20c3b359295",
+    "name_en": "Creeping Toxins",
+    "name_cn": "蜗行毒素",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6914df97-567f-4d9a-9473-d3de39a09e86",
+    "name_en": "Frozen Shot",
+    "name_cn": "冻结射击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "94ea865d-07ca-4e54-a1cb-8cca3945c3c6",
+    "name_en": "Street Food",
+    "name_cn": "街头美食",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1fb47cc1-c38f-4240-8f7f-04a78222f5e7",
+    "name_en": "Toxicity",
+    "name_cn": "毒势",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0d4f9fa5-521c-4e05-8b2b-dc8b185b18eb",
+    "name_en": "Inspired by Jules: Stove",
+    "name_cn": "朱尔斯点拨：炉灶",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3715da61-af37-49c6-aa7d-68804484b685",
+    "name_en": "Chemical Fire",
+    "name_cn": "化学燃焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "82d8a964-4068-44c0-a123-af96e5c350d4",
+    "name_en": "Heavy Mettle",
+    "name_cn": "钢毅",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8f33e0aa-7912-4c77-9a10-609e5ce0f4e7",
+    "name_en": "Leverage Momentum",
+    "name_cn": "顺势而动",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b7edb810-2ead-4e1c-965d-d787eacc6fd3",
+    "name_en": "Shatter",
+    "name_cn": "冰碎",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4199514b-f966-462b-8f5d-7188033bc9d1",
+    "name_en": "Secret Ingredient",
+    "name_cn": "秘密食材",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "13989ad3-2122-4d86-a323-bb90fda8360b",
+    "name_en": "Bloodhound",
+    "name_cn": "寻血猎犬",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "83d940dd-4b3d-4b0c-9f46-43d0041f5626",
+    "name_en": "Combat Medic",
+    "name_cn": "战地医护",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8a9a98fe-b1bd-4da7-8233-dffd3845aa45",
+    "name_en": "Dumpster Diving",
+    "name_cn": "垃圾桶寻宝",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ef9cbc3d-bac9-4690-9881-fad35b934717",
+    "name_en": "Ancient Flamekeeper",
+    "name_cn": "远古护火者",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0045d15e-ac74-436f-a200-eeedab7baf90",
+    "name_en": "Backroom Dealings",
+    "name_cn": "幕后交易",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "42a673e6-f6cd-45ea-89e2-d37614271016",
+    "name_en": "Crimson Dash",
+    "name_cn": "绯红冲锋",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "db94a1da-532e-42e1-af25-5033b0fc8bcb",
+    "name_en": "Essence Overflow",
+    "name_cn": "精华溢出",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ef4e5045-91c6-4973-8aed-1f29300e1db4",
+    "name_en": "Everlasting Life",
+    "name_cn": "永生",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6ba408d1-dad1-4cf2-b0f9-2afe3cb94bb9",
+    "name_en": "The One Potion",
+    "name_cn": "唯一药水",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cbd2810c-4713-4503-a97d-30e73ccaebb7",
+    "name_en": "Toxic Flame",
+    "name_cn": "毒焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f3f43bb9-1177-458f-8244-aaf409a050dd",
+    "name_en": "Balanced Friendship",
+    "name_cn": "平衡友谊",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d56a6e90-f664-4791-8b78-5c8bd3f45f80",
+    "name_en": "Sick Burn",
+    "name_cn": "毒性灼烧",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f568cc30-31d8-48b3-8d26-a0f2032ebc6f",
+    "name_en": "Diamond Heart",
+    "name_cn": "钻石心脏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d1505b87-551f-4786-818c-3c441f920d7b",
+    "name_en": "Re-Tooled",
+    "name_cn": "工具重铸",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "31e244c7-e013-4e6c-a51c-4f0ca8d10472",
+    "name_en": "Strong Arm",
+    "name_cn": "强健手臂",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "50eaea1d-0159-4feb-b855-9965cd7eddc2",
+    "name_en": "Heavy Machinery",
+    "name_cn": "重型机械",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "99e9d968-218c-405a-9d82-5692190dfd3d",
+    "name_en": "Plowshares to Swords",
+    "name_cn": "铸犁为剑",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a9b441e1-5824-4855-9359-2ab4643d9ff5",
+    "name_en": "Toxic Shield",
+    "name_cn": "毒性护盾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "560a532c-73f4-4edd-b197-0127e2ca4cc9",
+    "name_en": "Arms Dealer",
+    "name_cn": "军火商",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e43da7b1-1190-469a-b6c6-43d8e3ca0ad6",
+    "name_en": "Steelstorm",
+    "name_cn": "钢铁风暴",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "66d65bb7-09fa-4262-b0a1-12a29ac9e946",
+    "name_en": "Glass Cannon",
+    "name_cn": "玻璃大炮",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "965202e6-12e7-476d-adf3-93748e47661f",
+    "name_en": "Fast Food",
+    "name_cn": "快餐",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "05ea3ce6-0626-45c5-af36-a7711200d431",
+    "name_en": "Initial Chill",
+    "name_cn": "寒霜初降",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ba317deb-c0b3-41b9-8b04-35a071316d9c",
+    "name_en": "Ancient Technology",
+    "name_cn": "远古科技",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9a8aedfe-6b97-4db9-8676-c774292637ee",
+    "name_en": "Titanium Casing",
+    "name_cn": "钛制外壳",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6a2b0ffc-bb7b-4ad3-a20c-8b46f9684a12",
+    "name_en": "Quick Ignition",
+    "name_cn": "急速引燃",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a2200487-1d56-4383-8671-781049f8f7de",
+    "name_en": "Honed Arsenal",
+    "name_cn": "精锐军械库",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4d8b7111-c324-4558-af3c-d7c8df61618d",
+    "name_en": "Pop-Up Shop",
+    "name_cn": "钟表小熊",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7b3c06c6-75d2-4c80-b4c5-01ec3c7479d5",
+    "name_en": "Hot Meal",
+    "name_cn": "热乎饭菜",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "57a19498-4525-4f15-9aa2-d0b21cf20d73",
+    "name_en": "Party Like it's 011111001111",
+    "name_cn": "011111001111末日狂欢",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cac848c8-dc77-4277-ba9f-df282b9f36ef",
+    "name_en": "Herbal Supplements",
+    "name_cn": "草药补剂",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "82be7836-c1f8-4f07-b165-493f40d9d21b",
+    "name_en": "Inspired by Jules: Cooler",
+    "name_cn": "朱尔斯点拨：冷藏箱",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d53d5ba0-b087-42a2-9523-2a44d9001e07",
+    "name_en": "Inexorable",
+    "name_cn": "势不可挡",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6a332b72-d300-486b-9659-1ca83e064ed2",
+    "name_en": "Staying Power",
+    "name_cn": "持久之力",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "81075325-d0fd-4bbd-aa62-cc24a35fef79",
+    "name_en": "Acclimation",
+    "name_cn": "环境适应",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9ff2cb3f-99dd-425b-b44f-14a1d0271f56",
+    "name_en": "Stop That!",
+    "name_cn": "让我缓缓！",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d26ef556-5508-4c10-b94b-c61e005d2378",
+    "name_en": "Green Light",
+    "name_cn": "绿灯",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7edf2ff2-f644-4b68-984f-57cd51bfc0c2",
+    "name_en": "Eject, Eject!",
+    "name_cn": "立刻弹射！",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b48957e5-7a9e-4959-9116-5b18c3cceb72",
+    "name_en": "Pack Infiltrator",
+    "name_cn": "打入恐龙群",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8725f216-28b4-494b-87a1-c7f12c461927",
+    "name_en": "Special Exhibit",
+    "name_cn": "特殊展品",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9d910b0a-9ef3-447f-ab41-195effb68f21",
+    "name_en": "Hot Spot",
+    "name_cn": "热点",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "81881146-f3ba-4092-9041-9f68cc30b732",
+    "name_en": "Lethargy",
+    "name_cn": "倦怠",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6e95c90d-e4b4-42c3-b5e9-3c390d762c92",
+    "name_en": "Shield Bash",
+    "name_cn": "盾击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "42ca6153-fe5b-44b4-a043-f14870659472",
+    "name_en": "Oceanic Rush",
+    "name_cn": "海洋冲锋",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "5780e3ce-316c-4871-bfb8-45261b686fc2",
+    "name_en": "Captain's Charge",
+    "name_cn": "船长的号令",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1e63e9bd-603a-4965-a6e8-4e180377c0ff",
+    "name_en": "Temporal Strike",
+    "name_cn": "时空打击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "663ca415-c46a-46d1-8f63-c04080fb6a30",
+    "name_en": "Master Mechanic",
+    "name_cn": "机械大师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f6aa6347-024c-4e97-a93d-cf3a7fe8f53e",
+    "name_en": "Refreshing Treat",
+    "name_cn": "爽口点心",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a557b352-cc6d-45f8-aa3c-d070997cd8cc",
+    "name_en": "Gold Garnish",
+    "name_cn": "黄金点缀",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f45baa82-ff32-4337-88b9-71f7a8f2336f",
+    "name_en": "Biohazard",
+    "name_cn": "生物危害",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0e3f3e4c-22a8-456c-9f34-5d9aa3700727",
+    "name_en": "Archeologist",
+    "name_cn": "考古学家",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "2d0e4193-304d-4cf8-8232-6386abdf7230",
+    "name_en": "Quick Study",
+    "name_cn": "快速学习",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ed63ead8-5ba3-4972-b547-b1791484fccf",
+    "name_en": "Farm to Table",
+    "name_cn": "农田直供",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "dfe40f90-61de-46dc-b807-0da587140e9d",
+    "name_en": "Ambush",
+    "name_cn": "伏击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "a4058f97-96bf-4a8a-9161-831cfd96ab34",
+    "name_en": "Denizens of the Deep",
+    "name_cn": "深海住民",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6640af95-3999-43b2-b32d-fae5caf0b8cc",
+    "name_en": "Brewmaster",
+    "name_cn": "酿造大师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f38a0fb0-b94a-4701-9330-d14a943ac5c4",
+    "name_en": "Right Eye",
+    "name_cn": "右眼",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "61ffd0e3-a0fe-43d2-8112-85fc90580d71",
+    "name_en": "Property Mogul",
+    "name_cn": "地产巨擘",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3735516a-1517-40fe-b158-9ccee3758fef",
+    "name_en": "Building Crescendo",
+    "name_cn": "递进高潮",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "53315fc2-ef04-45fc-b269-9d4932c52621",
+    "name_en": "Searing Flames",
+    "name_cn": "灼热烈焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1e75f81b-f982-4642-b33d-497336784f9e",
+    "name_en": "Stunning Strike",
+    "name_cn": "震慑打击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ad375e12-445b-4ebf-b33e-f607c06b950c",
+    "name_en": "Friend of the Sea",
+    "name_cn": "深海伙伴",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "dbd50f7c-4261-4afd-93da-2f4d9e33509e",
+    "name_en": "Explosive Potions",
+    "name_cn": "爆燃药水",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fdeee7b2-7c1f-48e0-8fe1-e5a43e7a6726",
+    "name_en": "Dirty Dishes",
+    "name_cn": "脏盘子",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c6a57594-4358-44de-b888-64216df4aa05",
+    "name_en": "Healthy Tip",
+    "name_cn": "生命力打赏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f0955884-1ea7-4cac-ad73-c30798d3642c",
+    "name_en": "Sharp Corners",
+    "name_cn": "锐利棱角",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1e65b121-c928-4147-8a76-34a495e7bbb2",
+    "name_en": "Target Acquisition",
+    "name_cn": "目标锁定",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "05ec8652-3c5f-4cba-acd1-c3eee8e49d44",
+    "name_en": "Healthy Heart",
+    "name_cn": "健康心脏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3d9279b1-dbf8-4193-8989-8d2b022533af",
+    "name_en": "Streamline Weapon",
+    "name_cn": "精简武器",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f6883b13-0dd2-475f-92e9-760102341bda",
+    "name_en": "Conflagration",
+    "name_cn": "烈焰燃烧",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4eebf47e-9472-4d53-86f6-998e8401791c",
+    "name_en": "Playing with Fire",
+    "name_cn": "火爆游戏",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "158c1575-71c6-406c-82c9-f4435d9b37ca",
+    "name_en": "Emergency Shield",
+    "name_cn": "应急护盾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7518cb66-252b-4b9c-9d4d-269aaad8daf3",
+    "name_en": "Hot Air",
+    "name_cn": "热空气",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ec327a59-8fde-444f-b29b-73b22c248c4e",
+    "name_en": "Renovation",
+    "name_cn": "翻新工程",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fb502edf-88fa-48a4-bd99-5e368a38c9ab",
+    "name_en": "Favorite Toy",
+    "name_cn": "最爱玩具",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b9ac862b-7599-4d1c-96c7-99e4edaad05f",
+    "name_en": "Reserve Shield",
+    "name_cn": "备用护盾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e5602f0a-0f7f-4832-97cc-59bc7b605804",
+    "name_en": "Frozen Synapse",
+    "name_cn": "冻结突触",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "20db8a31-f74d-40d2-a5a5-db28e3261bea",
+    "name_en": "Diamond Fangs",
+    "name_cn": "钻石獠牙",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "62154f7f-ea50-4703-aa2e-d2d4ae55e9b0",
+    "name_en": "Big Numbers",
+    "name_cn": "高伤打击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fb89bd6d-2677-435a-a73a-e0350cdab29e",
+    "name_en": "Overclocked",
+    "name_cn": "超频",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "2aabac27-fb64-44df-96f5-b1dac0b23b1c",
+    "name_en": "Hardened Shield",
+    "name_cn": "强化护盾",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "65a77e2d-6c13-46c2-ae28-c521502a8be3",
+    "name_en": "Walk-in Clinic",
+    "name_cn": "便民诊所",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1252064a-3bf4-478e-9326-946677ecc8b3",
+    "name_en": "Frozen Secrets",
+    "name_cn": "冻结秘密",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d1e825ba-653c-4993-8002-50c3933c5827",
+    "name_en": "Machine Learning",
+    "name_cn": "机器学习",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "42c33f6c-a233-4ad1-8f04-b1cadac3a15f",
+    "name_en": "Toxin Injector",
+    "name_cn": "毒素注射器",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c38468ba-2636-4818-a821-6fb7e73d7110",
+    "name_en": "Noisy Cricket",
+    "name_cn": "吵闹蟋蟀",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "614a7ba0-6c7f-4686-88e2-42ecfe2d8735",
+    "name_en": "Heal Power",
+    "name_cn": "治愈之力",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "1aa32e3b-fb93-4d4e-9630-f6168cd77cdc",
+    "name_en": "Final Dose",
+    "name_cn": "最后一剂",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "cdf1d8f2-851b-43a8-bc8b-6d3ce2d4bca9",
+    "name_en": "Tall Buildings",
+    "name_cn": "高楼大厦",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ab4d7a85-3eb2-43e8-aa11-f94581f5690f",
+    "name_en": "Living Flame",
+    "name_cn": "生焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e9218caf-28ed-4e9a-a24b-358d4852d88b",
+    "name_en": "Frostfire",
+    "name_cn": "寒霜烈焰",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9b9a6e90-0a17-45fa-8da1-b493be0df450",
+    "name_en": "Ancient Toxins",
+    "name_cn": "远古毒素",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "280eb842-0600-4f2c-bbf9-01926b43f1dc",
+    "name_en": "Emergency Burn",
+    "name_cn": "应急灼烧",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4b491993-ccc9-4021-a347-5492a51f7b30",
+    "name_en": "Second Wind",
+    "name_cn": "重整气息",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "dfeaa982-9ed6-4aee-840e-628fa8b508bd",
+    "name_en": "Insect Bite",
+    "name_cn": "虫咬",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "549263e2-4ab4-4fe8-a552-e94486b3e91b",
+    "name_en": "Invigorating Blade",
+    "name_cn": "振能刃",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9a707fa9-38b6-42dc-a4fb-737982f47745",
+    "name_en": "Morning Rush",
+    "name_cn": "早起冲劲",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fa2dfc79-67be-4307-95d9-b4279ab58900",
+    "name_en": "Buddy System",
+    "name_cn": "伙伴系统",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "b3c4ed70-958a-42e5-b4d4-16b27c03ac54",
+    "name_en": "Knife Tricks",
+    "name_cn": "刀技",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "76ae19fd-2783-4c21-919a-cdce66bb8948",
+    "name_en": "Workin' Hard",
+    "name_cn": "勤奋工作",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "6e7328ed-f925-4ca6-8637-9625626e12d2",
+    "name_en": "Quick Defenses",
+    "name_cn": "急速防御",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "abba2590-426d-449f-8f19-4a3bd51ae4fe",
+    "name_en": "Industrialist",
+    "name_cn": "实业家",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e2bed270-5a6c-46ae-ab7e-a0d34f6da903",
+    "name_en": "Commercial Zoning",
+    "name_cn": "商业区划",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d52f6759-3ab5-46f4-87d1-bc719634c0d8",
+    "name_en": "Ice Bullets",
+    "name_cn": "寒冰子弹",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "13bcf77b-0ad0-4dd3-85ed-927799691a72",
+    "name_en": "Tempering",
+    "name_cn": "回火再铸",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fd3f0e7b-27ac-4bde-87f8-5ec61b19c4f7",
+    "name_en": "Sabotage",
+    "name_cn": "破坏行动",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "464e7a29-ef42-4242-9adc-9e99b9299a58",
+    "name_en": "It's a Drone",
+    "name_cn": "这就是无人机",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "9b8912ec-1219-4cdf-acd5-cf9b73438280",
+    "name_en": "Net Launcher",
+    "name_cn": "捕网发射器",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "c7261fd4-ef40-4091-abb2-dcf5694ae2ac",
+    "name_en": "Endurance",
+    "name_cn": "坚韧不拔",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "61c83a38-2976-45d1-95c7-cafe4f34ed51",
+    "name_en": "Slow and Steady",
+    "name_cn": "稳中求胜",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "76ac0aa6-ef43-4a5b-9a30-f0ab4186dc83",
+    "name_en": "Healthy Lifestyle",
+    "name_cn": "养生秘法",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "bead31da-27fe-4056-ab77-1adbb37bb973",
+    "name_en": "Open for Business",
+    "name_cn": "开张营业",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "13d1b66a-1d45-4e8e-9921-8312253fc48e",
+    "name_en": "Barnacle Crusted",
+    "name_cn": "藤壶覆盖",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "0e790e41-203a-4b07-8a06-352a2070588d",
+    "name_en": "War Chef",
+    "name_cn": "战地厨师",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "4a443bdd-f949-4fb5-9ccd-a710f74d2311",
+    "name_en": "Dual Wield",
+    "name_cn": "双持",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "063df89c-4fe9-4e89-a0c4-a0af4dedc9bb",
+    "name_en": "Rapid Relief",
+    "name_cn": "急速缓解",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "d09d1ff8-a49b-485b-b1e3-ea50c4af5781",
+    "name_en": "Immolating Spark",
+    "name_cn": "灼焰火花",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e6f8f206-b1c5-4b3b-b05f-5003cab5cced",
+    "name_en": "Debilitating Secrets",
+    "name_cn": "蛛缠之秘",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7a301c09-3e32-473a-ba6c-89097657a400",
+    "name_en": "Flanking Criticals",
+    "name_cn": "侧翼暴击",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "30df1bd1-0465-4203-b15b-d44a9fcec9a1",
+    "name_en": "Quick Bite",
+    "name_cn": "急速撕咬",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "8e4fed70-3ad9-488d-8c77-f926c1621544",
+    "name_en": "Reel 'Em In",
+    "name_cn": "收线",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "7ce449d2-0843-4fee-9bdf-dacf380afb8f",
+    "name_en": "Regular Maintenance",
+    "name_cn": "定期维护",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f219c4c6-bb56-499a-894d-5dc689e22cb4",
+    "name_en": "Bloodthirst",
+    "name_cn": "嗜血",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "202e4917-e744-41bf-965a-81edcded9d5f",
+    "name_en": "Toxic Weapons",
+    "name_cn": "毒性武器",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "ae41f574-fc9f-492a-8ae0-45853ab607a6",
+    "name_en": "Critical Investments",
+    "name_cn": "关键投资",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "3b4c3700-6c77-4954-a3e1-dfeaeab08c4a",
+    "name_en": "Hardly Workin'",
+    "name_cn": "假装努力",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "dec273b3-155e-4fbd-9629-5dbd2900e032",
+    "name_en": "Coolant Leak",
+    "name_cn": "冷却剂泄露",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "2efc2530-badd-4460-9b03-9d34a10a85de",
+    "name_en": "Bombs Away!",
+    "name_cn": "炸飞！",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "42a245de-4281-40d1-ad98-7a79b471aefe",
+    "name_en": "Berserker",
+    "name_cn": "狂战士",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "daec4b27-bd32-434e-85ef-4bd4629e7d11",
+    "name_en": "Bold Under Pressure",
+    "name_cn": "逆境无惧",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "fd927bfc-ff5a-4d9c-87ce-b9510a22e444",
+    "name_en": "Improvised Protection",
+    "name_cn": "临时防护",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "5fa9745a-79fd-4392-a7ac-ebcf898aa14c",
+    "name_en": "Secrets of Life",
+    "name_cn": "生命奥妙",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f67ea56d-22cf-4048-a321-d42688642875",
+    "name_en": "Barrel Roll",
+    "name_cn": "桶滚",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "e7488436-6835-4e5e-971c-ba0a60f58529",
+    "name_en": "Bullet Time",
+    "name_cn": "时间凝滞",
+    "source": "skills_db.json",
+    "type": "skill"
+  },
+  {
+    "id": "f422485c-b23a-4c3f-9ad4-9d22718dc204",
+    "name_en": "Artillery Spotter",
+    "name_cn": "炮击观察员",
+    "source": "skills_db.json",
+    "type": "skill"
+  }
+]

@@ -6,8 +6,9 @@ use std::path::PathBuf;
 use regex::Regex;
 use std::io::{Read, BufRead, BufReader, Seek, SeekFrom, Write};
 use std::fs::File;
-use std::{thread, time};
+use std::{thread, time, panic};
 use tokio;
+use chrono::Local;
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON};
 
 use crate::monster_recognition::scan_and_identify_monster_at_mouse;
@@ -21,14 +22,66 @@ pub fn log_to_file(msg: &str) {
         exe_path.push("app_debug.txt");
         if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(exe_path) {
             let _ = writeln!(f, "[{}] {}", get_time_str(), msg);
+            let _ = f.flush();
         }
     }
 }
 
 fn get_time_str() -> String {
-    let now = std::time::SystemTime::now();
-    let duration = now.duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
-    format!("{}", duration.as_secs()) // Simple timestamp
+    Local::now().format("%Y-%m-%d %H:%M:%S%.3f").to_string()
+}
+
+pub fn set_panic_hook() {
+    panic::set_hook(Box::new(|panic_info| {
+        let payload = panic_info.payload();
+        let message = if let Some(s) = payload.downcast_ref::<&str>() {
+            s.to_string()
+        } else if let Some(s) = payload.downcast_ref::<String>() {
+            s.clone()
+        } else {
+            "Unknown panic".to_string()
+        };
+
+        let location = panic_info.location()
+            .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()))
+            .unwrap_or_else(|| "unknown location".to_string());
+        
+        log_to_file(&format!("FATAL PANIC at {}: {}", location, message));
+        
+        // Output to stderr as well
+        eprintln!("FATAL PANIC at {}: {}", location, message);
+    }));
+}
+
+pub fn log_system_info(app_handle: &tauri::AppHandle) {
+    log_to_file("--- System Info ---");
+    log_to_file(&format!("OS: {}", std::env::consts::OS));
+    log_to_file(&format!("ARCH: {}", std::env::consts::ARCH));
+    
+    if let Ok(exe_path) = std::env::current_exe() {
+        log_to_file(&format!("EXE Path: {:?}", exe_path));
+    }
+    
+    if let Ok(cwd) = std::env::current_dir() {
+        log_to_file(&format!("CWD: {:?}", cwd));
+    }
+
+    log_to_file(&format!("Resource Dir: {:?}", app_handle.path().resource_dir().ok()));
+    log_to_file(&format!("App Config Dir: {:?}", app_handle.path().app_config_dir().ok()));
+    log_to_file(&format!("App Local Data Dir: {:?}", app_handle.path().app_local_data_dir().ok()));
+    
+    // Log environment variables that might affect execution
+    for var in ["PATH", "USERNAME", "APPDATA", "LOCALAPPDATA"] {
+        if let Ok(val) = std::env::var(var) {
+            log_to_file(&format!("Env {}: {}", var, val));
+        }
+    }
+
+    let lp = get_log_path();
+    log_to_file(&format!("Game Log Path: {:?}", lp));
+    log_to_file(&format!("Game Log Exists: {}", lp.exists()));
+    
+    log_to_file("-------------------");
 }
 
 // --- Data Models ---
@@ -355,9 +408,17 @@ fn get_log_path() -> PathBuf {
 #[tauri::command]
 #[allow(dead_code)]
 async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
-    let resources_path = app.path().resource_dir().unwrap();
+    let resources_path = app.path().resource_dir().map_err(|e| {
+        let err = format!("Failed to get resource dir in template loading: {}", e);
+        log_to_file(&err);
+        err
+    })?;
     let res_dir = resources_path.join("resources");
-    let cache_dir = get_cache_path().parent().unwrap().to_path_buf();
+    let cache_dir = get_cache_path().parent().ok_or_else(|| {
+        let err = "Failed to get cache parent dir".to_string();
+        log_to_file(&err);
+        err
+    })?.to_path_buf();
     
     // 异步加载
     tauri::async_runtime::spawn(async move {
@@ -598,7 +659,8 @@ fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32
 // --- App Run ---
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    log_to_file("=================== App Started ===================");
+    set_panic_hook();
+    log_to_file("=================== App Starting ===================");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
@@ -617,6 +679,8 @@ pub fn run() {
             monsters: Arc::new(RwLock::new(serde_json::Map::new())),
         })
         .setup(|app| {
+            log_system_info(app.handle());
+            
             // 设置窗口不占据焦点，穿透焦点解决遮挡游戏悬浮的问题 (仅 Windows)
             #[cfg(target_os = "windows")]
             {
@@ -635,7 +699,15 @@ pub fn run() {
             }
 
             let handle = app.handle().clone();
-            let resources_path = app.path().resource_dir().unwrap();
+            let resources_path = match app.path().resource_dir() {
+                Ok(p) => p,
+                Err(e) => {
+                    log_to_file(&format!("CRITICAL ERROR: Failed to get resource_dir: {}", e));
+                    PathBuf::new()
+                }
+            };
+            log_to_file(&format!("Resolved Resources Path: {:?}", resources_path));
+
             let db_state = app.state::<DbState>();
             
             // 1. Load Items DB
@@ -643,28 +715,38 @@ pub fn run() {
                 resources_path.join("resources").join("items_db.json"),
                 resources_path.join("items_db.json"),
             ];
+            log_to_file("Attempting to load Items DB...");
             for path in &items_possible_paths {
+                log_to_file(&format!("Checking path: {:?}", path));
                 if path.exists() {
-                    if let Ok(json) = std::fs::read_to_string(path) {
-                        if let Ok(raw_list) = serde_json::from_str::<Vec<RawItem>>(&json) {
-                            let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                            let mut id_map = HashMap::new();
-                            let mut tag_set = std::collections::HashSet::new();
-                            for (index, item) in items_list.iter().enumerate() {
-                                id_map.insert(item.uuid.clone(), index);
-                                for tag in &item.processed_tags { tag_set.insert(tag.clone()); }
+                     match std::fs::read_to_string(path) {
+                        Ok(json) => {
+                            match serde_json::from_str::<Vec<RawItem>>(&json) {
+                                Ok(raw_list) => {
+                                    let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                                    let mut id_map = HashMap::new();
+                                    let mut tag_set = std::collections::HashSet::new();
+                                    for (index, item) in items_list.iter().enumerate() {
+                                        id_map.insert(item.uuid.clone(), index);
+                                        for tag in &item.processed_tags { tag_set.insert(tag.clone()); }
+                                    }
+                                    let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
+                                    unique_tags.sort();
+                                    let count = items_list.len();
+                                    let mut db = db_state.items.write().unwrap();
+                                    db.list = items_list;
+                                    db.id_map = id_map;
+                                    db.unique_tags = unique_tags;
+                                    log_to_file(&format!("[Init] Successfully loaded {} items from {:?}", count, path));
+                                    break;
+                                },
+                                Err(e) => log_to_file(&format!("Error parsing items_db.json: {}", e)),
                             }
-                            let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
-                            unique_tags.sort();
-                            let count = items_list.len();
-                            let mut db = db_state.items.write().unwrap();
-                            db.list = items_list;
-                            db.id_map = id_map;
-                            db.unique_tags = unique_tags;
-                            println!("[Init] Successfully loaded {} items from {:?}", count, path);
-                            break;
-                        }
+                        },
+                        Err(e) => log_to_file(&format!("Error reading items_db.json: {}", e)),
                     }
+                } else {
+                    log_to_file("Path does not exist.");
                 }
             }
 
@@ -673,26 +755,37 @@ pub fn run() {
                 resources_path.join("resources").join("skills_db.json"),
                 resources_path.join("skills_db.json"),
             ];
+            log_to_file("Attempting to load Skills DB...");
             for path in &skills_possible_paths {
+                log_to_file(&format!("Checking path: {:?}", path));
                 if path.exists() {
-                    if let Ok(json) = std::fs::read_to_string(path) {
-                        if let Ok(raw_list) = serde_json::from_str::<Vec<RawItem>>(&json) {
-                            let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                            let mut id_map = HashMap::new();
-                            for (index, item) in skills_list.iter().enumerate() { id_map.insert(item.uuid.clone(), index); }
-                            let count = skills_list.len();
-                            let mut db = db_state.skills.write().unwrap();
-                            db.list = skills_list;
-                            db.id_map = id_map;
-                            println!("[Init] Successfully loaded {} skills from {:?}", count, path);
-                            break;
-                        }
+                    match std::fs::read_to_string(path) {
+                        Ok(json) => {
+                            match serde_json::from_str::<Vec<RawItem>>(&json) {
+                                Ok(raw_list) => {
+                                    let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                                    let mut id_map = HashMap::new();
+                                    for (index, item) in skills_list.iter().enumerate() { id_map.insert(item.uuid.clone(), index); }
+                                    let count = skills_list.len();
+                                    let mut db = db_state.skills.write().unwrap();
+                                    db.list = skills_list;
+                                    db.id_map = id_map;
+                                    log_to_file(&format!("[Init] Successfully loaded {} skills from {:?}", count, path));
+                                    break;
+                                },
+                                Err(e) => log_to_file(&format!("Error parsing skills_db.json: {}", e)),
+                            }
+                        },
+                        Err(e) => log_to_file(&format!("Error reading skills_db.json: {}", e)),
                     }
+                } else {
+                    log_to_file("Path does not exist.");
                 }
             }
 
             // 3. Load Monster Image Map
             let monster_img_map_path = resources_path.join("resources").join("images_monster_map.json");
+            log_to_file(&format!("Attempting to load Monster Image Map from {:?}", monster_img_map_path));
             let mut monster_img_lookup = HashMap::new();
             if let Ok(json) = std::fs::read_to_string(&monster_img_map_path) {
                 if let Ok(serde_json::Value::Object(map)) = serde_json::from_str::<serde_json::Value>(&json) {
@@ -1005,7 +1098,7 @@ pub fn run() {
                                     let iid = cap["iid"].to_string();
                                     inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
                                     let mut section = cap.name("sec").map(|s| s.as_str().to_string());
-                                    if section.is_none() || section.as_ref().unwrap() == "" {
+                                    if section.as_deref().unwrap_or("") == "" {
                                         if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
                                             if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
                                             else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
@@ -1105,8 +1198,14 @@ pub fn run() {
 
                 loop {
                     if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
-                    let meta = std::fs::metadata(&log_path).unwrap();
-                    let current_file_size = meta.len();
+                    let current_file_size = match std::fs::metadata(&log_path) {
+                        Ok(meta) => meta.len(),
+                        Err(e) => {
+                            log_to_file(&format!("Error reading log metadata: {}. Retrying...", e));
+                            thread::sleep(time::Duration::from_secs(1));
+                            continue;
+                        }
+                    };
                     
                     if current_file_size < last_file_size {
                         println!("[LogMonitor] Log truncated, resetting state...");
@@ -1130,7 +1229,14 @@ pub fn run() {
                     }
                     
                     if current_file_size > last_file_size {
-                        let mut f = File::open(&log_path).unwrap();
+                        let mut f = match File::open(&log_path) {
+                            Ok(file) => file,
+                            Err(e) => {
+                                log_to_file(&format!("Failed to open log file for reading: {}", e));
+                                thread::sleep(time::Duration::from_secs(1));
+                                continue;
+                            }
+                        };
                         let _ = f.seek(SeekFrom::Start(last_file_size));
                         let reader = BufReader::new(f);
                         
@@ -1184,7 +1290,7 @@ pub fn run() {
                                 let target = cap.name("tgt").map(|t| t.as_str());
 
                                 // Fallback: Derive section from Target if Section is missing or ambiguous
-                                if section.is_none() || section.as_ref().unwrap() == "" {
+                                if section.as_deref().unwrap_or("") == "" {
                                     if let Some(tgt) = target {
                                         if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
                                         else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
@@ -1418,6 +1524,7 @@ pub fn run() {
                 }
             });
 
+            log_to_file("Setup complete. Initializing main loop...");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -1434,5 +1541,9 @@ pub fn run() {
             restore_game_focus
         ])
         .run(tauri::generate_context!())
+        .map_err(|e| {
+            log_to_file(&format!("FATAL: Error while running tauri application: {}", e));
+            e
+        })
         .expect("error while running tauri application");
 }
