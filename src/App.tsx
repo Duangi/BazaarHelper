@@ -77,7 +77,7 @@ interface MonsterData {
   displayImgBg?: string;
 }
 
-type TabType = "hand" | "stash" | "monster";
+type TabType = "hand" | "stash" | "monster" | "card";
 
 const KEYWORD_COLORS: Record<string, string> = {
   "弹药": "#ff8e00",
@@ -147,6 +147,8 @@ export default function App() {
   const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
+  const [recognizedCards, setRecognizedCards] = useState<ItemData[]>([]); // 识别出的卡牌列表 (Top 3)
+  const [isRecognizingCard, setIsRecognizingCard] = useState(false); // 是否正在识别卡牌
 
   // 图片路径缓存，避免重复解析
   const [imgCache] = useState<Map<string, string>>(new Map());
@@ -163,7 +165,9 @@ export default function App() {
 
   // 新增：识别热键状态
   const [detectionHotkey, setDetectionHotkey] = useState<number | null>(null);
+  const [cardDetectionHotkey, setCardDetectionHotkey] = useState<number | null>(null);
   const [isRecordingHotkey, setIsRecordingHotkey] = useState(false);
+  const [isRecordingCardHotkey, setIsRecordingCardHotkey] = useState(false);
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -224,6 +228,48 @@ export default function App() {
       else next.add(name_zh);
       return next;
     });
+  };
+
+  const handleRecognizeCard = async (switchTab = false) => {
+    if (isRecognizingCard) return;
+    if (switchTab) setActiveTab("card");
+    setIsRecognizingCard(true);
+    setErrorMessage(null);
+    try {
+      const results = await invoke<any[] | null>("recognize_card_at_mouse");
+      if (results && results.length > 0) {
+        const fullInfos: ItemData[] = [];
+        for (const res of results) {
+          const itemInfo = await invoke<ItemData | null>("get_item_info", { id: res.id });
+          if (itemInfo) {
+            const imgUrl = await getImg(`images/${itemInfo.uuid || itemInfo.name}.webp`);
+            fullInfos.push({ ...itemInfo, displayImg: imgUrl });
+          }
+        }
+        
+        if (fullInfos.length > 0) {
+          setRecognizedCards(fullInfos);
+          // 自动展开识别到的所有前三项，方便用户查看
+          setExpandedItems(prev => {
+            const next = new Set(prev);
+            fullInfos.forEach(info => next.add(info.uuid));
+            return next;
+          });
+          setStatusMsg(`识别成功: 找到 ${fullInfos.length} 个匹配项`);
+          setTimeout(() => setStatusMsg(null), 2000);
+        } else {
+          setErrorMessage("识别到了卡牌，但没能在数据库中找到对应信息");
+        }
+      } else {
+        setErrorMessage("未能识别到鼠标下的卡牌。请确保鼠标指向卡牌中心。");
+      }
+    } catch (e: any) {
+      console.error(e);
+      setErrorMessage(`卡牌识别执行出错: ${e}`);
+    } finally {
+      setIsRecognizingCard(false);
+      setTimeout(() => setErrorMessage(null), 3000);
+    }
   };
 
   const renderText = (text: any) => {
@@ -517,10 +563,12 @@ export default function App() {
     let unlistenDay: any = null;
     let unlistenSync: any = null;
     let unlistenAutoJump: any = null;
+    let unlistenCard: any = null;
     
     const setupListeners = async () => {
       // 0. 加载热键配置
       invoke<number | null>("get_detection_hotkey").then(setDetectionHotkey);
+      invoke<number | null>("get_card_detection_hotkey").then(setCardDetectionHotkey);
 
       // 1. 怪物识别触发
       unlistenMonster = await listen<number | null>('trigger-monster-recognition', async (event) => {
@@ -534,6 +582,12 @@ export default function App() {
         setTimeout(async () => {
            await handleAutoRecognition(dayNum);
         }, 500);
+      });
+
+      // 1.1 卡牌识别触发 (热键)
+      unlistenCard = await listen('hotkey-detect-card', () => {
+        console.log("收到卡牌识别触发事件");
+        handleRecognizeCard(true); // 自动识别并跳转
       });
 
       // 1.5 自动识别并跳转事件 (auto-jump-to-monster)
@@ -607,6 +661,7 @@ export default function App() {
     
     return () => {
       if (unlistenMonster) unlistenMonster();
+      if (unlistenCard) unlistenCard();
       if (unlistenDay) unlistenDay();
       if (unlistenSync) unlistenSync();
       if (unlistenAutoJump) unlistenAutoJump();
@@ -703,7 +758,9 @@ export default function App() {
       targetDay = "Day 1";
     }
 
-    const monstersOnDay = Object.values(allMonsters).filter(m => m.available === targetDay);
+    const monstersOnDay = Object.values(allMonsters).filter(m =>
+      m && typeof m.name_zh === "string" && m.name_zh.length > 0 && m.available === targetDay
+    );
     
     console.log(`[DEBUG] Filtering monsters for ${targetDay}:`, monstersOnDay.length, 'found');
     const jackMonster = monstersOnDay.find(m => m.name_zh === '快乐杰克南瓜');
@@ -1023,75 +1080,6 @@ export default function App() {
       setIsRecognizing(false);
     }
   };
-
-  // 手动触发怪物识别
-  const handleManualRecognition = async () => {
-    setIsRecognizing(true);
-    try {
-      console.log("开始手动识别怪物...");
-      // 传入当前天数以加速识别
-      const results = await invoke("recognize_monsters_from_screenshot", { day: currentDay }) as any[];
-      console.log("识别结果:", results);
-      
-      if (results && results.length > 0) {
-        // 按照 position (1, 2, 3) 提取怪物名
-        const names = new Array(3).fill("");
-        results.forEach(r => {
-          if (r.position >= 1 && r.position <= 3) {
-            names[r.position - 1] = r.name;
-          }
-        });
-        
-        // 过滤掉空的，保留 [左, 中, 右] 的顺序
-        const validNames = names.filter(n => n !== "");
-        console.log("%c[识别成功]", "color: #ffcd19; font-weight: bold", "识别到的怪物顺序 (从左至右):", validNames);
-        setIdentifiedNames(validNames);
-
-        // 识别后自动展开
-        setExpandedMonsters(prev => {
-          const next = new Set(prev);
-          validNames.forEach(name => {
-            if (allMonsters[name]) next.add(name);
-          });
-          return next;
-        });
-        
-        // 自动切换到对应 Day Tab
-        if (validNames.length > 0) {
-          const firstMonsterName = validNames[0];
-          const monster = allMonsters[firstMonsterName];
-          if (monster && monster.available) {
-             // 如果当前选中的 Day 与识别到的怪物不符，则跳转
-             if (selectedDay !== monster.available) {
-               console.log(`[Auto-Switch] 识别到 ${firstMonsterName} (${monster.available})，自动切换 Day Tab`);
-               setSelectedDay(monster.available);
-               // 同时尝试更新 currentDay 状态，以便后续逻辑同步（例如 +1 day）
-               // 格式通常为 "Day 1", "Day 10+"
-               try {
-                 const match = monster.available.match(/Day\s+(\d+)/);
-                 if (match && match[1]) {
-                   const dayNum = parseInt(match[1]);
-                   setCurrentDay(dayNum);
-                 }
-               } catch (e) {
-                 console.warn("Failed to parse day from available string:", monster.available);
-               }
-             }
-          }
-        }
-
-        setActiveTab("monster");
-      } else {
-        console.log("未识别到怪物");
-        setIdentifiedNames([]);
-      }
-    } catch (e) {
-      console.error("识别失败:", e);
-    } finally {
-      setIsRecognizing(false);
-    }
-  };
-
 
   // 4. 窗口定位与尺寸控制 (更新界面居中、overlay贴边)
   const lastLayout = useRef<string>("");
@@ -1551,6 +1539,68 @@ export default function App() {
                 <div className="setting-tip">默认: 鼠标右键 (VK: 2)</div>
               </div>
 
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label>卡牌识别按键</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ padding: '2px 8px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsRecordingCardHotkey(true);
+                    }}
+                  >
+                    {isRecordingCardHotkey ? "请按键..." : (cardDetectionHotkey ? getHotkeyLabel(cardDetectionHotkey) : "未设置")}
+                  </button>
+                </div>
+                {isRecordingCardHotkey && (
+                  <div 
+                    style={{ 
+                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                      display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      let vk = 0;
+                      switch(e.button) {
+                        case 0: vk = 1; break;
+                        case 1: vk = 4; break;
+                        case 2: vk = 2; break;
+                        case 3: vk = 5; break;
+                        case 4: vk = 6; break;
+                      }
+                      if (vk > 0) {
+                        setCardDetectionHotkey(vk);
+                        invoke("set_card_detection_hotkey", { hotkey: vk });
+                        setIsRecordingCardHotkey(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (e.keyCode) {
+                        setCardDetectionHotkey(e.keyCode);
+                        invoke("set_card_detection_hotkey", { hotkey: e.keyCode });
+                        setIsRecordingCardHotkey(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    ref={(el) => el?.focus()}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                    <button 
+                      style={{ marginTop: '20px', padding: '5px 15px' }}
+                      onClick={(e) => { e.stopPropagation(); setIsRecordingCardHotkey(false); }}
+                    >取消</button>
+                  </div>
+                )}
+                <div className="setting-tip">默认: Alt (VK: 18)</div>
+              </div>
+
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
               <div className="setting-item">
@@ -1673,9 +1723,9 @@ export default function App() {
         <>
           {/* 更新按钮 */}
           <nav className="nav-bar">
-            {(["monster", "hand", "stash"] as TabType[]).map(t => (
+            {(["monster", "card", "hand", "stash"] as TabType[]).map(t => (
               <div key={t} className={`nav-item ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
-                {t === 'monster' ? '野怪一览' : t === 'hand' ? '手牌' : '仓库'}
+                {t === 'monster' ? '野怪一览' : t === 'card' ? '卡牌识别' : t === 'hand' ? '手牌' : '仓库'}
               </div>
             ))}
           </nav>
@@ -1707,16 +1757,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="search-container">
-                      <button 
-                        className="manual-recognition-btn" 
-                        onClick={handleManualRecognition}
-                        disabled={isRecognizing || !templateLoading.is_complete}
-                        style={{ width: '100%' }}
-                      >
-                        {isRecognizing ? "识别中..." : "🎯 识别画面中的怪物"}
-                      </button>
-                    </div>
+                    {/* 原识别按钮已移除 */}
 
                     {!templateLoading.is_complete && templateLoading.total > 0 && (
                       <div className="loading-progress">
@@ -1779,53 +1820,64 @@ export default function App() {
                 </div>
               </>
             ) : (
-                <div className="card-list">
-                  {getSortedItems(activeTab === "hand" ? syncData.hand_items : syncData.stash_items).map(item => {
-                    const isExpanded = expandedItems.has(item.uuid);
-                    const tierClass = item.tier.split(' / ')[0].toLowerCase();
-                    const tierNameZh = {
-                      'bronze': '青铜+',
-                      'silver': '白银+',
-                      'gold': '黄金+',
-                      'diamond': '钻石+'
-                    }[tierClass] || tierClass;
-                    const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
-                    const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
+                <>
+                  <div className="card-list">
+                    {(activeTab === "card" ? recognizedCards : getSortedItems(activeTab === "hand" ? syncData.hand_items : syncData.stash_items)).map((item, idx) => {
+                      const isExpanded = expandedItems.has(item.uuid);
+                      const isRecognized = activeTab === "card";
+                      const isTopMatch = idx === 0;
+                      const tierClass = item.tier.split(' / ')[0].toLowerCase();
+                      const tierNameZh = {
+                        'bronze': '青铜+',
+                        'silver': '白银+',
+                        'gold': '黄金+',
+                        'diamond': '钻石+'
+                      }[tierClass] || tierClass;
+                      const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+                      const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
 
-                    return (
-                      <div key={item.uuid} className={`item-card-container ${isExpanded ? 'expanded' : ''}`} onClick={() => toggleExpand(item.uuid)}>
-                        <div className={`item-card tier-${tierClass}`}>
-                          <div className="card-left">
-                            <div className={`image-box size-${sizeClass}`}>
-                              <img src={item.displayImg} alt={item.name} />
-                            </div>
-                          </div>
-
-                          <div className="card-center">
-                            <div className="name-line">
-                              <span className="name-cn">{item.name_cn}</span>
-                              <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
-                            </div>
-                            <div className="tags-line">
-                              {item.processed_tags.slice(0, 3).map(t => (
-                                <span key={t} className="tag-badge">{t}</span>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="card-right">
-                            <div className="top-right-group">
-                              <span className="hero-badge">{heroZh}</span>
-                              <div 
-                                className={`pin-btn ${pinnedItems.has(item.uuid) ? 'active' : ''}`}
-                                onClick={(e) => togglePin(item.uuid, e)}
-                              >
-                                {pinnedItems.has(item.uuid) ? "📌" : "📍"}
+                      return (
+                        <div key={item.uuid} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(item.uuid)}>
+                          <div className={`item-card tier-${tierClass}`}>
+                            <div className="card-left">
+                              <div className={`image-box size-${sizeClass}`}>
+                                <img src={item.displayImg} alt={item.name} />
                               </div>
                             </div>
-                            <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
+
+                            <div className="card-center">
+                              <div className="name-line">
+                                <span className="name-cn">{item.name_cn}</span>
+                                {isRecognized && (
+                                  <span className="id-badge" style={{ 
+                                    marginLeft: '4px',
+                                    backgroundColor: isTopMatch ? '#238636' : '#8b949e' 
+                                  }}>
+                                    {isTopMatch ? "MATCH" : "MAYBE"}
+                                  </span>
+                                )}
+                                <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
+                              </div>
+                              <div className="tags-line">
+                                {item.processed_tags.slice(0, 3).map(t => (
+                                  <span key={t} className="tag-badge">{t}</span>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="card-right">
+                              <div className="top-right-group">
+                                <span className="hero-badge">{heroZh}</span>
+                                <div 
+                                  className={`pin-btn ${pinnedItems.has(item.uuid) ? 'active' : ''}`}
+                                  onClick={(e) => togglePin(item.uuid, e)}
+                                >
+                                  {pinnedItems.has(item.uuid) ? "📌" : "📍"}
+                                </div>
+                              </div>
+                              <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
+                            </div>
                           </div>
-                        </div>
 
                         {isExpanded && (
                           <div className={`item-details-v2 ${pinnedItems.has(item.uuid) ? 'progression-active' : ''}`}>
@@ -1933,15 +1985,22 @@ export default function App() {
                       </div>
                     );
                   })}
-                  {(activeTab === "hand" ? syncData.hand_items : syncData.stash_items).length === 0 && (
+                  {activeTab === "card" && recognizedCards.length === 0 && !isRecognizingCard && (
+                    <div className="empty-tip">按下 Alt 键 识别鼠标指向的卡牌</div>
+                  )}
+                  {activeTab === "card" && isRecognizingCard && (
+                    <div className="empty-tip">🔍 正在识别中...</div>
+                  )}
+                  {(activeTab === "hand" || activeTab === "stash") && (activeTab === "hand" ? syncData.hand_items : syncData.stash_items).length === 0 && (
                     <div className="empty-tip">当前暂无数据，请在游戏中操作相应卡牌</div>
                   )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
-        </>
-      )}
+        </div>
+      </>
+    )}
 
       {/* 正在安装层 */}
       {isInstalling && (

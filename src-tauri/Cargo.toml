@@ -42,3 +42,4 @@ windows = { version = "0.62.2", features = ["Win32_UI_WindowsAndMessaging", "Win
 
 # OpenCV 核心绑定 (用于 ORB 特征匹配)
 opencv = "0.92"
+enigo = "0.3"

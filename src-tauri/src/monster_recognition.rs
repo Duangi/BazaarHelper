@@ -11,6 +11,7 @@ use opencv::{
     prelude::*,
 };
 use crate::log_to_file;
+use chrono;
 
 #[tauri::command]
 pub fn check_opencv_load() -> Result<String, String> {
@@ -60,6 +61,7 @@ struct MonsterEntry {
 }
 
 static TEMPLATE_CACHE: OnceLock<Vec<TemplateCache>> = OnceLock::new();
+static CARD_TEMPLATE_CACHE: OnceLock<Vec<TemplateCache>> = OnceLock::new();
 static LOADING_PROGRESS: OnceLock<Arc<Mutex<LoadingProgress>>> = OnceLock::new();
 
 pub fn get_loading_progress() -> LoadingProgress {
@@ -76,7 +78,7 @@ pub fn get_loading_progress() -> LoadingProgress {
 }
 
 // 使用 OpenCV ORB 提取特征点和描述符
-fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i32, i32), opencv::Error> {
+fn extract_features_orb(image_path: &str, n_features: i32) -> Result<(Vec<(f32, f32)>, Vec<u8>, i32, i32), opencv::Error> {
     // 读取图片 (支持中文路径)
     let content = std::fs::read(image_path).map_err(|e| opencv::Error::new(opencv::core::StsError, format!("Read error: {}", e)))?;
     let img = imdecode(&Mat::from_slice(&content)?, IMREAD_GRAYSCALE)?;
@@ -85,8 +87,8 @@ fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i
         return Ok((Vec::new(), Vec::new(), 0, 0));
     }
 
-    // 初始化 ORB (维持在 1000 个特征点，平衡速度与精度)
-    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
+    // 初始化 ORB
+    let mut orb = ORB::create(n_features, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     // 提取特征点和描述符
@@ -127,7 +129,7 @@ fn extract_features_orb(image_path: &str) -> Result<(Vec<(f32, f32)>, Vec<u8>, i
 }
 
 // 从 DynamicImage 提取特征 (用于截图分析)
-fn extract_features_from_dynamic_image(img: &DynamicImage) -> Result<Mat, opencv::Error> {
+fn extract_features_from_dynamic_image(img: &DynamicImage, n_features: i32) -> Result<Mat, opencv::Error> {
     // 将图像保存到临时缓冲区
     let mut bytes = Vec::new();
     use image::ImageFormat;
@@ -146,7 +148,7 @@ fn extract_features_from_dynamic_image(img: &DynamicImage) -> Result<Mat, opencv
     }
 
     // 初始化 ORB (截图也同样使用 1000 个特征点)
-    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, 
+    let mut orb = ORB::create(n_features, 1.2f32, 8, 31, 0, 2, 
         opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20)?;
 
     let mut keypoints = Vector::<KeyPoint>::new();
@@ -371,7 +373,7 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
         let path_str = path.to_str()?;
         
         // 使用 OpenCV 提取特征
-        match extract_features_orb(path_str) {
+        match extract_features_orb(path_str, 1000) {
             Ok((keypoints, descriptors, desc_rows, desc_cols)) => {
                 // 读取原始图片数据用于调试
                 let sample_png = std::fs::read(&path).unwrap_or_default();
@@ -475,7 +477,7 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
         (target_monitor.capture_image().map_err(|e| e.to_string())?, target_monitor.x(), target_monitor.y())
     };
 
-    let mut img = DynamicImage::ImageRgba8(screenshot);
+    let img = DynamicImage::ImageRgba8(screenshot);
     let (img_w, img_h) = img.dimensions();
 
     // 3. 计算裁剪区域 400x400
@@ -500,12 +502,12 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
         return Err("裁剪区域太小或鼠标已移出窗口范围".into());
     }
 
-    let cropped_img = img.crop(crop_x, crop_y, crop_w, crop_h);
+    let cropped_img = img.crop_imm(crop_x, crop_y, crop_w, crop_h);
     // 可选：保存调试图片
     // cropped_img.save("debug_mouse_crop.png").ok();
 
     // 4. 提取特征并匹配
-    let scene_desc = extract_features_from_dynamic_image(&cropped_img).map_err(|e| e.to_string())?;
+    let scene_desc = extract_features_from_dynamic_image(&cropped_img, 1000).map_err(|e| e.to_string())?;
     if scene_desc.empty() {
         return Ok(None);
     }
@@ -643,17 +645,16 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     println!("[OpenCV Recognition] 开始匹配，库中共有 {} 个目标怪兽", cache.len());
 
     let mut results = Vec::new();
-    let region_y = (height as f32 * 0.15) as u32;
-    let region_h = (height as f32 * 0.35) as u32;
-    let total_region_w = (width as f32 * (5.0 / 12.0)) as u32;
-    let region_x_start = (width as f32 * (0.5 - 5.0 / 24.0)) as u32;
+    let region_y = (height as f32 * 0.10) as u32;
+    let region_h = (height as f32 * 0.50) as u32;
+    let total_region_w = (width as f32 * 0.60) as u32;
+    let region_x_start = (width as f32 * 0.20) as u32;
 
     let slot_w = total_region_w / 3;
     let slot_h = region_h;
 
     let start_match = Instant::now();
-    let _ = std::fs::create_dir_all("target/debug/monster_debug");
-    let _ = img.save("target/debug/monster_debug/screenshot_opencv.png");
+    save_debug_image(&img, "monster_full_screenshot");
 
     for i in 0..3 {
         let start_slot = Instant::now();
@@ -662,9 +663,10 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
         if x + slot_w > width || y + slot_h > height { continue; }
 
         let slice = img.crop_imm(x, y, slot_w, slot_h);
+        save_debug_image(&slice, &format!("monster_slot_{}", i + 1));
         
         // 使用 OpenCV 提取场景特征
-        let scene_descriptors = match extract_features_from_dynamic_image(&slice) {
+        let scene_descriptors = match extract_features_from_dynamic_image(&slice, 1000) {
             Ok(desc) => desc,
             Err(e) => {
                 println!("[Slot {}] 提取特征失败: {}", i + 1, e);
@@ -757,4 +759,230 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     println!("[Timer] OpenCV 识别流程整体耗时: {:?}", start_total.elapsed());
 
     Ok(results)
+}
+
+// --- Card Recognition ---
+
+pub fn save_debug_image(img: &DynamicImage, name: &str) {
+    // 自动保存到缓存目录下的 debug 文件夹
+    let cache_dir = std::env::var("APPDATA")
+        .map(|v| PathBuf::from(v).join("BazaarHelper"))
+        .unwrap_or_else(|_| PathBuf::from("target/debug"));
+        
+    let debug_dir = cache_dir.join("debug_images");
+    let _ = std::fs::create_dir_all(&debug_dir);
+    
+    let file_path = debug_dir.join(format!("{}_{}.png", chrono::Local::now().format("%H%M%S"), name));
+    let _ = img.save(&file_path);
+    println!("[DebugImage] 已保存截图至: {:?}", file_path);
+}
+
+pub async fn preload_card_templates_async(resources_dir: PathBuf, cache_dir: PathBuf) -> Result<(), String> {
+    log_to_file(&format!("Start loading card templates. Resource Dir: {:?}, Cache Dir: {:?}", resources_dir, cache_dir));
+    
+    let cache_file = cache_dir.join("card_features_opencv.bin");
+    let bundled_cache = resources_dir.join("card_features_opencv.bin");
+
+    // 1. 优先从资源目录加载
+    if bundled_cache.exists() {
+        if let Ok(data) = std::fs::read(&bundled_cache) {
+            if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
+                if !cached_templates.is_empty() {
+                    log_to_file(&format!("Loaded {} card templates from bundled cache", cached_templates.len()));
+                    println!("[Card Templates] Loaded {} templates from bundled cache: {:?}", cached_templates.len(), bundled_cache);
+                    let _ = CARD_TEMPLATE_CACHE.set(cached_templates);
+                    return Ok(());
+                }
+            }
+        }
+    }
+
+    // 2. 尝试从 AppData 缓存加载
+    if cache_file.exists() {
+        if let Ok(data) = std::fs::read(&cache_file) {
+            if let Ok(cached_templates) = bincode::deserialize::<Vec<TemplateCache>>(&data) {
+                if !cached_templates.is_empty() {
+                    log_to_file(&format!("Loaded {} card templates from OpenCV cache", cached_templates.len()));
+                    println!("[Card Templates] Loaded {} templates from cache: {:?}", cached_templates.len(), cache_file);
+                    let _ = CARD_TEMPLATE_CACHE.set(cached_templates);
+                    return Ok(());
+                }
+            }
+        }
+    }
+
+    // 3. 从 items_db.json 加载并计算
+    let db_path = resources_dir.join("items_db.json");
+    if !db_path.exists() {
+        return Err(format!("items_db.json not found at {:?}", db_path));
+    }
+
+    let json_content = std::fs::read_to_string(&db_path)
+        .map_err(|e| format!("读取 items_db.json 失败: {}", e))?;
+
+    // 我们只需要简单的结构
+    #[derive(Deserialize)]
+    struct RawItemSimple {
+        id: String,
+        name_cn: Option<String>,
+    }
+    
+    let items: Vec<RawItemSimple> = serde_json::from_str(&json_content)
+        .map_err(|e| format!("解析 items_db.json 失败: {}", e))?;
+
+    let mut tasks = Vec::new();
+    for item in items {
+        let img_path = resources_dir.join("images").join(format!("{}.webp", item.id));
+        if img_path.exists() {
+            tasks.push((item.name_cn.unwrap_or_else(|| item.id.clone()), item.id, img_path));
+        }
+    }
+
+    log_to_file(&format!("Building card cache for {} images...", tasks.len()));
+    
+    let cache: Vec<TemplateCache> = tasks.into_par_iter().filter_map(|(name, id, path)| {
+        let path_str = path.to_str()?;
+        // 用户要求特征点少一些, 用 300
+        match extract_features_orb(path_str, 300) {
+            Ok((keypoints, descriptors, rows, cols)) => {
+                Some(TemplateCache {
+                    name, // 这里存中文名
+                    day: id, // 这里借用 day 字段存 ID
+                    keypoints,
+                    descriptors,
+                    descriptor_rows: rows,
+                    descriptor_cols: cols,
+                    sample_png: Vec::new(), 
+                    sample_w: 0,
+                    sample_h: 0,
+                })
+            }
+            Err(_) => None,
+        }
+    }).collect();
+
+    log_to_file(&format!("Successfully built cache for {} cards", cache.len()));
+    
+    // 保存到文件以便下次加速
+    if let Ok(serialized) = bincode::serialize(&cache) {
+        let _ = std::fs::write(&cache_file, &serialized);
+        let _ = std::fs::write(&bundled_cache, &serialized);
+        log_to_file(&format!("Saved card templates cache: appdata={:?}, resources={:?}", cache_file, bundled_cache));
+        println!("[Card Templates] Cache saved: appdata={:?}, resources={:?}", cache_file, bundled_cache);
+    }
+
+    let _ = CARD_TEMPLATE_CACHE.set(cache);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, String> {
+    use xcap::{Window, Monitor};
+    use enigo::{Enigo, Mouse, Settings};
+
+    // 1. 获取鼠标位置
+    let enigo = match Enigo::new(&Settings::default()) {
+        Ok(e) => e,
+        Err(e) => return Err(format!("Failed to init Enigo: {:?}", e)),
+    };
+    let (mouse_x, mouse_y) = match enigo.location() {
+        Ok(loc) => loc,
+        Err(e) => return Err(format!("Failed to get mouse location: {:?}", e)),
+    };
+
+    // 2. 截图
+    let windows = Window::all().map_err(|e| e.to_string())?;
+    let bazaar_window = windows.into_iter().find(|w| {
+        let title = w.title().to_lowercase();
+        let app_name = w.app_name().to_lowercase();
+        title.contains("the bazaar") || app_name.contains("the bazaar")
+    });
+
+    let (screenshot, win_x, win_y) = if let Some(window) = bazaar_window {
+        (window.capture_image().map_err(|e| e.to_string())?, window.x(), window.y())
+    } else {
+        let monitors = Monitor::all().map_err(|e| e.to_string())?;
+        let target_monitor = monitors.into_iter().find(|m| {
+             let mx = m.x(); let my = m.y(); let mw = m.width(); let mh = m.height();
+             mouse_x >= mx && mouse_x < mx + mw as i32 && mouse_y >= my && mouse_y < my + mh as i32
+        }).ok_or("Mouse not in monitor")?;
+        (target_monitor.capture_image().map_err(|e| e.to_string())?, target_monitor.x(), target_monitor.y())
+    };
+
+    let img = DynamicImage::ImageRgba8(screenshot);
+    let (img_w, img_h) = img.dimensions();
+    let rel_x = mouse_x - win_x;
+    let rel_y = mouse_y - win_y;
+    
+    // 4K 自适应：调整截图范围。
+    // 竖直方向保持屏幕高度的 75%，水平方向缩小一半，设为屏幕高度的 50%
+    let target_h = (img_h as f32 * 0.75).round() as u32;
+    let target_w = (img_h as f32 * 0.50).round() as u32;
+    
+    let half_w = (target_w / 2) as i32;
+    let half_h = (target_h / 2) as i32;
+    
+    let crop_x = std::cmp::max(rel_x - half_w, 0) as u32;
+    let crop_y = std::cmp::max(rel_y - half_h, 0) as u32;
+    let crop_w = if crop_x + target_w > img_w { img_w.saturating_sub(crop_x) } else { target_w };
+    let crop_h = if crop_y + target_h > img_h { img_h.saturating_sub(crop_y) } else { target_h };
+
+    if crop_w < 50 || crop_h < 50 { return Err("Invalid crop size".into()); }
+    let mut cropped_img = img.crop_imm(crop_x, crop_y, crop_w, crop_h);
+    
+    // 4K 优化：针对高分辨率截图，缩减尺寸以加快特征提取和比对（由 512 提升至 800 以保留更多细节）
+    if crop_w > 800 || crop_h > 800 {
+        cropped_img = cropped_img.resize(800, 800, image::imageops::FilterType::Triangle);
+    }
+    
+    save_debug_image(&cropped_img, "card_crop_adaptive");
+
+    // 3. 提取特征
+    let scene_desc = extract_features_from_dynamic_image(&cropped_img, 500).map_err(|e| e.to_string())?;
+    if scene_desc.empty() { return Ok(None); }
+    
+    // 4. 比对
+    let cache = CARD_TEMPLATE_CACHE.get().ok_or("Card templates not loaded")?;
+    let mut results: Vec<(&TemplateCache, usize, f32)> = Vec::new();
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        let mut template_desc = match unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U) } {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        unsafe { std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len()); }
+
+        if let Ok(matches) = match_orb_descriptors(&scene_desc, &template_desc) {
+            let min_kp = (template.descriptor_rows as f32).min(scene_desc.rows() as f32);
+            let confidence = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+            results.push((template, matches, confidence));
+        }
+    }
+    
+    results.sort_by(|a, b| b.1.cmp(&a.1));
+
+    let mut matches_found = Vec::new();
+    for i in 0..results.len().min(10) { // 先取前10个候选
+        let (top, matches, confidence) = results[i];
+        // 阈值：匹配点数 > 12 且 置信度 > 0.12
+        if matches > 12 && confidence > 0.12 {
+             matches_found.push(serde_json::json!({
+                 "id": top.day, // ID 存储在 day 字段
+                 "name": top.name,
+                 "confidence": confidence,
+                 "match_count": matches
+             }));
+        }
+        if matches_found.len() >= 3 { break; }
+    }
+
+    if !matches_found.is_empty() {
+        println!("[Card Recognition] Found {} matches", matches_found.len());
+        return Ok(Some(serde_json::json!(matches_found)));
+    }
+    
+    println!("[Card Recognition] No matches found above threshold.");
+    Ok(None)
 }

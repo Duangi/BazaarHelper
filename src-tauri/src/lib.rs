@@ -9,7 +9,7 @@ use std::fs::File;
 use std::{thread, time, panic};
 use tokio;
 use chrono::Local;
-use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON};
+use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
 
 use crate::monster_recognition::scan_and_identify_monster_at_mouse;
 
@@ -93,6 +93,8 @@ pub struct PersistentState {
     pub current_stash: HashSet<String>,
     #[serde(default)]
     pub detection_hotkey: Option<i32>,
+    #[serde(default)]
+    pub card_detection_hotkey: Option<i32>,
 }
 
 impl Default for PersistentState {
@@ -103,6 +105,7 @@ impl Default for PersistentState {
             current_hand: HashSet::new(),
             current_stash: HashSet::new(),
             detection_hotkey: Some(VK_RBUTTON.0 as i32),
+            card_detection_hotkey: Some(VK_MENU.0 as i32),
         }
     }
 }
@@ -422,7 +425,10 @@ async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
     
     // 异步加载
     tauri::async_runtime::spawn(async move {
+        let res_dir_clone = res_dir.clone();
+        let cache_dir_clone = cache_dir.clone();
         let _ = monster_recognition::preload_templates_async(res_dir, cache_dir).await;
+        let _ = monster_recognition::preload_card_templates_async(res_dir_clone, cache_dir_clone).await;
     });
     
     Ok(())
@@ -438,6 +444,20 @@ async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
 //     }
 //     Ok(())
 // }
+
+#[tauri::command]
+async fn get_item_info(state: tauri::State<'_, DbState>, id: String) -> Result<Option<ItemData>, String> {
+    let db = state.items.read().unwrap();
+    if let Some(&idx) = db.id_map.get(&id) {
+        return Ok(Some(db.list[idx].clone()));
+    }
+    // Also check skills if not found in items
+    let sdb = state.skills.read().unwrap();
+    if let Some(&idx) = sdb.id_map.get(&id) {
+        return Ok(Some(sdb.list[idx].clone()));
+    }
+    Ok(None)
+}
 
 #[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
@@ -615,11 +635,24 @@ fn get_detection_hotkey() -> Option<i32> {
 }
 
 #[tauri::command]
+fn get_card_detection_hotkey() -> Option<i32> {
+    load_state().card_detection_hotkey
+}
+
+#[tauri::command]
 fn set_detection_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.detection_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] Detection hotkey updated to: {}", hotkey);
+}
+
+#[tauri::command]
+fn set_card_detection_hotkey(hotkey: i32) {
+    let mut state = load_state();
+    state.card_detection_hotkey = Some(hotkey);
+    save_state(&state);
+    println!("[Config] Card detection hotkey updated to: {}", hotkey);
 }
 
 fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
@@ -1167,7 +1200,7 @@ pub fn run() {
                     inst_to_temp: inst_to_temp.clone(),
                     current_hand: current_hand.clone(),
                     current_stash: current_stash.clone(),
-                    detection_hotkey: load_state().detection_hotkey,
+                    ..load_state()
                 });
 
                 // Initial UI Sync after loading/backfilling
@@ -1220,11 +1253,7 @@ pub fn run() {
                             inst_to_temp: inst_to_temp.clone(), 
                             current_hand: current_hand.clone(), 
                             current_stash: current_stash.clone(),
-                            // Preserve hotkey setting from disk logic if necessary, but here we are in a reset state.
-                            // However, we shouldn't lose the hotkey setting just because the log was truncated.
-                            // We should load the *existing* state to get the hotkey, or just set it to default if we can't.
-                            // Better: read the current state from disk before overwriting.
-                            detection_hotkey: load_state().detection_hotkey, 
+                            ..load_state()
                         });
                     }
                     
@@ -1406,7 +1435,7 @@ pub fn run() {
                                 inst_to_temp: inst_to_temp.clone(),
                                 current_hand: current_hand.clone(),
                                 current_stash: current_stash.clone(),
-                                detection_hotkey: load_state().detection_hotkey,
+                                ..load_state()
                             });
                         }
                         last_file_size = current_file_size;
@@ -1415,26 +1444,29 @@ pub fn run() {
                 }
             });
 
-            // 启动鼠标监听线程 (识别怪物)
+            // 启动鼠标监听线程 (识别怪物与卡牌)
             let handle_mouse = handle.clone();
             std::thread::spawn(move || {
                 let mut last_trigger = time::Instant::now();
+                let mut last_card_trigger = time::Instant::now();
                 loop {
                     // 读取配置的按键
-                    let hotkey = {
+                    let (monster_hotkey, card_hotkey) = {
                         let state = load_state();
-                        state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32)
+                        (
+                            state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32),
+                            state.card_detection_hotkey.unwrap_or(VK_MENU.0 as i32)
+                        )
                     };
                     
                     unsafe {
-                        // 检测按键按下
-                        if (GetAsyncKeyState(hotkey) as i16) < 0 {
+                        // 1. 检测怪物识别按键
+                        if (GetAsyncKeyState(monster_hotkey) as i16) < 0 {
                             if last_trigger.elapsed() > time::Duration::from_millis(500) {
                                 last_trigger = time::Instant::now();
+                                log_to_file("Monster Hotkey pressed, starting scan...");
                                 
-                                log_to_file("Hotkey pressed, starting scan...");
-
-                                // 尝试识别
+                                // 尝试识别怪物
                                 match scan_and_identify_monster_at_mouse() {
                                     Ok(Some(monster_name)) => {
                                         log_to_file(&format!("Success! Valid monster found: {}", monster_name));
@@ -1519,6 +1551,16 @@ pub fn run() {
                                 }
                             }
                         }
+
+                        // 2. 检测卡牌识别按键
+                        if (GetAsyncKeyState(card_hotkey) as i16) < 0 {
+                            if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
+                                last_card_trigger = time::Instant::now();
+                                log_to_file("Card Hotkey pressed, triggering recognition...");
+                                // 发送事件给前端，让前端调用 handleRecognizeCard
+                                let _ = handle_mouse.emit("hotkey-detect-card", ());
+                            }
+                        }
                     }
                     thread::sleep(time::Duration::from_millis(100));
                 }
@@ -1535,8 +1577,12 @@ pub fn run() {
             update_day,
             get_detection_hotkey,
             set_detection_hotkey,
+            get_card_detection_hotkey,
+            set_card_detection_hotkey,
             start_template_loading,
+            get_item_info,
             crate::monster_recognition::check_opencv_load, 
+            crate::monster_recognition::recognize_card_at_mouse,
             // clear_monster_cache,
             restore_game_focus
         ])
