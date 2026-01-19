@@ -435,7 +435,7 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
 
 // 公共函数：鼠标触发的怪物识别
 pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
-    use xcap::{Window, Monitor};
+    use xcap::Monitor;
     use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
     use windows::Win32::Foundation::POINT;
     
@@ -446,21 +446,32 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
     let mouse_y = point.y;
 
     // 2. 查找窗口并截图
-    let windows = Window::all().map_err(|e| e.to_string())?;
-    // 优先只查找 "The Bazaar" 窗口
+    let windows = xcap::Window::all().map_err(|e| e.to_string())?;
+    // 优先查找包含鼠标且标题匹配 "The Bazaar" 的窗口
     let bazaar_window = windows.into_iter().find(|w| {
         let title = w.title().to_lowercase();
         let app_name = w.app_name().to_lowercase();
-        // 简单匹配
-        title.contains("the bazaar") || app_name.contains("the bazaar") || 
-        title.contains("thebazaar") || app_name.contains("thebazaar")
+        let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                        title.contains("thebazaar") || app_name.contains("thebazaar");
+        
+        if is_bazaar {
+            let wx = w.x();
+            let wy = w.y();
+            let ww = w.width();
+            let wh = w.height();
+            // 检查鼠标是否在窗口范围内
+            mouse_x >= wx && mouse_x < wx + ww as i32 &&
+            mouse_y >= wy && mouse_y < wy + wh as i32
+        } else {
+            false
+        }
     });
 
     let (screenshot, win_x, win_y) = if let Some(window) = bazaar_window {
-        log_to_file(&format!("Found window: {}, App: {}", window.title(), window.app_name()));
+        log_to_file(&format!("Found matching window under mouse: {}, App: {}", window.title(), window.app_name()));
         (window.capture_image().map_err(|e| e.to_string())?, window.x(), window.y())
     } else {
-        log_to_file("Window not found, capturing monitor under cursor.");
+        log_to_file("No matching Bazaar window under mouse, capturing monitor under cursor.");
         // Find monitor containing the mouse
         let monitors = Monitor::all().map_err(|e| e.to_string())?;
         if monitors.is_empty() { return Err("No monitor found".into()); }
@@ -499,6 +510,8 @@ pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
     let crop_h = if crop_y + crop_size as u32 > img_h { img_h.saturating_sub(crop_y) } else { crop_size as u32 };
 
     if crop_w < 50 || crop_h < 50 {
+        log_to_file(&format!("Error: Crop area too small ({}x{}). Mouse: ({},{}), Win: ({},{}), Rel: ({},{}), Img: {}x{}", 
+            crop_w, crop_h, mouse_x, mouse_y, win_x, win_y, rel_x, rel_y, img_w, img_h));
         return Err("裁剪区域太小或鼠标已移出窗口范围".into());
     }
 
