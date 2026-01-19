@@ -1,4 +1,4 @@
-﻿use std::sync::{Arc, RwLock};
+﻿use std::sync::{Arc, RwLock, OnceLock};
 use tauri::{State, Manager, Emitter};
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
@@ -10,10 +10,154 @@ use std::{thread, time, panic};
 use tokio;
 use chrono::Local;
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
+use windows::Win32::UI::WindowsAndMessaging::{IsIconic, GetForegroundWindow, FindWindowW, GetWindowLongW, SetWindowLongW, GWL_EXSTYLE, WS_EX_TOOLWINDOW, WS_EX_APPWINDOW};
+use windows::core::PCWSTR;
+use opencv::core::MatTraitConst;
+use device_query::{DeviceQuery, DeviceState, MouseState};
 
-use crate::monster_recognition::scan_and_identify_monster_at_mouse;
+use crate::monster_recognition::{scan_and_identify_monster_at_mouse, YoloDetection};
 
 pub mod monster_recognition;
+
+struct OverlayBounds {
+    x: i32,
+    y: i32,
+    width: i32,
+    height: i32,
+}
+
+struct OverlayState(Arc<std::sync::Mutex<OverlayBounds>>);
+
+#[tauri::command]
+fn update_overlay_bounds(x: i32, y: i32, w: i32, h: i32, state: State<'_, OverlayState>) {
+    let mut bounds = state.0.lock().unwrap();
+    bounds.x = x;
+    bounds.y = y;
+    bounds.width = w;
+    bounds.height = h;
+    println!("[Overlay Bounds] Updated: x={}, y={}, w={}, h={}", x, y, w, h);
+}
+
+static YOLO_SCAN_RESULTS: OnceLock<RwLock<Vec<YoloDetection>>> = OnceLock::new();
+static YOLO_SCAN_IMAGE: OnceLock<RwLock<Option<image::DynamicImage>>> = OnceLock::new();
+
+fn get_yolo_scan_results() -> &'static RwLock<Vec<YoloDetection>> {
+    YOLO_SCAN_RESULTS.get_or_init(|| RwLock::new(Vec::new()))
+}
+
+fn get_yolo_scan_image() -> &'static RwLock<Option<image::DynamicImage>> {
+    YOLO_SCAN_IMAGE.get_or_init(|| RwLock::new(None))
+}
+
+#[tauri::command]
+async fn trigger_yolo_scan(app: tauri::AppHandle) -> Result<usize, String> {
+    use xcap::Window;
+    
+    let resources_path = app.path().resource_dir().map_err(|e| e.to_string())?;
+    let model_path = resources_path.join("resources").join("models").join("best.onnx");
+
+    // 1. 获取 The Bazaar 窗口截图
+    let windows = Window::all().map_err(|e| e.to_string())?;
+    let bazaar_window = windows.into_iter().find(|w| {
+        let title = w.title().to_lowercase();
+        let app_name = w.app_name().to_lowercase();
+        let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                        title.contains("thebazaar") || app_name.contains("thebazaar");
+        is_bazaar && !title.contains("bazaarhelper")
+    }).ok_or("The Bazaar window not found")?;
+
+    let screenshot = bazaar_window.capture_image().map_err(|e| e.to_string())?;
+    let img = image::DynamicImage::ImageRgba8(screenshot);
+    
+    // 2. YOLO 识别
+    println!("[YOLO] Starting manual scan...");
+    let detections = monster_recognition::run_yolo_inference(&img, &model_path)?;
+    println!("[YOLO] Scan complete. Found {} objects.", detections.len());
+
+    // 3. 保存结果
+    {
+        let mut results = get_yolo_scan_results().write().unwrap();
+        *results = detections.clone();
+    }
+    {
+        let mut saved_img = get_yolo_scan_image().write().unwrap();
+        *saved_img = Some(img);
+    }
+
+    Ok(detections.len())
+}
+
+#[tauri::command]
+async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Result<Option<serde_json::Value>, String> {
+    use image::GenericImageView;
+    let detections = get_yolo_scan_results().read().unwrap().clone();
+    let img_opt = get_yolo_scan_image().read().unwrap().clone();
+    
+    if img_opt.is_none() {
+        return Ok(None);
+    }
+    let img = img_opt.unwrap();
+
+    // Check for any detection hit
+    let target_detection = detections.iter().find(|d| {
+        x >= d.x1 && x <= d.x2 && y >= d.y1 && y <= d.y2
+    });
+
+    if let Some(det) = target_detection {
+        println!("[YOLO Click] Clicked on Class {} at [{}, {}, {}, {}]", det.class_id, det.x1, det.y1, det.x2, det.y2);
+        
+        let w = (det.x2 - det.x1).max(50) as u32;
+        let h = (det.y2 - det.y1).max(50) as u32;
+        let crop_x = det.x1.max(0) as u32;
+        let crop_y = det.y1.max(0) as u32;
+        
+        let (img_w, img_h) = img.dimensions();
+        let final_w = if crop_x + w > img_w { img_w - crop_x } else { w };
+        let final_h = if crop_y + h > img_h { img_h - crop_y } else { h };
+        
+        let cropped = img.crop_imm(crop_x, crop_y, final_w, final_h);
+        let scene_desc = monster_recognition::extract_features_from_dynamic_image(&cropped, 1000)
+            .map_err(|e| e.to_string())?;
+            
+        if scene_desc.empty() {
+            return Ok(None);
+        }
+
+        if det.class_id == 3 {
+            // Card Recognition
+            let match_result = monster_recognition::match_card_descriptors(&scene_desc)?;
+            if let Some(cards) = match_result {
+                let card_list = cards.as_array().unwrap();
+                if !card_list.is_empty() {
+                    let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
+                    let db_state = app.state::<DbState>();
+                    if let Some(info) = get_item_info_internal(&db_state, card_id).await {
+                        return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+                    }
+                }
+            }
+        } else {
+            // Monster Recognition (All other classes)
+            let monster_match = monster_recognition::match_monster_descriptors_from_mat(&scene_desc)?;
+            if let Some(monster_name) = monster_match {
+                let db_state = app.state::<DbState>();
+                let monsters = db_state.monsters.read().unwrap();
+                if let Some(m) = monsters.get(&monster_name) {
+                    return Ok(Some(serde_json::json!({ "type": "monster", "data": m })));
+                }
+            }
+        }
+    }
+    Ok(None)
+}
+
+async fn get_item_info_internal(state: &DbState, id: String) -> Option<ItemData> {
+    let db = state.items.read().unwrap();
+    if let Some(&idx) = db.id_map.get(&id) {
+        return Some(db.list[idx].clone());
+    }
+    None
+}
 
 // --- Logger Helper ---
 pub fn log_to_file(msg: &str) {
@@ -460,6 +604,14 @@ async fn get_item_info(state: tauri::State<'_, DbState>, id: String) -> Result<O
 }
 
 #[tauri::command]
+async fn set_overlay_ignore_cursor(app: tauri::AppHandle, ignore: bool) -> Result<(), String> {
+    if let Some(overlay) = app.get_webview_window("overlay") {
+        overlay.set_ignore_cursor_events(ignore).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
@@ -695,7 +847,12 @@ pub fn run() {
     set_panic_hook();
     log_to_file("=================== App Starting ===================");
 
+    // Initialize Overlay Bounds State
+    let bounds = Arc::new(std::sync::Mutex::new(OverlayBounds { x: 0, y: 0, width: 0, height: 0 }));
+    let bounds_clone = bounds.clone();
+
     tauri::Builder::default()
+        .manage(OverlayState(bounds))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -711,8 +868,75 @@ pub fn run() {
             })),
             monsters: Arc::new(RwLock::new(serde_json::Map::new())),
         })
-        .setup(|app| {
-            log_system_info(app.handle());
+        .setup(move |app| {
+            let handle = app.handle().clone();
+            log_system_info(&handle);
+            
+            // --- Helper: Hide from Alt-Tab (ToolWindow Style) ---
+            if let Some(window) = app.get_webview_window("main") {
+                if let Ok(hwnd) = window.hwnd() {
+                    unsafe {
+                        use windows::Win32::Foundation::HWND as HWND_TYPE;
+                        // HWND wrapper differs in windows crate versions, casting usually fine
+                        let hwnd_val = HWND_TYPE(hwnd.0 as _);
+                        let style = GetWindowLongW(hwnd_val, GWL_EXSTYLE);
+                        SetWindowLongW(hwnd_val, GWL_EXSTYLE, (style | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32);
+                    }
+                }
+            }
+
+            // --- Helper: Start Mouse Monitor Thread (Dynamic Overlay & Global Click) ---
+            let handle_monitor = handle.clone();
+            let bounds_monitor = bounds_clone.clone(); // Moved from run scope
+            std::thread::spawn(move || {
+                let device_state = DeviceState::new();
+                let mut is_ignoring = false; // Tracks current pass-through state
+                let mut last_click_state = false;
+
+                let mut last_ignore_update = time::Instant::now();
+                let mut last_rbtn_state = false;
+
+                loop {
+                    let mouse: MouseState = device_state.get_mouse();
+                    let mx = mouse.coords.0;
+                    let my = mouse.coords.1;
+                    
+                    // 1. Dynamic Passthrough Logic (only check every 100ms to save CPU, or rely on loop)
+                    let (bx, by, bw, bh) = {
+                        let b = bounds_monitor.lock().unwrap();
+                        (b.x, b.y, b.width, b.height)
+                    };
+                    let is_mouse_in_overlay = mx >= bx && mx <= (bx + bw) && my >= by && my <= (by + bh);
+                    
+                    if let Some(window) = handle_monitor.get_webview_window("overlay") {
+                        if is_mouse_in_overlay {
+                             if is_ignoring {
+                                 println!("[Overlay] Mouse ENTERED interactable area (x:{}, y:{}, w:{}, h:{}) at ({}, {}). Disabling click-through.", bx, by, bw, bh, mx, my);
+                                 let _ = window.set_ignore_cursor_events(false);
+                                 is_ignoring = false;
+                             }
+                        } else {
+                             if !is_ignoring {
+                                 println!("[Overlay] Mouse left interactable area. Enabling click-through.");
+                                 let _ = window.set_ignore_cursor_events(true);
+                                 is_ignoring = true;
+                             }
+                        }
+                    }
+
+                    // 2. Global Right Click Detection (Edge Detection)
+                    unsafe {
+                        let rbtn_down = (GetAsyncKeyState(VK_RBUTTON.0 as i32) as i16) < 0;
+                        if rbtn_down && !last_rbtn_state {
+                            println!("[Debug Click] Global Right Click detected via GetAsyncKeyState at ({}, {})", mx, my);
+                            let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
+                        }
+                        last_rbtn_state = rbtn_down;
+                    }
+
+                    std::thread::sleep(std::time::Duration::from_millis(50));
+                }
+            });
             
             // 设置窗口不占据焦点，穿透焦点解决遮挡游戏悬浮的问题 (仅 Windows)
             #[cfg(target_os = "windows")]
@@ -725,9 +949,22 @@ pub fn run() {
                         unsafe {
                             let handle = HWND(hwnd.0 as _);
                             let ex_style = GetWindowLongW(handle, GWL_EXSTYLE);
-                            SetWindowLongW(handle, GWL_EXSTYLE, ex_style | WS_EX_NOACTIVATE.0 as i32);
+                            // 同时设置透传点击和不占焦点 + 隐藏于 Alt-Tab (WS_EX_TOOLWINDOW)
+                            let new_style = (ex_style | WS_EX_NOACTIVATE.0 as i32 | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32;
+                            SetWindowLongW(handle, GWL_EXSTYLE, new_style);
                         }
                     }
+                }
+
+                // 初始化 Overlay 窗口：透明 + 穿透
+                if let Some(overlay) = app.get_webview_window("overlay") {
+                    if let Ok(Some(monitor)) = overlay.primary_monitor() {
+                        let size = monitor.size();
+                        let half_width = size.width / 2;
+                        let _ = overlay.set_size(tauri::PhysicalSize::new(half_width, size.height));
+                        let _ = overlay.set_position(tauri::PhysicalPosition::new(half_width as i32, 0));
+                    }
+                    overlay.show().unwrap();
                 }
             }
 
@@ -743,6 +980,92 @@ pub fn run() {
 
             let db_state = app.state::<DbState>();
             
+            // --- 窗口同步逻辑：跟随游戏最小化/隐藏 ---
+            let sync_handle = app.handle().clone();
+            std::thread::spawn(move || {
+                let window_name: Vec<u16> = "The Bazaar\0".encode_utf16().collect();
+                let pc_name = PCWSTR(window_name.as_ptr());
+                let mut was_minimized = false;
+                let mut was_game_running = true;
+
+                loop {
+                    std::thread::sleep(std::time::Duration::from_millis(500));
+                    
+                    unsafe {
+                        let game_hwnd_res = FindWindowW(PCWSTR::null(), pc_name);
+                        let is_running = game_hwnd_res.is_ok();
+
+                        if is_running {
+                            let game_hwnd = game_hwnd_res.unwrap();
+                            let is_minimized = IsIconic(game_hwnd).as_bool();
+                            let foreground_hwnd = GetForegroundWindow();
+                            let is_foreground = foreground_hwnd == game_hwnd;
+
+                            // 获取主窗口和 Overlay 窗口
+                            let main_win = sync_handle.get_webview_window("main");
+                            let overlay_win = sync_handle.get_webview_window("overlay");
+
+                            if is_minimized {
+                                if !was_minimized {
+                                    if let Some(ref w) = main_win { let _ = w.hide(); }
+                                    if let Some(ref w) = overlay_win { let _ = w.hide(); }
+                                    was_minimized = true;
+                                }
+                            } else {
+                                if was_minimized {
+                                    // 游戏恢复了，显示窗口并置顶
+                                    if let Some(ref w) = main_win { 
+                                        let _ = w.show(); 
+                                        let _ = w.set_always_on_top(true);
+                                    }
+                                    if let Some(ref w) = overlay_win { 
+                                        let _ = w.show(); 
+                                        let _ = w.set_always_on_top(true);
+                                    }
+                                    was_minimized = false;
+                                }
+
+                                // 如果游戏不是前台，且用户点击了其他非本程序的窗口，隐藏 Overlay 以免干扰
+                                // (可选逻辑，根据用户需求“只悬浮在游戏上方”)
+                                if let Some(ref w_overlay) = overlay_win {
+                                    let helper_active = if let Some(mw) = main_win.as_ref() {
+                                        if let Ok(hwnd) = mw.hwnd() {
+                                            foreground_hwnd.0 as isize == hwnd.0 as isize
+                                        } else { false }
+                                    } else { false };
+                                    
+                                    let overlay_active = if let Ok(hwnd) = w_overlay.hwnd() {
+                                        foreground_hwnd.0 as isize == hwnd.0 as isize
+                                    } else { false };
+
+                                    // 如果当前活跃窗口既不是游戏，也不是辅助工具的窗口，则隐藏 Overlay
+                                    if !is_foreground && !helper_active && !overlay_active {
+                                        if w_overlay.is_visible().unwrap_or(false) {
+                                            let _ = w_overlay.hide();
+                                        }
+                                    } else {
+                                        if !w_overlay.is_visible().unwrap_or(false) {
+                                            let _ = w_overlay.show();
+                                            let _ = w_overlay.set_always_on_top(true);
+                                        }
+                                    }
+                                }
+                            }
+                            was_game_running = true;
+                        } else {
+                            // 游戏没运行
+                            if was_game_running {
+                                // 隐藏 Overlay
+                                if let Some(w) = sync_handle.get_webview_window("overlay") {
+                                    let _ = w.hide();
+                                }
+                                was_game_running = false;
+                            }
+                        }
+                    }
+                }
+            });
+
             // 1. Load Items DB
             let items_possible_paths = [
                 resources_path.join("resources").join("items_db.json"),
@@ -1298,6 +1621,25 @@ pub fn run() {
                                 println!("[DayMonitor] Day increased to {} after PVP completion", current_day);
                             }
 
+                            // YOLO Trigger on ANY State changed
+                            if trimmed.contains("State changed from [") && trimmed.contains("] to [") {
+                                log_to_file(&format!("State changed: {}", trimmed));
+                                let yolo_handle = handle.clone();
+                                tauri::async_runtime::spawn(async move {
+                                    // 延迟 500ms 等待游戏画面切换完成
+                                    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+                                    match monster_recognition::recognize_monsters_yolo(&yolo_handle) {
+                                        Ok(monsters) => {
+                                            if !monsters.is_empty() {
+                                                // 发送结果给 Overlay 窗口
+                                                let _ = yolo_handle.emit("overlay-update-monsters", monsters);
+                                            }
+                                        },
+                                        Err(e) => log_to_file(&format!("YOLO Recognition Error: {}", e)),
+                                    }
+                                });
+                            }
+
                             // Optional: PVE-only day detection (less common, but as a fallback)
                             if trimmed.contains("State changed from [ChoiceState] to [") {
                                 if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
@@ -1583,7 +1925,11 @@ pub fn run() {
             get_item_info,
             crate::monster_recognition::check_opencv_load, 
             crate::monster_recognition::recognize_card_at_mouse,
+            trigger_yolo_scan,
+            handle_overlay_right_click,
+            update_overlay_bounds,
             // clear_monster_cache,
+            set_overlay_ignore_cursor,
             restore_game_focus
         ])
         .run(tauri::generate_context!())

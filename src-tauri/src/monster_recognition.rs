@@ -1,17 +1,259 @@
-use image::{DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImageView, imageops::FilterType};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock};
 use rayon::prelude::*;
+use ndarray::Array;
+use ort::{session::{builder::GraphOptimizationLevel, Session}, value::Value};
 use opencv::{
     core::{Mat, Vector, KeyPoint, DMatch, NORM_HAMMING},
     features2d::{ORB, BFMatcher},
     imgcodecs::{imdecode, IMREAD_GRAYSCALE},
     prelude::*,
 };
+use tauri::Manager;
 use crate::log_to_file;
 use chrono;
+
+// YOLO 检测结果
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct YoloDetection {
+    pub x1: i32,
+    pub y1: i32,
+    pub x2: i32,
+    pub y2: i32,
+    pub confidence: f32,
+    pub class_id: usize,
+}
+
+static YOLO_SESSION: OnceLock<Mutex<Session>> = OnceLock::new();
+
+pub fn get_yolo_session(model_path: &PathBuf) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
+    if let Some(mutex) = YOLO_SESSION.get() {
+        return mutex.lock().map_err(|e| e.to_string());
+    }
+    
+    let session = Session::builder()
+        .map_err(|e| e.to_string())?
+        .with_optimization_level(GraphOptimizationLevel::Level3)
+        .map_err(|e| e.to_string())?
+        .with_intra_threads(4)
+        .map_err(|e| e.to_string())?
+        .commit_from_file(model_path)
+        .map_err(|e| e.to_string())?;
+        
+    let _ = YOLO_SESSION.set(Mutex::new(session));
+    YOLO_SESSION.get().unwrap().lock().map_err(|e| e.to_string())
+}
+
+pub fn run_yolo_inference(img: &DynamicImage, model_path: &PathBuf) -> Result<Vec<YoloDetection>, String> {
+    let mut session = get_yolo_session(model_path)?;
+    let (orig_w, orig_h) = img.dimensions();
+
+    // 1. 预处理 (640x640)
+    let resized = img.resize_exact(640, 640, FilterType::Lanczos3);
+    let rgb_img = resized.to_rgb8();
+    
+    let mut input_array = Array::zeros((1, 3, 640, 640));
+    for (x, y, pixel) in rgb_img.enumerate_pixels() {
+        input_array[[0, 0, y as usize, x as usize]] = pixel[0] as f32 / 255.0;
+        input_array[[0, 1, y as usize, x as usize]] = pixel[1] as f32 / 255.0;
+        input_array[[0, 2, y as usize, x as usize]] = pixel[2] as f32 / 255.0;
+    }
+
+    // 2. 推理
+    let input_shape = [1, 3, 640, 640];
+    let input_vec = input_array.into_raw_vec();
+    let input_tensor = Value::from_array((input_shape, input_vec)).map_err(|e: ort::Error| e.to_string())?;
+    let outputs = session.run(vec![("images", input_tensor)]).map_err(|e: ort::Error| e.to_string())?;
+    let output_value = &outputs["output0"];
+    
+    // 3. 后处理
+    let (shape, data) = output_value.try_extract_tensor::<f32>().map_err(|e: ort::Error| e.to_string())?;
+    
+    // YOLOv8/v11 输出通常是 [1, 4 + num_classes, 8400]
+    let num_elements = shape[1] as usize;
+    let num_anchors = shape[2] as usize;
+
+    let mut candidates = Vec::new();
+    let conf_threshold = 0.25;
+
+    for i in 0..num_anchors {
+        let mut max_score = 0.0;
+        let mut class_id = 0;
+        for c in 4..num_elements {
+            // output[[0, c, i]] -> data[c * num_anchors + i]
+            let score = data[c * num_anchors + i];
+            if score > max_score {
+                max_score = score;
+                class_id = c - 4;
+            }
+        }
+
+        if max_score > conf_threshold {
+            let xc = data[0 * num_anchors + i];
+            let yc = data[1 * num_anchors + i];
+            let w = data[2 * num_anchors + i];
+            let h = data[3 * num_anchors + i];
+
+            let x1 = (xc - w / 2.0) * (orig_w as f32 / 640.0);
+            let y1 = (yc - h / 2.0) * (orig_h as f32 / 640.0);
+            let x2 = (xc + w / 2.0) * (orig_w as f32 / 640.0);
+            let y2 = (yc + h / 2.0) * (orig_h as f32 / 640.0);
+
+            candidates.push(YoloDetection {
+                x1: x1 as i32,
+                y1: y1 as i32,
+                x2: x2 as i32,
+                y2: y2 as i32,
+                confidence: max_score,
+                class_id,
+            });
+        }
+    }
+
+    Ok(nms(candidates, 0.45))
+}
+
+fn nms(mut detections: Vec<YoloDetection>, iou_threshold: f32) -> Vec<YoloDetection> {
+    detections.sort_by(|a, b| b.confidence.partial_cmp(&a.confidence).unwrap_or(std::cmp::Ordering::Equal));
+    let mut result = Vec::new();
+
+    while !detections.is_empty() {
+        let best = detections.remove(0);
+        result.push(best.clone());
+        detections.retain(|d| {
+            calculate_iou(&best, d) < iou_threshold
+        });
+    }
+
+    result
+}
+
+fn calculate_iou(a: &YoloDetection, b: &YoloDetection) -> f32 {
+    let x1 = a.x1.max(b.x1);
+    let y1 = a.y1.max(b.y1);
+    let x2 = a.x2.min(b.x2);
+    let y2 = a.y2.min(b.y2);
+
+    let intersection_area = (x2 - x1).max(0) * (y2 - y1).max(0);
+    let area_a = (a.x2 - a.x1) * (a.y2 - a.y1);
+    let area_b = (b.x2 - b.x1) * (b.y2 - b.y1);
+
+    if area_a + area_b - intersection_area == 0 {
+        return 0.0;
+    }
+
+    intersection_area as f32 / (area_a + area_b - intersection_area) as f32
+}
+
+pub fn recognize_monsters_yolo(app: &tauri::AppHandle) -> Result<Vec<String>, String> {
+    use xcap::Window;
+    use std::time::Instant;
+
+    let start_total = Instant::now();
+    let resources_path = app.path().resource_dir().map_err(|e| e.to_string())?;
+    let model_path = resources_path.join("resources").join("models").join("best.onnx");
+
+    // 截图逻辑
+    let windows = Window::all().map_err(|e| e.to_string())?;
+    let bazaar_window = windows.into_iter().find(|w| {
+        let title = w.title().to_lowercase();
+        let app_name = w.app_name().to_lowercase();
+        let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                        title.contains("thebazaar") || app_name.contains("thebazaar");
+        is_bazaar && !title.contains("bazaarhelper")
+    });
+
+    let screenshot = if let Some(window) = bazaar_window {
+        window.capture_image().map_err(|e| e.to_string())?
+    } else {
+        use xcap::Monitor;
+        let monitors = Monitor::all().map_err(|e| e.to_string())?;
+        if monitors.is_empty() { return Err("No monitor found".into()); }
+        monitors[0].capture_image().map_err(|e| e.to_string())?
+    };
+
+    let img = DynamicImage::ImageRgba8(screenshot);
+    let detections = run_yolo_inference(&img, &model_path)?;
+    
+    let mut identified_monsters = Vec::new();
+    
+    // 过滤出 class_id = 1 (event) 的结果
+    for det in detections.iter().filter(|d| d.class_id == 1) {
+        // 进行裁剪
+        let x = det.x1.max(0) as u32;
+        let y = det.y1.max(0) as u32;
+        let w = (det.x2 - det.x1).max(0) as u32;
+        let h = (det.y2 - det.y1).max(0) as u32;
+        
+        if w > 0 && h > 0 {
+            let cropped = img.crop_imm(x, y, w, h);
+            // 调用现有的 ORB 匹配逻辑
+            if let Some(monster_name) = match_single_image_to_db(&cropped, None) {
+                identified_monsters.push(monster_name);
+            }
+        }
+    }
+
+    println!("[YOLO Recognition] Identified {} monsters in {:?}", identified_monsters.len(), start_total.elapsed());
+    Ok(identified_monsters)
+}
+
+fn match_single_image_to_db(img: &DynamicImage, day_filter: Option<String>) -> Option<String> {
+    let full_cache = TEMPLATE_CACHE.get()?;
+    let cache: Vec<&TemplateCache> = if let Some(ref target_day) = day_filter {
+        full_cache.iter().filter(|t| t.day == *target_day).collect()
+    } else {
+        full_cache.iter().collect()
+    };
+
+    // 预处理图像：转换为 OpenCV Mat
+    let gray_img_res = (|| -> Result<Mat, Box<dyn std::error::Error>> {
+        let mut buff = Vec::new();
+        img.write_to(&mut std::io::Cursor::new(&mut buff), image::ImageFormat::Png)?;
+        let mat = imdecode(&Mat::from_slice(&buff)?, opencv::imgcodecs::IMREAD_GRAYSCALE)?;
+        Ok(mat)
+    })();
+
+    let gray_img = gray_img_res.ok()?;
+
+    // 提取特征点
+    let mut orb = ORB::create(1000, 1.2f32, 8, 31, 0, 2, opencv::features2d::ORB_ScoreType::HARRIS_SCORE, 31, 20).ok()?;
+    let mut keypoints = Vector::<KeyPoint>::new();
+    let mut descriptors = Mat::default();
+    orb.detect_and_compute(&gray_img, &Mat::default(), &mut keypoints, &mut descriptors, false).ok()?;
+
+    if descriptors.empty() { return None; }
+
+    // 寻找最佳匹配
+    let mut best_name = None;
+    let mut max_matches = 0;
+
+    for t in cache {
+        // 使用 Mat::new_rows_cols_with_data 或 Mat::from_slice 重新创建描述符
+        let t_desc_res = (|| -> Result<Mat, Box<dyn std::error::Error>> {
+            let mut mat = unsafe { Mat::new_rows_cols(t.descriptor_rows, t.descriptor_cols, opencv::core::CV_8U)? };
+            let data_ptr = mat.data_mut();
+            unsafe {
+                std::ptr::copy_nonoverlapping(t.descriptors.as_ptr(), data_ptr, t.descriptors.len());
+            }
+            Ok(mat)
+        })();
+
+        if let Ok(t_mat) = t_desc_res {
+            if let Ok(matches) = match_orb_descriptors(&descriptors, &t_mat) {
+                if matches > max_matches && matches > 15 { // 设定一个阈值
+                    max_matches = matches;
+                    best_name = Some(t.name.clone());
+                }
+            }
+        }
+    }
+
+    best_name
+}
 
 #[tauri::command]
 pub fn check_opencv_load() -> Result<String, String> {
@@ -129,7 +371,7 @@ fn extract_features_orb(image_path: &str, n_features: i32) -> Result<(Vec<(f32, 
 }
 
 // 从 DynamicImage 提取特征 (用于截图分析)
-fn extract_features_from_dynamic_image(img: &DynamicImage, n_features: i32) -> Result<Mat, opencv::Error> {
+pub fn extract_features_from_dynamic_image(img: &DynamicImage, n_features: i32) -> Result<Mat, opencv::Error> {
     // 将图像保存到临时缓冲区
     let mut bytes = Vec::new();
     use image::ImageFormat;
@@ -158,6 +400,92 @@ fn extract_features_from_dynamic_image(img: &DynamicImage, n_features: i32) -> R
     orb.detect_and_compute(&gray_img, &mask, &mut keypoints, &mut descriptors, false)?;
 
     Ok(descriptors)
+}
+
+pub fn match_card_descriptors(scene_desc: &Mat) -> Result<Option<serde_json::Value>, String> {
+    let cache = CARD_TEMPLATE_CACHE.get().ok_or("Card templates not loaded")?;
+    let mut results: Vec<(&TemplateCache, usize, f32)> = Vec::new();
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        let mut template_desc = match unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U) } {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        unsafe { std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len()); }
+
+        if let Ok(matches) = match_orb_descriptors(&scene_desc, &template_desc) {
+            let min_kp = (template.descriptor_rows as f32).min(scene_desc.rows() as f32);
+            let confidence = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+            results.push((template, matches, confidence));
+        }
+    }
+    
+    results.sort_by(|a, b| b.1.cmp(&a.1));
+
+    let mut matches_found = Vec::new();
+    for i in 0..results.len().min(10) { 
+        let (top, matches, confidence) = results[i];
+        if matches > 12 && confidence > 0.12 {
+             matches_found.push(serde_json::json!({
+                 "id": top.day,
+                 "name": top.name,
+                 "confidence": confidence,
+                 "match_count": matches
+             }));
+        }
+        if matches_found.len() >= 3 { break; }
+    }
+
+    if !matches_found.is_empty() {
+        return Ok(Some(serde_json::json!(matches_found)));
+    }
+    Ok(None)
+}
+
+pub fn match_monster_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Option<String>, String> {
+    let cache = TEMPLATE_CACHE.get().ok_or("Monster templates not loaded")?;
+    let mut best_name = None;
+    let mut max_matches = 0;
+    let mut best_score = 0.0f32;
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        let rows = template.descriptor_rows;
+        let cols = template.descriptor_cols;
+        
+        let mut template_desc = match unsafe { Mat::new_rows_cols(rows, cols, CV_8U) } {
+            Ok(mat) => mat,
+            Err(_) => continue,
+        };
+        if template.descriptors.len() == (rows * cols) as usize {
+            unsafe {
+                std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len());
+            }
+        } else {
+            continue;
+        }
+
+        if let Ok(matches) = match_orb_descriptors(&scene_descriptors, &template_desc) {
+            let scene_kp_count = scene_descriptors.rows() as f32;
+            let template_kp_count = template.descriptor_rows as f32;
+            let min_kp = scene_kp_count.min(template_kp_count);
+            let score = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+
+            if matches > max_matches {
+                max_matches = matches;
+                best_score = score;
+                best_name = Some(template.name.clone());
+            }
+        }
+    }
+
+    if max_matches >= 10 || best_score > 0.15 {
+        return Ok(best_name);
+    }
+    Ok(None)
 }
 
 // ORB 匹配函数 - 使用 Lowe's Ratio Test

@@ -184,6 +184,15 @@ export default function App() {
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // 禁用右键菜单
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("contextmenu", handleContextMenu);
+    return () => window.removeEventListener("contextmenu", handleContextMenu);
+  }, []);
+
   // 监听扫描错误
   useEffect(() => {
     const unlisten = listen<string>("scan-error", (event) => {
@@ -1020,6 +1029,18 @@ export default function App() {
     }
   };
 
+  const handleManualYoloScan = async () => {
+    try {
+        console.log("Triggering manual YOLO scan...");
+        await invoke("trigger_yolo_scan");
+        setStatusMsg("已触发全屏识别");
+        setTimeout(() => setStatusMsg(null), 2000);
+    } catch (e) {
+        console.error("Manual scan failed:", e);
+        setErrorMessage(`手动识别失败: ${e}`);
+    }
+  };
+
   const handleAutoRecognition = async (day: number | null) => {
     if (isRecognizing) return;
     setIsRecognizing(true);
@@ -1735,6 +1756,13 @@ export default function App() {
               {activeTab === "monster" ? (
                 <>
                   <div className="monster-controls">
+                    <button 
+                      className="bulk-btn" 
+                      style={{ width: '100%', marginBottom: '10px', background: 'var(--c-gold)', color: '#000', fontWeight: 'bold' }} 
+                      onClick={handleManualYoloScan}
+                    >
+                      📸 截屏识物 (YOLO)
+                    </button>
                     <div className="day-tabs">
                       <div className="day-row">
                         {["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"].map(d => (

@@ -5,6 +5,111 @@
   box-sizing: border-box;
 }
 
+/* Overlay Styles */
+.overlay-container {
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  pointer-events: none; /* 让大部分区域穿透 */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay-content-wrapper {
+  pointer-events: none; /* 穿透背景 */
+  display: flex;
+  flex-direction: column;
+  padding: 50px;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.monster-overlay-group {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 10px;
+  width: fit-content;
+  pointer-events: auto; /* 只有这个区域响应鼠标 */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.monster-name-tag {
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  cursor: move;
+  user-select: none;
+}
+
+.monster-name-tag.drag-region {
+  -webkit-app-region: drag;
+}
+
+.overlay-items-row {
+  display: flex;
+  gap: 10px;
+}
+
+.overlay-item-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #444;
+  background: #222;
+  cursor: pointer;
+}
+
+.overlay-item-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay-tooltip {
+  position: fixed;
+  background: rgba(18, 18, 18, 0.95);
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px;
+  width: 250px;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.tooltip-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.tooltip-tier {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.tooltip-cd {
+  color: #00ecc3;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.tooltip-desc {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #eee;
+}
+
 :root {
   /* 颜色坐标原点 */
   --haste-rgb: 0, 236, 195;

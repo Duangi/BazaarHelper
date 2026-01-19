@@ -12,6 +12,7 @@
     "app":  {
                 "windows":  [
                                 {
+                                    "label": "main",
                                     "title":  "The Bazaar Helper",
                                     "width":  600,
                                     "height":  850,
@@ -22,6 +23,20 @@
                                     "transparent":  true,
                                     "visible":  false,
                                     "dragDropEnabled":  true
+                                },
+                                {
+                                    "label": "overlay",
+                                    "title": "Bazaar Overlay",
+                                    "width": 800,
+                                    "height": 1080,
+                                    "resizable": false,
+                                    "alwaysOnTop": true,
+                                    "decorations": false,
+                                    "transparent": true,
+                                    "visible": false,
+                                    "skipTaskbar": true,
+                                    "shadow": false,
+                                    "incognito": true
                                 }
                             ],
                 "security":  {

@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": ["main", "overlay"],
   "permissions": [
     "core:default",
     "opener:default",
@@ -14,6 +14,7 @@
     "core:window:allow-show",
     "core:window:allow-set-shadow",
     "core:window:allow-start-dragging",
+    "core:window:allow-set-ignore-cursor-events",
     
     "process:allow-restart",
     "process:allow-exit",
