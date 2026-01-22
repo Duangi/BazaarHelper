@@ -19,23 +19,21 @@ use crate::monster_recognition::{scan_and_identify_monster_at_mouse, YoloDetecti
 
 pub mod monster_recognition;
 
-struct OverlayBounds {
+#[derive(Clone, serde::Deserialize, serde::Serialize)]
+struct BoundsRect {
     x: i32,
     y: i32,
-    width: i32,
-    height: i32,
+    w: i32,
+    h: i32,
 }
 
-struct OverlayState(Arc<std::sync::Mutex<OverlayBounds>>);
+struct OverlayState(Arc<std::sync::Mutex<Vec<BoundsRect>>>);
 
 #[tauri::command]
-fn update_overlay_bounds(x: i32, y: i32, w: i32, h: i32, state: State<'_, OverlayState>) {
-    let mut bounds = state.0.lock().unwrap();
-    bounds.x = x;
-    bounds.y = y;
-    bounds.width = w;
-    bounds.height = h;
-    println!("[Overlay Bounds] Updated: x={}, y={}, w={}, h={}", x, y, w, h);
+fn update_overlay_bounds(bounds: Vec<BoundsRect>, state: State<'_, OverlayState>) {
+    let mut bounds_state = state.0.lock().unwrap();
+    *bounds_state = bounds.clone();
+    // 减少日志输出频率
 }
 
 static YOLO_SCAN_RESULTS: OnceLock<RwLock<Vec<YoloDetection>>> = OnceLock::new();
@@ -50,41 +48,123 @@ fn get_yolo_scan_image() -> &'static RwLock<Option<image::DynamicImage>> {
 }
 
 #[tauri::command]
-async fn trigger_yolo_scan(app: tauri::AppHandle) -> Result<usize, String> {
-    use xcap::Window;
+fn set_show_yolo_monitor(app: tauri::AppHandle, show: bool) -> Result<(), String> {
+    // Broadcast the show/hide event to all windows; overlay will handle it
+    let _ = app.emit("set-show-yolo-monitor", show);
+    // Persist preference
+    let mut state = load_state();
+    state.show_yolo_monitor = show;
+    save_state(&state);
+    Ok(())
+}
+
+#[tauri::command]
+#[allow(non_snake_case)]
+async fn trigger_yolo_scan(app: tauri::AppHandle, useGpu: bool) -> Result<usize, String> {
+    // Frontend and backend now use canonical `useGpu` parameter
+    let use_gpu_flag = useGpu;
+    use xcap::{Window, Monitor};
     
-    let resources_path = app.path().resource_dir().map_err(|e| e.to_string())?;
-    let model_path = resources_path.join("resources").join("models").join("best.onnx");
+    // Notify frontend scan started
+    let _ = app.emit("yolo-scan-start", ());
 
-    // 1. 获取 The Bazaar 窗口截图
-    let windows = Window::all().map_err(|e| e.to_string())?;
-    let bazaar_window = windows.into_iter().find(|w| {
-        let title = w.title().to_lowercase();
-        let app_name = w.app_name().to_lowercase();
-        let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
-                        title.contains("thebazaar") || app_name.contains("thebazaar");
-        is_bazaar && !title.contains("bazaarhelper")
-    }).ok_or("The Bazaar window not found")?;
+    let result = (|| -> Result<usize, String> {
+        let resources_path = app.path().resource_dir().map_err(|e| e.to_string())?;
+        let model_path = resources_path.join("resources").join("models").join("best.onnx");
 
-    let screenshot = bazaar_window.capture_image().map_err(|e| e.to_string())?;
-    let img = image::DynamicImage::ImageRgba8(screenshot);
-    
-    // 2. YOLO 识别
-    println!("[YOLO] Starting manual scan...");
-    let detections = monster_recognition::run_yolo_inference(&img, &model_path)?;
-    println!("[YOLO] Scan complete. Found {} objects.", detections.len());
+        // 1. 获取 The Bazaar 窗口截图，如果未找到则使用主屏幕截图
+        let windows = Window::all().map_err(|e| e.to_string())?;
+        
+        // 优先寻找游戏窗口
+        let target_window = windows.iter().find(|w| {
+            let title = w.title().to_lowercase();
+            let app_name = w.app_name().to_lowercase();
+            let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                            title.contains("thebazaar") || app_name.contains("thebazaar");
+            is_bazaar && !title.contains("bazaarhelper")
+        });
 
-    // 3. 保存结果
-    {
-        let mut results = get_yolo_scan_results().write().unwrap();
-        *results = detections.clone();
+        let screenshot = if let Some(w) = target_window {
+            println!("[YOLO] Found Game Window: '{}' at ({},{})", w.title(), w.x(), w.y());
+            w.capture_image().map_err(|e| e.to_string())?
+        } else {
+            println!("[YOLO] The Bazaar window not found, falling back to primary monitor scan.");
+            let monitors = Monitor::all().map_err(|e| e.to_string())?;
+            let monitor = monitors.into_iter().next().ok_or("No monitor found")?;
+            monitor.capture_image().map_err(|e| e.to_string())?
+        };
+
+        let img = image::DynamicImage::ImageRgba8(screenshot);
+        
+        // 2. YOLO 识别
+        println!("[YOLO] Starting manual scan with GPU acceleration: {}...", use_gpu_flag);
+        let detections = monster_recognition::run_yolo_inference(&img, &model_path, use_gpu_flag)?;
+        println!("[YOLO] Scan complete. Found {} objects.", detections.len());
+
+        // Debug: 将结果画在图上并保存
+        #[cfg(debug_assertions)]
+        {
+            use imageproc::drawing::draw_hollow_rect_mut;
+            use imageproc::rect::Rect;
+            use image::Rgba;
+            use std::fs;
+
+            let mut debug_img = img.clone();
+            for det in &detections {
+                 let color = Rgba([255, 0, 0, 255]); // Red for bounding box
+                 let width = (det.x2 - det.x1).max(1) as u32;
+                 let height = (det.y2 - det.y1).max(1) as u32;
+                 
+                 draw_hollow_rect_mut(
+                    &mut debug_img,
+                    Rect::at(det.x1, det.y1).of_size(width, height),
+                    color
+                 );
+            }
+            
+            // 尝试保存到 target/debug/test 目录
+            let debug_dir = std::env::current_exe()
+                .map(|p| p.parent().unwrap().join("test"))
+                .unwrap_or_else(|_| std::path::PathBuf::from("debug_test"));
+                
+            if !debug_dir.exists() {
+                let _ = fs::create_dir_all(&debug_dir);
+            }
+            
+            let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+            let filename = debug_dir.join(format!("yolo_debug_{}.png", timestamp));
+            
+            match debug_img.save(&filename) {
+                Ok(_) => println!("[Debug] Saved YOLO debug image to: {:?}", filename),
+                Err(e) => println!("[Debug] Failed to save debug image: {}", e),
+            }
+        }
+
+        // 3. 保存结果
+        {
+            let mut results = get_yolo_scan_results().write().unwrap();
+            *results = detections.clone();
+        }
+        {
+            let mut saved_img = get_yolo_scan_image().write().unwrap();
+            *saved_img = Some(img);
+        }
+        
+        Ok(detections.len())
+    })();
+
+    match &result {
+        Ok(count) => {
+            println!("[YOLO] Scan succeeded with {} detections", count);
+            let _ = app.emit("yolo-scan-end", ());
+        }
+        Err(e) => {
+            log_to_file(&format!("[YOLO Error] {}", e));
+            let _ = app.emit("scan-error", e.clone());
+        }
     }
-    {
-        let mut saved_img = get_yolo_scan_image().write().unwrap();
-        *saved_img = Some(img);
-    }
 
-    Ok(detections.len())
+    result
 }
 
 #[tauri::command]
@@ -123,8 +203,11 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
             return Ok(None);
         }
 
-        if det.class_id == 3 {
-            // Card Recognition
+        // names: ['day', 'event', 'item', 'monstericon', 'randomicon', 'shopicon', 'skill']
+        // 0: day, 1: event, 2: item, 3: monstericon, 4: randomicon, 5: shopicon, 6: skill
+
+        if det.class_id == 2 || det.class_id == 6 {
+            // Item (2) or Skill (6) -> Card Recognition
             let match_result = monster_recognition::match_card_descriptors(&scene_desc)?;
             if let Some(cards) = match_result {
                 let card_list = cards.as_array().unwrap();
@@ -136,16 +219,51 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
                     }
                 }
             }
-        } else {
-            // Monster Recognition (All other classes)
-            let monster_match = monster_recognition::match_monster_descriptors_from_mat(&scene_desc)?;
-            if let Some(monster_name) = monster_match {
-                let db_state = app.state::<DbState>();
-                let monsters = db_state.monsters.read().unwrap();
-                if let Some(m) = monsters.get(&monster_name) {
-                    return Ok(Some(serde_json::json!({ "type": "monster", "data": m })));
+        } else if det.class_id == 1 {
+            // Event (1) -> Check for Monster Icon (3) overlap
+            // Logic: Is there any Icon (3) inside this Event (1) with > 50% area overlap (relative to Icon)?
+            let monster_icons: Vec<&YoloDetection> = detections.iter().filter(|d| d.class_id == 3).collect();
+            let mut is_monster = false;
+            
+            for icon in monster_icons {
+                // Calculate Intersection
+                let ix1 = det.x1.max(icon.x1);
+                let iy1 = det.y1.max(icon.y1);
+                let ix2 = det.x2.min(icon.x2);
+                let iy2 = det.y2.min(icon.y2);
+                
+                let i_area = (ix2 - ix1).max(0) * (iy2 - iy1).max(0);
+                let icon_full_area = (icon.x2 - icon.x1) * (icon.y2 - icon.y1);
+                
+                if icon_full_area > 0 && (i_area as f32 / icon_full_area as f32) > 0.5 {
+                    is_monster = true;
+                    break;
                 }
             }
+            
+            if is_monster {
+                let monster_match = monster_recognition::match_monster_descriptors_from_mat(&scene_desc)?;
+                if let Some(monster_name) = monster_match {
+                    let db_state = app.state::<DbState>();
+                    let monsters = db_state.monsters.read().unwrap();
+                    if let Some(m) = monsters.get(&monster_name) {
+                        return Ok(Some(serde_json::json!({ "type": "monster", "data": m })));
+                    }
+                }
+            }
+        } else {
+             // Fallback or other classes (e.g. 3 directly?)
+             // Monster recognition for direct MonsterIcon (3) or others if needed
+             if det.class_id == 3 {
+                 let monster_match = monster_recognition::match_monster_descriptors_from_mat(&scene_desc)?;
+                 if let Some(monster_name) = monster_match {
+                     let db_state = app.state::<DbState>();
+                     let monsters = db_state.monsters.read().unwrap();
+                     if let Some(m) = monsters.get(&monster_name) {
+                         return Ok(Some(serde_json::json!({ "type": "monster", "data": m })));
+                     }
+                 }
+             }
         }
     }
     Ok(None)
@@ -239,6 +357,10 @@ pub struct PersistentState {
     pub detection_hotkey: Option<i32>,
     #[serde(default)]
     pub card_detection_hotkey: Option<i32>,
+    #[serde(default)]
+    pub toggle_collapse_hotkey: Option<i32>,
+    #[serde(default = "default_show_yolo_monitor")]
+    pub show_yolo_monitor: bool,
 }
 
 impl Default for PersistentState {
@@ -250,9 +372,13 @@ impl Default for PersistentState {
             current_stash: HashSet::new(),
             detection_hotkey: Some(VK_RBUTTON.0 as i32),
             card_detection_hotkey: Some(VK_MENU.0 as i32),
+            toggle_collapse_hotkey: Some(192), // Default: ~ key (Backtick) (VK_OEM_3 is 192 usually, or 0xC0)
+            show_yolo_monitor: true,
         }
     }
 }
+
+fn default_show_yolo_monitor() -> bool { true }
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RawSkill {
     pub en: Option<String>,
@@ -268,20 +394,32 @@ pub struct RawItem {
     pub available_tiers: Option<String>,
     pub heroes: Option<String>,
     pub tags: Option<String>,
+    pub hidden_tags: Option<String>,
     pub size: Option<String>,
     pub cooldown: Option<f32>,
     pub cooldown_tiers: Option<String>,
+    pub damage: Option<i32>,
     pub damage_tiers: Option<String>,
+    pub heal: Option<i32>,
     pub heal_tiers: Option<String>,
+    pub shield: Option<i32>,
     pub shield_tiers: Option<String>,
+    pub ammo: Option<i32>,
     pub ammo_tiers: Option<String>,
+    pub crit: Option<i32>,
     pub crit_tiers: Option<String>,
+    pub multicast: Option<i32>,
     pub multicast_tiers: Option<String>,
+    pub burn: Option<i32>,
     pub burn_tiers: Option<String>,
+    pub poison: Option<i32>,
     pub poison_tiers: Option<String>,
+    pub regen: Option<i32>,
     pub regen_tiers: Option<String>,
+    pub lifesteal: Option<i32>,
     pub lifesteal_tiers: Option<String>,
     pub skills: Option<Vec<RawSkill>>,
+    pub descriptions: Option<Vec<RawSkill>>,
     pub enchantments: Option<serde_json::Value>,
     pub image: Option<String>,
     #[serde(default)]
@@ -296,24 +434,38 @@ pub struct ItemData {
     pub tier: String,
     pub available_tiers: String,
     pub tags: String,
+    pub hidden_tags: String,
     pub size: Option<String>,
     pub processed_tags: Vec<String>,
     pub heroes: Vec<String>,
     pub cooldown: Option<f32>,
     pub cooldown_tiers: String,
     pub damage_tiers: String,
+    pub damage: Option<i32>,
     pub heal_tiers: String,
+    pub heal: Option<i32>,
     pub shield_tiers: String,
+    pub shield: Option<i32>,
     pub ammo_tiers: String,
+    pub ammo: Option<i32>,
     pub crit_tiers: String,
+    pub crit: Option<i32>,
     pub multicast_tiers: String,
+    pub multicast: Option<i32>,
     pub burn_tiers: String,
+    pub burn: Option<i32>,
     pub poison_tiers: String,
+    pub poison: Option<i32>,
     pub regen_tiers: String,
+    pub regen: Option<i32>,
     pub lifesteal_tiers: String,
-    pub skills: Vec<String>,
+    pub lifesteal: Option<i32>,
+    pub skills: Vec<SkillText>,
     pub enchantments: Vec<String>,
     pub description: String,
+    pub instance_id: Option<String>,
+    pub description_cn: Option<String>, // Added this
+    pub image: Option<String>, // Added this
 }
 
 impl From<RawItem> for ItemData {
@@ -339,9 +491,22 @@ impl From<RawItem> for ItemData {
             .filter(|s| !s.contains("隐藏") && !s.contains("Hide") && !s.contains("Hidden"))
             .collect();
 
-        let skills = raw.skills.unwrap_or_default().into_iter()
-            .filter_map(|s| s.cn.or(s.en))
-            .filter(|s| !s.is_empty())
+        // 提取隐藏标签
+        let hidden_tags = raw.hidden_tags.unwrap_or_default();
+
+        // Use descriptions if skills is empty (for skill-type items from skills_db)
+        let skill_source = if raw.skills.is_some() { 
+            raw.skills.unwrap_or_default() 
+        } else { 
+            raw.descriptions.unwrap_or_default() 
+        };
+        
+        let skills = skill_source.into_iter()
+            .map(|s| SkillText {
+                en: s.en.unwrap_or_default(),
+                cn: s.cn.unwrap_or_default(),
+            })
+            .filter(|s| !s.cn.is_empty() || !s.en.is_empty())
             .collect();
         
         // Handle enchantments
@@ -365,6 +530,17 @@ impl From<RawItem> for ItemData {
                 }
             }
         }
+        
+        let damage = raw.damage;
+        let heal = raw.heal;
+        let shield = raw.shield;
+        let ammo = raw.ammo;
+        let crit = raw.crit;
+        let multicast = raw.multicast;
+        let burn = raw.burn;
+        let poison = raw.poison;
+        let regen = raw.regen;
+        let lifesteal = raw.lifesteal;
         // Removed .sort() to keep JSON order
 
         ItemData {
@@ -374,24 +550,38 @@ impl From<RawItem> for ItemData {
             tier: raw.starting_tier.clone().unwrap_or_else(|| "Bronze".to_string()),
             available_tiers: raw.available_tiers.unwrap_or_default(),
             tags: raw.tags.unwrap_or_default(),
+            hidden_tags,
             size: raw.size,
             processed_tags,
             heroes,
-            cooldown: raw.cooldown.map(|c| c / 1000.0), // ms to s
+            cooldown: raw.cooldown,
             cooldown_tiers: raw.cooldown_tiers.unwrap_or_default(),
             damage_tiers: raw.damage_tiers.unwrap_or_default(),
+            damage,
             heal_tiers: raw.heal_tiers.unwrap_or_default(),
+            heal,
             shield_tiers: raw.shield_tiers.unwrap_or_default(),
+            shield,
             ammo_tiers: raw.ammo_tiers.unwrap_or_default(),
+            ammo,
             crit_tiers: raw.crit_tiers.unwrap_or_default(),
+            crit,
             multicast_tiers: raw.multicast_tiers.unwrap_or_default(),
+            multicast,
             burn_tiers: raw.burn_tiers.unwrap_or_default(),
+            burn,
             poison_tiers: raw.poison_tiers.unwrap_or_default(),
+            poison,
             regen_tiers: raw.regen_tiers.unwrap_or_default(),
+            regen,
             lifesteal_tiers: raw.lifesteal_tiers.unwrap_or_default(),
+            lifesteal,
             skills,
             enchantments,
-            description: raw.description_cn.unwrap_or_default(),
+            description: "".to_string(), // will be populated
+            instance_id: None, // Used for tracked stash items
+            description_cn: raw.description_cn,
+            image: raw.image,
         }
     }
 }
@@ -404,15 +594,45 @@ pub struct TierInfo {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SkillText {
+    pub en: String,
+    pub cn: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterSubItem {
     pub id: Option<String>,
     pub name: String,
     pub name_en: Option<String>,
     pub tier: Option<String>,
     pub current_tier: Option<String>,
+    pub starting_tier: Option<String>,
     pub tags: Option<Vec<String>>,
     pub tiers: Option<HashMap<String, Option<TierInfo>>>,
+    pub size: Option<String>,
+    pub damage_tiers: Option<String>,
+    pub heal_tiers: Option<String>,
+    pub shield_tiers: Option<String>,
+    pub ammo_tiers: Option<String>,
+    pub burn_tiers: Option<String>,
+    pub poison_tiers: Option<String>,
+    pub regen_tiers: Option<String>,
+    pub lifesteal_tiers: Option<String>,
+    pub multicast_tiers: Option<String>,
+    pub cooldown: Option<i32>,
+    pub cooldown_tiers: Option<String>,
+    pub skills: Option<Vec<SkillText>>,
+    pub damage: Option<i32>,
+    pub heal: Option<i32>,
+    pub shield: Option<i32>,
+    pub burn: Option<i32>,
+    pub poison: Option<i32>,
+    pub regen: Option<i32>,
+    pub lifesteal: Option<i32>,
+    pub ammo: Option<i32>,
+    pub multicast: Option<i32>,
 }
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MonsterData {
@@ -457,21 +677,77 @@ fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &st
     let mut size = override_size.map(|s| s.to_string());
     let mut id = "".to_string();
     let mut tiers = serde_json::Map::new();
+    let mut skills: Vec<SkillText> = Vec::new();
+    let mut damage_tiers = None;
+    let mut heal_tiers = None;
+    let mut shield_tiers = None;
+    let mut ammo_tiers = None;
+    let mut burn_tiers = None;
+    let mut poison_tiers = None;
+    let mut regen_tiers = None;
+    let mut lifesteal_tiers = None;
+    let mut multicast_tiers = None;
+    let mut cooldown_tiers = None;
+    let mut starting_tier: Option<String> = None;
+    
+    // Single value fallbacks
+    let mut damage_val = None;
+    let mut heal_val = None;
+    let mut shield_val = None;
+    let mut burn_val = None;
+    let mut poison_val = None;
+    let mut regen_val = None;
+    let mut lifesteal_val = None;
+    let mut ammo_val = None;
+    let mut multicast_val = None;
 
     if let Some(item) = item_data {
         name_cn = item.name_cn;
         name_en = item.name;
         id = item.uuid;
+        starting_tier = Some(item.tier.clone());
+
         if size.is_none() {
             size = item.size;
         }
         if !item.description.is_empty() {
             desc.push(item.description.clone());
         }
-        for s in &item.skills {
-            desc.push(s.clone());
+        
+        // 直接使用ItemData中的SkillText数组
+        skills = item.skills.clone();
+        
+        // 为desc添加技能文本（用于tiers显示）
+        for skill in &item.skills {
+            let skill_text = if !skill.cn.is_empty() { &skill.cn } else { &skill.en };
+            if !skill_text.is_empty() {
+                desc.push(skill_text.clone());
+            }
         }
         cooldown = item.cooldown;
+        
+        // Populate single values from ItemData
+        damage_val = item.damage;
+        heal_val = item.heal;
+        shield_val = item.shield;
+        burn_val = item.burn;
+        poison_val = item.poison;
+        regen_val = item.regen;
+        lifesteal_val = item.lifesteal;
+        ammo_val = item.ammo;
+        multicast_val = item.multicast;
+        
+        // 提取各种tier字段（移除原来的skills提取代码）
+        damage_tiers = if !item.damage_tiers.is_empty() { Some(item.damage_tiers.clone()) } else { None };
+        heal_tiers = if !item.heal_tiers.is_empty() { Some(item.heal_tiers.clone()) } else { None };
+        shield_tiers = if !item.shield_tiers.is_empty() { Some(item.shield_tiers.clone()) } else { None };
+        ammo_tiers = if !item.ammo_tiers.is_empty() { Some(item.ammo_tiers.clone()) } else { None };
+        burn_tiers = if !item.burn_tiers.is_empty() { Some(item.burn_tiers.clone()) } else { None };
+        poison_tiers = if !item.poison_tiers.is_empty() { Some(item.poison_tiers.clone()) } else { None };
+        regen_tiers = if !item.regen_tiers.is_empty() { Some(item.regen_tiers.clone()) } else { None };
+        lifesteal_tiers = if !item.lifesteal_tiers.is_empty() { Some(item.lifesteal_tiers.clone()) } else { None };
+        multicast_tiers = if !item.multicast_tiers.is_empty() { Some(item.multicast_tiers.clone()) } else { None };
+        cooldown_tiers = if !item.cooldown_tiers.is_empty() { Some(item.cooldown_tiers.clone()) } else { None };
 
         // Parse multiples tiers if available
         if !item.available_tiers.is_empty() {
@@ -528,6 +804,32 @@ fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &st
     
     sub.insert("size".to_string(), final_size.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
     sub.insert("tiers".to_string(), serde_json::Value::Object(tiers));
+    
+    // 添加所有新字段
+    sub.insert("damage_tiers".to_string(), damage_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("heal_tiers".to_string(), heal_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("shield_tiers".to_string(), shield_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("ammo_tiers".to_string(), ammo_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("burn_tiers".to_string(), burn_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("poison_tiers".to_string(), poison_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("regen_tiers".to_string(), regen_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("lifesteal_tiers".to_string(), lifesteal_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("multicast_tiers".to_string(), multicast_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("cooldown".to_string(), cooldown.map(|c| serde_json::Value::Number((c as i32).into())).unwrap_or(serde_json::Value::Null));
+    sub.insert("cooldown_tiers".to_string(), cooldown_tiers.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+    sub.insert("skills".to_string(), serde_json::to_value(skills).unwrap_or(serde_json::Value::Null));
+    sub.insert("starting_tier".to_string(), starting_tier.map(serde_json::Value::String).unwrap_or(serde_json::Value::Null));
+
+    // Valid single values
+    if let Some(v) = damage_val { sub.insert("damage".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = heal_val { sub.insert("heal".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = shield_val { sub.insert("shield".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = burn_val { sub.insert("burn".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = poison_val { sub.insert("poison".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = regen_val { sub.insert("regen".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = lifesteal_val { sub.insert("lifesteal".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = ammo_val { sub.insert("ammo".to_string(), serde_json::Value::Number(v.into())); }
+    if let Some(v) = multicast_val { sub.insert("multicast".to_string(), serde_json::Value::Number(v.into())); }
     
     serde_json::Value::Object(sub)
 }
@@ -650,6 +952,12 @@ fn get_cache_path() -> PathBuf {
     }
 }
 
+#[tauri::command]
+fn get_show_yolo_monitor() -> Result<bool, String> {
+    let state = load_state();
+    Ok(state.show_yolo_monitor)
+}
+
 fn get_prev_log_path() -> PathBuf {
     let mut p = get_log_path();
     p.set_file_name("Player-prev.log");
@@ -721,10 +1029,204 @@ fn lookup_item_by_name(name_cn: &str, items_db: &ItemDb, skills_db: &SkillDb) ->
 }
 
 // --- Commands ---
+#[derive(Debug, serde::Deserialize)]
+pub struct SearchQuery {
+    pub keyword: Option<String>,
+    pub item_type: Option<String>, // "all", "item", "skill"
+    pub size: Option<String>,
+    pub start_tier: Option<String>,
+    pub hero: Option<String>,
+    pub tags: Option<String>,
+    pub hidden_tags: Option<String>,
+}
+
+#[tauri::command]
+fn search_items(query: SearchQuery, state: State<'_, DbState>) -> Result<Vec<ItemData>, String> {
+    let mut results = Vec::new();
+    let keyword = query.keyword.as_deref().map(|s| s.to_lowercase());
+    let size_filter = query.size.as_deref().map(|s| s.to_lowercase());
+    let tier_filter = query.start_tier.as_deref().map(|s| s.to_lowercase());
+    let hero_filter = query.hero.as_deref().map(|s| s.to_lowercase());
+    let tags_filter = query.tags.as_deref().map(|s| s.to_lowercase());
+    let htags_filter = query.hidden_tags.as_deref().map(|s| s.to_lowercase());
+
+    let match_item = |item: &ItemData| -> bool {
+        if let Some(ref k) = keyword {
+            if !item.name_cn.to_lowercase().contains(k) && !item.name.to_lowercase().contains(k) {
+                return false;
+            }
+        }
+        if let Some(ref s) = size_filter {
+            if !item.size.as_ref().map(|v| v.to_lowercase()).unwrap_or_default().contains(s) {
+                return false;
+            }
+        }
+        if let Some(ref t) = tier_filter {
+            if !item.tier.to_lowercase().contains(t) {
+                return false;
+            }
+        }
+        if let Some(ref h) = hero_filter {
+            if !item.heroes.iter().any(|hero| hero.to_lowercase().contains(h)) {
+                return false;
+            }
+        }
+        if let Some(ref t) = tags_filter {
+             if !item.tags.to_lowercase().contains(t) {
+                 return false;
+             }
+        }
+        if let Some(ref h) = htags_filter {
+             if !item.hidden_tags.to_lowercase().contains(h) {
+                 return false;
+             }
+        }
+        true
+    };
+
+    let search_type = query.item_type.as_deref().unwrap_or("all");
+
+    if search_type == "all" || search_type == "item" {
+        if let Ok(db) = state.items.read() {
+            for item in &db.list {
+                if match_item(item) {
+                     results.push(item.clone());
+                }
+            }
+        }
+    }
+
+    if search_type == "all" || search_type == "skill" {
+        if let Ok(db) = state.skills.read() {
+            for item in &db.list {
+                if match_item(item) {
+                     results.push(item.clone());
+                }
+            }
+        }
+    }
+
+    // Sort by tier then name
+    results.sort_by(|a, b| {
+        // Simple tier sort logic (Bronze < Silver < Gold < Diamond < Legendary)
+        let tier_rank = |t: &str| match t.split('/').next().unwrap_or("").trim() {
+            "Bronze" | "Common" => 1,
+            "Silver" => 2,
+            "Gold" => 3,
+            "Diamond" => 4,
+            "Legendary" => 5,
+            _ => 10,
+        };
+        let ta = tier_rank(&a.tier);
+        let tb = tier_rank(&b.tier);
+        if ta != tb {
+            ta.cmp(&tb)
+        } else {
+            a.name_cn.cmp(&b.name_cn)
+        }
+    });
+
+    Ok(results)
+}
+
 #[tauri::command]
 fn get_all_monsters(state: State<'_, DbState>) -> Result<serde_json::Map<String, serde_json::Value>, String> {
+    log_to_file("get_all_monsters called");
     let db = state.monsters.read().map_err(|_| "DB Busy")?;
+    let count = db.len();
+    log_to_file(&format!("Monsters DB contains {} entries", count));
+    
+    // 调试：输出前几个怪物名称
+    if count > 0 {
+        let sample_names: Vec<String> = db.keys().take(5).cloned().collect();
+        log_to_file(&format!("Sample monster names: {:?}", sample_names));
+    } else {
+        log_to_file("Warning: Monsters DB is empty!");
+    }
+    
     Ok(db.clone())
+}
+
+#[tauri::command]
+fn debug_monsters_db(state: State<'_, DbState>) -> Result<String, String> {
+    let db = state.monsters.read().map_err(|_| "DB Busy")?;
+    let count = db.len();
+    let mut result = format!("Monsters DB Status:\n- Total entries: {}\n", count);
+    
+    if count > 0 {
+        let sample: Vec<String> = db.keys().take(10).cloned().collect();
+        result.push_str(&format!("- Sample entries: {:?}\n", sample));
+        
+        // 检查Day 1的怪物
+        let day1_monsters: Vec<String> = db.iter()
+            .filter(|(_, data)| {
+                data.get("available").and_then(|v| v.as_str()) == Some("Day 1")
+            })
+            .map(|(name, _)| name.clone())
+            .take(5)
+            .collect();
+        result.push_str(&format!("- Day 1 monsters: {:?}\n", day1_monsters));
+    } else {
+        result.push_str("- Database is empty!\n");
+    }
+    
+    log_to_file(&result);
+    Ok(result)
+}
+
+#[tauri::command]
+fn clear_yolo_cache() -> Result<String, String> {
+    // 清理YOLO扫描结果和图像缓存
+    {
+        let mut results = get_yolo_scan_results().write().unwrap();
+        results.clear();
+    }
+    {
+        let mut saved_img = get_yolo_scan_image().write().unwrap();
+        *saved_img = None;
+    }
+    log_to_file("YOLO cache cleared to free memory");
+    Ok("YOLO缓存已清理".to_string())
+}
+
+#[tauri::command]
+fn debug_resource_paths(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
+    let resources_path = app.path().resource_dir().map_err(|e| e.to_string())?;
+    let mut report = serde_json::Map::new();
+    report.insert("resource_dir".to_string(), serde_json::Value::String(resources_path.to_string_lossy().to_string()));
+
+    let files = [
+        "monsters_db.json",
+        "monsters_export.json",
+        "images_monster_map.json",
+        "items_db.json",
+        "skills_db.json",
+    ];
+
+    let mut files_obj = serde_json::Map::new();
+    for f in &files {
+        let p1 = resources_path.join("resources").join(f);
+        let p2 = resources_path.join(f);
+        let mut info = serde_json::Map::new();
+        info.insert("path1".to_string(), serde_json::Value::String(p1.to_string_lossy().to_string()));
+        info.insert("exists1".to_string(), serde_json::Value::Bool(p1.exists()));
+        if p1.exists() {
+            if let Ok(md) = std::fs::metadata(&p1) {
+                info.insert("size1".to_string(), serde_json::Value::Number(serde_json::Number::from(md.len())));
+            }
+        }
+        info.insert("path2".to_string(), serde_json::Value::String(p2.to_string_lossy().to_string()));
+        info.insert("exists2".to_string(), serde_json::Value::Bool(p2.exists()));
+        if p2.exists() {
+            if let Ok(md) = std::fs::metadata(&p2) {
+                info.insert("size2".to_string(), serde_json::Value::Number(serde_json::Number::from(md.len())));
+            }
+        }
+        files_obj.insert(f.to_string(), serde_json::Value::Object(info));
+    }
+
+    report.insert("files".to_string(), serde_json::Value::Object(files_obj));
+    Ok(serde_json::Value::Object(report))
 }
 
 #[tauri::command]
@@ -792,6 +1294,11 @@ fn get_card_detection_hotkey() -> Option<i32> {
 }
 
 #[tauri::command]
+fn get_toggle_collapse_hotkey() -> Option<i32> {
+    load_state().toggle_collapse_hotkey
+}
+
+#[tauri::command]
 fn set_detection_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.detection_hotkey = Some(hotkey);
@@ -805,6 +1312,14 @@ fn set_card_detection_hotkey(hotkey: i32) {
     state.card_detection_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] Card detection hotkey updated to: {}", hotkey);
+}
+
+#[tauri::command]
+fn set_toggle_collapse_hotkey(hotkey: i32) {
+    let mut state = load_state();
+    state.toggle_collapse_hotkey = Some(hotkey);
+    save_state(&state);
+    println!("[Config] Toggle collapse hotkey updated to: {}", hotkey);
 }
 
 fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
@@ -842,13 +1357,59 @@ fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32
 }
 
 // --- App Run ---
+#[tauri::command]
+fn get_yolo_stats() -> serde_json::Value {
+    let detections = get_yolo_scan_results().read().unwrap();
+    let total = detections.len();
+    let items = detections.iter().filter(|d| d.class_id == 2).count(); // item
+    let events = detections.iter().filter(|d| d.class_id == 1).count(); // event
+    let skills = detections.iter().filter(|d| d.class_id == 6).count(); // skill
+    let monster_icons = detections.iter().filter(|d| d.class_id == 3).count(); // monstericon
+    
+    // 计算怪物数量（event和monstericon重叠的）
+    let events_list: Vec<_> = detections.iter().filter(|d| d.class_id == 1).collect();
+    let monsters_count = events_list.iter().map(|event| {
+        detections.iter().filter(|d| d.class_id == 3).any(|icon| {
+            // 检查交集
+            let ix1 = event.x1.max(icon.x1);
+            let iy1 = event.y1.max(icon.y1);
+            let ix2 = event.x2.min(icon.x2);
+            let iy2 = event.y2.min(icon.y2);
+            let i_area = (ix2 - ix1).max(0) * (iy2 - iy1).max(0);
+            let icon_area = (icon.x2 - icon.x1) * (icon.y2 - icon.y1);
+            icon_area > 0 && (i_area as f32 / icon_area as f32) > 0.5
+        })
+    }).filter(|&has_monster| has_monster).count();
+
+    serde_json::json!({
+        "total": total,
+        "items": items,
+        "events": events,
+        "monsters": monsters_count,
+        "skills": skills,
+        "monster_icons": monster_icons
+    })
+}
+
+#[tauri::command]
+async fn invoke_yolo_scan(app: tauri::AppHandle) -> Result<Vec<String>, String> {
+    monster_recognition::recognize_monsters_yolo(&app)
+}
+
+#[tauri::command]
+async fn emit_to_main(app: tauri::AppHandle, event: String, payload: serde_json::Value) -> Result<(), String> {
+    app.emit(&event, payload)
+        .map_err(|e| format!("Failed to emit event: {}", e))?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     set_panic_hook();
     log_to_file("=================== App Starting ===================");
 
     // Initialize Overlay Bounds State
-    let bounds = Arc::new(std::sync::Mutex::new(OverlayBounds { x: 0, y: 0, width: 0, height: 0 }));
+    let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
     tauri::Builder::default()
@@ -891,9 +1452,9 @@ pub fn run() {
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
                 let mut is_ignoring = false; // Tracks current pass-through state
-                let mut last_click_state = false;
+                let _last_click_state = false;
 
-                let mut last_ignore_update = time::Instant::now();
+                let _last_ignore_update = time::Instant::now();
                 let mut last_rbtn_state = false;
 
                 loop {
@@ -901,17 +1462,18 @@ pub fn run() {
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
                     
-                    // 1. Dynamic Passthrough Logic (only check every 100ms to save CPU, or rely on loop)
-                    let (bx, by, bw, bh) = {
-                        let b = bounds_monitor.lock().unwrap();
-                        (b.x, b.y, b.width, b.height)
+                    // 1. Dynamic Passthrough Logic - 检查是否在任何一个bounds区域内
+                    let is_mouse_in_overlay = {
+                        let bounds_list = bounds_monitor.lock().unwrap();
+                        bounds_list.iter().any(|b| {
+                            mx >= b.x && mx <= (b.x + b.w) && my >= b.y && my <= (b.y + b.h)
+                        })
                     };
-                    let is_mouse_in_overlay = mx >= bx && mx <= (bx + bw) && my >= by && my <= (by + bh);
                     
                     if let Some(window) = handle_monitor.get_webview_window("overlay") {
                         if is_mouse_in_overlay {
                              if is_ignoring {
-                                 println!("[Overlay] Mouse ENTERED interactable area (x:{}, y:{}, w:{}, h:{}) at ({}, {}). Disabling click-through.", bx, by, bw, bh, mx, my);
+                                 println!("[Overlay] Mouse ENTERED interactable area at ({}, {}). Disabling click-through.", mx, my);
                                  let _ = window.set_ignore_cursor_events(false);
                                  is_ignoring = false;
                              }
@@ -956,13 +1518,21 @@ pub fn run() {
                     }
                 }
 
-                // 初始化 Overlay 窗口：透明 + 穿透
+                // 初始化 Overlay 窗口：设置为主显示器全屏覆盖
                 if let Some(overlay) = app.get_webview_window("overlay") {
+                    // 直接使用主显示器的全尺寸，确保可以在整个屏幕范围内交互
                     if let Ok(Some(monitor)) = overlay.primary_monitor() {
                         let size = monitor.size();
-                        let half_width = size.width / 2;
-                        let _ = overlay.set_size(tauri::PhysicalSize::new(half_width, size.height));
-                        let _ = overlay.set_position(tauri::PhysicalPosition::new(half_width as i32, 0));
+                        let position = monitor.position();
+                        println!("[Overlay Init] Setting overlay: x={}, y={}, w={}, h={}", 
+                                position.x, position.y, size.width, size.height);
+                        let _ = overlay.set_size(tauri::PhysicalSize::new(size.width, size.height));
+                        let _ = overlay.set_position(tauri::PhysicalPosition::new(position.x, position.y));
+                    } else {
+                        // 最终降级：4K分辨率作为默认
+                        println!("[Overlay Init] Using fallback 4K resolution");
+                        let _ = overlay.set_size(tauri::PhysicalSize::new(3840, 2160));
+                        let _ = overlay.set_position(tauri::PhysicalPosition::new(0, 0));
                     }
                     overlay.show().unwrap();
                 }
@@ -1140,7 +1710,10 @@ pub fn run() {
             }
 
             // 3. Load Monster Image Map
-            let monster_img_map_path = resources_path.join("resources").join("images_monster_map.json");
+            let mut monster_img_map_path = resources_path.join("resources").join("images_monster_map.json");
+            if !monster_img_map_path.exists() {
+                monster_img_map_path = resources_path.join("images_monster_map.json");
+            }
             log_to_file(&format!("Attempting to load Monster Image Map from {:?}", monster_img_map_path));
             let mut monster_img_lookup = HashMap::new();
             if let Ok(json) = std::fs::read_to_string(&monster_img_map_path) {
@@ -1154,8 +1727,24 @@ pub fn run() {
             }
 
             // 4. Load & Merge Monsters (Export First, then DB)
-            let monsters_export_path = resources_path.join("resources").join("monsters_export.json");
-            let monsters_db_path = resources_path.join("resources").join("monsters_db.json");
+            // 尝试多种路径方式以兼容dev和release模式
+            let mut monsters_export_path = resources_path.join("resources").join("monsters_export.json");
+            let mut monsters_db_path = resources_path.join("resources").join("monsters_db.json");
+            
+            // 如果第一种路径不存在，尝试直接从resources_path查找
+            if !monsters_export_path.exists() {
+                monsters_export_path = resources_path.join("monsters_export.json");
+            }
+            if !monsters_db_path.exists() {
+                monsters_db_path = resources_path.join("monsters_db.json");
+            }
+            
+            // 调试日志：检查路径
+            log_to_file(&format!("Resources base path: {:?}", resources_path));
+            log_to_file(&format!("Monsters export path: {:?}", monsters_export_path));
+            log_to_file(&format!("Monsters db path: {:?}", monsters_db_path));
+            log_to_file(&format!("Monsters export exists: {}", monsters_export_path.exists()));
+            log_to_file(&format!("Monsters db exists: {}", monsters_db_path.exists()));
             
             let mut final_monsters = serde_json::Map::new();
             let mut export_by_day: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
@@ -1368,7 +1957,22 @@ pub fn run() {
                 }
             }
             let monster_count = final_monsters.len();
-            *db_state.monsters.write().unwrap() = final_monsters;
+            *db_state.monsters.write().unwrap() = final_monsters.clone();
+            log_to_file(&format!("Monsters DB populated with {} entries", monster_count));
+            
+            // 调试：输出前几个怪物名称，并通知前端数据库已准备好
+            if monster_count > 0 {
+                let sample_names: Vec<String> = final_monsters.keys().take(5).cloned().collect();
+                log_to_file(&format!("Sample loaded monsters: {:?}", sample_names));
+                // Emit an event so the frontend knows the monsters DB is ready
+                let _ = handle.emit("monsters-db-ready", serde_json::json!({
+                    "total": monster_count,
+                    "sample": sample_names,
+                }));
+            } else {
+                log_to_file("Warning: No monsters were loaded!");
+            }
+
             println!("[Init] Successfully consolidated {} monsters (Export prioritized by day)", monster_count);
 
             // Log Monitor Thread
@@ -1410,7 +2014,6 @@ pub fn run() {
                 let mut last_iid = String::new();
                 let mut cur_owner = String::new();
                 let mut in_pvp = false;
-                let mut hour_count: u32 = 0;
                 let mut is_sync = false;
 
                 // --- Initial Sync: Replay Logs to catch up with current state ---
@@ -1423,7 +2026,11 @@ pub fn run() {
 
                 let files_to_process = vec![prev_path, log_path.clone()];
                 for path in files_to_process {
-                    if !path.exists() { continue; }
+                    if !path.exists() { 
+                        println!("[LogMonitor] Skipping non-existent file: {:?}", path);
+                        continue; 
+                    }
+                    println!("[LogMonitor] Processing log file: {:?}", path);
                     if let Ok(file) = File::open(&path) {
                         let reader = BufReader::new(file);
                         for line in reader.lines() {
@@ -1432,7 +2039,7 @@ pub fn run() {
                                 
                                 // Reset everything if we see a new run start
                                 if trimmed.contains("NetMessageRunInitialized") {
-                                    current_day = 1; in_pvp = false; hour_count = 0;
+                                    current_day = 1; in_pvp = false;
                                     inst_to_temp.clear();
                                     current_hand.clear();
                                     current_stash.clear();
@@ -1441,13 +2048,7 @@ pub fn run() {
 
                                 if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
                                 if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
-                                    current_day = current_day.saturating_add(1); in_pvp = false; hour_count = 0;
-                                }
-                                if trimmed.contains("State changed from [ChoiceState] to [") {
-                                    if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
-                                        hour_count = hour_count.saturating_add(1);
-                                        if hour_count >= 10 { current_day = current_day.saturating_add(1); hour_count = 0; }
-                                    }
+                                    current_day = current_day.saturating_add(1); in_pvp = false;
                                 }
 
                                 if let Some(cap) = re_purchase.captures(trimmed) {
@@ -1552,8 +2153,18 @@ pub fn run() {
                     let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
                 });
 
+                println!("[LogMonitor] Initialization complete. Starting main monitoring loop...");
+                // Debug: Log the path being monitored at startup
+                log_to_file(&format!("[LogMonitor] Monitoring log file: {:?}", log_path));
+                println!("[LogMonitor] Monitoring log file: {:?}", log_path);
+                log_to_file(&format!("[LogMonitor] Starting monitor loop, initial size: {}", last_file_size));
+                
                 loop {
-                    if !log_path.exists() { thread::sleep(time::Duration::from_secs(2)); continue; }
+                    if !log_path.exists() { 
+                        log_to_file(&format!("[LogMonitor] Log file not found: {:?}", log_path));
+                        thread::sleep(time::Duration::from_secs(2)); 
+                        continue; 
+                    }
                     let current_file_size = match std::fs::metadata(&log_path) {
                         Ok(meta) => meta.len(),
                         Err(e) => {
@@ -1562,6 +2173,11 @@ pub fn run() {
                             continue;
                         }
                     };
+                    
+                    // Debug: Log size changes
+                    if current_file_size != last_file_size {
+                        log_to_file(&format!("[LogMonitor] File size changed: {} -> {}", last_file_size, current_file_size));
+                    }
                     
                     if current_file_size < last_file_size {
                         println!("[LogMonitor] Log truncated, resetting state...");
@@ -1581,6 +2197,12 @@ pub fn run() {
                     }
                     
                     if current_file_size > last_file_size {
+                        // Prevent spamming triggers if we are catching up on a large log chunk (>5000 bytes)
+                        let is_bulk_read = (current_file_size - last_file_size) > 5000;
+                        if is_bulk_read {
+                            log_to_file(&format!("[LogMonitor] Bulk read detected: {} bytes, will skip YOLO triggers for this batch", current_file_size - last_file_size));
+                        }
+                        
                         let mut f = match File::open(&log_path) {
                             Ok(file) => file,
                             Err(e) => {
@@ -1600,7 +2222,7 @@ pub fn run() {
 
                             // Day Detection Logic
                             if trimmed.contains("NetMessageRunInitialized") {
-                                current_day = 1; in_pvp = false; hour_count = 0; day_changed = true;
+                                current_day = 1; in_pvp = false; day_changed = true;
                                 inst_to_temp.clear();
                                 current_hand.clear();
                                 current_stash.clear();
@@ -1615,41 +2237,34 @@ pub fn run() {
                             // Day increment: The most reliable trigger is the transition back to Map (ChoiceState) after a PVP fight.
                             if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
                                 current_day = current_day.saturating_add(1);
-                                in_pvp = false; 
-                                hour_count = 0; 
+                                in_pvp = false;
                                 day_changed = true;
                                 println!("[DayMonitor] Day increased to {} after PVP completion", current_day);
                             }
 
-                            // YOLO Trigger on ANY State changed
-                            if trimmed.contains("State changed from [") && trimmed.contains("] to [") {
-                                log_to_file(&format!("State changed: {}", trimmed));
-                                let yolo_handle = handle.clone();
-                                tauri::async_runtime::spawn(async move {
-                                    // 延迟 500ms 等待游戏画面切换完成
-                                    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
-                                    match monster_recognition::recognize_monsters_yolo(&yolo_handle) {
-                                        Ok(monsters) => {
-                                            if !monsters.is_empty() {
-                                                // 发送结果给 Overlay 窗口
-                                                let _ = yolo_handle.emit("overlay-update-monsters", monsters);
-                                            }
-                                        },
-                                        Err(e) => log_to_file(&format!("YOLO Recognition Error: {}", e)),
-                                    }
-                                });
+                            // YOLO Trigger on ANY State changed (controlled by enable-yolo-auto setting)
+                            // Debug: Log every state change line and check conditions
+                            if trimmed.contains("State changed") {
+                                println!("[Debug] Found 'State changed' line: {}", trimmed);
+                                println!("[Debug] is_bulk_read: {}", is_bulk_read);
+                                println!("[Debug] contains 'State changed from [': {}", trimmed.contains("State changed from ["));
+                                println!("[Debug] contains '] to [': {}", trimmed.contains("] to ["));
                             }
-
-                            // Optional: PVE-only day detection (less common, but as a fallback)
-                            if trimmed.contains("State changed from [ChoiceState] to [") {
-                                if !trimmed.contains("to [ChoiceState]") && !trimmed.contains("to [PVPCombatState]") {
-                                    hour_count = hour_count.saturating_add(1);
-                                    if hour_count >= 10 { 
-                                        current_day = current_day.saturating_add(1);
-                                        hour_count = 0;
-                                        day_changed = true;
-                                        println!("[DayMonitor] Day increased to {} after 10 encounters", current_day);
-                                    }
+                            
+                            if !is_bulk_read && trimmed.contains("State changed from [") && trimmed.contains("] to [") {
+                                println!("[State Change Detected] Emitting YOLO trigger for: {}", trimmed);
+                                log_to_file(&format!("[State Change Detected] {}", trimmed));
+                                log_to_file("[Backend] Emitting trigger_yolo_scan event to frontend");
+                                // Emit event to frontend, which will check enable-yolo-auto setting
+                                match handle.emit("trigger_yolo_scan", ()) {
+                                    Ok(_) => {
+                                        println!("[Backend] trigger_yolo_scan event emitted successfully");
+                                        log_to_file("[Backend] trigger_yolo_scan event emitted successfully");
+                                    },
+                                    Err(e) => {
+                                        println!("[Backend] Failed to emit trigger_yolo_scan: {}", e);
+                                        log_to_file(&format!("[Backend] Failed to emit trigger_yolo_scan: {}", e));
+                                    },
                                 }
                             }
 
@@ -1760,14 +2375,20 @@ pub fn run() {
                             }
                             let items_db = thread_items_db.read().unwrap();
                             let skills_db = thread_skills_db.read().unwrap();
-                            let hand_items = current_hand.iter()
-                                .filter_map(|iid| inst_to_temp.get(iid))
-                                .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
-                                .collect();
-                            let stash_items = current_stash.iter()
-                                .filter_map(|iid| inst_to_temp.get(iid))
-                                .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
-                                .collect();
+                            
+                            let map_items = |ids: &HashSet<String>| -> Vec<ItemData> {
+                                ids.iter()
+                                   .filter_map(|iid| {
+                                       let tid = inst_to_temp.get(iid)?;
+                                       let mut item = lookup_item(tid, &items_db, &skills_db)?;
+                                       item.instance_id = Some(iid.clone());
+                                       Some(item)
+                                   })
+                                   .collect()
+                            };
+
+                            let hand_items = map_items(&current_hand);
+                            let stash_items = map_items(&current_stash);
                             
                             let all_tags = items_db.unique_tags.clone();
                             let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
@@ -1791,13 +2412,15 @@ pub fn run() {
             std::thread::spawn(move || {
                 let mut last_trigger = time::Instant::now();
                 let mut last_card_trigger = time::Instant::now();
+                let mut last_toggle_trigger = time::Instant::now();
                 loop {
                     // 读取配置的按键
-                    let (monster_hotkey, card_hotkey) = {
+                    let (monster_hotkey, card_hotkey, toggle_hotkey) = {
                         let state = load_state();
                         (
                             state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32),
-                            state.card_detection_hotkey.unwrap_or(VK_MENU.0 as i32)
+                            state.card_detection_hotkey.unwrap_or(VK_MENU.0 as i32),
+                            state.toggle_collapse_hotkey.unwrap_or(192)
                         )
                     };
                     
@@ -1899,8 +2522,18 @@ pub fn run() {
                             if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
                                 last_card_trigger = time::Instant::now();
                                 log_to_file("Card Hotkey pressed, triggering recognition...");
-                                // 发送事件给前端，让前端调用 handleRecognizeCard
+                                // 发送事件给前端: 同时触发旧版识别和新版 YOLO 识别
                                 let _ = handle_mouse.emit("hotkey-detect-card", ());
+                                let _ = handle_mouse.emit("trigger_yolo_scan", ());
+                            }
+                        }
+
+                        // 3. 检测折叠/展开按键
+                        if (GetAsyncKeyState(toggle_hotkey) as i16) < 0 {
+                            if last_toggle_trigger.elapsed() > time::Duration::from_millis(500) {
+                                last_toggle_trigger = time::Instant::now();
+                                log_to_file("Toggle Hotkey pressed");
+                                let _ = handle_mouse.emit("toggle-collapse", ());
                             }
                         }
                     }
@@ -1913,6 +2546,9 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_all_monsters,
+            debug_monsters_db,
+            debug_resource_paths,
+            clear_yolo_cache,
             recognize_monsters_from_screenshot,
             get_template_loading_progress,
             get_current_day,
@@ -1921,15 +2557,23 @@ pub fn run() {
             set_detection_hotkey,
             get_card_detection_hotkey,
             set_card_detection_hotkey,
+            get_toggle_collapse_hotkey,
+            set_toggle_collapse_hotkey,
             start_template_loading,
             get_item_info,
+            search_items,
             crate::monster_recognition::check_opencv_load, 
             crate::monster_recognition::recognize_card_at_mouse,
             trigger_yolo_scan,
+            invoke_yolo_scan,
             handle_overlay_right_click,
             update_overlay_bounds,
+            emit_to_main,
+            get_yolo_stats,
+            get_show_yolo_monitor,
             // clear_monster_cache,
             set_overlay_ignore_cursor,
+            set_show_yolo_monitor,
             restore_game_focus
         ])
         .run(tauri::generate_context!())

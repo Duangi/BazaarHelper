@@ -7,7 +7,6 @@ use opencv::{
     highgui,
     imgcodecs,
     imgproc,
-    prelude::*,
 };
 
 #[derive(Debug, Clone)]

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect, useRef, useState, Fragment } from "react";
 import { getCurrentWindow, LogicalPosition, LogicalSize, currentMonitor } from "@tauri-apps/api/window";
-import { listen } from "@tauri-apps/api/event";
+import { listen, emit } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import { getVersion } from '@tauri-apps/api/app';
@@ -13,6 +13,7 @@ import { exit, relaunch } from '@tauri-apps/plugin-process';
 // --- 接口定义 ---
 interface ItemData {
   uuid: string;
+  instance_id?: string;
   name: string;
   name_cn: string;
   tier: string;
@@ -77,7 +78,7 @@ interface MonsterData {
   displayImgBg?: string;
 }
 
-type TabType = "hand" | "stash" | "monster" | "card";
+type TabType = "items" | "search" | "monster" | "card";
 
 const KEYWORD_COLORS: Record<string, string> = {
   "弹药": "#ff8e00",
@@ -119,6 +120,16 @@ const ENCHANT_COLORS: Record<string, string> = {
   "黑曜石": "#9d4a6f"
 };
 
+const HERO_COLORS: Record<string, string> = {
+  "Vanessa": '#FF6B6B',
+  "Pygmalien": '#5BA3FF',
+  "Jules": '#D77EFF',
+  "Mak": '#D4FF85',
+  "Dooley": '#FFC048',
+  "Stelle": '#FFE74C',
+  "Common": '#E0E0E0'
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("monster");
   const [syncData, setSyncData] = useState<SyncPayload & { monster: any[] }>({ 
@@ -143,12 +154,104 @@ export default function App() {
     return saved ? parseInt(saved, 10) : 16;
   }); // 自定义字号
   const [showSettings, setShowSettings] = useState(false);
+  const [enableYoloAuto, setEnableYoloAuto] = useState(() => {
+    const saved = localStorage.getItem("enable-yolo-auto");
+    return saved === "true";
+  });
+  const [useGpuAcceleration, setUseGpuAcceleration] = useState(() => {
+    const saved = localStorage.getItem("use-gpu-acceleration");
+    if (saved === null) {
+      // 首次运行，默认开启并写入 localStorage
+      localStorage.setItem("use-gpu-acceleration", "true");
+      return true;
+    }
+    return saved === "true";
+  });
+  const [showYoloMonitor, setShowYoloMonitor] = useState(() => {
+    const saved = localStorage.getItem("show-yolo-monitor");
+    if (saved === null) {
+      // 首次运行，默认开启并写入 localStorage
+      localStorage.setItem("show-yolo-monitor", "true");
+      return true;
+    }
+    return saved === "true";
+  });
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
   const [recognizedCards, setRecognizedCards] = useState<ItemData[]>([]); // 识别出的卡牌列表 (Top 3)
   const [isRecognizingCard, setIsRecognizingCard] = useState(false); // 是否正在识别卡牌
+  const [lastItemSize, setLastItemSize] = useState(""); // 记住物品模式下的尺寸选择
+  const [isInputFocused, setIsInputFocused] = useState(false); // 标记输入框是否获取了焦点
+
+  // Search State
+  const [searchQuery, setSearchQuery] = useState({
+    keyword: "",
+    item_type: "all", // "all", "item", "skill"
+    size: "",
+    start_tier: "",
+    hero: "",
+    tags: "",
+    hidden_tags: ""
+  });
+  const [searchResults, setSearchResults] = useState<ItemData[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Lazy Load State
+  const [visibleCount, setVisibleCount] = useState(50);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  // Reset filtered items count when query changes
+  useEffect(() => {
+    setVisibleCount(50);
+    // Scroll to top
+    if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop = 0;
+    }
+  }, [searchQuery, activeTab, selectedDay, syncData]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // Load more if scrolled to bottom (within 200px)
+    if (scrollHeight - scrollTop - clientHeight < 200) {
+      setVisibleCount(prev => prev + 20);
+    }
+  };
+
+  // Debounced search effect
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (activeTab === "search") {
+        setIsSearching(true);
+        try {
+          const res = await invoke<ItemData[]>("search_items", { query: searchQuery });
+          
+          // Image patching: Search results don't have displayImg set.
+          // We need to generate it similar to how get_item_info might do it (not visible here but assumed logic)
+          // or how Card Recognition does it: `images/${itemInfo.uuid || itemInfo.name}.webp`
+          const patched = await Promise.all(res.map(async (item) => {
+            // Note: Use item.uuid first. Backend ItemData has 'uuid' which is 'id' in JSON.
+            // Images are locally stored in resources/images/
+            // Filename is usually the Item ID? Or Name?
+            // In recognizer: `images/${itemInfo.uuid || itemInfo.name}.webp`
+            // Let's try ID first.
+            const imgPath = `images/${item.uuid}.webp`;
+            const url = await getImg(imgPath);
+            return { ...item, displayImg: url };
+          }));
+          
+          setSearchResults(patched);
+        } catch (e) {
+          console.error("Search failed:", e);
+        } finally {
+          setIsSearching(false);
+        }
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery, activeTab]);
+
 
   // 图片路径缓存，避免重复解析
   const [imgCache] = useState<Map<string, string>>(new Map());
@@ -166,8 +269,10 @@ export default function App() {
   // 新增：识别热键状态
   const [detectionHotkey, setDetectionHotkey] = useState<number | null>(null);
   const [cardDetectionHotkey, setCardDetectionHotkey] = useState<number | null>(null);
+  const [toggleCollapseHotkey, setToggleCollapseHotkey] = useState<number | null>(null);
   const [isRecordingHotkey, setIsRecordingHotkey] = useState(false);
   const [isRecordingCardHotkey, setIsRecordingCardHotkey] = useState(false);
+  const [isRecordingToggleHotkey, setIsRecordingToggleHotkey] = useState(false);
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -193,6 +298,15 @@ export default function App() {
     return () => window.removeEventListener("contextmenu", handleContextMenu);
   }, []);
 
+  // 监听窗口关闭事件，通知overlay
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      emit('main-window-closing').catch(console.error);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   // 监听扫描错误
   useEffect(() => {
     const unlisten = listen<string>("scan-error", (event) => {
@@ -206,26 +320,26 @@ export default function App() {
     };
   }, []);
 
-  // 置顶/取消置顶功能
-  const togglePin = (uuid: string, e: React.MouseEvent) => {
+  // 置顶/取消置顶功能 (Now uses ID which can be instance_id or uuid)
+  const togglePin = (id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // 防止触发展开/收起
     setPinnedItems(prev => {
       const newPinned = new Map(prev);
-      if (newPinned.has(uuid)) {
-        newPinned.delete(uuid);
+      if (newPinned.has(id)) {
+        newPinned.delete(id);
       } else {
         setPinnedCounter(c => c + 1);
-        newPinned.set(uuid, pinnedCounter + 1);
+        newPinned.set(id, pinnedCounter + 1);
       }
       return newPinned;
     });
   };
 
-  const toggleExpand = (uuid: string) => {
+  const toggleExpand = (id: string) => {
     setExpandedItems(prev => {
       const next = new Set(prev);
-      if (next.has(uuid)) next.delete(uuid);
-      else next.add(uuid);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -282,11 +396,22 @@ export default function App() {
   };
 
   const renderText = (text: any) => {
-    if (!text || typeof text !== 'string') return null;
+    if (!text) return null;
+    
+    let content = "";
+    if (typeof text === 'string') {
+      content = text;
+    } else if (text.cn) {
+      content = text.cn;
+    } else if (text.en) {
+      content = text.en;
+    } else {
+      return null;
+    }
     
     // 1. 处理数值序列如 3/6/9/12 或 9/12
     // 逻辑：匹配由数字和斜杠组成的模式
-    const parts = text.split(/(\d+(?:\/\d+)+)/g);
+    const parts = content.split(/(\d+(?:\/\d+)+)/g);
     
     return parts.map((part, i) => {
       if (part.includes('/')) {
@@ -299,9 +424,12 @@ export default function App() {
               if (nums.length === 2) colorIdx = idx + 2;
               else if (nums.length === 3) colorIdx = idx + 1;
               
+              const val = parseFloat(n);
+              const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
+              
               return (
                 <span key={idx}>
-                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{n}</span>
+                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{displayVal}</span>
                   {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
                 </span>
               );
@@ -309,6 +437,13 @@ export default function App() {
           </span>
         );
       }
+
+      // 1.5 处理单个大数值 (ms -> s) 例如：冻结一件物品500秒
+      let processedPart = part;
+      processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
+          const val = parseInt(match, 10);
+          return val > 100 ? (val / 1000).toFixed(1) : match;
+      });
 
       // 2. 处理关键词和标签颜色
       // 构建正则，包含关键词和动态从 backend 获取的 tags
@@ -319,7 +454,7 @@ export default function App() {
       if (allMatches.length === 0) return part;
       
       const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
-      const subParts = part.split(regex);
+      const subParts = processedPart.split(regex);
       
       return subParts.map((sub, j) => {
         if (KEYWORD_COLORS[sub]) {
@@ -362,13 +497,38 @@ export default function App() {
  };
   // 获取排序后的物品列表（手牌和仓库）
   const getSortedItems = (items: ItemData[]) => {
-    return [...items].sort((a, b) => {
-      const aPin = pinnedItems.get(a.uuid);
-      const bPin = pinnedItems.get(b.uuid);
+    // 1. 先排序 (确保置顶的在前面)
+    const sorted = [...items].sort((a, b) => {
+      // 优先使用 instance_id (如果存在)，否则使用 uuid 判断置顶
+      const aId = a.instance_id || a.uuid;
+      const bId = b.instance_id || b.uuid;
+      const aPin = pinnedItems.get(aId) || pinnedItems.get(a.uuid);
+      const bPin = pinnedItems.get(bId) || pinnedItems.get(b.uuid);
+      
       if (aPin && bPin) return bPin - aPin; // 都置顶，后置顶的在前
       if (aPin) return -1; // a置顶，a在前
       if (bPin) return 1; // b置顶，b在前
       return 0; // 都不置顶，保持原顺序
+    });
+
+    // 2. 去重 (同一个 uuid 只保留第一个)
+    // 注意：由于已经排序过，置顶的项会排在前面，所以会被保留
+    const seen = new Set<string>();
+    return sorted.filter(item => {
+      // Use instance_id for uniqueness if available (Hand/Stash cases)
+      // Otherwise fall back to uuid (Card recognition cases)
+      // If we want to allow duplicates in Card recognition (unlikely needed for just "what is this"), keep uuid.
+      // But for Hand/Stash, we MUST allow duplicates (e.g. 2 Pigs).
+      // Note: If instance_id is missing, we might still dedup by uuid.
+      
+      const key = item.instance_id || item.uuid;
+      
+      // If we are in 'items' view, and we have multiple items with same UUID but NO instance_id (shouldn't happen for valid player items),
+      // we might hide them. But assuming player items have instance_id.
+      
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
   };
 
@@ -381,6 +541,7 @@ export default function App() {
     const saved = localStorage.getItem("plugin-height");
     return saved ? parseInt(saved, 10) : 700;
   });
+
 
   // 辅助函数：将虚拟键码转换为可读文本
   const getHotkeyLabel = (code: number) => {
@@ -568,114 +729,188 @@ export default function App() {
 
   // 监听后端事件
   useEffect(() => {
-    let unlistenMonster: any = null;
-    let unlistenDay: any = null;
-    let unlistenSync: any = null;
-    let unlistenAutoJump: any = null;
-    let unlistenCard: any = null;
-    
+    // 使用数组存储清理函数，确保无论异步何时完成都能清理
+    const unlisteners: (() => void)[] = [];
+    let isMounted = true; 
+
     const setupListeners = async () => {
-      // 0. 加载热键配置
-      invoke<number | null>("get_detection_hotkey").then(setDetectionHotkey);
-      invoke<number | null>("get_card_detection_hotkey").then(setCardDetectionHotkey);
-
-      // 1. 怪物识别触发
-      unlistenMonster = await listen<number | null>('trigger-monster-recognition', async (event) => {
-        console.log("收到自动识别触发事件, Day:", event.payload);
-        const dayNum = event.payload;
-        if (dayNum) {
-          const dayLabel = dayNum >= 10 ? "Day 10+" : `Day ${dayNum}`;
-          setSelectedDay(dayLabel);
-          setCurrentDay(dayNum);
-        }
-        setTimeout(async () => {
-           await handleAutoRecognition(dayNum);
-        }, 500);
-      });
-
-      // 1.1 卡牌识别触发 (热键)
-      unlistenCard = await listen('hotkey-detect-card', () => {
-        console.log("收到卡牌识别触发事件");
-        handleRecognizeCard(true); // 自动识别并跳转
-      });
-
-      // 1.5 自动识别并跳转事件 (auto-jump-to-monster)
-      unlistenAutoJump = await listen<{ day: number; monster_name: string }>('auto-jump-to-monster', async (event) => {
-          const { day, monster_name } = event.payload;
-          console.log(`收到自动跳转事件: Day ${day}, Monster: ${monster_name}`);
-          
-          // 支持并列名称 (如: "毒素 吹箭枪陷阱|黑曜石 吹箭枪陷阱|炽焰 吹箭枪陷阱")
-          const names = monster_name.includes('|') ? monster_name.split('|') : [monster_name];
-
-          // 1. 自动展开插件
-          if (isCollapsed) {
-              setIsCollapsed(false);
-          }
-
-          // 2. 跳转到对应天数
-          setCurrentDay(day);
-          const dayLabel = day >= 10 ? "Day 10+" : `Day ${day}`;
-          setSelectedDay(dayLabel);
-
-          // 3. 高亮匹配的怪物 (设置 Identify 和 Expand)
-          setIdentifiedNames(names);
-          setExpandedMonsters(prev => {
-              const next = new Set(prev);
-              names.forEach(n => next.add(n));
-              return next;
+      // 辅助函数：安全注册监听器
+      const safeListen = async <T,>(event: string, callback: (payload: T) => void) => {
+        try {
+          const unlisten = await listen<T>(event, (e) => {
+             if (isMounted) callback(e.payload);
           });
           
-          // 滚动到第一个匹配项 (可选)
-          setTimeout(() => {
-              const element = document.getElementById(`monster-${names[0]}`);
-              if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-          }, 100);
+          if (isMounted) {
+            unlisteners.push(unlisten);
+          } else {
+            // 如果Promise返回时组件已卸载，立即注销
+            unlisten();
+          }
+        } catch (err) {
+          console.error(`Failed to listen to ${event}:`, err);
+        }
+      };
 
-          // 4. 切换到怪物 Tab
-          setActiveTab("monster");
-      });
-
-      // 2. 天数更新
-      unlistenDay = await listen<number>('day-update', (event) => {
-        console.log("收到天数更新事件:", event.payload);
-        const d = event.payload;
-        setCurrentDay(d);
-        const dayLabel = d >= 10 ? "Day 10+" : `Day ${d}`;
-        setSelectedDay(dayLabel);
-      });
-
-      // 3. 物品同步 (sync-items)
-      unlistenSync = await listen<SyncPayload>("sync-items", async (event) => {
-        const payload = event.payload;
+      // 1. 物品同步 (sync-items) —— 修复重点
+      await safeListen<SyncPayload>("sync-items", async (payload) => {
+        // 图片处理逻辑
         const processItems = (items: ItemData[]) => 
-          Promise.all(items.map(async (i) => ({ ...i, displayImg: await getImg(`images/${i.uuid || i.name}.webp`) })));
+          Promise.all(items.map(async (i) => ({ 
+            ...i, 
+            displayImg: await getImg(`images/${i.uuid || i.name}.webp`) 
+          })));
 
         const [hand, stash] = await Promise.all([
           processItems(payload.hand_items || []),
           processItems(payload.stash_items || [])
         ]);
 
-        setSyncData(prev => ({ 
-          ...prev, 
-          hand_items: hand, 
-          stash_items: stash, 
-          all_tags: payload.all_tags || [] 
-        }));
+        if (isMounted) {
+          setSyncData(prev => ({ 
+            ...prev, 
+            hand_items: hand, 
+            stash_items: stash, 
+            all_tags: payload.all_tags || [] 
+          }));
+        }
       });
+
+      // 2. 怪物识别触发
+      await safeListen<number | null>('trigger-monster-recognition', (dayNum) => {
+        console.log("收到自动识别触发事件, Day:", dayNum);
+        if (dayNum) {
+          const dayLabel = dayNum >= 10 ? "Day 10+" : `Day ${dayNum}`;
+          setSelectedDay(dayLabel);
+          setCurrentDay(dayNum);
+        }
+        setTimeout(() => { if (isMounted) handleAutoRecognition(dayNum); }, 500);
+      });
+
+      // 3. 卡牌识别触发 (热键)
+      await safeListen<void>('hotkey-detect-card', () => {
+        console.log("收到卡牌识别触发事件");
+        setActiveTab("card"); // Auto-navigate to Card tab
+        handleRecognizeCard(true); // switchTab=true might be redundant if we set directly, but ensure logic
+      });
+
+      // 3.5. YOLO扫描触发 (游戏状态变更)
+      await safeListen<void>('trigger_yolo_scan', async () => {
+        console.log("[Frontend] Received trigger_yolo_scan event from backend");
+        // 检查是否开启了YOLO自动识别
+        const enabled = localStorage.getItem("enable-yolo-auto");
+        console.log("[Frontend] enable-yolo-auto setting:", enabled);
+        if (enabled !== "true") {
+          console.log("[Frontend] YOLO自动识别已关闭，跳过。enabled=", enabled);
+          return;
+        }
+        console.log("[Frontend] YOLO自动识别已开启，开始扫描");
+        const useGpu = localStorage.getItem("use-gpu-acceleration");
+        const useGpuBool = useGpu === "true";
+        console.log("[Frontend] GPU加速设置:", useGpu, "-> useGpu =", useGpuBool);
+        try {
+          if ((window as any).__yolo_running) {
+            console.log("[Frontend] YOLO scan already running, skipping duplicate call");
+            return;
+          }
+          (window as any).__yolo_running = true;
+          console.log("[Frontend] Invoking trigger_yolo_scan with useGpu=", useGpuBool);
+          const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
+          console.log(`[Frontend] YOLO扫描完成，检测到 ${count} 个目标`);
+
+          // 获取统计信息并通知Overlay更新
+          try {
+            const stats = await invoke('get_yolo_stats');
+            await emit('yolo-stats-updated', stats);
+            console.log("[Frontend] YOLO统计信息已更新并发送给Overlay");
+          } catch (statsErr) {
+            console.error("[Frontend] 获取YOLO统计失败:", statsErr);
+          }
+
+          setActiveTab("card"); // 自动切换到卡牌选项卡
+        } catch (err) {
+          console.error("[Frontend] YOLO扫描失败:", err);
+          setErrorMessage(`YOLO识别失败: ${err}`);
+          setTimeout(() => setErrorMessage(null), 5000);
+        } finally {
+          (window as any).__yolo_running = false;
+        }
+      });
+
+      // 4. 插件折叠/展开 (热键)
+      await safeListen<void>('toggle-collapse', () => {
+          setIsCollapsed(prev => !prev);
+      });
+
+      // 5. 自动识别并跳转事件
+      await safeListen<{ day: number; monster_name: string }>('auto-jump-to-monster', (payload) => {
+          const { day, monster_name } = payload;
+          const names = monster_name.includes('|') ? monster_name.split('|') : [monster_name];
+
+          setIsCollapsed(false);
+          setCurrentDay(day);
+          setSelectedDay(day >= 10 ? "Day 10+" : `Day ${day}`);
+          setIdentifiedNames(names);
+          setExpandedMonsters(prev => {
+              const next = new Set(prev);
+              names.forEach((n: string) => next.add(n));
+              return next;
+          });
+          
+          setTimeout(() => {
+              const element = document.getElementById(`monster-${names[0]}`);
+              if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+
+          setActiveTab("monster");
+      });
+
+      // 6. 野怪匹配事件（来自Overlay右键识别）
+      await safeListen<{ name: string; name_zh: string }>('monster-matched', (payload) => {
+          console.log("收到野怪匹配事件:", payload);
+          // 将识别的野怪名称添加到identifiedNames
+          setIdentifiedNames(prev => {
+              if (!prev.includes(payload.name)) {
+                  return [...prev, payload.name];
+              }
+              return prev;
+          });
+          // 展开该野怪
+          setExpandedMonsters(prev => {
+              const next = new Set(prev);
+              next.add(payload.name);
+              return next;
+          });
+          // 切换到野怪选项卡
+          setActiveTab("monster");
+          // 滚动到该野怪
+          setTimeout(() => {
+              const element = document.getElementById(`monster-${payload.name}`);
+              if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
+      });
+
+      // 5. 天数更新
+      await safeListen<number>('day-update', (d) => {
+        setCurrentDay(d);
+        setSelectedDay(d >= 10 ? "Day 10+" : `Day ${d}`);
+      });
+      
+      // 加载热键设置
+      invoke<number | null>("get_detection_hotkey").then(val => isMounted && setDetectionHotkey(val));
+      invoke<number | null>("get_card_detection_hotkey").then(val => isMounted && setCardDetectionHotkey(val));
+      invoke<number | null>("get_toggle_collapse_hotkey").then(val => isMounted && setToggleCollapseHotkey(val));
     };
     
     setupListeners();
     
+    // 清理函数
     return () => {
-      if (unlistenMonster) unlistenMonster();
-      if (unlistenCard) unlistenCard();
-      if (unlistenDay) unlistenDay();
-      if (unlistenSync) unlistenSync();
-      if (unlistenAutoJump) unlistenAutoJump();
+      isMounted = false;
+      unlisteners.forEach(fn => fn());
+      unlisteners.length = 0;
     };
-  }, [isCollapsed]); // 添加依赖以确保 isCollapsed 更新有效 (但要注意闭包陷阱，最好用 ref 或函数式更新)
+  }, []); // 依赖项为空，确保只执行一次
 
   // 基础环境侦测：分辨率适配
   useEffect(() => {
@@ -742,15 +977,55 @@ export default function App() {
 
   // 加载全量怪物数据
   useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 15;
+
     const loadAllMonsters = async () => {
       try {
         const res: Record<string, MonsterData> = await invoke("get_all_monsters");
-        setAllMonsters(res);
+        // 有数据则更新
+        if (res && Object.keys(res).length > 0) {
+          console.log(`[Init] Loaded ${Object.keys(res).length} monsters from backend.`);
+          setAllMonsters(res);
+        } else {
+          // 没数据，如果还在重试次数内，则延迟重试
+          if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`[Init] Monsters DB empty, retrying in 1s (${retryCount}/${maxRetries})...`);
+            setTimeout(loadAllMonsters, 1000);
+          } else {
+            console.warn("[Init] Failed to load monsters after max retries.");
+          }
+        }
       } catch (e) {
         console.error("加载全量怪物失败:", e);
       }
     };
     loadAllMonsters();
+  }, []);
+
+  // Listen for backend signal that monsters DB is ready and reload
+  useEffect(() => {
+    let unlisten: (() => void) | null = null;
+    const setup = async () => {
+      try {
+        const l = await appWindow.listen('monsters-db-ready', async (event: any) => {
+          try {
+            console.log('[Event] monsters-db-ready payload:', event.payload);
+            const res: Record<string, MonsterData> = await invoke('get_all_monsters');
+            setAllMonsters(res);
+          } catch (e) {
+            console.error('Failed to reload monsters after monsters-db-ready:', e);
+          }
+        });
+        // `l` is the unlisten function returned by `appWindow.listen`
+        unlisten = l;
+      } catch (e) {
+        console.warn('Failed to listen for monsters-db-ready:', e);
+      }
+    };
+    setup();
+    return () => { if (unlisten) unlisten(); };
   }, []);
 
   // 当 selectedDay 或 allMonsters 改变时，更新显示的怪物
@@ -1026,18 +1301,6 @@ export default function App() {
       await invoke("update_day", { day: newDay });
     } catch (e) {
       console.error("更新天数失败:", e);
-    }
-  };
-
-  const handleManualYoloScan = async () => {
-    try {
-        console.log("Triggering manual YOLO scan...");
-        await invoke("trigger_yolo_scan");
-        setStatusMsg("已触发全屏识别");
-        setTimeout(() => setStatusMsg(null), 2000);
-    } catch (e) {
-        console.error("Manual scan failed:", e);
-        setErrorMessage(`手动识别失败: ${e}`);
     }
   };
 
@@ -1330,38 +1593,47 @@ export default function App() {
       onMouseLeave={(e) => {
         // 如果鼠标离开时按键未松开（可能正在拖动或缩放），则不交还焦点，防止操作中断
         if (e.buttons !== 0) return;
+        // 如果输入框正在输入，则不交还焦点，防止焦点抢夺导致输入打断
+        if (isInputFocused) return;
         // 当鼠标划出插件界面时，自动尝试把焦点还给游戏
         invoke("restore_game_focus").catch(() => {});
+        invoke("set_overlay_ignore_cursor", { ignore: true }).catch(() => {});
       }}
     >
       {/* 3. 全局错误提示 Toast */}
       {errorMessage && (
-        <div style={{
+        <div className="error-toast" style={{
           position: 'fixed',
-          top: '20px',
+          top: '80px', // Lowered position
           left: '50%',
           transform: 'translateX(-50%)',
-          backgroundColor: '#ff4d4f',
-          color: '#fff',
+          backgroundColor: 'rgba(40, 35, 30, 0.95)',
+          color: '#ff6b6b',
+          border: '1px solid #ff4d4f',
           padding: '12px 24px',
           borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '12px',
           fontSize: '14px',
-          fontWeight: 600
+          fontWeight: 600,
+          backdropFilter: 'blur(5px)',
+          animation: 'slideDown 0.3s ease-out'
         }}>
-          <span>⚠ {errorMessage}</span>
+          <span style={{ fontSize: '18px' }}>⚠️</span>
+          <span>{errorMessage}</span>
           <button 
             onClick={() => setErrorMessage(null)}
             style={{ 
               background: 'transparent', 
               border: 'none', 
-              color: '#fff', 
+              color: '#888', 
               cursor: 'pointer',
-              fontSize: '16px' 
+              fontSize: '18px',
+              marginLeft: '8px',
+              lineHeight: 1
             }}
           >
             ×
@@ -1436,19 +1708,81 @@ export default function App() {
                 />
               </div>
               <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <label>数据缓存</label>
-                  {/* <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={async () => {
-                    try {
-                      await invoke("clear_monster_cache");
-                      setStatusMsg("野怪特征缓存已清空，请手动重启插件以重新加载。");
-                    } catch (e) {
-                      setStatusMsg("清空失败: " + e);
-                    }
-                  }}>清空野怪特征缓存</button> */}
-                  <span style={{ fontSize: '12px', color: '#888' }}>已启用内置缓存</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>YOLO自动识别</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {enableYoloAuto && (
+                      <button 
+                        className="bulk-btn" 
+                        style={{ 
+                          padding: '4px 12px',
+                          background: useGpuAcceleration ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                          borderColor: useGpuAcceleration ? '#4CAF50' : '#f44336',
+                          color: useGpuAcceleration ? '#4CAF50' : '#f44336'
+                        }} 
+                        onClick={() => {
+                          const newVal = !useGpuAcceleration;
+                          setUseGpuAcceleration(newVal);
+                          localStorage.setItem("use-gpu-acceleration", newVal.toString());
+                        }}
+                      >
+                        GPU加速: {useGpuAcceleration ? '开' : '关'}
+                      </button>
+                    )}
+                    <button 
+                      className="bulk-btn" 
+                      style={{ 
+                        padding: '4px 12px',
+                        background: enableYoloAuto ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                        borderColor: enableYoloAuto ? '#4CAF50' : '#f44336',
+                        color: enableYoloAuto ? '#4CAF50' : '#f44336'
+                      }} 
+                      onClick={() => {
+                        const newVal = !enableYoloAuto;
+                        setEnableYoloAuto(newVal);
+                        localStorage.setItem("enable-yolo-auto", newVal.toString());
+                      }}
+                    >
+                      {enableYoloAuto ? '已开启' : '已关闭'}
+                    </button>
+                  </div>
+                </div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  当游戏状态变更时，自动触发YOLO识别卡牌（GPU加速需要DirectML.dll支持）
                 </div>
               </div>
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>YOLO实时监控</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ 
+                      padding: '4px 12px',
+                      background: showYoloMonitor ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                      borderColor: showYoloMonitor ? '#4CAF50' : '#f44336',
+                      color: showYoloMonitor ? '#4CAF50' : '#f44336'
+                    }} 
+                    onClick={() => {
+                      console.log("[App] YOLO实时监控按钮点击，当前值:", showYoloMonitor);
+                      const newVal = !showYoloMonitor;
+                      console.log("[App] 设置新值:", newVal);
+                      setShowYoloMonitor(newVal);
+                      localStorage.setItem("show-yolo-monitor", newVal.toString());
+                      console.log("[App] localStorage已更新:", localStorage.getItem("show-yolo-monitor"));
+                      // Notify backend to forward the change to overlay window
+                      try {
+                        invoke('set_show_yolo_monitor', { show: newVal }).catch(console.error);
+                      } catch (e) { console.error(e); }
+                    }}
+                  >
+                    {showYoloMonitor ? '隐藏' : '显示'}
+                  </button>
+                </div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  显示/隐藏YOLO实时监控窗口，用于查看识别结果
+                </div>
+              </div>
+
               
               {statusMsg && (
                 <div style={{ 
@@ -1622,6 +1956,68 @@ export default function App() {
                 <div className="setting-tip">默认: Alt (VK: 18)</div>
               </div>
 
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label>一键收起/展开插件</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ padding: '2px 8px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsRecordingToggleHotkey(true);
+                    }}
+                  >
+                    {isRecordingToggleHotkey ? "请按键..." : (toggleCollapseHotkey ? getHotkeyLabel(toggleCollapseHotkey) : "未设置")}
+                  </button>
+                </div>
+                {isRecordingToggleHotkey && (
+                  <div 
+                    style={{ 
+                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                      display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      let vk = 0;
+                      switch(e.button) {
+                        case 0: vk = 1; break;
+                        case 1: vk = 4; break;
+                        case 2: vk = 2; break;
+                        case 3: vk = 5; break;
+                        case 4: vk = 6; break;
+                      }
+                      if (vk > 0) {
+                        setToggleCollapseHotkey(vk);
+                        invoke("set_toggle_collapse_hotkey", { hotkey: vk });
+                        setIsRecordingToggleHotkey(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (e.keyCode) {
+                        setToggleCollapseHotkey(e.keyCode);
+                        invoke("set_toggle_collapse_hotkey", { hotkey: e.keyCode });
+                        setIsRecordingToggleHotkey(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    ref={(el) => el?.focus()}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                    <button 
+                      style={{ marginTop: '20px', padding: '5px 15px' }}
+                      onClick={(e) => { e.stopPropagation(); setIsRecordingToggleHotkey(false); }}
+                    >取消</button>
+                  </div>
+                )}
+                <div className="setting-tip">默认: ~ (VK: 192)</div>
+              </div>
+
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
               <div className="setting-item">
@@ -1744,25 +2140,258 @@ export default function App() {
         <>
           {/* 更新按钮 */}
           <nav className="nav-bar">
-            {(["monster", "card", "hand", "stash"] as TabType[]).map(t => (
+            {(["monster", "card", "items", "search"] as TabType[]).map(t => (
               <div key={t} className={`nav-item ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
-                {t === 'monster' ? '野怪一览' : t === 'card' ? '卡牌识别' : t === 'hand' ? '手牌' : '仓库'}
+                {t === 'monster' ? '野怪一览' : t === 'card' ? '卡牌识别' : t === 'items' ? '手头物品' : '百科搜索'}
               </div>
             ))}
           </nav>
 
-          <div className="scroll-area">
+          {activeTab === "search" && (
+            <div className="search-box-container" style={{ 
+              zIndex: 100,
+              padding: '12px', 
+              borderBottom: '1px solid rgba(255,255,255,0.1)', 
+              background: '#2b2621', // Dark background to cover scrolling content
+              boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              {/* Row 1: Keyword + Type */}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <input 
+                    className="search-input"
+                    placeholder="搜索名称 / 描述..." 
+                    value={searchQuery.keyword}
+                    onChange={e => setSearchQuery({...searchQuery, keyword: e.target.value})}
+                    onFocus={() => {
+                        setIsInputFocused(true);
+                        // 确保获得焦点时输入法不被鼠标穿透逻辑干扰
+                        invoke("set_overlay_ignore_cursor", { ignore: false }).catch(() => {});
+                    }}
+                    onBlur={() => {
+                        setIsInputFocused(false);
+                    }}
+                    style={{ 
+                      flex: 1, 
+                      minWidth: '200px',
+                      background: '#1e1b18', 
+                      border: '1px solid #48413a', 
+                      color: '#eee', 
+                      padding: '8px 12px', 
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                 />
+                 
+              </div>
+
+              {/* Row 2: Type, Size, Tier, Hero - button groups (single-choice) */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                   {[
+                     {val: 'item', label: '物品'},
+                     {val: 'skill', label: '技能'}
+                   ].map(opt => (
+                     <button key={opt.val}
+                       className={`toggle-btn ${searchQuery.item_type === opt.val ? 'active' : ''}`}
+                       onClick={() => {
+                         if (searchQuery.item_type === opt.val) {
+                           // Toggle off: set to 'all', 恢复尺寸
+                           setSearchQuery({...searchQuery, item_type: 'all', size: opt.val === 'skill' ? lastItemSize : searchQuery.size});
+                         } else if (opt.val === 'skill') {
+                           // 切换到技能：记住当前尺寸，设置为medium
+                           setLastItemSize(searchQuery.size);
+                           setSearchQuery({...searchQuery, item_type: opt.val, size: 'medium'});
+                         } else {
+                           // 切换到物品：恢复之前的尺寸选择
+                           const restoredSize = searchQuery.item_type === 'skill' ? lastItemSize : searchQuery.size;
+                           setSearchQuery({...searchQuery, item_type: opt.val, size: restoredSize});
+                         }
+                       }}
+                       style={{ padding: '6px 10px', borderRadius: 6 }}
+                     >{opt.label}</button>
+                   ))}
+                 </div>
+
+                 {searchQuery.item_type !== 'skill' && (
+                   <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                     {[
+                       {val: 'small', label: '小'},
+                       {val: 'medium', label: '中'},
+                       {val: 'large', label: '大'}
+                     ].map(opt => (
+                       <button key={opt.val}
+                         className={`toggle-btn ${searchQuery.size === opt.val ? 'active' : ''}`}
+                         onClick={() => setSearchQuery({...searchQuery, size: searchQuery.size === opt.val ? '' : opt.val})}
+                         style={{ padding: '6px 10px', borderRadius: 6 }}
+                       >{opt.label}</button>
+                     ))}
+                   </div>
+                 )}
+              </div>
+
+              {/* Row 3: Tier and Hero - Always on separate line */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                   {[
+                     {val: 'bronze', label: '青铜', color: '#cd7f32'},
+                     {val: 'silver', label: '白银', color: '#c0c0c0'},
+                     {val: 'gold', label: '黄金', color: '#ffd700'},
+                     {val: 'diamond', label: '钻石', color: '#b9f2ff'},
+                     {val: 'legendary', label: '传说', color: '#ff4500'}
+                   ].map(opt => (
+                     <button key={opt.val}
+                       className={`toggle-btn ${searchQuery.start_tier === opt.val ? 'active' : ''}`}
+                       onClick={() => setSearchQuery({...searchQuery, start_tier: searchQuery.start_tier === opt.val ? '' : opt.val})}
+                       style={{ padding: '6px 10px', borderRadius: 6, color: opt.color }}
+                     >{opt.label}</button>
+                   ))}
+                 </div>
+
+                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                   {[
+                     {val: 'Common', label: '通用', color: '#E0E0E0', avatar: ''},
+                     {val: 'Pygmalien', label: '猪', color: '#5BA3FF', avatar: '/images/heroes/pygmalien.webp'},
+                     {val: 'Jules', label: '朱尔斯', color: '#D77EFF', avatar: '/images/heroes/jules.webp'},
+                     {val: 'Vanessa', label: '瓦内莎', color: '#FF6B6B', avatar: '/images/heroes/vanessa.webp'},
+                     {val: 'Mak', label: '马克', color: '#D4FF85', avatar: '/images/heroes/mak.webp'},
+                     {val: 'Dooley', label: '多利', color: '#FFC048', avatar: '/images/heroes/dooley.webp'},
+                     {val: 'Stelle', label: '斯黛尔', color: '#FFE74C', avatar: '/images/heroes/stelle.webp'}
+                   ].map(opt => (
+                     <button key={opt.val}
+                       className={`toggle-btn ${opt.avatar ? 'hero-btn' : ''} ${searchQuery.hero === opt.val ? 'active' : ''}`}
+                       onClick={() => setSearchQuery({...searchQuery, hero: searchQuery.hero === opt.val ? '' : opt.val})}
+                       title={opt.label}
+                     >
+                       {opt.avatar ? <img src={opt.avatar} alt={opt.label} /> : opt.label}
+                     </button>
+                   ))}
+                 </div>
+              </div>
+
+              {/* Row 4: Tags & Hidden Tags - Allow wrap */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                 <select 
+                    className="search-select"
+                    value={searchQuery.tags}
+                    onChange={e => setSearchQuery({...searchQuery, tags: e.target.value})}
+                    style={{ flex: 1, minWidth: '120px' }}
+                 >
+                   <option value="">标签: 全部</option>
+                   {[
+                     ["Drone", "无人机"], 
+                     ["Property", "地产"], 
+                     ["Ray", "射线"], 
+                     ["Tool", "工具"], 
+                     ["Dinosaur", "恐龙"], 
+                     ["Loot", "战利品"], 
+                     ["Apparel", "服饰"], 
+                     ["Core", "核心"], 
+                     ["Weapon", "武器"], 
+                     ["Aquatic", "水系"], 
+                     ["Toy", "玩具"], 
+                     ["Tech", "科技"], 
+                     ["Potion", "药水"], 
+                     ["Reagent", "原料"], 
+                     ["Vehicle", "载具"], 
+                     ["Relic", "遗物"], 
+                     ["Food", "食物"], 
+                     ["Dragon", "龙"],
+                     ["Friend", "伙伴"]
+                   ].sort((a,b) => a[1].localeCompare(b[1], 'zh-CN')).map(([val, label]) => {
+                     return <option key={val} value={val}>{label}</option>;
+                   })}
+                 </select>
+                 
+                 <select 
+                    className="search-select"
+                    value={searchQuery.hidden_tags}
+                    onChange={e => setSearchQuery({...searchQuery, hidden_tags: e.target.value})}
+                    style={{ flex: 1, minWidth: '120px' }}
+                 >
+                   <option value="">隐藏标签: 全部</option>
+                   {[
+                    "AbsorbDestroy", "AbsorbFreeze", "AbsorbSlow", "Ammo/弹药", "AmmoRef/弹药相关", "Burn/灼烧", "BurnRef/灼烧相关", 
+                    "Charge/充能", "Cooldown/冷却", "CooldownReference/冷却相关", "Crit/暴击", "CritRef/暴击相关", "Damage/伤害", "DamageRef/伤害相关", 
+                    "EconomyRef/经济相关", "Experience/经验", "Flying/飞行", "FlyingRef/飞行相关", "Freeze/冻结", "FreezeRef/冻结相关", 
+                    "Gold/金币", "Haste/加速", "HasteRef/加速相关", "Heal/治疗", "HealRef/治疗相关", "Health/生命值", "HealthRef/生命值相关", 
+                    "Income/收入", "Level/等级相关", "Lifesteal/生命偷取", "Poison/剧毒", "PoisonRef/剧毒相关", "PotionRef/药水相关", 
+                    "Quest/任务", "Regen/再生", "RegenRef/再生相关", "Shield/护盾", "ShieldRef/护盾相关", "Slow/减速", "SlowRef/减速相关", 
+                    "TechReference/科技相关", "Ticket/票", "Value/价值"
+                   ].map(t => {
+                     const parts = t.split('/');
+                     const val = parts[0];
+                     let label = parts.length > 1 ? parts[1] : val;
+                     // normalize wording: replace 引用 -> 相关
+                     label = label.replace(/引用/g, '相关');
+                     return <option key={val} value={val}>{label}</option>;
+                   })}
+                 </select>
+              </div>
+
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                marginTop: '8px',
+                padding: '6px 0',
+                borderTop: '1px solid rgba(125, 107, 74, 0.3)'
+              }}>
+                 <div style={{ 
+                   display: 'flex', 
+                   alignItems: 'center', 
+                   gap: '8px',
+                   fontSize: '13px', 
+                   color: '#a0937d' 
+                 }}>
+                   {isSearching ? (
+                     <>
+                       <span style={{ color: '#d4af37' }}>🔍</span>
+                       <span>正在搜索...</span>
+                     </>
+                   ) : (
+                     <>
+                       <span style={{ 
+                         width: '30px', 
+                         height: '1px', 
+                         background: 'linear-gradient(to right, transparent, #d4af37)' 
+                       }}></span>
+                       <span>找到</span>
+                       <span style={{ 
+                         color: '#ffcc00', 
+                         fontWeight: 'bold',
+                         fontSize: '15px',
+                         textShadow: '0 0 8px rgba(255, 204, 0, 0.4)'
+                       }}>{searchResults.length}</span>
+                       <span>个结果</span>
+                       <span style={{ 
+                         width: '30px', 
+                         height: '1px', 
+                         background: 'linear-gradient(to left, transparent, #d4af37)' 
+                       }}></span>
+                     </>
+                   )}
+                 </div>
+                 <button 
+                    className="bulk-btn" 
+                    style={{ fontSize: '12px', padding: '4px 12px' }} 
+                    onClick={() => setSearchQuery({
+                        keyword: "", item_type: "all", size: "", start_tier: "", hero: "", tags: "", hidden_tags: ""
+                    })}
+                 >
+                    重置筛选
+                 </button>
+              </div>
+            </div>
+          )}
+
+          <div className="scroll-area" ref={scrollAreaRef} onScroll={handleScroll}>
             <div className="items" ref={wrapRef}>
               {activeTab === "monster" ? (
                 <>
                   <div className="monster-controls">
-                    <button 
-                      className="bulk-btn" 
-                      style={{ width: '100%', marginBottom: '10px', background: 'var(--c-gold)', color: '#000', fontWeight: 'bold' }} 
-                      onClick={handleManualYoloScan}
-                    >
-                      📸 截屏识物 (YOLO)
-                    </button>
                     <div className="day-tabs">
                       <div className="day-row">
                         {["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"].map(d => (
@@ -1850,8 +2479,37 @@ export default function App() {
             ) : (
                 <>
                   <div className="card-list">
-                    {(activeTab === "card" ? recognizedCards : getSortedItems(activeTab === "hand" ? syncData.hand_items : syncData.stash_items)).map((item, idx) => {
-                      const isExpanded = expandedItems.has(item.uuid);
+                    {(() => {
+                        let source: ItemData[] = [];
+                        if (activeTab === "card") source = recognizedCards;
+                        else if (activeTab === "items") source = getSortedItems([...syncData.hand_items, ...syncData.stash_items]);
+                        else if (activeTab === "search") source = searchResults;
+
+                        // Filter empty entries (no Chinese name or no skills)
+                        const filtered = source.filter(item => {
+                             if (!item.name_cn || item.name_cn.trim() === "") return false;
+                             
+                             // For Items tab, we want to show everything the user has, even if data is incomplete.
+                             // For Search tab, we should filter incomplete data.
+                             if (activeTab === "search") {
+                                 // Show items that have EITHER skills OR enchantments (not require both)
+                                 const hasSkills = item.skills && item.skills.length > 0;
+                                 const hasEnchantments = item.enchantments && item.enchantments.length > 0;
+                                 if (!hasSkills && !hasEnchantments) {
+                                     return false;
+                                 }
+                             }
+                             return true;
+                        });
+
+                        const displayList = filtered.slice(0, visibleCount);
+
+                        return displayList.map((item, idx) => {
+                      // Use instance_id if available (Hand/Stash), fallback to uuid (Card/YOLO)
+                      const uniqueKey = item.instance_id || item.uuid + (activeTab === "card" ? `-${idx}` : "");
+                      const expansionKey = item.instance_id || item.uuid;
+                      
+                      const isExpanded = expandedItems.has(expansionKey);
                       const isRecognized = activeTab === "card";
                       const isTopMatch = idx === 0;
                       const tierClass = item.tier.split(' / ')[0].toLowerCase();
@@ -1859,13 +2517,14 @@ export default function App() {
                         'bronze': '青铜+',
                         'silver': '白银+',
                         'gold': '黄金+',
-                        'diamond': '钻石+'
+                        'diamond': '钻石+',
+                        'legendary': '传说'
                       }[tierClass] || tierClass;
                       const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
                       const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
 
                       return (
-                        <div key={item.uuid} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(item.uuid)}>
+                        <div key={uniqueKey} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(expansionKey)}>
                           <div className={`item-card tier-${tierClass}`}>
                             <div className="card-left">
                               <div className={`image-box size-${sizeClass}`}>
@@ -1895,20 +2554,41 @@ export default function App() {
 
                             <div className="card-right">
                               <div className="top-right-group">
-                                <span className="hero-badge">{heroZh}</span>
-                                <div 
-                                  className={`pin-btn ${pinnedItems.has(item.uuid) ? 'active' : ''}`}
-                                  onClick={(e) => togglePin(item.uuid, e)}
-                                >
-                                  {pinnedItems.has(item.uuid) ? "📌" : "📍"}
-                                </div>
+                                {(() => {
+                                  const rawHero = item.heroes && item.heroes[0] ? item.heroes[0] : 'Common';
+                                  const heroKey = rawHero.split(' / ')[0];
+                                  const heroColor = HERO_COLORS[heroKey] || undefined;
+                                  const heroAvatarMap: Record<string, string> = {
+                                    'Pygmalien': '/images/heroes/pygmalien.webp',
+                                    'Jules': '/images/heroes/jules.webp',
+                                    'Vanessa': '/images/heroes/vanessa.webp',
+                                    'Mak': '/images/heroes/mak.webp',
+                                    'Dooley': '/images/heroes/dooley.webp',
+                                    'Stelle': '/images/heroes/stelle.webp'
+                                  };
+                                  const avatar = heroAvatarMap[heroKey];
+                                  if (activeTab === 'search') {
+                                    return avatar ? <img src={avatar} alt={heroZh} className="hero-avatar-badge" title={heroZh} /> : <span className="hero-badge" style={{marginRight: 0, color: heroColor}}>{heroZh}</span>;
+                                  }
+                                  return (
+                                    <>
+                                      {avatar ? <img src={avatar} alt={heroZh} className="hero-avatar-badge" title={heroZh} /> : <span className="hero-badge" style={{ color: heroColor }}>{heroZh}</span>}
+                                      <div 
+                                        className={`pin-btn ${pinnedItems.has(expansionKey) ? 'active' : ''}`}
+                                        onClick={(e) => togglePin(expansionKey, e)}
+                                      >
+                                        {pinnedItems.has(expansionKey) ? "📌" : "📍"}
+                                      </div>
+                                    </>
+                                  );
+                                })()}
                               </div>
                               <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
                             </div>
                           </div>
 
                         {isExpanded && (
-                          <div className={`item-details-v2 ${pinnedItems.has(item.uuid) ? 'progression-active' : ''}`}>
+                          <div className={`item-details-v2 ${pinnedItems.has(expansionKey) ? 'progression-active' : ''}`}>
                             {(() => {
                                 try {
                                     // 强制从原始数据读取，防止类型系统干扰
@@ -1920,7 +2600,8 @@ export default function App() {
                                     if (hasProgression) {
                                       const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
                                         const ms = parseFloat(v);
-                                        return isNaN(ms) ? "0.0" : (ms/1000).toFixed(1);
+                                        if (isNaN(ms)) return "0.0";
+                                        return (ms > 100 ? ms / 1000 : ms).toFixed(1);
                                       });
                                       const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
                                       const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
@@ -1963,7 +2644,7 @@ export default function App() {
                                 return item.cooldown !== undefined && item.cooldown > 0 && (
                                   <div className="details-left">
                                     <div className="cd-display">
-                                      <div className="cd-value">{item.cooldown.toFixed(1)}</div>
+                                      <div className="cd-value">{(item.cooldown > 100 ? item.cooldown / 1000 : item.cooldown).toFixed(1)}</div>
                                       <div className="cd-unit">秒</div>
                                     </div>
                                   </div>
@@ -2012,14 +2693,15 @@ export default function App() {
                         )}
                       </div>
                     );
-                  })}
+                  });
+                })()}
                   {activeTab === "card" && recognizedCards.length === 0 && !isRecognizingCard && (
                     <div className="empty-tip">按下 Alt 键 识别鼠标指向的卡牌</div>
                   )}
                   {activeTab === "card" && isRecognizingCard && (
                     <div className="empty-tip">🔍 正在识别中...</div>
                   )}
-                  {(activeTab === "hand" || activeTab === "stash") && (activeTab === "hand" ? syncData.hand_items : syncData.stash_items).length === 0 && (
+                  {activeTab === "items" && (syncData.hand_items.length + syncData.stash_items.length) === 0 && (
                     <div className="empty-tip">当前暂无数据，请在游戏中操作相应卡牌</div>
                   )}
                 </div>

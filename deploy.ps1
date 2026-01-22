@@ -1,5 +1,5 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.2.3"  # <--- 版本号
+$NEW_VERSION = "1.3.1"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
@@ -41,12 +41,45 @@ if (Test-Path "src-tauri/target/release/bundle/nsis") {
 npm run tauri build
 if ($LASTEXITCODE -ne 0) { throw "Build failed" }
 
-# 为方便测试，把 DLL 也复制到 release 目录下的 loose exe 旁边
+# 为方便测试，把相关 DLL 都复制到 release 目录下的 loose exe 旁边
 $releaseDir = "src-tauri/target/release"
-$dllSource = "C:\opencv\build\x64\vc16\bin\opencv_world4120.dll"
-if (Test-Path $dllSource) {
-    Copy-Item $dllSource -Destination "$releaseDir\opencv_world4120.dll" -Force
-    Write-Host "✅ [Dev] Copied opencv DLL to target/release for testing." -ForegroundColor Cyan
+
+# 复制OpenCV DLL
+$opencvDll = "C:\opencv\build\x64\vc16\bin\opencv_world4120.dll"
+if (Test-Path $opencvDll) {
+    Copy-Item $opencvDll -Destination "$releaseDir\opencv_world4120.dll" -Force
+    Write-Host "✅ [Dev] Copied OpenCV DLL to target/release for testing." -ForegroundColor Cyan
+}
+
+# 从resources目录复制ONNX Runtime相关DLL
+$resourcesDir = "src-tauri/resources"
+$onnxDlls = @(
+    "onnxruntime.dll",
+    "DirectML.dll", 
+    "onnxruntime_providers_shared.dll"
+    # 注意：onnxruntime_providers_dml.dll 在某些版本中可能不存在，如果有的话会自动复制
+)
+
+foreach ($dllName in $onnxDlls) {
+    $sourcePath = "$resourcesDir\$dllName"
+    if (Test-Path $sourcePath) {
+        $destPath = "$releaseDir\$dllName"
+        Copy-Item $sourcePath -Destination $destPath -Force
+        Write-Host "✅ [Dev] Copied $dllName from resources to target/release." -ForegroundColor Cyan
+    } else {
+        Write-Host "⚠️  [Warning] $dllName not found in $resourcesDir (may be optional)" -ForegroundColor Yellow
+    }
+}
+
+# 检查是否有其他可选的DML相关DLL
+$optionalDlls = @("onnxruntime_providers_dml.dll")
+foreach ($dllName in $optionalDlls) {
+    $sourcePath = "$resourcesDir\$dllName"
+    if (Test-Path $sourcePath) {
+        $destPath = "$releaseDir\$dllName"
+        Copy-Item $sourcePath -Destination $destPath -Force
+        Write-Host "✅ [Optional] Copied $dllName from resources to target/release." -ForegroundColor Green
+    }
 }
 
 # 4. 定位安装包

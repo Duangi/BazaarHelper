@@ -5,7 +5,11 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock};
 use rayon::prelude::*;
 use ndarray::Array;
-use ort::{session::{builder::GraphOptimizationLevel, Session}, value::Value};
+use ort::{
+    execution_providers::DirectMLExecutionProvider,
+    session::{builder::GraphOptimizationLevel, Session}, 
+    value::Value
+};
 use opencv::{
     core::{Mat, Vector, KeyPoint, DMatch, NORM_HAMMING},
     features2d::{ORB, BFMatcher},
@@ -29,26 +33,45 @@ pub struct YoloDetection {
 
 static YOLO_SESSION: OnceLock<Mutex<Session>> = OnceLock::new();
 
-pub fn get_yolo_session(model_path: &PathBuf) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
+pub fn get_yolo_session(model_path: &PathBuf, use_gpu: bool) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
     if let Some(mutex) = YOLO_SESSION.get() {
         return mutex.lock().map_err(|e| e.to_string());
     }
     
-    let session = Session::builder()
-        .map_err(|e| e.to_string())?
+    if use_gpu {
+        log_to_file("[YOLO] Initializing session with DirectML execution provider...");
+    } else {
+        log_to_file("[YOLO] Initializing session with CPU execution provider...");
+    }
+    
+    let mut builder = Session::builder()
+        .map_err(|e| format!("创建Session Builder失败: {}", e))?;
+    
+    if use_gpu {
+        builder = builder
+            .with_execution_providers([DirectMLExecutionProvider::default().build()])
+            .map_err(|e| format!("DirectML执行提供者加载失败: {}. 请确保已安装GPU驱动和DirectML.dll在程序目录中。", e))?;
+    }
+    
+    let session = builder
         .with_optimization_level(GraphOptimizationLevel::Level3)
-        .map_err(|e| e.to_string())?
+        .map_err(|e| format!("设置优化级别失败: {}", e))?
         .with_intra_threads(4)
-        .map_err(|e| e.to_string())?
+        .map_err(|e| format!("设置线程数失败: {}", e))?
         .commit_from_file(model_path)
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("加载ONNX模型失败: {}. 模型路径: {:?}", e, model_path))?;
         
+    if use_gpu {
+        log_to_file("[YOLO] Session initialized successfully with DirectML");
+    } else {
+        log_to_file("[YOLO] Session initialized successfully with CPU");
+    }
     let _ = YOLO_SESSION.set(Mutex::new(session));
     YOLO_SESSION.get().unwrap().lock().map_err(|e| e.to_string())
 }
 
-pub fn run_yolo_inference(img: &DynamicImage, model_path: &PathBuf) -> Result<Vec<YoloDetection>, String> {
-    let mut session = get_yolo_session(model_path)?;
+pub fn run_yolo_inference(img: &DynamicImage, model_path: &PathBuf, use_gpu: bool) -> Result<Vec<YoloDetection>, String> {
+    let mut session = get_yolo_session(model_path, use_gpu)?;
     let (orig_w, orig_h) = img.dimensions();
 
     // 1. 预处理 (640x640)
@@ -176,29 +199,57 @@ pub fn recognize_monsters_yolo(app: &tauri::AppHandle) -> Result<Vec<String>, St
     };
 
     let img = DynamicImage::ImageRgba8(screenshot);
-    let detections = run_yolo_inference(&img, &model_path)?;
+    let detections = run_yolo_inference(&img, &model_path, true)?; // 默认使用GPU
     
     let mut identified_monsters = Vec::new();
-    
-    // 过滤出 class_id = 1 (event) 的结果
-    for det in detections.iter().filter(|d| d.class_id == 1) {
-        // 进行裁剪
-        let x = det.x1.max(0) as u32;
-        let y = det.y1.max(0) as u32;
-        let w = (det.x2 - det.x1).max(0) as u32;
-        let h = (det.y2 - det.y1).max(0) as u32;
+
+    // 1. 分离 Detected Objects
+    // names: ['day', 'event', 'item', 'monstericon', 'randomicon', 'shopicon', 'skill']
+    // event_id = 1, monstericon_id = 3
+    let events: Vec<&YoloDetection> = detections.iter().filter(|d| d.class_id == 1).collect();
+    let monster_icons: Vec<&YoloDetection> = detections.iter().filter(|d| d.class_id == 3).collect();
+
+    // 2. 判定逻辑: Event + MonsterIcon Overlap > 50%
+    for event in events {
+        let mut is_monster_event = false;
         
-        if w > 0 && h > 0 {
-            let cropped = img.crop_imm(x, y, w, h);
-            // 调用现有的 ORB 匹配逻辑
-            if let Some(monster_name) = match_single_image_to_db(&cropped, None) {
-                identified_monsters.push(monster_name);
+        for icon in &monster_icons {
+            let overlay_area = intersection_area_val(event, icon);
+            let icon_area = ((icon.x2 - icon.x1) * (icon.y2 - icon.y1)) as f32;
+            
+            if icon_area > 0.0 && (overlay_area / icon_area) >= 0.5 {
+                 is_monster_event = true;
+                 break;
+            }
+        }
+
+        if is_monster_event {
+            // 进行裁剪和识别
+            let x = event.x1.max(0) as u32;
+            let y = event.y1.max(0) as u32;
+            let w = (event.x2 - event.x1).max(0) as u32;
+            let h = (event.y2 - event.y1).max(0) as u32;
+            
+            if w > 0 && h > 0 {
+                let cropped = img.crop_imm(x, y, w, h);
+                // 调用现有的 ORB 匹配逻辑
+                if let Some(monster_name) = match_single_image_to_db(&cropped, None) {
+                    identified_monsters.push(monster_name);
+                }
             }
         }
     }
-
+    
     println!("[YOLO Recognition] Identified {} monsters in {:?}", identified_monsters.len(), start_total.elapsed());
     Ok(identified_monsters)
+}
+
+fn intersection_area_val(a: &YoloDetection, b: &YoloDetection) -> f32 {
+    let x1 = a.x1.max(b.x1);
+    let y1 = a.y1.max(b.y1);
+    let x2 = a.x2.min(b.x2);
+    let y2 = a.y2.min(b.y2);
+    (x2 - x1).max(0) as f32 * (y2 - y1).max(0) as f32
 }
 
 fn match_single_image_to_db(img: &DynamicImage, day_filter: Option<String>) -> Option<String> {

@@ -153,6 +153,9 @@ html, body, #root {
   background: transparent !important;
   height: 100%; width: 100%; overflow: hidden;
   font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
 }
 
 .overlay {
@@ -374,18 +377,21 @@ html, body, #root {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 .bulk-btn {
-  background: rgba(255, 205, 25, 0.1);
-  border: 1px solid rgba(255, 205, 25, 0.3);
-  color: #ffcd19;
-  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #7d6b4a;
+  color: #a0937d;
+  padding: 6px 12px;
   border-radius: 4px;
   font-size: calc(12px * var(--font-scale, 1));
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  white-space: nowrap;
 }
 .bulk-btn:hover {
-  background: rgba(255, 205, 25, 0.2);
-  border-color: #ffcd19;
+  background: rgba(212, 175, 55, 0.05);
+  border-color: #d4af37;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
 .collapse-btn {
@@ -1114,23 +1120,69 @@ html, body, #root {
 
 .search-input {
   flex: 1;
-  padding: 14px 18px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #fff;
-  font-size: calc(16px * var(--font-scale, 1));
+  padding: 10px 10px 10px 36px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #7d6b4a;
+  border-bottom: 2px solid #7d6b4a;
+  border-radius: 4px;
+  color: #eee;
+  font-size: calc(14px * var(--font-scale, 1));
   outline: none;
-  transition: all 0.3s;
+  transition: all 0.25s ease;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23a0937d" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 10px center;
 }
 
 .search-input:focus {
-  border-color: var(--c-golden);
-  background: rgba(0, 0, 0, 0.6);
+  border-color: #d4af37;
+  border-bottom-color: #ffcc00;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23ffcc00" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 10px center;
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: #7d6b4a;
+}
+
+/* Select dropdown styling */
+.search-select {
+  padding: 8px 28px 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #7d6b4a;
+  border-radius: 4px;
+  color: #eee;
+  font-size: calc(13px * var(--font-scale, 1));
+  outline: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23a0937d" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.search-select:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #d4af37;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.2);
+}
+.search-select:focus {
+  border-color: #ffcc00;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23ffcc00" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.search-select option {
+  background: #1a1a1a;
+  color: #eee;
+  padding: 8px;
 }
 
 /* 手动识别按钮 */
@@ -1644,13 +1696,134 @@ html, body, #root {
   gap: 12px;
   min-height: 64px;
   position: relative;
+  
+  /* 机械风格边框 */
+  background: linear-gradient(135deg, #5a5f69 0%, #9ca2af 40%, #2c313a 100%);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.2),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-/* Tier Specific Borders */
-.item-card.tier-bronze { border-left: 4px solid #cd7f32; }
-.item-card.tier-silver { border-left: 4px solid #c0c0c0; }
-.item-card.tier-gold { border-left: 4px solid #ffd700; box-shadow: inset 10px 0 20px -15px rgba(255, 215, 0, 0.3); }
-.item-card.tier-diamond { border-left: 4px solid #b9f2ff; box-shadow: inset 10px 0 20px -15px rgba(185, 242, 255, 0.4); }
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.5),
+    inset 0 0 20px rgba(0,0,0,0.5),
+    0 15px 25px rgba(0,0,0,0.7),
+    0 0 0 3px #1a1c22,
+    0 0 10px rgba(100, 200, 255, 0.2);
+}
+
+/* Tier Specific Borders - 在机械边框基础上添加颜色强调 */
+.item-card.tier-bronze { 
+  border-left: 4px solid #cd7f32; 
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.2),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    inset 10px 0 20px -15px rgba(205, 127, 50, 0.3),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22;
+}
+.item-card.tier-silver { 
+  border-left: 4px solid #c0c0c0; 
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.2),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    inset 10px 0 20px -15px rgba(192, 192, 192, 0.3),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22;
+}
+.item-card.tier-gold { 
+  border-left: 4px solid #ffd700; 
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.3),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    inset 10px 0 20px -15px rgba(255, 215, 0, 0.4),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22,
+    0 0 15px rgba(255, 215, 0, 0.2);
+}
+.item-card.tier-diamond { 
+  border-left: 4px solid #b9f2ff; 
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.3),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    inset 10px 0 20px -15px rgba(185, 242, 255, 0.5),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22,
+    0 0 15px rgba(185, 242, 255, 0.3);
+}
+
+/* Legendary tier left bar */
+.item-card.tier-legendary { 
+  border-left: 4px solid #ff4500; 
+  box-shadow: 
+    inset 0 0 0 1px rgba(255,255,255,0.3),
+    inset 0 0 10px rgba(0,0,0,0.8),
+    inset 10px 0 20px -15px rgba(255, 69, 0, 0.4),
+    0 10px 20px rgba(0,0,0,0.6),
+    0 0 0 3px #1a1c22,
+    0 0 20px rgba(255, 69, 0, 0.4);
+}
+
+/* Toggle button groups - Game UI Style (Ghost Button) */
+.toggle-btn {
+  background: rgba(0, 0, 0, 0.2);
+  color: #a0937d;
+  border: 1px solid #7d6b4a;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  box-shadow: none;
+  white-space: nowrap;
+  position: relative;
+}
+.toggle-btn:hover {
+  border-color: #d4af37;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+.toggle-btn.active {
+  background: rgba(255, 204, 0, 0.1);
+  border-color: #ffcc00;
+  color: #ffcc00;
+  box-shadow: inset 0 0 8px rgba(255, 204, 0, 0.2), 0 0 12px rgba(255, 204, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+  font-weight: 700;
+}
+
+/* Hero buttons with avatar */
+.toggle-btn.hero-btn {
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  min-width: 42px;
+  min-height: 42px;
+}
+.toggle-btn.hero-btn img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #7d6b4a;
+  transition: all 0.25s ease;
+  display: block;
+}
+.toggle-btn.hero-btn:hover img {
+  border-color: #d4af37;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}
+.toggle-btn.hero-btn.active img {
+  border-color: #ffcc00;
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+}
 
 .card-left {
   display: flex;
@@ -1763,6 +1936,7 @@ html, body, #root {
 .tier-label.tier-silver { color: #c0c0c0; border: 1px solid rgba(192, 192, 192, 0.3); }
 .tier-label.tier-gold { color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.3); }
 .tier-label.tier-diamond { color: #b9f2ff; border: 1px solid rgba(185, 242, 255, 0.3); }
+.tier-label.tier-legendary { color: #ff4500; border: 1px solid rgba(255, 69, 0, 0.25); }
 
 .tags-line {
   display: flex;
@@ -1801,6 +1975,23 @@ html, body, #root {
   border-radius: 4px;
   border: 1px solid rgba(255, 205, 25, 0.2);
   margin-right: 25px;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+.hero-avatar-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #7d6b4a;
+  margin-right: 6px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.hero-avatar-badge:hover {
+  border-color: #d4af37;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
 }
 
 .expand-chevron {
@@ -1856,6 +2047,125 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* === 属性宝石徽章（机械风格） === */
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 8px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  position: relative;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.8));
+  text-shadow: 
+    -2px -2px 0 #000,  
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000,
+    0 3px 5px rgba(0,0,0,1);
+}
+
+/* 伤害 (红色宝石) */
+.stat-badge.damage {
+  background: linear-gradient(135deg, #ff4d4d 0%, #990000 100%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+}
+.stat-badge.damage::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+  z-index: -1;
+}
+
+/* 治疗 (绿色宝石) */
+.stat-badge.heal {
+  background: linear-gradient(135deg, #8eea31 0%, #4a7a1a 100%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+}
+.stat-badge.heal::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  z-index: -1;
+}
+
+/* 护盾 (黄色宝石) */
+.stat-badge.shield {
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+}
+.stat-badge.shield::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  z-index: -1;
+}
+
+/* 灼烧 (橙色宝石) */
+.stat-badge.burn {
+  background: linear-gradient(135deg, #ff9f45 0%, #cc5500 100%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+}
+.stat-badge.burn::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+  z-index: -1;
+}
+
+/* 中毒 (深绿宝石) */
+.stat-badge.poison {
+  background: linear-gradient(135deg, #0ebe4f 0%, #056625 100%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+}
+.stat-badge.poison::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  z-index: -1;
+}
+
+/* 再生 (浅绿宝石) */
+.stat-badge.regen {
+  background: linear-gradient(135deg, #8eea31 0%, #4a7a1a 100%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+}
+.stat-badge.regen::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(0% 0%, 80% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+  z-index: -1;
+}
+
+/* 吸血 (紫色宝石) */
+.stat-badge.lifesteal {
+  background: linear-gradient(135deg, #9d4a6f 0%, #5a2a40 100%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+}
+.stat-badge.lifesteal::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 50%);
+  clip-path: polygon(20% 0%, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  z-index: -1;
 }
 
 .skill-item, .enchant-item {
