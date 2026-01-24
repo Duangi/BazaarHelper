@@ -1109,10 +1109,16 @@ export default function App() {
 
         // 设置防抖定时器，只有停止移动200ms后才记录位置
         moveDebounceTimer.current = window.setTimeout(() => {
-          // 【关键修复】直接存储物理坐标，不做任何转换
-          // 这是绝对真理，不随缩放改变
-          setHasCustomPosition(true);
-          lastKnownPosition.current = { x: event.payload.x, y: event.payload.y };
+          // 过滤掉(-11,-11)等异常坐标（窗口最小化或特殊状态）
+          if (event.payload.x >= 0 && event.payload.y >= 0) {
+            // 【关键修复】直接存储物理坐标，不做任何转换
+            // 这是绝对真理，不随缩放改变
+            setHasCustomPosition(true);
+            lastKnownPosition.current = { x: event.payload.x, y: event.payload.y };
+            console.log(`[Position] Saved valid position: (${event.payload.x}, ${event.payload.y})`);
+          } else {
+            console.log(`[Position] Ignored invalid position: (${event.payload.x}, ${event.payload.y})`);
+          }
         }, 200);
       });
       return unlisten;
@@ -1543,6 +1549,7 @@ export default function App() {
       currentScale.current = logicalScale;
       console.log(`[Layout DEBUG] Using fallback scale=${logicalScale}`);
       
+      // 使用逻辑坐标系统
       const pX = 0;
       const pY = 0;
       const pWidth = 1920;
@@ -1557,30 +1564,36 @@ export default function App() {
       if (showVersionScreen) {
         targetW = 600;
         targetH = 850;
-        targetX = Math.round(pX / logicalScale + (pWidth / logicalScale - targetW) / 2);
-        targetY = Math.round(pY / logicalScale + (pHeight / logicalScale - targetH) / 2);
+        targetX = Math.round(pX + (pWidth - targetW) / 2);
+        targetY = Math.round(pY + (pHeight - targetH) / 2);
       } else {
-        const screenWLogical = pWidth / logicalScale;
-        const screenHLogical = pHeight / logicalScale;
+        const screenWLogical = pWidth;
+        const screenHLogical = pHeight;
         
         targetW = Math.round(Math.min(expandedWidth, screenWLogical - 20));
         targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeight, screenHLogical - 40));
         console.log(`[Layout DEBUG] Calculation: targetW=${targetW}, targetH=${targetH}, isCollapsed=${isCollapsed}`);
 
         if (hasCustomPosition && lastKnownPosition.current) {
+          // lastKnownPosition存储的是物理坐标，需要转换为逻辑坐标
           targetX = Math.round(lastKnownPosition.current.x / logicalScale);
           targetY = Math.round(lastKnownPosition.current.y / logicalScale);
+          console.log(`[Layout DEBUG] Using saved position (physical): (${lastKnownPosition.current.x}, ${lastKnownPosition.current.y})`);
+          console.log(`[Layout DEBUG] Converted to logical: (${targetX}, ${targetY})`);
         } else {
-          targetX = Math.round((pX + pWidth) / logicalScale - targetW);
-          targetY = Math.round(pY / logicalScale); 
+          targetX = Math.round(pX + pWidth - targetW);
+          targetY = Math.round(pY);
+          console.log(`[Layout DEBUG] Using default position (right-top): (${targetX}, ${targetY})`);
         }
       }
 
       const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
+      console.log(`[Layout DEBUG] Layout key check: current="${lastLayout.current}" new="${layoutKey}"`);
       if (lastLayout.current === layoutKey) {
-        console.log(`[Layout DEBUG] skip: layoutKey unchanged (${layoutKey})`);
+        console.log(`[Layout DEBUG] SKIPPING: layoutKey unchanged (${layoutKey})`);
         return;
       }
+      console.log(`[Layout DEBUG] Layout key changed, will apply`);
       lastLayout.current = layoutKey;
 
       try {
@@ -1591,12 +1604,14 @@ export default function App() {
         const size = await appWindow.innerSize();
         const pos = await appWindow.outerPosition();
         
-        const currentW = Math.round(size.width / logicalScale);
-        const currentH = Math.round(size.height / logicalScale);
+        // size是逻辑尺寸，pos是物理坐标，需要转换为逻辑坐标
+        const currentW = Math.round(size.width);
+        const currentH = Math.round(size.height);
         const currentX = Math.round(pos.x / logicalScale);
         const currentY = Math.round(pos.y / logicalScale);
 
         console.log(`[Layout DEBUG] Current window state: ${currentW}x${currentH} at ${currentX},${currentY}`);
+        console.log(`[Layout DEBUG] Target window state: ${targetW}x${targetH} at ${targetX},${targetY}`);
 
         if (currentW !== targetW || currentH !== targetH) {
           console.log(`[Layout DEBUG] calling setSize(${targetW}, ${targetH})`);
@@ -1611,7 +1626,8 @@ export default function App() {
         await appWindow.show(); 
         console.log(`[Layout DEBUG] Sync complete.`);
       } catch (e) { 
-        console.error("[Layout DEBUG] Error during sync:", e); 
+        console.error("[Layout ERROR] Failed during layout sync:", e); 
+        console.error(`[Layout ERROR] Target was: ${targetW}x${targetH} at ${targetX},${targetY}`);
         lastLayout.current = ""; 
         await appWindow.show().catch(() => {});
       }

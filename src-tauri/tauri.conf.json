@@ -16,7 +16,6 @@
                                     "title":  "The Bazaar Helper",
                                     "width":  600,
                                     "height":  850,
-                                    "center":  true,
                                     "resizable":  true,
                                     "alwaysOnTop":  true,
                                     "decorations":  false,
