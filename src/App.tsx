@@ -1528,14 +1528,19 @@ export default function App() {
 
   useEffect(() => {
     const syncLayout = async () => {
+      console.log(`[Layout DEBUG] syncLayout triggered. isCollapsed=${isCollapsed}, showVersionScreen=${showVersionScreen}`);
       const appWindow = getCurrentWindow();
       
       // 1. 获取当前显示器
       const monitor = await currentMonitor(); 
-      if (!monitor) return;
+      if (!monitor) {
+        console.log(`[Layout DEBUG] no monitor found`);
+        return;
+      }
 
       const logicalScale = monitor.scaleFactor;
       currentScale.current = logicalScale;
+      console.log(`[Layout DEBUG] logicalScale=${logicalScale}`);
       
       const pX = monitor.position.x;
       const pY = monitor.position.y;
@@ -1559,6 +1564,7 @@ export default function App() {
         
         targetW = Math.round(Math.min(expandedWidth, screenWLogical - 20));
         targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeight, screenHLogical - 40));
+        console.log(`[Layout DEBUG] isCollapsed: ${isCollapsed}, targetH: ${targetH}, expandedHeight: ${expandedHeight}`);
 
         if (hasCustomPosition && lastKnownPosition.current) {
           targetX = Math.round(lastKnownPosition.current.x / logicalScale);
@@ -1570,10 +1576,14 @@ export default function App() {
       }
 
       const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
-      if (lastLayout.current === layoutKey) return;
+      if (lastLayout.current === layoutKey) {
+        console.log(`[Layout DEBUG] skip: layoutKey matches ${layoutKey}`);
+        return;
+      }
       lastLayout.current = layoutKey;
 
       try {
+        console.log(`[Layout DEBUG] Applying layout: ${layoutKey}`);
         // 先关掉阴影减少重绘压力
         if (appWindow.setShadow) await appWindow.setShadow(false);
         
@@ -1587,17 +1597,22 @@ export default function App() {
         const currentX = Math.round(pos.x / logicalScale);
         const currentY = Math.round(pos.y / logicalScale);
 
+        console.log(`[Layout DEBUG] Current: ${currentW}x${currentH} at ${currentX},${currentY}`);
+
         if (currentW !== targetW || currentH !== targetH) {
+          console.log(`[Layout DEBUG] setSize(LogicalSize(${targetW}, ${targetH}))`);
           await appWindow.setSize(new LogicalSize(targetW, targetH));
         }
         if (currentX !== targetX || currentY !== targetY) {
+          console.log(`[Layout DEBUG] setPosition(LogicalPosition(${targetX}, ${targetY}))`);
           await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
         
         await appWindow.setAlwaysOnTop(true);
         await appWindow.show(); // 确保在位置调整后显示
+        console.log(`[Layout DEBUG] Apply finished`);
       } catch (e) { 
-        console.error("[Layout] Sync failed:", e); 
+        console.error("[Layout DEBUG] Sync failed:", e); 
         lastLayout.current = ""; 
         // 即使出错也尝试显示，避免应用不可见
         await appWindow.show().catch(() => {});
@@ -1825,7 +1840,10 @@ export default function App() {
           </svg>
         </button>
         
-        <div className="collapse-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
+        <div className="collapse-btn" onClick={() => {
+          console.log(`[Layout DEBUG] Toggle button clicked, current isCollapsed: ${isCollapsed}`);
+          setIsCollapsed(!isCollapsed);
+        }}>
           {isCollapsed ? "展开" : "收起"}
           <span className={`collapse-arrow ${isCollapsed ? 'collapsed' : 'expanded'}`}>▾</span>
         </div>

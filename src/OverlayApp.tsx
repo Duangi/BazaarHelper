@@ -481,8 +481,8 @@ export default function OverlayApp() {
             // 优化流程：无论当前是否已显示卡牌，只要右键点击了有效区域，就直接尝试识别并切换
             // 只有当右键点击了"空白"区域且当前有卡牌显示时，才关闭
             try {
-                // 如果当前没有正在进行耗时操作（如YOLO扫描），我们才响应右键
-                // 但 identify set 为 false，因为 handle_overlay_right_click 是极快的本地查找
+                // 停止正在进行的 YOLO 扫描，并立马响应右键点击
+                await invoke("abort_yolo_scan").catch(() => {});
                 
                 const res = await invoke<{type: 'item' | 'monster' | 'event', data: any} | null>("handle_overlay_right_click", { 
                     x: Math.round(coords.x), 
@@ -942,25 +942,6 @@ export default function OverlayApp() {
                 overflow: 'hidden'
             }}
         >
-            {identifying && (
-                <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: 'rgba(0,0,0,0.7)',
-                    color: '#fff',
-                    padding: '8px 20px',
-                    borderRadius: '20px',
-                    border: '1px solid var(--c-golden)',
-                    fontSize: '14px',
-                    zIndex: 1000,
-                    boxShadow: '0 0 15px rgba(255, 205, 25, 0.5)'
-                }}>
-                    🔍 正在进行yolo识别...
-                </div>
-            )}
-
             {yoloResult && (
                 <div 
                     ref={containerRef}

@@ -170,7 +170,9 @@ html, body, #root {
   position: fixed; top: 0; right: 0;
   background: rgba(41, 37, 33, 0.85); /* 还原酒馆褐色背景 */
   display: flex; flex-direction: column;
-  height: 100vh !important; width: 100% !important;
+  height: 100% !important; 
+  width: 100% !important;
+  overflow: hidden;
 }
 
 .resize-handle-width {
