@@ -3,7 +3,6 @@ import { useEffect, useState, useRef, Fragment } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
-import { useDraggable } from "./hooks/useDraggable";
 import "./App.css";
 
 interface SkillText {
@@ -188,24 +187,23 @@ export default function OverlayApp() {
     const imgCache = useRef<Map<string, string>>(new Map());
     const MAX_CACHE_SIZE = 200; // 限制缓存最大200张图片
 
-    // Draggable for Main Card (保存到 localStorage)
-    const { position: draggablePos, handleMouseDown: handleDragStart } = useDraggable({ x: 100, y: 100 }, 'overlay-card-position');
-    // Draggable for Realtime Box (保存到 localStorage) - 左上角
-    const { position: rtPos, handleMouseDown: handleRtDrag } = useDraggable({ x: 10, y: 10 }, 'overlay-rt-position');
-
-    const [size, setSize] = useState({ w: 420, h: -1 });
+    // 移除了拖动功能，使用设置中的位置控制
     const [isResizing, setIsResizing] = useState(false);
     const isResizingRef = useRef(false);
     
-    // Overlay详情页面位置和缩放设置
+    // Overlay详情页面位置、缩放和尺寸设置
     const [detailPosition, setDetailPosition] = useState(() => {
         const x = localStorage.getItem('overlay-detail-x');
         const y = localStorage.getItem('overlay-detail-y');
         const scale = localStorage.getItem('overlay-detail-scale');
+        const width = localStorage.getItem('overlay-detail-width');
+        const height = localStorage.getItem('overlay-detail-height');
         return {
             x: x ? parseInt(x) : 50,
             y: y ? parseInt(y) : 50,
-            scale: scale ? parseInt(scale) : 100
+            scale: scale ? parseInt(scale) : 100,
+            width: width ? parseInt(width) : 420,
+            height: height ? parseInt(height) : 600
         };
     });
 
@@ -255,8 +253,14 @@ export default function OverlayApp() {
         // 监听详情页面位置更新
         const positionUnlisten = listen("update-overlay-detail-position", (event: any) => {
             console.log("[Overlay] Received position update:", event.payload);
-            const { x, y, scale } = event.payload;
-            setDetailPosition({ x, y, scale });
+            const { x, y, scale, width, height } = event.payload;
+            setDetailPosition({ 
+                x: x ?? detailPosition.x, 
+                y: y ?? detailPosition.y, 
+                scale: scale ?? detailPosition.scale,
+                width: width ?? detailPosition.width,
+                height: height ?? detailPosition.height
+            });
         });
 
         return () => {
@@ -296,13 +300,9 @@ export default function OverlayApp() {
 
 
     useEffect(() => {
-        const move = (e: MouseEvent) => {
+        const move = (_e: MouseEvent) => {
              if (isResizingRef.current) {
-                const rect = containerRef.current!.getBoundingClientRect();
-                setSize({
-                    w: Math.max(380, e.clientX - rect.left),
-                    h: Math.max(200, e.clientY - rect.top)
-                });
+                // Resizing is now controlled via detailPosition state from backend
             }
         };
         const stop = () => {
@@ -475,13 +475,23 @@ export default function OverlayApp() {
             displayImgBg = await getImg(e.image_paths.bg);
         }
 
-        // 加载choices的图标
+        // 加载choices的图标和文本
         const processedChoices = e.choices ? await Promise.all(e.choices.map(async choice => {
             const iconPath = `EncEvent_Icons/${choice.icon}.webp`;
             const iconImg = await getImg(iconPath);
+            
+            // 获取中文文本，优先使用已有的display_text，否则使用text_key
+            let displayText = '';
+            if (choice.display_text) {
+                displayText = choice.display_text;
+            } else if (choice.text_key) {
+                displayText = choice.text_key;
+            }
+            
             return {
                 ...choice,
-                displayIcon: iconImg
+                displayIcon: iconImg,
+                display_text: displayText
             };
         })) : [];
 
@@ -972,13 +982,12 @@ export default function OverlayApp() {
                         left: `${detailPosition.x}%`,
                         top: `${detailPosition.y}%`,
                         transform: `translate(-50%, -50%) scale(${detailPosition.scale / 100})`,
-                        width: `${size.w}px`,
-                        height: size.h !== -1 ? `${size.h}px` : 'auto',
+                        width: `${detailPosition.width}px`,
+                        height: `${detailPosition.height}px`,
                         pointerEvents: 'auto',
                         zIndex: 999,
                         overflow: 'visible',
-                        minWidth: '380px',
-                        maxHeight: '85vh',
+                        minWidth: '200px',
                         background: 'rgba(20,15,10,0.98)',
                         border: '1px solid var(--c-golden)',
                         borderRadius: '12px',
@@ -1788,8 +1797,8 @@ export default function OverlayApp() {
                 ref={yoloMonitorRef}
                 style={{
                     position: 'absolute',
-                    left: `${rtPos.x}px`,
-                    top: `${rtPos.y}px`,
+                    left: '10px',
+                    top: '10px',
                     background: 'rgba(0, 0, 0, 0.8)',
                     border: isPolling ? '1px solid #00ffcc' : '1px solid #444',
                     borderRadius: '8px',
@@ -1804,11 +1813,9 @@ export default function OverlayApp() {
                 }}
             >
                  <div 
-                    onMouseDown={handleRtDrag}
                     style={{
                         padding: '4px 8px',
                         background: 'rgba(0, 255, 204, 0.1)',
-                        cursor: 'grab',
                         fontSize: '12px',
                         fontWeight: 'bold',
                         borderBottom: '1px solid rgba(0, 255, 204, 0.3)',

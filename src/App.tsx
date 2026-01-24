@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useRef, useState, Fragment } from "react";
+import { useEffect, useRef, useState, Fragment, useCallback } from "react";
 import { getCurrentWindow, LogicalPosition, LogicalSize, currentMonitor } from "@tauri-apps/api/window";
 import { listen, emit } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
@@ -196,6 +196,18 @@ export default function App() {
     const saved = localStorage.getItem("overlay-detail-scale");
     return saved ? parseInt(saved) : 100; // 默认100%
   });
+  const [overlayDetailWidth, setOverlayDetailWidth] = useState(() => {
+    const saved = localStorage.getItem("overlay-detail-width");
+    return saved ? parseInt(saved) : 420; // 默认420px
+  });
+  const [overlayDetailHeight, setOverlayDetailHeight] = useState(() => {
+    const saved = localStorage.getItem("overlay-detail-height");
+    return saved ? parseInt(saved) : 600; // 默认600px
+  });
+  const [yoloHotkey, setYoloHotkey] = useState(() => {
+    const saved = localStorage.getItem("yolo-hotkey");
+    return saved ? parseInt(saved) : 81; // 默认Q键 (VK: 81)
+  });
   const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
@@ -388,6 +400,7 @@ export default function App() {
   const [isRecordingHotkey, setIsRecordingHotkey] = useState(false);
   const [isRecordingCardHotkey, setIsRecordingCardHotkey] = useState(false);
   const [isRecordingToggleHotkey, setIsRecordingToggleHotkey] = useState(false);
+  const [isRecordingYoloHotkey, setIsRecordingYoloHotkey] = useState(false);
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -1018,40 +1031,41 @@ export default function App() {
     };
   }, []); // 移除enableYoloAuto和yoloScanInterval依赖，避免重复注册
 
+  // YOLO扫描函数（提取到外部以便热键调用）
+  const runYoloScan = useCallback(async () => {
+    const useGpu = localStorage.getItem("use-gpu-acceleration");
+    const useGpuBool = useGpu === "true";
+    
+    try {
+      if ((window as any).__yolo_running) {
+        console.log("[YOLO Manual/Auto] Scan already running, skipping");
+        return;
+      }
+      (window as any).__yolo_running = true;
+      console.log(`[YOLO Manual/Auto] Starting scan (GPU: ${useGpuBool})`);
+      const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
+      console.log(`[YOLO Manual/Auto] Scan complete, detected ${count} objects`);
+
+      // 获取统计信息并通知Overlay更新
+      try {
+        const stats = await invoke('get_yolo_stats');
+        await emit('yolo-stats-updated', stats);
+      } catch (statsErr) {
+        console.error("[YOLO Manual/Auto] Failed to get stats:", statsErr);
+      }
+    } catch (err) {
+      console.error("[YOLO Manual/Auto] Scan failed:", err);
+    } finally {
+      (window as any).__yolo_running = false;
+    }
+  }, []);
+
   // YOLO自动扫描定时器 - 单独的useEffect
   useEffect(() => {
     if (!enableYoloAuto) {
       console.log("[YOLO Auto] Auto scan disabled");
       return;
     }
-
-    const runYoloScan = async () => {
-      const useGpu = localStorage.getItem("use-gpu-acceleration");
-      const useGpuBool = useGpu === "true";
-      
-      try {
-        if ((window as any).__yolo_running) {
-          console.log("[YOLO Auto] Scan already running, skipping");
-          return;
-        }
-        (window as any).__yolo_running = true;
-        console.log(`[YOLO Auto] Starting scan (interval: ${yoloScanInterval}s, GPU: ${useGpuBool})`);
-        const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
-        console.log(`[YOLO Auto] Scan complete, detected ${count} objects`);
-
-        // 获取统计信息并通知Overlay更新
-        try {
-          const stats = await invoke('get_yolo_stats');
-          await emit('yolo-stats-updated', stats);
-        } catch (statsErr) {
-          console.error("[YOLO Auto] Failed to get stats:", statsErr);
-        }
-      } catch (err) {
-        console.error("[YOLO Auto] Scan failed:", err);
-      } finally {
-        (window as any).__yolo_running = false;
-      }
-    };
 
     // 启动定时器
     const yoloTimer = setInterval(runYoloScan, yoloScanInterval * 1000);
@@ -1062,7 +1076,24 @@ export default function App() {
       clearInterval(yoloTimer);
       console.log("[YOLO Auto] Timer stopped");
     };
-  }, [enableYoloAuto, yoloScanInterval]); // 当设置改变时重启定时器
+  }, [enableYoloAuto, yoloScanInterval, runYoloScan]); // 添加runYoloScan依赖
+
+  // YOLO手动触发热键监听
+  useEffect(() => {
+    // 监听后端发送的YOLO热键事件
+    const unlisten = listen('yolo_hotkey_pressed', () => {
+      console.log('[YOLO Hotkey] Triggered');
+      runYoloScan();
+    });
+    return () => { unlisten.then(f => f()); };
+  }, [runYoloScan]); // 添加runYoloScan依赖
+
+  // 设置YOLO热键到后端
+  useEffect(() => {
+    if (yoloHotkey) {
+      invoke('set_yolo_hotkey', { hotkey: yoloHotkey }).catch(console.error);
+    }
+  }, [yoloHotkey]);
 
   // 基础环境侦测：分辨率适配
   useEffect(() => {
@@ -1544,16 +1575,31 @@ export default function App() {
       console.log(`[Layout DEBUG] syncLayout START. isCollapsed=${isCollapsed}, expandedHeight=${expandedHeight}`);
       const appWindow = getCurrentWindow();
       
-      // 直接使用fallback值，不再等待currentMonitor
-      const logicalScale = 1.0;
-      currentScale.current = logicalScale;
-      console.log(`[Layout DEBUG] Using fallback scale=${logicalScale}`);
+      // 获取实际屏幕尺寸
+      let logicalScale = 1.0;
+      let pX = 0;
+      let pY = 0;
+      let pWidth = 1920;
+      let pHeight = 1080;
       
-      // 使用逻辑坐标系统
-      const pX = 0;
-      const pY = 0;
-      const pWidth = 1920;
-      const pHeight = 1080;
+      try {
+        const monitor = await currentMonitor();
+        if (monitor && monitor.size) {
+          logicalScale = monitor.scaleFactor || 1.0;
+          pX = monitor.position.x;
+          pY = monitor.position.y;
+          pWidth = Math.round(monitor.size.width / logicalScale);
+          pHeight = Math.round(monitor.size.height / logicalScale);
+          console.log(`[Layout DEBUG] Monitor info: ${pWidth}x${pHeight} at ${pX},${pY}, scale=${logicalScale}`);
+        } else {
+          console.log(`[Layout DEBUG] Monitor unavailable, using fallback`);
+        }
+      } catch (e) {
+        console.log(`[Layout DEBUG] Failed to get monitor, using fallback:`, e);
+      }
+      
+      currentScale.current = logicalScale;
+      console.log(`[Layout DEBUG] Final screen params: ${pWidth}x${pHeight}, scale=${logicalScale}`);
 
       // 生成当前布局状态的唯一标识
       let targetW = 0;
@@ -1953,7 +1999,7 @@ export default function App() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <input 
                       type="range"
-                      min="0.1"
+                      min="0.5"
                       max="2"
                       step="0.1"
                       value={yoloScanInterval}
@@ -1979,7 +2025,74 @@ export default function App() {
                   </div>
                 </div>
                 <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  设置YOLO自动识别的时间间隔（0.1秒 - 2秒）
+                  设置YOLO自动识别的时间间隔（0.5秒 - 2秒）
+                </div>
+              </div>
+
+              {/* YOLO手动触发快捷键设置 */}
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>YOLO手动触发快捷键</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ padding: '2px 8px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsRecordingYoloHotkey(true);
+                    }}
+                  >
+                    {isRecordingYoloHotkey ? "请按键..." : (yoloHotkey ? getHotkeyLabel(yoloHotkey) : "未设置")}
+                  </button>
+                </div>
+                {isRecordingYoloHotkey && (
+                  <div 
+                    style={{ 
+                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                      display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // 禁止左键和右键
+                      if (e.button === 0 || e.button === 2) {
+                        return;
+                      }
+                      let vk = 0;
+                      switch(e.button) {
+                        case 1: vk = 4; break;
+                        case 3: vk = 5; break;
+                        case 4: vk = 6; break;
+                      }
+                      if (vk > 0) {
+                        setYoloHotkey(vk);
+                        localStorage.setItem("yolo-hotkey", vk.toString());
+                        setIsRecordingYoloHotkey(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (e.keyCode) {
+                        setYoloHotkey(e.keyCode);
+                        localStorage.setItem("yolo-hotkey", e.keyCode.toString());
+                        setIsRecordingYoloHotkey(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    ref={(el) => el?.focus()}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标中键/侧键（不支持左右键）</div>
+                    <button 
+                      style={{ marginTop: '20px', padding: '5px 15px' }}
+                      onClick={(e) => { e.stopPropagation(); setIsRecordingYoloHotkey(false); }}
+                    >取消</button>
+                  </div>
+                )}
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  按此键立即触发YOLO识别（默认: Q键, VK: 81）
                 </div>
               </div>
               
@@ -2213,11 +2326,13 @@ export default function App() {
                     onMouseDown={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      // 禁止左键和右键
+                      if (e.button === 0 || e.button === 2) {
+                        return;
+                      }
                       let vk = 0;
                       switch(e.button) {
-                        case 0: vk = 1; break;
                         case 1: vk = 4; break;
-                        case 2: vk = 2; break;
                         case 3: vk = 5; break;
                         case 4: vk = 6; break;
                       }
@@ -2240,7 +2355,7 @@ export default function App() {
                     ref={(el) => el?.focus()}
                   >
                     <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
-                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标中键/侧键（不支持左右键）</div>
                     <button 
                       style={{ marginTop: '20px', padding: '5px 15px' }}
                       onClick={(e) => { e.stopPropagation(); setIsRecordingToggleHotkey(false); }}
@@ -2282,7 +2397,13 @@ export default function App() {
                       const val = parseInt(e.target.value);
                       setOverlayDetailX(val);
                       localStorage.setItem("overlay-detail-x", val.toString());
-                      invoke('update_overlay_detail_position', { x: val, y: overlayDetailY, scale: overlayDetailScale }).catch(console.error);
+                      invoke('update_overlay_detail_position', { 
+                        x: val, 
+                        y: overlayDetailY, 
+                        scale: overlayDetailScale,
+                        width: overlayDetailWidth,
+                        height: overlayDetailHeight
+                      }).catch(console.error);
                     }} 
                     style={{ width: '100%', accentColor: '#ffcd19' }}
                   />
@@ -2300,7 +2421,13 @@ export default function App() {
                       const val = parseInt(e.target.value);
                       setOverlayDetailY(val);
                       localStorage.setItem("overlay-detail-y", val.toString());
-                      invoke('update_overlay_detail_position', { x: overlayDetailX, y: val, scale: overlayDetailScale }).catch(console.error);
+                      invoke('update_overlay_detail_position', { 
+                        x: overlayDetailX, 
+                        y: val, 
+                        scale: overlayDetailScale,
+                        width: overlayDetailWidth,
+                        height: overlayDetailHeight
+                      }).catch(console.error);
                     }} 
                     style={{ width: '100%', accentColor: '#ffcd19' }}
                   />
@@ -2318,7 +2445,61 @@ export default function App() {
                       const val = parseInt(e.target.value);
                       setOverlayDetailScale(val);
                       localStorage.setItem("overlay-detail-scale", val.toString());
-                      invoke('update_overlay_detail_position', { x: overlayDetailX, y: overlayDetailY, scale: val }).catch(console.error);
+                      invoke('update_overlay_detail_position', { 
+                        x: overlayDetailX, 
+                        y: overlayDetailY, 
+                        scale: val,
+                        width: overlayDetailWidth,
+                        height: overlayDetailHeight
+                      }).catch(console.error);
+                    }} 
+                    style={{ width: '100%', accentColor: '#ffcd19' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                    <span style={{ color: '#fff' }}>宽度: {overlayDetailWidth}px</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="200" 
+                    max="800" 
+                    value={overlayDetailWidth} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setOverlayDetailWidth(val);
+                      localStorage.setItem("overlay-detail-width", val.toString());
+                      invoke('update_overlay_detail_position', { 
+                        x: overlayDetailX, 
+                        y: overlayDetailY, 
+                        scale: overlayDetailScale,
+                        width: val,
+                        height: overlayDetailHeight
+                      }).catch(console.error);
+                    }} 
+                    style={{ width: '100%', accentColor: '#ffcd19' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                    <span style={{ color: '#fff' }}>高度: {overlayDetailHeight}px</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="200" 
+                    max="1000" 
+                    value={overlayDetailHeight} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setOverlayDetailHeight(val);
+                      localStorage.setItem("overlay-detail-height", val.toString());
+                      invoke('update_overlay_detail_position', { 
+                        x: overlayDetailX, 
+                        y: overlayDetailY, 
+                        scale: overlayDetailScale,
+                        width: overlayDetailWidth,
+                        height: val
+                      }).catch(console.error);
                     }} 
                     style={{ width: '100%', accentColor: '#ffcd19' }}
                   />

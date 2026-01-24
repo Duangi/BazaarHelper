@@ -20,7 +20,7 @@
                                     "alwaysOnTop":  true,
                                     "decorations":  false,
                                     "transparent":  true,
-                                    "backgroundColor": "#00000000",
+                                    "backgroundColor":  "#00000000",
                                     "visible":  false,
                                     "dragDropEnabled":  true
                                 },
@@ -35,7 +35,7 @@
                                     "alwaysOnTop":  true,
                                     "decorations":  false,
                                     "transparent":  true,
-                                    "backgroundColor": "#00000000",
+                                    "backgroundColor":  "#00000000",
                                     "visible":  false,
                                     "skipTaskbar":  true,
                                     "shadow":  false,

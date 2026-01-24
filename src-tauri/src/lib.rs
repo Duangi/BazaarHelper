@@ -73,7 +73,8 @@ fn apply_dark_theme(window: &tauri::WebviewWindow) {
     }
 }
 
-// 强力去除白条函数
+// 强力去除白条函数（暂时未使用，保留供将来使用）
+#[allow(dead_code)]
 fn apply_pure_overlay_style(window: &tauri::WebviewWindow) {
     // 先尝试“染黑”
     apply_dark_theme(window);
@@ -222,12 +223,14 @@ fn set_show_yolo_monitor(app: tauri::AppHandle, show: bool) -> Result<(), String
 }
 
 #[tauri::command]
-fn update_overlay_detail_position(app: tauri::AppHandle, x: i32, y: i32, scale: i32) -> Result<(), String> {
+fn update_overlay_detail_position(app: tauri::AppHandle, x: i32, y: i32, scale: i32, width: Option<i32>, height: Option<i32>) -> Result<(), String> {
     // Broadcast the position update to overlay window
     let _ = app.emit("update-overlay-detail-position", serde_json::json!({
         "x": x,
         "y": y,
-        "scale": scale
+        "scale": scale,
+        "width": width.unwrap_or(420),
+        "height": height.unwrap_or(600)
     }));
     Ok(())
 }
@@ -528,6 +531,8 @@ pub struct PersistentState {
     pub card_detection_hotkey: Option<i32>,
     #[serde(default)]
     pub toggle_collapse_hotkey: Option<i32>,
+    #[serde(default)]
+    pub yolo_hotkey: Option<i32>,
     #[serde(default = "default_show_yolo_monitor")]
     pub show_yolo_monitor: bool,
 }
@@ -542,6 +547,7 @@ impl Default for PersistentState {
             detection_hotkey: Some(VK_RBUTTON.0 as i32),
             card_detection_hotkey: Some(VK_MENU.0 as i32),
             toggle_collapse_hotkey: Some(192), // Default: ~ key (Backtick) (VK_OEM_3 is 192 usually, or 0xC0)
+            yolo_hotkey: Some(81), // Default: Q key (VK_Q = 81)
             show_yolo_monitor: true,
         }
     }
@@ -1489,6 +1495,14 @@ fn set_toggle_collapse_hotkey(hotkey: i32) {
     state.toggle_collapse_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] Toggle collapse hotkey updated to: {}", hotkey);
+}
+
+#[tauri::command]
+fn set_yolo_hotkey(hotkey: i32) {
+    let mut state = load_state();
+    state.yolo_hotkey = Some(hotkey);
+    save_state(&state);
+    println!("[Config] YOLO hotkey updated to: {}", hotkey);
 }
 
 fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
@@ -2568,14 +2582,16 @@ pub fn run() {
                 let mut last_trigger = time::Instant::now();
                 let mut last_card_trigger = time::Instant::now();
                 let mut last_toggle_trigger = time::Instant::now();
+                let mut last_yolo_trigger = time::Instant::now();
                 loop {
                     // 读取配置的按键
-                    let (monster_hotkey, card_hotkey, toggle_hotkey) = {
+                    let (monster_hotkey, card_hotkey, toggle_hotkey, yolo_hotkey) = {
                         let state = load_state();
                         (
                             state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32),
                             state.card_detection_hotkey.unwrap_or(VK_MENU.0 as i32),
-                            state.toggle_collapse_hotkey.unwrap_or(192)
+                            state.toggle_collapse_hotkey.unwrap_or(192),
+                            state.yolo_hotkey.unwrap_or(81)
                         )
                     };
                     
@@ -2690,6 +2706,15 @@ pub fn run() {
                                 let _ = handle_mouse.emit("toggle-collapse", ());
                             }
                         }
+
+                        // 4. 检测YOLO手动触发按键（排除左右键）
+                        if yolo_hotkey != 1 && yolo_hotkey != 2 && (GetAsyncKeyState(yolo_hotkey) as i16) < 0 {
+                            if last_yolo_trigger.elapsed() > time::Duration::from_millis(500) {
+                                last_yolo_trigger = time::Instant::now();
+                                log_to_file("YOLO Hotkey pressed");
+                                let _ = handle_mouse.emit("yolo_hotkey_pressed", ());
+                            }
+                        }
                     }
                     thread::sleep(time::Duration::from_millis(100));
                 }
@@ -2713,6 +2738,7 @@ pub fn run() {
             set_card_detection_hotkey,
             get_toggle_collapse_hotkey,
             set_toggle_collapse_hotkey,
+            set_yolo_hotkey,
             start_template_loading,
             get_item_info,
             search_items,
