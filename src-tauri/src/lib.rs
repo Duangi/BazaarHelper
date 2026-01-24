@@ -74,7 +74,7 @@ fn apply_dark_theme(window: &tauri::WebviewWindow) {
 }
 
 // 强力去除白条函数
-fn force_overlay_style(window: &tauri::WebviewWindow) {
+fn apply_pure_overlay_style(window: &tauri::WebviewWindow) {
     // 先尝试“染黑”
     apply_dark_theme(window);
 
@@ -1549,8 +1549,14 @@ pub fn run() {
             let handle = app.handle().clone();
             log_system_info(&handle);
             
-            // --- Helper: Hide from Alt-Tab (ToolWindow Style) ---
+            // --- Helper: Hide from Alt-Tab (ToolWindow Style) & Remove White Bar ---
             if let Some(window) = app.get_webview_window("main") {
+                // Apply the aggressive style removal
+                apply_pure_overlay_style(&window);
+                
+                // Aggressively remove menu for this window
+                let _ = window.remove_menu();
+                
                 if let Ok(hwnd) = window.hwnd() {
                     unsafe {
                         use windows::Win32::Foundation::HWND as HWND_TYPE;
@@ -1564,21 +1570,19 @@ pub fn run() {
 
             // --- Helper: Start Mouse Monitor Thread (Dynamic Overlay & Global Click) ---
             let handle_monitor = handle.clone();
-            let bounds_monitor = bounds_clone.clone(); // Moved from run scope
+            let bounds_monitor = bounds_clone.clone();
+            
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
-                let mut is_ignoring = false; // Tracks current pass-through state
-                let _last_click_state = false;
-
-                let _last_ignore_update = time::Instant::now();
-                let mut last_rbtn_state = false;
+                // 状态标记：记录上一次的状态，防止重复调用
+                let mut was_ignoring = true; 
 
                 loop {
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
                     
-                    // 1. Dynamic Passthrough Logic - 检查是否在任何一个bounds区域内
+                    // 1. 判断鼠标是否在 overlay 区域内
                     let is_mouse_in_overlay = {
                         let bounds_list = bounds_monitor.lock().unwrap();
                         bounds_list.iter().any(|b| {
@@ -1587,35 +1591,48 @@ pub fn run() {
                     };
                     
                     if let Some(window) = handle_monitor.get_webview_window("overlay") {
+                        // 逻辑：
+                        // 如果鼠标进入区域 且 当前是穿透模式 -> 切换为【可交互】
+                        // 如果鼠标离开区域 且 当前是可交互模式 -> 切换为【穿透】
+                        
                         if is_mouse_in_overlay {
-                             // [DEBUG] Disabling interactive mode to test white bar removal
-                             // Always force passthrough
-                             if !is_ignoring {
-                                 println!("[Overlay] Force enabling passthrough.");
-                                 let _ = window.set_ignore_cursor_events(true);
-                                 force_overlay_style(&window);
-                                 is_ignoring = true;
+                             if was_ignoring {
+                                 // 状态改变：鼠标刚进来 -> 开启交互
+                                 // 1. 先允许捕获鼠标
+                                 let _ = window.set_ignore_cursor_events(false);
+                                 
+                                 // 2. 【关键】Tauri 修改样式后，我们立马补刀，强制去掉边框
+                                 // 这一步只在状态切换瞬间执行一次，不要一直循环执行！
+                                 apply_pure_overlay_style(&window);
+                                 
+                                 was_ignoring = false; // 更新状态
+                                 // println!("[Overlay] Mouse Enter -> Interactive");
                              }
-                             
-                             // Refresh style to ensure black border
-                             force_overlay_style(&window);
                         } else {
-                             if !is_ignoring {
-                                 println!("[Overlay] Mouse left interactable area. Enabling click-through.");
+                             if !was_ignoring {
+                                 // 状态改变：鼠标刚离开 -> 开启穿透
                                  let _ = window.set_ignore_cursor_events(true);
-                                 is_ignoring = true;
+                                 
+                                 // 恢复无边框样式 (虽然穿透模式下通常看不清，但保持一致)
+                                 apply_pure_overlay_style(&window);
+                                 
+                                 // 把焦点还给游戏 (防止鼠标划出后，键盘输入还留在 overlay)
+                                 let _ = restore_game_focus();
+                                 
+                                 was_ignoring = true; // 更新状态
+                                 // println!("[Overlay] Mouse Leave -> Ignoring");
                              }
                         }
                     }
 
-                    // 2. Global Right Click Detection (Edge Detection)
+                    // 全局右键检测逻辑保持不变
                     unsafe {
+                        static mut LAST_RBTN: bool = false;
                         let rbtn_down = (GetAsyncKeyState(VK_RBUTTON.0 as i32) as i16) < 0;
-                        if rbtn_down && !last_rbtn_state {
-                            println!("[Debug Click] Global Right Click detected via GetAsyncKeyState at ({}, {})", mx, my);
-                            let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
+                        if rbtn_down && !LAST_RBTN {
+                             let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
                         }
-                        last_rbtn_state = rbtn_down;
+                        LAST_RBTN = rbtn_down;
                     }
 
                     std::thread::sleep(std::time::Duration::from_millis(50));

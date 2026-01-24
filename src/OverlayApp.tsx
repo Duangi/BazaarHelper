@@ -145,7 +145,7 @@ const KEYWORD_COLORS: Record<string, string> = {
 
 export default function OverlayApp() {
     const [yoloResult, setYoloResult] = useState<{type: 'item' | 'monster' | 'event', data: ItemData | MonsterData | EventData} | null>(null);
-    const [identifying, setIdentifying] = useState(false);
+    const [, setIdentifying] = useState(false);
     const [showYoloMonitor, setShowYoloMonitor] = useState(() => {
         const saved = localStorage.getItem("show-yolo-monitor");
         if (saved === null) {

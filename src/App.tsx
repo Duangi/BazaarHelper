@@ -892,8 +892,7 @@ export default function App() {
       // 3. 卡牌识别触发 (热键)
       await safeListen<void>('hotkey-detect-card', () => {
         console.log("收到卡牌识别触发事件");
-        setActiveTab("card"); // Auto-navigate to Card tab
-        handleRecognizeCard(true); // switchTab=true might be redundant if we set directly, but ensure logic
+        handleRecognizeCard(true);
       });
 
       // 保留原有的手动触发事件（用于手动按钮触发）
@@ -921,8 +920,6 @@ export default function App() {
           } catch (statsErr) {
             console.error("[Frontend] 获取YOLO统计失败:", statsErr);
           }
-
-          setActiveTab("card"); // 自动切换到卡牌选项卡
         } catch (err) {
           console.error("[Frontend] YOLO扫描失败:", err);
           setErrorMessage(`YOLO识别失败: ${err}`);
@@ -932,55 +929,7 @@ export default function App() {
         }
       });
 
-      // 3.5. YOLO自动扫描定时器
-      let yoloTimer: ReturnType<typeof setInterval> | null = null;
-      const runYoloScan = async () => {
-        if (!enableYoloAuto) return;
-        
-        const useGpu = localStorage.getItem("use-gpu-acceleration");
-        const useGpuBool = useGpu === "true";
-        
-        try {
-          if ((window as any).__yolo_running) {
-            console.log("[YOLO Auto] Scan already running, skipping");
-            return;
-          }
-          (window as any).__yolo_running = true;
-          console.log(`[YOLO Auto] Starting scan (interval: ${yoloScanInterval}s, GPU: ${useGpuBool})`);
-          const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
-          console.log(`[YOLO Auto] Scan complete, detected ${count} objects`);
 
-          // 获取统计信息并通知Overlay更新
-          try {
-            const stats = await invoke('get_yolo_stats');
-            await emit('yolo-stats-updated', stats);
-          } catch (statsErr) {
-            console.error("[YOLO Auto] Failed to get stats:", statsErr);
-          }
-
-          if (count > 0) {
-            setActiveTab("card"); // 自动切换到卡牙选项卡
-          }
-        } catch (err) {
-          console.error("[YOLO Auto] Scan failed:", err);
-        } finally {
-          (window as any).__yolo_running = false;
-        }
-      };
-
-      if (enableYoloAuto) {
-        // 启动定时器
-        yoloTimer = setInterval(runYoloScan, yoloScanInterval * 1000);
-        console.log(`[YOLO Auto] Timer started with interval: ${yoloScanInterval}s`);
-      }
-
-      // 将定时器清理函数添加到unlisteners
-      unlisteners.push(() => {
-        if (yoloTimer) {
-          clearInterval(yoloTimer);
-          console.log("[YOLO Auto] Timer stopped");
-        }
-      });
 
       // 4. 插件折叠/展开 (热键)
       await safeListen<void>('toggle-collapse', () => {
@@ -1528,24 +1477,36 @@ export default function App() {
 
   useEffect(() => {
     const syncLayout = async () => {
-      console.log(`[Layout DEBUG] syncLayout triggered. isCollapsed=${isCollapsed}, showVersionScreen=${showVersionScreen}`);
+      console.log(`[Layout DEBUG] syncLayout START. isCollapsed=${isCollapsed}, expandedHeight=${expandedHeight}`);
       const appWindow = getCurrentWindow();
       
       // 1. 获取当前显示器
-      const monitor = await currentMonitor(); 
+      console.log(`[Layout DEBUG] Awaiting monitor...`);
+      
+      // 添加超时机制防止 currentMonitor 挂起
+      const monitorPromise = currentMonitor();
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => {
+          console.warn("[Layout DEBUG] currentMonitor timed out");
+          resolve(null);
+      }, 200));
+
+      const monitor = await Promise.race([monitorPromise, timeoutPromise]).catch((e: unknown) => {
+          console.error("[Layout DEBUG] currentMonitor error:", e);
+          return null;
+      }); 
+      
       if (!monitor) {
-        console.log(`[Layout DEBUG] no monitor found`);
-        return;
+        console.log(`[Layout DEBUG] no monitor found, using fallback scale 1.0`);
       }
 
-      const logicalScale = monitor.scaleFactor;
+      const logicalScale = monitor ? monitor.scaleFactor : 1.0;
       currentScale.current = logicalScale;
       console.log(`[Layout DEBUG] logicalScale=${logicalScale}`);
       
-      const pX = monitor.position.x;
-      const pY = monitor.position.y;
-      const pWidth = monitor.size.width;
-      const pHeight = monitor.size.height;
+      const pX = monitor ? monitor.position.x : 0;
+      const pY = monitor ? monitor.position.y : 0;
+      const pWidth = monitor ? monitor.size.width : 1920;
+      const pHeight = monitor ? monitor.size.height : 1080;
 
       // 生成当前布局状态的唯一标识
       let targetW = 0;
@@ -1564,7 +1525,7 @@ export default function App() {
         
         targetW = Math.round(Math.min(expandedWidth, screenWLogical - 20));
         targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeight, screenHLogical - 40));
-        console.log(`[Layout DEBUG] isCollapsed: ${isCollapsed}, targetH: ${targetH}, expandedHeight: ${expandedHeight}`);
+        console.log(`[Layout DEBUG] Calculation: targetW=${targetW}, targetH=${targetH}, isCollapsed=${isCollapsed}`);
 
         if (hasCustomPosition && lastKnownPosition.current) {
           targetX = Math.round(lastKnownPosition.current.x / logicalScale);
@@ -1577,18 +1538,16 @@ export default function App() {
 
       const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
       if (lastLayout.current === layoutKey) {
-        console.log(`[Layout DEBUG] skip: layoutKey matches ${layoutKey}`);
+        console.log(`[Layout DEBUG] skip: layoutKey unchanged (${layoutKey})`);
         return;
       }
       lastLayout.current = layoutKey;
 
       try {
-        console.log(`[Layout DEBUG] Applying layout: ${layoutKey}`);
+        console.log(`[Layout DEBUG] Applying size: ${targetW}x${targetH}`);
         // 先关掉阴影减少重绘压力
         if (appWindow.setShadow) await appWindow.setShadow(false);
         
-        // 关键：合并调整，虽然 Tauri V2 依然是分开的 API，
-        // 但我们可以判断当前位置是否已经是目标，减少不必要的调用
         const size = await appWindow.innerSize();
         const pos = await appWindow.outerPosition();
         
@@ -1597,29 +1556,28 @@ export default function App() {
         const currentX = Math.round(pos.x / logicalScale);
         const currentY = Math.round(pos.y / logicalScale);
 
-        console.log(`[Layout DEBUG] Current: ${currentW}x${currentH} at ${currentX},${currentY}`);
+        console.log(`[Layout DEBUG] Current window state: ${currentW}x${currentH} at ${currentX},${currentY}`);
 
         if (currentW !== targetW || currentH !== targetH) {
-          console.log(`[Layout DEBUG] setSize(LogicalSize(${targetW}, ${targetH}))`);
+          console.log(`[Layout DEBUG] calling setSize(${targetW}, ${targetH})`);
           await appWindow.setSize(new LogicalSize(targetW, targetH));
         }
         if (currentX !== targetX || currentY !== targetY) {
-          console.log(`[Layout DEBUG] setPosition(LogicalPosition(${targetX}, ${targetY}))`);
+          console.log(`[Layout DEBUG] calling setPosition(${targetX}, ${targetY})`);
           await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
         
         await appWindow.setAlwaysOnTop(true);
-        await appWindow.show(); // 确保在位置调整后显示
-        console.log(`[Layout DEBUG] Apply finished`);
+        await appWindow.show(); 
+        console.log(`[Layout DEBUG] Sync complete.`);
       } catch (e) { 
-        console.error("[Layout DEBUG] Sync failed:", e); 
+        console.error("[Layout DEBUG] Error during sync:", e); 
         lastLayout.current = ""; 
-        // 即使出错也尝试显示，避免应用不可见
         await appWindow.show().catch(() => {});
       }
     };
 
-    const delay = showVersionScreen ? 100 : 20; // 稍微增加延迟让 React 渲染稳定
+    const delay = showVersionScreen ? 100 : 20; 
     const timer = setTimeout(syncLayout, delay); 
     return () => clearTimeout(timer);
   }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
@@ -1841,7 +1799,11 @@ export default function App() {
         </button>
         
         <div className="collapse-btn" onClick={() => {
-          console.log(`[Layout DEBUG] Toggle button clicked, current isCollapsed: ${isCollapsed}`);
+          console.log(`[Layout DEBUG] Toggle button clicked. current isCollapsed: ${isCollapsed}, expandedHeight: ${expandedHeight}`);
+          if (expandedHeight < 200) {
+            console.log(`[Layout DEBUG] expandedHeight is too small (${expandedHeight}), resetting to 700`);
+            setExpandedHeight(700);
+          }
           setIsCollapsed(!isCollapsed);
         }}>
           {isCollapsed ? "展开" : "收起"}
