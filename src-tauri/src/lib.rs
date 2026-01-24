@@ -10,10 +10,123 @@ use std::{thread, time, panic};
 use tokio;
 use chrono::Local;
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
-use windows::Win32::UI::WindowsAndMessaging::{IsIconic, GetForegroundWindow, FindWindowW, GetWindowLongW, SetWindowLongW, GWL_EXSTYLE, WS_EX_TOOLWINDOW, WS_EX_APPWINDOW};
+use windows::Win32::UI::WindowsAndMessaging::{
+    IsIconic, GetForegroundWindow, FindWindowW, GetWindowLongW, SetWindowLongW, SetWindowPos,
+    GWL_EXSTYLE, GWL_STYLE, 
+    WS_EX_TOOLWINDOW, WS_EX_APPWINDOW, WS_EX_WINDOWEDGE, WS_EX_CLIENTEDGE, WS_EX_STATICEDGE,
+    WS_EX_LAYERED,
+    WS_CAPTION, WS_THICKFRAME, WS_POPUP, WS_SYSMENU, WS_MAXIMIZEBOX, WS_MINIMIZEBOX, WS_BORDER, WS_DLGFRAME,
+    WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN,
+    SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_NOACTIVATE, SWP_FRAMECHANGED
+};
+#[cfg(feature = "enable_win32_dwm")]
+use windows::Win32::Graphics::Dwm::{
+    DwmSetWindowAttribute,
+    DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_BORDER_COLOR, DWMWA_CAPTION_COLOR, DWMWA_TEXT_COLOR
+};
+use windows::Win32::Foundation::{HWND, COLORREF};
 use windows::core::PCWSTR;
 use opencv::core::MatTraitConst;
 use device_query::{DeviceQuery, DeviceState, MouseState};
+
+// 强力去除白条函数，顺便染黑
+fn apply_dark_theme(window: &tauri::WebviewWindow) {
+    if let Ok(hwnd) = window.hwnd() {
+        unsafe {
+            let handle = HWND(hwnd.0 as _);
+
+            // 1. 开启沉浸式暗黑模式 (Win10 1809+ / Win11)
+            let use_dark_mode = 1 as i32;
+            let _ = DwmSetWindowAttribute(
+                handle,
+                DWMWA_USE_IMMERSIVE_DARK_MODE,
+                &use_dark_mode as *const _ as *const _,
+                std::mem::size_of::<i32>() as u32,
+            );
+
+            // 2. [Win11 专用] 强制设置标题栏和边框颜色为纯黑 (实际上是透明的视觉效果)
+            let black_color = COLORREF(0x000000); 
+            
+            let _ = DwmSetWindowAttribute(
+                handle,
+                DWMWA_BORDER_COLOR,
+                &black_color as *const _ as *const _,
+                std::mem::size_of::<COLORREF>() as u32,
+            );
+            
+            let _ = DwmSetWindowAttribute(
+                handle,
+                DWMWA_CAPTION_COLOR,
+                &black_color as *const _ as *const _,
+                std::mem::size_of::<COLORREF>() as u32,
+            );
+
+            // 3. 将【标题栏文字】染成纯黑 (实现隐身)
+            let _ = DwmSetWindowAttribute(
+                handle,
+                DWMWA_TEXT_COLOR,
+                &black_color as *const _ as *const _,
+                std::mem::size_of::<COLORREF>() as u32,
+            );
+        }
+    }
+}
+
+// 强力去除白条函数
+fn force_overlay_style(window: &tauri::WebviewWindow) {
+    // 先尝试“染黑”
+    apply_dark_theme(window);
+
+    if let Ok(hwnd) = window.hwnd() {
+        unsafe {
+            let handle = HWND(hwnd.0 as _);
+            
+            // --- 1. 处理基础样式 (GWL_STYLE) ---
+            // 目标：纯净的 WS_POPUP | WS_VISIBLE
+            let current_style = GetWindowLongW(handle, GWL_STYLE) as u32;
+            
+            // 移除所有装饰性样式
+            let mut new_style = current_style & !(
+                WS_CAPTION.0 | 
+                WS_THICKFRAME.0 | 
+                WS_MINIMIZEBOX.0 | 
+                WS_MAXIMIZEBOX.0 | 
+                WS_SYSMENU.0 | 
+                WS_BORDER.0 | 
+                WS_DLGFRAME.0
+            );
+            
+            // 强制加上 WS_POPUP (这是消除白条的关键)
+            new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_CLIPSIBLINGS.0 | WS_CLIPCHILDREN.0;
+            
+            SetWindowLongW(handle, GWL_STYLE, new_style as i32);
+
+            // --- 2. 处理扩展样式 (GWL_EXSTYLE) ---
+            let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;
+            
+            // 移除会导致边框阴影的样式
+            let mut new_ex_style = current_ex_style & !(
+                WS_EX_APPWINDOW.0 | 
+                WS_EX_WINDOWEDGE.0 | 
+                WS_EX_CLIENTEDGE.0 | 
+                WS_EX_STATICEDGE.0
+            );
+            
+            // 确保是 TOOLWINDOW (不在任务栏显示) 和 LAYERED (支持透明)
+            new_ex_style |= WS_EX_TOOLWINDOW.0 | WS_EX_LAYERED.0;
+            
+            SetWindowLongW(handle, GWL_EXSTYLE, new_ex_style as i32);
+
+            // --- 3. 强制刷新 (SWP_FRAMECHANGED) ---
+            let _ = SetWindowPos(
+                handle, 
+                None, 
+                0, 0, 0, 0, 
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
+            );
+        }
+    }
+}
 
 use crate::monster_recognition::{scan_and_identify_monster_at_mouse, YoloDetection};
 
@@ -248,6 +361,22 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
                     let monsters = db_state.monsters.read().unwrap();
                     if let Some(m) = monsters.get(&monster_name) {
                         return Ok(Some(serde_json::json!({ "type": "monster", "data": m })));
+                    }
+                }
+            } else {
+                // Pure event (no monster icon) -> Event Recognition
+                let event_match = monster_recognition::match_event_descriptors_from_mat(&scene_desc)?;
+                if let Some(event_id) = event_match {
+                    // 读取 event_encounters.json 获取完整事件数据
+                    let event_json_path = app.path().resolve("resources/event_encounters.json", tauri::path::BaseDirectory::Resource)
+                        .map_err(|e| format!("Failed to resolve event_encounters.json: {}", e))?;
+                    
+                    if let Ok(json_data) = std::fs::read_to_string(&event_json_path) {
+                        if let Ok(events) = serde_json::from_str::<Vec<serde_json::Value>>(&json_data) {
+                            if let Some(event) = events.iter().find(|e| e.get("Id").and_then(|v| v.as_str()) == Some(&event_id)) {
+                                return Ok(Some(serde_json::json!({ "type": "event", "data": event })));
+                            }
+                        }
                     }
                 }
             }
@@ -1472,11 +1601,17 @@ pub fn run() {
                     
                     if let Some(window) = handle_monitor.get_webview_window("overlay") {
                         if is_mouse_in_overlay {
-                             if is_ignoring {
-                                 println!("[Overlay] Mouse ENTERED interactable area at ({}, {}). Disabling click-through.", mx, my);
-                                 let _ = window.set_ignore_cursor_events(false);
-                                 is_ignoring = false;
+                             // [DEBUG] Disabling interactive mode to test white bar removal
+                             // Always force passthrough
+                             if !is_ignoring {
+                                 println!("[Overlay] Force enabling passthrough.");
+                                 let _ = window.set_ignore_cursor_events(true);
+                                 force_overlay_style(&window);
+                                 is_ignoring = true;
                              }
+                             
+                             // Refresh style to ensure black border
+                             force_overlay_style(&window);
                         } else {
                              if !is_ignoring {
                                  println!("[Overlay] Mouse left interactable area. Enabling click-through.");
@@ -2564,6 +2699,8 @@ pub fn run() {
             search_items,
             crate::monster_recognition::check_opencv_load, 
             crate::monster_recognition::recognize_card_at_mouse,
+            crate::monster_recognition::load_event_templates,
+            crate::monster_recognition::recognize_event_at_mouse,
             trigger_yolo_scan,
             invoke_yolo_scan,
             handle_overlay_right_click,

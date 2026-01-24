@@ -95,6 +95,29 @@ interface MonsterData {
     displayImgBg?: string;
 }
 
+interface EventChoice {
+    icon: string;
+    icon_url: string;
+    text_key: string;
+    display_text?: string;
+}
+
+interface EventData {
+    Id: string;
+    InternalName?: string;
+    Localization?: {
+        Title?: { Text?: string };
+        Description?: { Text?: string };
+    };
+    choices?: EventChoice[];
+    image_paths?: {
+        char?: string;
+        bg?: string;
+    };
+    displayImgChar?: string;
+    displayImgBg?: string;
+}
+
 const ENCHANT_COLORS: Record<string, string> = {
     "黄金": "var(--c-gold)",
     "沉重": "var(--c-slow)",
@@ -121,7 +144,7 @@ const KEYWORD_COLORS: Record<string, string> = {
 };
 
 export default function OverlayApp() {
-    const [yoloResult, setYoloResult] = useState<{type: 'item' | 'monster', data: ItemData | MonsterData} | null>(null);
+    const [yoloResult, setYoloResult] = useState<{type: 'item' | 'monster' | 'event', data: ItemData | MonsterData | EventData} | null>(null);
     const [identifying, setIdentifying] = useState(false);
     const [showYoloMonitor, setShowYoloMonitor] = useState(() => {
         const saved = localStorage.getItem("show-yolo-monitor");
@@ -360,6 +383,27 @@ export default function OverlayApp() {
         } catch { return ""; }
     };
 
+        // Load skills_db.json mapping (id -> art_key basename)
+        const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
+        useEffect(() => {
+            (async () => {
+                try {
+                    const resPath = await resolveResource('resources/skills_db.json');
+                    const url = convertFileSrc(resPath);
+                    const resp = await fetch(url);
+                    const data = await resp.json();
+                    const map: Record<string, string> = {};
+                    for (const entry of data) {
+                        if (entry.id && entry.art_key) {
+                            const basename = entry.art_key.split('/').pop();
+                            map[entry.id] = basename;
+                        }
+                    }
+                    setSkillsArtMap(map);
+                } catch (e) { console.warn('Overlay: Failed to load skills_db.json', e); }
+            })();
+        }, []);
+
     const processMonsterImages = async (m: MonsterData) => {
         let filename = m.image ? m.image.split('/').pop() || `${m.name_zh}.webp` : `${m.name_zh}.webp`;
         let displayImg = await getImg(`images_monster_char/${filename}`);
@@ -378,14 +422,54 @@ export default function OverlayApp() {
             ...m,
             displayImg,
             displayImgBg,
-            skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
-                ...s, 
-                displayImg: await getImg(`images/${s.id || s.name}.webp`) 
-            }))) : [],
+            skills: m.skills ? await Promise.all(m.skills.map(async s => {
+                let imgPath = '';
+                try {
+                    const art = s.id ? skillsArtMap[s.id] : undefined;
+                    if (art) {
+                        const base = art.split('/').pop() || art;
+                        const nameNoExt = base.replace(/\.[^/.]+$/, '');
+                        imgPath = `images/skill/${nameNoExt}.webp`;
+                    } else {
+                        imgPath = `images/${s.id || s.name}.webp`;
+                    }
+                } catch (e) { imgPath = `images/${s.id || s.name}.webp`; }
+                return { ...s, displayImg: await getImg(imgPath) };
+            })) : [],
             items: m.items ? await Promise.all(m.items.map(async i => ({ 
                 ...i, 
                 displayImg: await getImg(`images/${i.id || i.name}.webp`) 
             }))) : []
+        };
+    };
+
+    const processEventImages = async (e: EventData) => {
+        // 加载事件图片
+        let displayImgChar = '';
+        let displayImgBg = '';
+        
+        if (e.image_paths?.char) {
+            displayImgChar = await getImg(e.image_paths.char);
+        }
+        if (e.image_paths?.bg) {
+            displayImgBg = await getImg(e.image_paths.bg);
+        }
+
+        // 加载choices的图标
+        const processedChoices = e.choices ? await Promise.all(e.choices.map(async choice => {
+            const iconPath = `EncEvent_Icons/${choice.icon}.webp`;
+            const iconImg = await getImg(iconPath);
+            return {
+                ...choice,
+                displayIcon: iconImg
+            };
+        })) : [];
+
+        return {
+            ...e,
+            displayImgChar,
+            displayImgBg,
+            choices: processedChoices as any
         };
     };
 
@@ -400,7 +484,7 @@ export default function OverlayApp() {
                 // 如果当前没有正在进行耗时操作（如YOLO扫描），我们才响应右键
                 // 但 identify set 为 false，因为 handle_overlay_right_click 是极快的本地查找
                 
-                const res = await invoke<{type: 'item' | 'monster', data: any} | null>("handle_overlay_right_click", { 
+                const res = await invoke<{type: 'item' | 'monster' | 'event', data: any} | null>("handle_overlay_right_click", { 
                     x: Math.round(coords.x), 
                     y: Math.round(coords.y) 
                 });
@@ -426,6 +510,9 @@ export default function OverlayApp() {
                         } catch (e) {
                             console.error('Failed to emit monster-matched event:', e);
                         }
+                    } else if (res.type === 'event') {
+                        const eventData = await processEventImages(res.data as EventData);
+                        setYoloResult({ type: 'event', data: eventData });
                     }
                     // 注意：这里不重置 pos，保留用户上次拖拽的位置（或者保持默认相对位置）
                     // 也不修改 ignore_cursor，用户可能正在操作
@@ -1038,6 +1125,121 @@ export default function OverlayApp() {
                                         </Fragment>
                                     );
                                 })()}
+                            </div>
+                        ) : yoloResult.type === 'event' ? (
+                            <div className="event-card-container" style={{ border: 'none', boxShadow: 'none', background: 'transparent', margin: 0, padding: 0 }}>
+                                {(() => {
+                                    const e = yoloResult.data as EventData;
+                                    const eventTitle = e.Localization?.Title?.Text || e.InternalName || '';
+                                    const eventDesc = e.Localization?.Description?.Text || '';
+                                    
+                                    return (
+                                        <Fragment>
+                                            {/* 事件标题区 */}
+                                            <div style={{
+                                                marginBottom: '16px',
+                                                background: 'rgba(255,255,255,0.03)',
+                                                borderRadius: '8px',
+                                                padding: '12px',
+                                                position: 'relative'
+                                            }}>
+                                                {e.displayImgBg && (
+                                                    <div style={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        borderRadius: '8px',
+                                                        overflow: 'hidden',
+                                                        opacity: 0.15,
+                                                        zIndex: 0
+                                                    }}>
+                                                        <img src={e.displayImgBg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                                                    </div>
+                                                )}
+                                                <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                                    {e.displayImgChar && (
+                                                        <img src={e.displayImgChar} alt={eventTitle} style={{ 
+                                                            width: '80px', 
+                                                            height: '80px', 
+                                                            borderRadius: '8px',
+                                                            border: '2px solid rgba(255,205,25,0.3)',
+                                                            objectFit: 'cover'
+                                                        }} />
+                                                    )}
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ 
+                                                            fontSize: '18px', 
+                                                            fontWeight: 'bold', 
+                                                            color: '#ffd700',
+                                                            marginBottom: '4px'
+                                                        }}>
+                                                            {eventTitle}
+                                                            <span className="id-badge" style={{ marginLeft: '8px' }}>EVENT</span>
+                                                        </div>
+                                                        {eventDesc && (
+                                                            <div style={{ 
+                                                                fontSize: '13px', 
+                                                                color: 'rgba(255,255,255,0.7)',
+                                                                lineHeight: '1.4'
+                                                            }}>
+                                                                {formatDescription(eventDesc)}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* 事件选项 */}
+                                            {e.choices && e.choices.length > 0 && (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                    {e.choices.map((choice: any, idx) => (
+                                                        <div key={idx} style={{
+                                                            background: 'rgba(255,255,255,0.05)',
+                                                            border: '1px solid rgba(255,205,25,0.2)',
+                                                            borderRadius: '6px',
+                                                            padding: '10px',
+                                                            display: 'flex',
+                                                            gap: '12px',
+                                                            alignItems: 'center',
+                                                            transition: 'all 0.2s ease',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            e.currentTarget.style.background = 'rgba(255,205,25,0.1)';
+                                                            e.currentTarget.style.borderColor = 'rgba(255,205,25,0.5)';
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                                                            e.currentTarget.style.borderColor = 'rgba(255,205,25,0.2)';
+                                                        }}
+                                                        >
+                                                            {choice.displayIcon && (
+                                                                <img src={choice.displayIcon} alt="" style={{
+                                                                    width: '48px',
+                                                                    height: '48px',
+                                                                    borderRadius: '6px',
+                                                                    border: '1px solid rgba(255,255,255,0.2)',
+                                                                    objectFit: 'cover'
+                                                                }} />
+                                                            )}
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ 
+                                                                    fontSize: '14px', 
+                                                                    color: '#fff',
+                                                                    lineHeight: '1.5'
+                                                                }}>
+                                                                    {choice.display_text || choice.text_key}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </Fragment>
+                                    );
+                                                })()}
                             </div>
                         ) : (
                                             <div className="monster-card-v2 expanded" style={{ border: 'none', boxShadow: 'none', background: 'transparent', margin: 0, padding: 0, overflow: 'visible' }}>

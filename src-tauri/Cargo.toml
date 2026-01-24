@@ -38,7 +38,7 @@ anyhow = "1.0.100"
 clap = { version = "4.5.54", features = ["derive"] }
 rayon = "1.10"
 bincode = "1.3"
-windows = { version = "0.62.2", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_Input_KeyboardAndMouse"] }
+windows = { version = "0.62.2", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_Input_KeyboardAndMouse", "Win32_Graphics_Dwm"] }
 
 # OpenCV 核心绑定 (用于 ORB 特征匹配)
 opencv = "0.92"
@@ -47,3 +47,7 @@ enigo = "0.3"
 ort = { version = "2.0.0-rc.9", features = ["directml"] }
 ndarray = "0.15"
 device_query = "4.0.1"
+
+[features]
+default = ["enable_win32_dwm"]
+enable_win32_dwm = []

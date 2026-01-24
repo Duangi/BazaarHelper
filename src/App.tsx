@@ -20,6 +20,7 @@ interface ItemData {
   available_tiers: string;
   size?: string;
   tags: string;
+  hidden_tags: string;
   processed_tags: string[];
   heroes: string[];
   cooldown?: number;
@@ -158,6 +159,10 @@ export default function App() {
     const saved = localStorage.getItem("enable-yolo-auto");
     return saved === "true";
   });
+  const [yoloScanInterval, setYoloScanInterval] = useState(() => {
+    const saved = localStorage.getItem("yolo-scan-interval");
+    return saved ? parseFloat(saved) : 1.0; // Default 1 second
+  });
   const [useGpuAcceleration, setUseGpuAcceleration] = useState(() => {
     const saved = localStorage.getItem("use-gpu-acceleration");
     if (saved === null) {
@@ -197,6 +202,57 @@ export default function App() {
   });
   const [searchResults, setSearchResults] = useState<ItemData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearchFilterCollapsed, setIsSearchFilterCollapsed] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedHiddenTags, setSelectedHiddenTags] = useState<string[]>([]);
+  const [searchFilterHeight, setSearchFilterHeight] = useState(300);
+  const [isResizingFilter, setIsResizingFilter] = useState(false);
+
+  // 隐藏标签图标URL缓存
+  const [hiddenTagIcons, setHiddenTagIcons] = useState<Record<string, string>>({});
+
+  // 预加载隐藏标签图标
+  useEffect(() => {
+    (async () => {
+      const iconNames = ["Ammo", "Burn", "Charge", "Cooldown", "CritChance", "Damage", "Income", 
+                         "Freeze", "Haste", "Health", "MaxHPHeart", "Lifesteal", "Poison", 
+                         "Regen", "Shield", "Slowness"];
+      const icons: Record<string, string> = {};
+      for (const name of iconNames) {
+        try {
+          const fullPath = await resolveResource(`resources/images_GUI/${name}.webp`);
+          const url = convertFileSrc(fullPath);
+          icons[name] = url;
+        } catch (e) {
+          console.warn(`Failed to load icon: ${name}`, e);
+        }
+      }
+      setHiddenTagIcons(icons);
+    })();
+  }, []);
+
+  // Load skills_db.json mapping (id -> art_key basename)
+  const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
+  useEffect(() => {
+    (async () => {
+      try {
+        const resPath = await resolveResource('resources/skills_db.json');
+        const url = convertFileSrc(resPath);
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const map: Record<string, string> = {};
+        for (const entry of data) {
+          if (entry.id && entry.art_key) {
+            const basename = entry.art_key.split('/').pop();
+            map[entry.id] = basename;
+          }
+        }
+        setSkillsArtMap(map);
+      } catch (e) {
+        console.warn('Failed to load skills_db.json for art map', e);
+      }
+    })();
+  }, []);
 
   // Lazy Load State
   const [visibleCount, setVisibleCount] = useState(50);
@@ -227,16 +283,40 @@ export default function App() {
         try {
           const res = await invoke<ItemData[]>("search_items", { query: searchQuery });
           
+          // Filter out "中型包裹" and apply multi-select tag filters
+          let filtered = res.filter(item => 
+            !item.name_cn.includes('中型包裹') && 
+            !item.name.includes('Medium Package')
+          );
+          
+          // Apply multi-select tag filters
+          if (selectedTags.length > 0) {
+            filtered = filtered.filter(item => 
+              selectedTags.some(tag => item.tags.toLowerCase().includes(tag.toLowerCase()))
+            );
+          }
+          if (selectedHiddenTags.length > 0) {
+            filtered = filtered.filter(item => 
+              selectedHiddenTags.some(tag => item.hidden_tags.toLowerCase().includes(tag.toLowerCase()))
+            );
+          }
+          
           // Image patching: Search results don't have displayImg set.
-          // We need to generate it similar to how get_item_info might do it (not visible here but assumed logic)
-          // or how Card Recognition does it: `images/${itemInfo.uuid || itemInfo.name}.webp`
-          const patched = await Promise.all(res.map(async (item) => {
-            // Note: Use item.uuid first. Backend ItemData has 'uuid' which is 'id' in JSON.
-            // Images are locally stored in resources/images/
-            // Filename is usually the Item ID? Or Name?
-            // In recognizer: `images/${itemInfo.uuid || itemInfo.name}.webp`
-            // Let's try ID first.
-            const imgPath = `images/${item.uuid}.webp`;
+          const patched = await Promise.all(filtered.map(async (item) => {
+            let imgPath = '';
+            
+            // Check if this item is a skill by looking up in skillsArtMap
+            const art = item.uuid ? skillsArtMap[item.uuid] : undefined;
+            if (art) {
+              // It's a skill - use art_key based path
+              const base = art.split('/').pop() || art;
+              const nameNoExt = base.replace(/\.[^/.]+$/, '');
+              imgPath = `images/skill/${nameNoExt}.webp`;
+            } else {
+              // It's a regular item - use uuid
+              imgPath = `images/${item.uuid}.webp`;
+            }
+            
             const url = await getImg(imgPath);
             return { ...item, displayImg: url };
           }));
@@ -250,7 +330,28 @@ export default function App() {
       }
     }, 300);
     return () => clearTimeout(handler);
-  }, [searchQuery, activeTab]);
+  }, [searchQuery, activeTab, skillsArtMap, selectedTags, selectedHiddenTags]);
+
+  // Handle filter resize
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizingFilter) {
+        const newHeight = e.clientY - 130; // Adjust offset based on top bar height
+        setSearchFilterHeight(Math.max(200, Math.min(newHeight, window.innerHeight * 0.6)));
+      }
+    };
+    const handleMouseUp = () => {
+      setIsResizingFilter(false);
+    };
+    if (isResizingFilter) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizingFilter]);
 
 
   // 图片路径缓存，避免重复解析
@@ -590,11 +691,12 @@ export default function App() {
       return assetUrl;
     } catch { return ""; }
   };
-  
+
   const enterApp = () => {
     console.log("[Update] Entering App. updateAvailable:", !!updateAvailable);
     setShowVersionScreen(false);
     invoke("start_template_loading").catch(console.error);
+    invoke("load_event_templates").catch(console.error);
     
     // 如果有更新，进入应用后开始后台下载
     if (updateAvailable) {
@@ -794,17 +896,10 @@ export default function App() {
         handleRecognizeCard(true); // switchTab=true might be redundant if we set directly, but ensure logic
       });
 
-      // 3.5. YOLO扫描触发 (游戏状态变更)
+      // 保留原有的手动触发事件（用于手动按钮触发）
       await safeListen<void>('trigger_yolo_scan', async () => {
-        console.log("[Frontend] Received trigger_yolo_scan event from backend");
-        // 检查是否开启了YOLO自动识别
-        const enabled = localStorage.getItem("enable-yolo-auto");
-        console.log("[Frontend] enable-yolo-auto setting:", enabled);
-        if (enabled !== "true") {
-          console.log("[Frontend] YOLO自动识别已关闭，跳过。enabled=", enabled);
-          return;
-        }
-        console.log("[Frontend] YOLO自动识别已开启，开始扫描");
+        console.log("[Frontend] Received manual trigger_yolo_scan event from backend");
+        // 手动触发事件，不受自动扫描设置影响
         const useGpu = localStorage.getItem("use-gpu-acceleration");
         const useGpuBool = useGpu === "true";
         console.log("[Frontend] GPU加速设置:", useGpu, "-> useGpu =", useGpuBool);
@@ -834,6 +929,56 @@ export default function App() {
           setTimeout(() => setErrorMessage(null), 5000);
         } finally {
           (window as any).__yolo_running = false;
+        }
+      });
+
+      // 3.5. YOLO自动扫描定时器
+      let yoloTimer: ReturnType<typeof setInterval> | null = null;
+      const runYoloScan = async () => {
+        if (!enableYoloAuto) return;
+        
+        const useGpu = localStorage.getItem("use-gpu-acceleration");
+        const useGpuBool = useGpu === "true";
+        
+        try {
+          if ((window as any).__yolo_running) {
+            console.log("[YOLO Auto] Scan already running, skipping");
+            return;
+          }
+          (window as any).__yolo_running = true;
+          console.log(`[YOLO Auto] Starting scan (interval: ${yoloScanInterval}s, GPU: ${useGpuBool})`);
+          const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
+          console.log(`[YOLO Auto] Scan complete, detected ${count} objects`);
+
+          // 获取统计信息并通知Overlay更新
+          try {
+            const stats = await invoke('get_yolo_stats');
+            await emit('yolo-stats-updated', stats);
+          } catch (statsErr) {
+            console.error("[YOLO Auto] Failed to get stats:", statsErr);
+          }
+
+          if (count > 0) {
+            setActiveTab("card"); // 自动切换到卡牙选项卡
+          }
+        } catch (err) {
+          console.error("[YOLO Auto] Scan failed:", err);
+        } finally {
+          (window as any).__yolo_running = false;
+        }
+      };
+
+      if (enableYoloAuto) {
+        // 启动定时器
+        yoloTimer = setInterval(runYoloScan, yoloScanInterval * 1000);
+        console.log(`[YOLO Auto] Timer started with interval: ${yoloScanInterval}s`);
+      }
+
+      // 将定时器清理函数添加到unlisteners
+      unlisteners.push(() => {
+        if (yoloTimer) {
+          clearInterval(yoloTimer);
+          console.log("[YOLO Auto] Timer stopped");
         }
       });
 
@@ -910,7 +1055,7 @@ export default function App() {
       unlisteners.forEach(fn => fn());
       unlisteners.length = 0;
     };
-  }, []); // 依赖项为空，确保只执行一次
+  }, [enableYoloAuto, yoloScanInterval]); // 依赖项包含enableYoloAuto和yoloScanInterval，当它们变化时重新设置定时器
 
   // 基础环境侦测：分辨率适配
   useEffect(() => {
@@ -1108,10 +1253,23 @@ export default function App() {
       ...m,
       displayImg: displayImg,
       displayImgBg: displayImgBg,
-      skills: m.skills ? await Promise.all(m.skills.map(async s => ({ 
-        ...s, 
-        displayImg: await getImg(`images/${s.id || s.name}.webp`) 
-      }))) : [],
+      skills: m.skills ? await Promise.all(m.skills.map(async s => {
+        // Prefer art_key from skills_db if available
+        let imgPath = '';
+        try {
+          const art = s.id ? skillsArtMap[s.id] : undefined;
+          if (art) {
+            const base = art.split('/').pop() || art;
+            const nameNoExt = base.replace(/\.[^/.]+$/, '');
+            imgPath = `images/skill/${nameNoExt}.webp`;
+          } else {
+            imgPath = `images/${s.id || s.name}.webp`;
+          }
+        } catch (e) {
+          imgPath = `images/${s.id || s.name}.webp`;
+        }
+        return { ...s, displayImg: await getImg(imgPath) };
+      })) : [],
       items: m.items ? await Promise.all(m.items.map(async i => ({ 
         ...i, 
         displayImg: await getImg(`images/${i.id || i.name}.webp`) 
@@ -1748,9 +1906,47 @@ export default function App() {
                   </div>
                 </div>
                 <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  当游戏状态变更时，自动触发YOLO识别卡牌（GPU加速需要DirectML.dll支持）
+                  启用后每隔固定时间自动触发YOLO识别卡牌（下方可调整频率）
                 </div>
               </div>
+              
+              {/* YOLO扫描频率设置 */}
+              <div className="setting-item" style={{ opacity: enableYoloAuto ? 1 : 0.5 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>YOLO扫描频率</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input 
+                      type="range"
+                      min="0.1"
+                      max="2"
+                      step="0.1"
+                      value={yoloScanInterval}
+                      disabled={!enableYoloAuto}
+                      onChange={(e) => {
+                        const newVal = parseFloat(e.target.value);
+                        setYoloScanInterval(newVal);
+                        localStorage.setItem("yolo-scan-interval", newVal.toString());
+                      }}
+                      style={{
+                        width: '120px',
+                        accentColor: '#ffcd19'
+                      }}
+                    />
+                    <span style={{ 
+                      fontSize: '13px', 
+                      color: '#ffcd19', 
+                      fontWeight: 'bold',
+                      minWidth: '50px'
+                    }}>
+                      {yoloScanInterval.toFixed(1)}s
+                    </span>
+                  </div>
+                </div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  设置YOLO自动识别的时间间隔（0.1秒 - 2秒）
+                </div>
+              </div>
+              
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <label>YOLO实时监控</label>
@@ -2150,14 +2346,45 @@ export default function App() {
           {activeTab === "search" && (
             <div className="search-box-container" style={{ 
               zIndex: 100,
-              padding: '12px', 
               borderBottom: '1px solid rgba(255,255,255,0.1)', 
-              background: '#2b2621', // Dark background to cover scrolling content
+              background: '#2b2621',
               boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px'
+              height: isSearchFilterCollapsed ? 'auto' : `${searchFilterHeight}px`,
+              position: 'relative'
             }}>
+              <div style={{ 
+                padding: '12px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '8px', 
+                overflowY: 'auto', 
+                flex: 1,
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#ffcd19 rgba(0,0,0,0.3)'
+              }} className="custom-scrollbar">
+              {/* Header row with collapse button */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '12px', color: '#ffcd19', fontWeight: 'bold' }}>搜索过滤器</div>
+                <button 
+                  onClick={() => setIsSearchFilterCollapsed(!isSearchFilterCollapsed)}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255,205,25,0.3)',
+                    color: '#ffcd19',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '11px'
+                  }}
+                >
+                  {isSearchFilterCollapsed ? '展开 ▼' : '收起 ▲'}
+                </button>
+              </div>
+
+              {!isSearchFilterCollapsed && (
+                <>
               {/* Row 1: Keyword + Type */}
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <input 
@@ -2271,119 +2498,179 @@ export default function App() {
                  </div>
               </div>
 
-              {/* Row 4: Tags & Hidden Tags - Allow wrap */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                 <select 
-                    className="search-select"
-                    value={searchQuery.tags}
-                    onChange={e => setSearchQuery({...searchQuery, tags: e.target.value})}
-                    style={{ flex: 1, minWidth: '120px' }}
-                 >
-                   <option value="">标签: 全部</option>
-                   {[
-                     ["Drone", "无人机"], 
-                     ["Property", "地产"], 
-                     ["Ray", "射线"], 
-                     ["Tool", "工具"], 
-                     ["Dinosaur", "恐龙"], 
-                     ["Loot", "战利品"], 
-                     ["Apparel", "服饰"], 
-                     ["Core", "核心"], 
-                     ["Weapon", "武器"], 
-                     ["Aquatic", "水系"], 
-                     ["Toy", "玩具"], 
-                     ["Tech", "科技"], 
-                     ["Potion", "药水"], 
-                     ["Reagent", "原料"], 
-                     ["Vehicle", "载具"], 
-                     ["Relic", "遗物"], 
-                     ["Food", "食物"], 
-                     ["Dragon", "龙"],
-                     ["Friend", "伙伴"]
-                   ].sort((a,b) => a[1].localeCompare(b[1], 'zh-CN')).map(([val, label]) => {
-                     return <option key={val} value={val}>{label}</option>;
-                   })}
-                 </select>
-                 
-                 <select 
-                    className="search-select"
-                    value={searchQuery.hidden_tags}
-                    onChange={e => setSearchQuery({...searchQuery, hidden_tags: e.target.value})}
-                    style={{ flex: 1, minWidth: '120px' }}
-                 >
-                   <option value="">隐藏标签: 全部</option>
-                   {[
-                    "AbsorbDestroy", "AbsorbFreeze", "AbsorbSlow", "Ammo/弹药", "AmmoRef/弹药相关", "Burn/灼烧", "BurnRef/灼烧相关", 
-                    "Charge/充能", "Cooldown/冷却", "CooldownReference/冷却相关", "Crit/暴击", "CritRef/暴击相关", "Damage/伤害", "DamageRef/伤害相关", 
-                    "EconomyRef/经济相关", "Experience/经验", "Flying/飞行", "FlyingRef/飞行相关", "Freeze/冻结", "FreezeRef/冻结相关", 
-                    "Gold/金币", "Haste/加速", "HasteRef/加速相关", "Heal/治疗", "HealRef/治疗相关", "Health/生命值", "HealthRef/生命值相关", 
-                    "Income/收入", "Level/等级相关", "Lifesteal/生命偷取", "Poison/剧毒", "PoisonRef/剧毒相关", "PotionRef/药水相关", 
-                    "Quest/任务", "Regen/再生", "RegenRef/再生相关", "Shield/护盾", "ShieldRef/护盾相关", "Slow/减速", "SlowRef/减速相关", 
-                    "TechReference/科技相关", "Ticket/票", "Value/价值"
-                   ].map(t => {
-                     const parts = t.split('/');
-                     const val = parts[0];
-                     let label = parts.length > 1 ? parts[1] : val;
-                     // normalize wording: replace 引用 -> 相关
-                     label = label.replace(/引用/g, '相关');
-                     return <option key={val} value={val}>{label}</option>;
-                   })}
-                 </select>
+              {/* Row 4: Tags & Hidden Tags - Multi-select buttons */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ fontSize: '11px', color: '#888' }}>标签 (可多选)</div>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {[
+                    ["Drone", "无人机"], 
+                    ["Property", "地产"], 
+                    ["Ray", "射线"], 
+                    ["Tool", "工具"], 
+                    ["Dinosaur", "恐龙"], 
+                    ["Loot", "战利品"], 
+                    ["Apparel", "服饰"], 
+                    ["Core", "核心"], 
+                    ["Weapon", "武器"], 
+                    ["Aquatic", "水系"], 
+                    ["Toy", "玩具"], 
+                    ["Tech", "科技"], 
+                    ["Potion", "药水"], 
+                    ["Reagent", "原料"], 
+                    ["Vehicle", "载具"], 
+                    ["Relic", "遗物"], 
+                    ["Food", "食物"], 
+                    ["Dragon", "龙"],
+                    ["Friend", "伙伴"]
+                  ].sort((a,b) => a[1].localeCompare(b[1], 'zh-CN')).map(([val, label]) => (
+                    <button key={val}
+                      className={`toggle-btn ${selectedTags.includes(val) ? 'active' : ''}`}
+                      onClick={() => {
+                        if (selectedTags.includes(val)) {
+                          setSelectedTags(selectedTags.filter(t => t !== val));
+                        } else {
+                          setSelectedTags([...selectedTags, val]);
+                        }
+                      }}
+                      style={{ padding: '6px 10px', borderRadius: 6, fontSize: '12px' }}
+                    >{label}</button>
+                  ))}
+                </div>
               </div>
 
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                marginTop: '8px',
-                padding: '6px 0',
-                borderTop: '1px solid rgba(125, 107, 74, 0.3)'
-              }}>
-                 <div style={{ 
-                   display: 'flex', 
-                   alignItems: 'center', 
-                   gap: '8px',
-                   fontSize: '13px', 
-                   color: '#a0937d' 
-                 }}>
-                   {isSearching ? (
-                     <>
-                       <span style={{ color: '#d4af37' }}>🔍</span>
-                       <span>正在搜索...</span>
-                     </>
-                   ) : (
-                     <>
-                       <span style={{ 
-                         width: '30px', 
-                         height: '1px', 
-                         background: 'linear-gradient(to right, transparent, #d4af37)' 
-                       }}></span>
-                       <span>找到</span>
-                       <span style={{ 
-                         color: '#ffcc00', 
-                         fontWeight: 'bold',
-                         fontSize: '15px',
-                         textShadow: '0 0 8px rgba(255, 204, 0, 0.4)'
-                       }}>{searchResults.length}</span>
-                       <span>个结果</span>
-                       <span style={{ 
-                         width: '30px', 
-                         height: '1px', 
-                         background: 'linear-gradient(to left, transparent, #d4af37)' 
-                       }}></span>
-                     </>
-                   )}
-                 </div>
-                 <button 
-                    className="bulk-btn" 
-                    style={{ fontSize: '12px', padding: '4px 12px' }} 
-                    onClick={() => setSearchQuery({
-                        keyword: "", item_type: "all", size: "", start_tier: "", hero: "", tags: "", hidden_tags: ""
-                    })}
-                 >
-                    重置筛选
-                 </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ fontSize: '11px', color: '#888' }}>隐藏标签 (可多选)</div>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  {/* 定义分组和图标映射 */}
+                  {(() => {
+                    const tagGroups = [
+                      { tags: [["Ammo", "弹药"], ["AmmoRef", "弹药相关"]], icon: "Ammo", color: "var(--c-ammo)" },
+                      { tags: [["Burn", "灼烧"], ["BurnRef", "灼烧相关"]], icon: "Burn", color: "var(--c-burn)" },
+                      { tags: [["Charge", "充能"]], icon: "Charge", color: "var(--c-charge)" },
+                      { tags: [["Cooldown", "冷却"], ["CooldownReference", "冷却相关"]], icon: "Cooldown", color: "var(--c-cooldown)" },
+                      { tags: [["Crit", "暴击"], ["CritRef", "暴击相关"]], icon: "CritChance", color: "var(--c-crit)" },
+                      { tags: [["Damage", "伤害"], ["DamageRef", "伤害相关"]], icon: "Damage", color: "var(--c-damage)" },
+                      { tags: [["EconomyRef", "经济相关"], ["Gold", "金币"]], icon: "Income", color: "var(--c-golden)" },
+                      { tags: [["Freeze", "冻结"], ["FreezeRef", "冻结相关"]], icon: "Freeze", color: "var(--c-freeze)" },
+                      { tags: [["Haste", "加速"], ["HasteRef", "加速相关"]], icon: "Haste", color: "var(--c-haste)" },
+                      { tags: [["Heal", "治疗"], ["HealRef", "治疗相关"]], icon: "Health", color: "var(--c-heal)" },
+                      { tags: [["Health", "生命值"], ["HealthRef", "生命值相关"]], icon: "MaxHPHeart", color: "var(--c-heal)" },
+                      { tags: [["Lifesteal", "生命偷取"]], icon: "Lifesteal", color: "var(--c-lifesteal)" },
+                      { tags: [["Poison", "剧毒"], ["PoisonRef", "剧毒相关"]], icon: "Poison", color: "var(--c-poison)" },
+                      { tags: [["Quest", "任务"]], icon: null, color: "#9098fe" },
+                      { tags: [["Regen", "再生"], ["RegenRef", "再生相关"]], icon: "Regen", color: "var(--c-regen)" },
+                      { tags: [["Shield", "护盾"], ["ShieldRef", "护盾相关"]], icon: "Shield", color: "var(--c-shield)" },
+                      { tags: [["Slow", "减速"], ["SlowRef", "减速相关"]], icon: "Slowness", color: "var(--c-slow)" },
+                    ];
+
+                    return tagGroups.map((group, groupIndex) => (
+                      <div key={groupIndex} style={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
+                        {group.tags.map(([val, label], index) => (
+                          <button key={val}
+                            className={`toggle-btn ${selectedHiddenTags.includes(val) ? 'active' : ''}`}
+                            onClick={() => {
+                              if (selectedHiddenTags.includes(val)) {
+                                setSelectedHiddenTags(selectedHiddenTags.filter(t => t !== val));
+                              } else {
+                                setSelectedHiddenTags([...selectedHiddenTags, val]);
+                              }
+                            }}
+                            style={{ 
+                              padding: '6px 10px', 
+                              borderRadius: 6, 
+                              fontSize: '12px',
+                              color: group.color,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            {index === 0 && group.icon && hiddenTagIcons[group.icon] && (
+                              <img 
+                                src={hiddenTagIcons[group.icon]} 
+                                alt="" 
+                                style={{ width: '14px', height: '14px', display: 'inline-block' }}
+                              />
+                            )}
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    ));
+                  })()}
+                </div>
               </div>
+                </>
+              )}
+              </div>
+              
+              {/* Results count */}
+              <div style={{ 
+                padding: '8px 12px',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: 'rgba(0,0,0,0.2)'
+              }}>
+                <div style={{ fontSize: '13px', color: '#a0937d' }}>
+                  {isSearching ? (
+                    <><span style={{ color: '#d4af37' }}>🔍</span> 搜索中...</>
+                  ) : (
+                    <>找到 <span style={{ color: '#ffcc00', fontWeight: 'bold' }}>{searchResults.length}</span> 个结果</>
+                  )}
+                </div>
+                <button 
+                  className="bulk-btn" 
+                  style={{ fontSize: '11px', padding: '4px 8px' }} 
+                  onClick={() => {
+                    setSearchQuery({ keyword: "", item_type: "all", size: "", start_tier: "", hero: "", tags: "", hidden_tags: "" });
+                    setSelectedTags([]);
+                    setSelectedHiddenTags([]);
+                  }}
+                >
+                  重置
+                </button>
+              </div>
+              
+              {/* Resize Handle */}
+              {!isSearchFilterCollapsed && (
+                <div 
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setIsResizingFilter(true);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    height: '8px',
+                    cursor: 'ns-resize',
+                    background: 'linear-gradient(to bottom, transparent, rgba(255,205,25,0.1))',
+                    borderTop: '1px solid rgba(255,205,25,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(to bottom, transparent, rgba(255,205,25,0.2))';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isResizingFilter) {
+                      e.currentTarget.style.background = 'linear-gradient(to bottom, transparent, rgba(255,205,25,0.1))';
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '40px',
+                    height: '3px',
+                    borderRadius: '2px',
+                    background: 'rgba(255,205,25,0.4)'
+                  }} />
+                </div>
+              )}
             </div>
           )}
 

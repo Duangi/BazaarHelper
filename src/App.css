@@ -124,6 +124,10 @@
   --golden-rgb: 255, 205, 25;
   --burn-rgb: 255, 159, 69;
   --tag-rgb: 152, 168, 254;
+  --crit-rgb: 255, 69, 0;
+  --cooldown-rgb: 0, 236, 195;
+  --charge-rgb: 255, 215, 0;
+  --regen-rgb: 34, 139, 34;
 
   /* 阶级颜色 */
   --c-bronze: #CD7F32;
@@ -147,6 +151,10 @@
   --c-golden: rgb(var(--golden-rgb));
   --c-burn: rgb(var(--burn-rgb));
   --c-tag: rgb(var(--tag-rgb));
+  --c-crit: rgb(var(--crit-rgb));
+  --c-cooldown: rgb(var(--cooldown-rgb));
+  --c-charge: rgb(var(--charge-rgb));
+  --c-regen: rgb(var(--regen-rgb));
 }
 
 html, body, #root {
@@ -2228,4 +2236,36 @@ html, body, #root {
   letter-spacing: 0.5px;
 }
 
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffcd19 0%, #d4af37 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px rgba(255, 205, 25, 0.3);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd700 0%, #ffcd19 100%);
+  box-shadow: 0 0 10px rgba(255, 205, 25, 0.5);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: #d4af37;
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #ffcd19 rgba(0, 0, 0, 0.3);
+}

@@ -2703,7 +2703,7 @@
     "heroes": "Vanessa / 凡妮莎",
     "tags": "Weapon / 武器",
     "hidden_tags": "AmmoRef / 弹药引用 | DamageRef / 伤害引用",
-    "art_key": "Icon_Skill_FrontlineLogistics",
+    "art_key": "Icon_Skill_VAN_FrontlineLogistics",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,

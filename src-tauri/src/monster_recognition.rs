@@ -539,6 +539,52 @@ pub fn match_monster_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Opt
     Ok(None)
 }
 
+// 从 Mat 匹配事件描述符，返回事件ID
+pub fn match_event_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Option<String>, String> {
+    let cache = EVENT_TEMPLATE_CACHE.get().ok_or("Event templates not loaded")?;
+    let mut best_id = None;
+    let mut max_matches = 0;
+    let mut best_score = 0.0f32;
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        let rows = template.descriptor_rows;
+        let cols = template.descriptor_cols;
+        
+        let mut template_desc = match unsafe { Mat::new_rows_cols(rows, cols, CV_8U) } {
+            Ok(mat) => mat,
+            Err(_) => continue,
+        };
+        if template.descriptors.len() == (rows * cols) as usize {
+            unsafe {
+                std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len());
+            }
+        } else {
+            continue;
+        }
+
+        if let Ok(matches) = match_orb_descriptors(&scene_descriptors, &template_desc) {
+            let scene_kp_count = scene_descriptors.rows() as f32;
+            let template_kp_count = template.descriptor_rows as f32;
+            let min_kp = scene_kp_count.min(template_kp_count);
+            let score = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+
+            if matches > max_matches {
+                max_matches = matches;
+                best_score = score;
+                best_id = Some(template.id.clone());
+            }
+        }
+    }
+
+    // 事件识别阈值：匹配点数 >= 15 且 得分 > 0.15
+    if max_matches >= 15 && best_score > 0.15 {
+        return Ok(best_id);
+    }
+    Ok(None)
+}
+
 // ORB 匹配函数 - 使用 Lowe's Ratio Test
 fn match_orb_descriptors(desc1: &Mat, desc2: &Mat) -> Result<usize, opencv::Error> {
     if desc1.empty() || desc2.empty() {
@@ -1376,5 +1422,242 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
     }
     
     println!("[Card Recognition] No matches found above threshold.");
+    Ok(None)
+}
+
+// ===== 事件识别功能 =====
+
+static EVENT_TEMPLATE_CACHE: OnceLock<Vec<EventTemplateCache>> = OnceLock::new();
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct EventTemplateCache {
+    id: String,
+    name: String,
+    descriptors: Vec<u8>,
+    descriptor_rows: i32,
+    descriptor_cols: i32,
+}
+
+// 加载事件特征模板
+#[tauri::command]
+pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
+    if EVENT_TEMPLATE_CACHE.get().is_some() {
+        println!("Event templates already loaded");
+        return Ok(());
+    }
+    
+    println!("开始加载事件特征模板...");
+    log_to_file("Loading event templates...");
+    
+    // 读取 event_encounters.json
+    let event_json_path = app.path().resolve("resources/event_encounters.json", tauri::path::BaseDirectory::Resource)
+        .map_err(|e| format!("Failed to resolve event_encounters.json: {}", e))?;
+    
+    let json_data = std::fs::read_to_string(&event_json_path)
+        .map_err(|e| format!("Failed to read event_encounters.json: {}", e))?;
+    
+    let events: Vec<serde_json::Value> = serde_json::from_str(&json_data)
+        .map_err(|e| format!("Failed to parse event_encounters.json: {}", e))?;
+    
+    // 特征文件目录
+    let features_dir = app.path().resolve("resources/event_features", tauri::path::BaseDirectory::Resource)
+        .map_err(|e| format!("Failed to resolve event_features dir: {}", e))?;
+    
+    let mut templates = Vec::new();
+    let mut loaded_count = 0;
+    let mut missing_count = 0;
+    
+    for event in events {
+        // 只处理有 choices 的事件
+        if let Some(choices) = event.get("choices") {
+            if let Some(arr) = choices.as_array() {
+                if arr.is_empty() {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+        } else {
+            continue;
+        }
+        
+        let id = event.get("Id")
+            .and_then(|v| v.as_str())
+            .unwrap_or("")
+            .to_string();
+        
+        if id.is_empty() {
+            continue;
+        }
+        
+        let name = event.get("Localization")
+            .and_then(|l| l.get("Title"))
+            .and_then(|t| t.get("Text"))
+            .and_then(|t| t.as_str())
+            .unwrap_or(&id)
+            .to_string();
+        
+        // 读取 bin 文件
+        let feature_file = features_dir.join(format!("{}.bin", id));
+        
+        if !feature_file.exists() {
+            missing_count += 1;
+            continue;
+        }
+        
+        match std::fs::read(&feature_file) {
+            Ok(data) => {
+                if data.len() < 8 {
+                    log_to_file(&format!("Warning: Invalid feature file for {}", name));
+                    continue;
+                }
+                
+                // 读取头部信息
+                let num_descriptors = u32::from_le_bytes([data[0], data[1], data[2], data[3]]) as i32;
+                let descriptor_size = u32::from_le_bytes([data[4], data[5], data[6], data[7]]) as i32;
+                
+                if descriptor_size != 32 {
+                    log_to_file(&format!("Warning: Invalid descriptor size for {}: {}", name, descriptor_size));
+                    continue;
+                }
+                
+                let expected_len = 8 + (num_descriptors * descriptor_size) as usize;
+                if data.len() != expected_len {
+                    log_to_file(&format!("Warning: Invalid data length for {}", name));
+                    continue;
+                }
+                
+                templates.push(EventTemplateCache {
+                    id: id.clone(),
+                    name: name.clone(),
+                    descriptors: data[8..].to_vec(),
+                    descriptor_rows: num_descriptors,
+                    descriptor_cols: descriptor_size,
+                });
+                
+                loaded_count += 1;
+            }
+            Err(e) => {
+                log_to_file(&format!("Failed to read feature file for {}: {}", name, e));
+            }
+        }
+    }
+    
+    println!("事件特征模板加载完成: {} 个成功, {} 个缺失", loaded_count, missing_count);
+    log_to_file(&format!("Event templates loaded: {} success, {} missing", loaded_count, missing_count));
+    
+    let _ = EVENT_TEMPLATE_CACHE.set(templates);
+    Ok(())
+}
+
+// 识别事件（从鼠标位置）
+#[tauri::command]
+pub async fn recognize_event_at_mouse() -> Result<Option<serde_json::Value>, String> {
+    use xcap::Monitor;
+    use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
+    use windows::Win32::Foundation::POINT;
+    
+    // 1. 获取鼠标位置
+    let mut point = POINT::default();
+    unsafe { GetCursorPos(&mut point).map_err(|e| e.to_string())? };
+    let mouse_x = point.x;
+    let mouse_y = point.y;
+
+    // 2. 截图
+    let windows = xcap::Window::all().map_err(|e| e.to_string())?;
+    let bazaar_window = windows.into_iter().find(|w| {
+        let title = w.title().to_lowercase();
+        let app_name = w.app_name().to_lowercase();
+        let is_bazaar = title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                        title.contains("thebazaar") || app_name.contains("thebazaar");
+        
+        if is_bazaar {
+            let wx = w.x();
+            let wy = w.y();
+            let ww = w.width();
+            let wh = w.height();
+            mouse_x >= wx && mouse_x < wx + ww as i32 &&
+            mouse_y >= wy && mouse_y < wy + wh as i32
+        } else {
+            false
+        }
+    });
+
+    let (screenshot, win_x, win_y) = if let Some(window) = bazaar_window {
+        (window.capture_image().map_err(|e| e.to_string())?, window.x(), window.y())
+    } else {
+        let monitors = Monitor::all().map_err(|e| e.to_string())?;
+        let target_monitor = monitors.into_iter().find(|m| {
+             let mx = m.x();
+             let my = m.y();
+             let mw = m.width();
+             let mh = m.height();
+             mouse_x >= mx && mouse_x < mx + mw as i32 &&
+             mouse_y >= my && mouse_y < my + mh as i32
+        }).ok_or("Mouse is not within any monitor bounds")?;
+        (target_monitor.capture_image().map_err(|e| e.to_string())?, target_monitor.x(), target_monitor.y())
+    };
+
+    let img = DynamicImage::ImageRgba8(screenshot);
+    let (img_w, img_h) = img.dimensions();
+    let rel_x = mouse_x - win_x;
+    let rel_y = mouse_y - win_y;
+    
+    // 裁剪 400x400 区域
+    let crop_size = 400;
+    let half_size = crop_size / 2;
+    
+    let crop_x = (rel_x - half_size).max(0) as u32;
+    let crop_y = (rel_y - half_size).max(0) as u32;
+    
+    let crop_w = if crop_x + crop_size as u32 > img_w { img_w.saturating_sub(crop_x) } else { crop_size as u32 };
+    let crop_h = if crop_y + crop_size as u32 > img_h { img_h.saturating_sub(crop_y) } else { crop_size as u32 };
+
+    if crop_w < 50 || crop_h < 50 {
+        return Err("裁剪区域太小或鼠标已移出窗口范围".into());
+    }
+
+    let cropped_img = img.crop_imm(crop_x, crop_y, crop_w, crop_h);
+    
+    // 3. 提取特征
+    let scene_desc = extract_features_from_dynamic_image(&cropped_img, 500).map_err(|e| e.to_string())?;
+    if scene_desc.empty() { return Ok(None); }
+    
+    // 4. 与事件模板比对
+    let cache = EVENT_TEMPLATE_CACHE.get().ok_or("Event templates not loaded")?;
+    let mut results: Vec<(&EventTemplateCache, usize, f32)> = Vec::new();
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        let mut template_desc = match unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U) } {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+        unsafe { std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), template_desc.data_mut() as *mut u8, template.descriptors.len()); }
+
+        if let Ok(matches) = match_orb_descriptors(&scene_desc, &template_desc) {
+            let min_kp = (template.descriptor_rows as f32).min(scene_desc.rows() as f32);
+            let confidence = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+            results.push((template, matches, confidence));
+        }
+    }
+    
+    results.sort_by(|a, b| b.1.cmp(&a.1));
+
+    // 取最佳匹配（阈值：匹配点数 > 15 且置信度 > 0.15）
+    if let Some((best, matches, confidence)) = results.first() {
+        if *matches > 15 && *confidence > 0.15 {
+            println!("[Event Recognition] Matched: {} (confidence: {:.2}, matches: {})", best.name, confidence, matches);
+            return Ok(Some(serde_json::json!({
+                "id": best.id,
+                "name": best.name,
+                "confidence": confidence,
+                "match_count": matches
+            })));
+        }
+    }
+    
+    println!("[Event Recognition] No event matches found above threshold.");
     Ok(None)
 }

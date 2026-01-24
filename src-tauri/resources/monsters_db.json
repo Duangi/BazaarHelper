@@ -3423,7 +3423,6 @@
         "tiers": {
           "bronze": {
             "description": [
-              "灼烧 +1",
               "灼烧物品 +10% 暴击率。"
             ],
             "extra_description": [],
@@ -3431,7 +3430,6 @@
           },
           "silver": {
             "description": [
-              "灼烧 +1",
               "灼烧物品 +15% 暴击率。"
             ],
             "extra_description": [],
@@ -3439,7 +3437,6 @@
           },
           "gold": {
             "description": [
-              "灼烧 +1",
               "灼烧物品 +20% 暴击率。"
             ],
             "extra_description": [],
@@ -3447,7 +3444,6 @@
           },
           "diamond": {
             "description": [
-              "灼烧 +1",
               "灼烧物品 +25% 暴击率。"
             ],
             "extra_description": [],
@@ -17969,7 +17965,7 @@
         "id": "ae039b3e-ef98-4dc7-a97c-1e06d2627e57",
         "name": "氮气罐",
         "tier": "GOLD+",
-        "current_tier": "Silver",
+        "current_tier": "Gold",
         "tags": [
           "TECH",
           "DOO"
@@ -17999,7 +17995,7 @@
         "id": "357d7a25-aae0-4d4f-9360-4ed1cc107962",
         "name": "焊炬",
         "tier": "SILVER+",
-        "current_tier": "Gold",
+        "current_tier": "Silver",
         "tags": [
           "TOOL",
           "DOO"
@@ -18039,7 +18035,7 @@
         "id": "98f9fc74-145f-4d13-85bf-3229b9257aa0",
         "name": "等离子步枪",
         "tier": "GOLD+",
-        "current_tier": "Silver",
+        "current_tier": "Gold",
         "tags": [
           "WEAPON",
           "TECH",
@@ -18098,50 +18094,6 @@
             ],
             "extra_description": [],
             "cd": null
-          }
-        }
-      },
-      {
-        "id": "eed2dc49-267a-4e8c-8ea6-d37dff677e8c",
-        "name": "感流盾",
-        "tier": "BRONZE+",
-        "current_tier": "Gold",
-        "tags": [
-          "TECH",
-          "DOO"
-        ],
-        "tiers": {
-          "bronze": {
-            "description": [
-              "获得20护盾",
-              "造成5灼烧"
-            ],
-            "extra_description": [],
-            "cd": "7.0"
-          },
-          "silver": {
-            "description": [
-              "获得20护盾",
-              "造成5灼烧"
-            ],
-            "extra_description": [],
-            "cd": "6.0"
-          },
-          "gold": {
-            "description": [
-              "获得20护盾",
-              "造成5灼烧"
-            ],
-            "extra_description": [],
-            "cd": "5.0"
-          },
-          "diamond": {
-            "description": [
-              "获得20护盾",
-              "造成5灼烧"
-            ],
-            "extra_description": [],
-            "cd": "4.0"
           }
         }
       },
