@@ -196,6 +196,18 @@ export default function OverlayApp() {
     const [size, setSize] = useState({ w: 420, h: -1 });
     const [isResizing, setIsResizing] = useState(false);
     const isResizingRef = useRef(false);
+    
+    // Overlay详情页面位置和缩放设置
+    const [detailPosition, setDetailPosition] = useState(() => {
+        const x = localStorage.getItem('overlay-detail-x');
+        const y = localStorage.getItem('overlay-detail-y');
+        const scale = localStorage.getItem('overlay-detail-scale');
+        return {
+            x: x ? parseInt(x) : 50,
+            y: y ? parseInt(y) : 50,
+            scale: scale ? parseInt(scale) : 100
+        };
+    });
 
     useEffect(() => { isResizingRef.current = isResizing; }, [isResizing]);
     
@@ -239,11 +251,19 @@ export default function OverlayApp() {
             setIsPolling(true);
             setTimeout(() => setIsPolling(false), 800);
         });
+        
+        // 监听详情页面位置更新
+        const positionUnlisten = listen("update-overlay-detail-position", (event: any) => {
+            console.log("[Overlay] Received position update:", event.payload);
+            const { x, y, scale } = event.payload;
+            setDetailPosition({ x, y, scale });
+        });
 
         return () => {
             startUnlisten.then(u => u());
             endUnlisten.then(u => u());
             statsUnlisten.then(u => u());
+            positionUnlisten.then(u => u());
             // 清理图片缓存
             imgCache.current.clear();
         };
@@ -949,8 +969,9 @@ export default function OverlayApp() {
                     onMouseLeave={handleMouseLeave}
                     style={{
                         position: 'absolute',
-                        left: `${draggablePos.x}px`,
-                        top: `${draggablePos.y}px`,
+                        left: `${detailPosition.x}%`,
+                        top: `${detailPosition.y}%`,
+                        transform: `translate(-50%, -50%) scale(${detailPosition.scale / 100})`,
                         width: `${size.w}px`,
                         height: size.h !== -1 ? `${size.h}px` : 'auto',
                         pointerEvents: 'auto',
@@ -966,23 +987,20 @@ export default function OverlayApp() {
                         flexDirection: 'column'
                     }}
                 >
-                    {/* Drag Handle */}
+                    {/* 标题栏（不可拖动） */}
                     <div 
-                        onMouseDown={handleDragStart}
                         style={{
                             height: '32px',
                             background: 'linear-gradient(90deg, rgba(255, 205, 25, 0.1), rgba(255, 205, 25, 0.2), rgba(255, 205, 25, 0.1))',
-                            cursor: 'grab',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
+                            justifyContent: 'center',
                             padding: '0 8px',
                             flexShrink: 0,
                             borderBottom: '1px solid rgba(255,205,25,0.2)',
                             userSelect: 'none'
                         }}
                     >
-                        <div style={{ width: '24px' }}></div>
                         <div style={{
                             fontSize: '10px',
                             color: 'rgba(255,205,25,0.8)',
@@ -990,36 +1008,8 @@ export default function OverlayApp() {
                             fontWeight: 'bold',
                             textShadow: '0 0 5px rgba(0,0,0,0.5)'
                         }}>
-                           ::: 手动识别 :::
+                           ::: 识别结果 :::
                         </div>
-                         <button 
-                            onClick={async () => {
-                                setIdentifying(true);
-                                try {
-                                    if ((window as any).__yolo_running) {
-                                        console.log("[Overlay] YOLO scan already running, skipping manual trigger");
-                                    } else {
-                                        (window as any).__yolo_running = true;
-                                        const useGpu = localStorage.getItem('use-gpu-acceleration') === 'true';
-                                        await invoke('trigger_yolo_scan', { useGpu: useGpu });
-                                    }
-                                } catch (e) { console.error(e); }
-                                finally { (window as any).__yolo_running = false; setTimeout(() => setIdentifying(false), 800); }
-                            }}
-                            className="overlay-btn-mini"
-                            style={{
-                                pointerEvents: 'auto',
-                                background: 'rgba(255, 205, 25, 0.2)',
-                                border: '1px solid rgba(255, 205, 25, 0.4)',
-                                color: '#ffd700',
-                                fontSize: '10px',
-                                padding: '2px 6px',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            刷新
-                        </button>
                     </div>
 
                     <div style={{ flex: 1, padding: '16px', overflowY: 'auto', overflowX: 'hidden' }}>

@@ -182,6 +182,20 @@ export default function App() {
     return saved === "true";
   });
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  
+  // Overlay详情页面位置和大小设置
+  const [overlayDetailX, setOverlayDetailX] = useState(() => {
+    const saved = localStorage.getItem("overlay-detail-x");
+    return saved ? parseInt(saved) : 50; // 默认50%（屏幕中间）
+  });
+  const [overlayDetailY, setOverlayDetailY] = useState(() => {
+    const saved = localStorage.getItem("overlay-detail-y");
+    return saved ? parseInt(saved) : 50; // 默认50%（屏幕中间）
+  });
+  const [overlayDetailScale, setOverlayDetailScale] = useState(() => {
+    const saved = localStorage.getItem("overlay-detail-scale");
+    return saved ? parseInt(saved) : 100; // 默认100%
+  });
   const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
@@ -929,8 +943,6 @@ export default function App() {
         }
       });
 
-
-
       // 4. 插件折叠/展开 (热键)
       await safeListen<void>('toggle-collapse', () => {
           setIsCollapsed(prev => !prev);
@@ -1004,7 +1016,53 @@ export default function App() {
       unlisteners.forEach(fn => fn());
       unlisteners.length = 0;
     };
-  }, [enableYoloAuto, yoloScanInterval]); // 依赖项包含enableYoloAuto和yoloScanInterval，当它们变化时重新设置定时器
+  }, []); // 移除enableYoloAuto和yoloScanInterval依赖，避免重复注册
+
+  // YOLO自动扫描定时器 - 单独的useEffect
+  useEffect(() => {
+    if (!enableYoloAuto) {
+      console.log("[YOLO Auto] Auto scan disabled");
+      return;
+    }
+
+    const runYoloScan = async () => {
+      const useGpu = localStorage.getItem("use-gpu-acceleration");
+      const useGpuBool = useGpu === "true";
+      
+      try {
+        if ((window as any).__yolo_running) {
+          console.log("[YOLO Auto] Scan already running, skipping");
+          return;
+        }
+        (window as any).__yolo_running = true;
+        console.log(`[YOLO Auto] Starting scan (interval: ${yoloScanInterval}s, GPU: ${useGpuBool})`);
+        const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
+        console.log(`[YOLO Auto] Scan complete, detected ${count} objects`);
+
+        // 获取统计信息并通知Overlay更新
+        try {
+          const stats = await invoke('get_yolo_stats');
+          await emit('yolo-stats-updated', stats);
+        } catch (statsErr) {
+          console.error("[YOLO Auto] Failed to get stats:", statsErr);
+        }
+      } catch (err) {
+        console.error("[YOLO Auto] Scan failed:", err);
+      } finally {
+        (window as any).__yolo_running = false;
+      }
+    };
+
+    // 启动定时器
+    const yoloTimer = setInterval(runYoloScan, yoloScanInterval * 1000);
+    console.log(`[YOLO Auto] Timer started with interval: ${yoloScanInterval}s`);
+
+    // 清理函数
+    return () => {
+      clearInterval(yoloTimer);
+      console.log("[YOLO Auto] Timer stopped");
+    };
+  }, [enableYoloAuto, yoloScanInterval]); // 当设置改变时重启定时器
 
   // 基础环境侦测：分辨率适配
   useEffect(() => {
@@ -1480,33 +1538,15 @@ export default function App() {
       console.log(`[Layout DEBUG] syncLayout START. isCollapsed=${isCollapsed}, expandedHeight=${expandedHeight}`);
       const appWindow = getCurrentWindow();
       
-      // 1. 获取当前显示器
-      console.log(`[Layout DEBUG] Awaiting monitor...`);
-      
-      // 添加超时机制防止 currentMonitor 挂起
-      const monitorPromise = currentMonitor();
-      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => {
-          console.warn("[Layout DEBUG] currentMonitor timed out");
-          resolve(null);
-      }, 200));
-
-      const monitor = await Promise.race([monitorPromise, timeoutPromise]).catch((e: unknown) => {
-          console.error("[Layout DEBUG] currentMonitor error:", e);
-          return null;
-      }); 
-      
-      if (!monitor) {
-        console.log(`[Layout DEBUG] no monitor found, using fallback scale 1.0`);
-      }
-
-      const logicalScale = monitor ? monitor.scaleFactor : 1.0;
+      // 直接使用fallback值，不再等待currentMonitor
+      const logicalScale = 1.0;
       currentScale.current = logicalScale;
-      console.log(`[Layout DEBUG] logicalScale=${logicalScale}`);
+      console.log(`[Layout DEBUG] Using fallback scale=${logicalScale}`);
       
-      const pX = monitor ? monitor.position.x : 0;
-      const pY = monitor ? monitor.position.y : 0;
-      const pWidth = monitor ? monitor.size.width : 1920;
-      const pHeight = monitor ? monitor.size.height : 1080;
+      const pX = 0;
+      const pY = 0;
+      const pWidth = 1920;
+      const pHeight = 1080;
 
       // 生成当前布局状态的唯一标识
       let targetW = 0;
@@ -2192,6 +2232,84 @@ export default function App() {
                   </div>
                 )}
                 <div className="setting-tip">默认: ~ (VK: 192)</div>
+              </div>
+
+              <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
+
+              {/* Overlay详情页面位置和大小控制 */}
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <label>Overlay详情页面位置</label>
+                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                    const centerX = 50;
+                    const centerY = 50;
+                    const normalScale = 100;
+                    setOverlayDetailX(centerX);
+                    setOverlayDetailY(centerY);
+                    setOverlayDetailScale(normalScale);
+                    localStorage.setItem("overlay-detail-x", centerX.toString());
+                    localStorage.setItem("overlay-detail-y", centerY.toString());
+                    localStorage.setItem("overlay-detail-scale", normalScale.toString());
+                    invoke('update_overlay_detail_position', { x: centerX, y: centerY, scale: normalScale }).catch(console.error);
+                  }}>恢复默认</button>
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                    <span style={{ color: '#fff' }}>水平位置: {overlayDetailX}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={overlayDetailX} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setOverlayDetailX(val);
+                      localStorage.setItem("overlay-detail-x", val.toString());
+                      invoke('update_overlay_detail_position', { x: val, y: overlayDetailY, scale: overlayDetailScale }).catch(console.error);
+                    }} 
+                    style={{ width: '100%', accentColor: '#ffcd19' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                    <span style={{ color: '#fff' }}>垂直位置: {overlayDetailY}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={overlayDetailY} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setOverlayDetailY(val);
+                      localStorage.setItem("overlay-detail-y", val.toString());
+                      invoke('update_overlay_detail_position', { x: overlayDetailX, y: val, scale: overlayDetailScale }).catch(console.error);
+                    }} 
+                    style={{ width: '100%', accentColor: '#ffcd19' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                    <span style={{ color: '#fff' }}>缩放: {overlayDetailScale}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="50" 
+                    max="150" 
+                    value={overlayDetailScale} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setOverlayDetailScale(val);
+                      localStorage.setItem("overlay-detail-scale", val.toString());
+                      invoke('update_overlay_detail_position', { x: overlayDetailX, y: overlayDetailY, scale: val }).catch(console.error);
+                    }} 
+                    style={{ width: '100%', accentColor: '#ffcd19' }}
+                  />
+                </div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  调整Overlay窗口中详情页面的显示位置和大小
+                </div>
               </div>
 
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>

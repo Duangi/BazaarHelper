@@ -129,6 +129,48 @@ fn apply_pure_overlay_style(window: &tauri::WebviewWindow) {
     }
 }
 
+// 温和的样式处理 (用于Main窗口 - 保留调整大小能力)
+fn apply_main_window_style(window: &tauri::WebviewWindow) {
+    // 先尝试"染黑"
+    apply_dark_theme(window);
+
+    if let Ok(hwnd) = window.hwnd() {
+        unsafe {
+            let handle = HWND(hwnd.0 as _);
+            
+            // 获取当前样式
+            let current_style = GetWindowLongW(handle, GWL_STYLE) as u32;
+            
+            // 只移除标题栏和系统菜单，但保留 WS_THICKFRAME（允许调整大小）
+            let mut new_style = current_style & !(
+                WS_CAPTION.0 | 
+                WS_SYSMENU.0 |
+                WS_MINIMIZEBOX.0 |
+                WS_MAXIMIZEBOX.0
+            );
+            
+            // 保留 WS_THICKFRAME 并添加 WS_POPUP
+            new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_THICKFRAME.0;
+            
+            SetWindowLongW(handle, GWL_STYLE, new_style as i32);
+
+            // 扩展样式保持简单
+            let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;
+            let mut new_ex_style = current_ex_style & !(WS_EX_APPWINDOW.0);
+            new_ex_style |= WS_EX_TOOLWINDOW.0 | WS_EX_LAYERED.0;
+            
+            SetWindowLongW(handle, GWL_EXSTYLE, new_ex_style as i32);
+
+            let _ = SetWindowPos(
+                handle, 
+                None, 
+                0, 0, 0, 0, 
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
+            );
+        }
+    }
+}
+
 use crate::monster_recognition::{scan_and_identify_monster_at_mouse, YoloDetection};
 
 pub mod monster_recognition;
@@ -176,6 +218,17 @@ fn set_show_yolo_monitor(app: tauri::AppHandle, show: bool) -> Result<(), String
     let mut state = load_state();
     state.show_yolo_monitor = show;
     save_state(&state);
+    Ok(())
+}
+
+#[tauri::command]
+fn update_overlay_detail_position(app: tauri::AppHandle, x: i32, y: i32, scale: i32) -> Result<(), String> {
+    // Broadcast the position update to overlay window
+    let _ = app.emit("update-overlay-detail-position", serde_json::json!({
+        "x": x,
+        "y": y,
+        "scale": scale
+    }));
     Ok(())
 }
 
@@ -1551,8 +1604,8 @@ pub fn run() {
             
             // --- Helper: Hide from Alt-Tab (ToolWindow Style) & Remove White Bar ---
             if let Some(window) = app.get_webview_window("main") {
-                // Apply the aggressive style removal
-                apply_pure_overlay_style(&window);
+                // 使用温和的样式处理，保留调整大小能力
+                apply_main_window_style(&window);
                 
                 // Aggressively remove menu for this window
                 let _ = window.remove_menu();
@@ -2624,9 +2677,8 @@ pub fn run() {
                             if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
                                 last_card_trigger = time::Instant::now();
                                 log_to_file("Card Hotkey pressed, triggering recognition...");
-                                // 发送事件给前端: 同时触发旧版识别和新版 YOLO 识别
+                                // 只发送前端识别事件，不再自动触发YOLO
                                 let _ = handle_mouse.emit("hotkey-detect-card", ());
-                                let _ = handle_mouse.emit("trigger_yolo_scan", ());
                             }
                         }
 
@@ -2679,6 +2731,7 @@ pub fn run() {
             // clear_monster_cache,
             set_overlay_ignore_cursor,
             set_show_yolo_monitor,
+            update_overlay_detail_position,
             restore_game_focus
         ])
         .run(tauri::generate_context!())
