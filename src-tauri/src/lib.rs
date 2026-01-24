@@ -1568,64 +1568,22 @@ pub fn run() {
                 }
             }
 
-            // --- Helper: Start Mouse Monitor Thread (Dynamic Overlay & Global Click) ---
+            // --- Helper: Start Mouse Monitor Thread (Global Click Detection Only) ---
             let handle_monitor = handle.clone();
-            let bounds_monitor = bounds_clone.clone();
+            let _bounds_monitor = bounds_clone.clone();
             
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
-                // 状态标记：记录上一次的状态，防止重复调用
-                let mut was_ignoring = true; 
 
                 loop {
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
                     
-                    // 1. 判断鼠标是否在 overlay 区域内
-                    let is_mouse_in_overlay = {
-                        let bounds_list = bounds_monitor.lock().unwrap();
-                        bounds_list.iter().any(|b| {
-                            mx >= b.x && mx <= (b.x + b.w) && my >= b.y && my <= (b.y + b.h)
-                        })
-                    };
-                    
-                    if let Some(window) = handle_monitor.get_webview_window("overlay") {
-                        // 逻辑：
-                        // 如果鼠标进入区域 且 当前是穿透模式 -> 切换为【可交互】
-                        // 如果鼠标离开区域 且 当前是可交互模式 -> 切换为【穿透】
-                        
-                        if is_mouse_in_overlay {
-                             if was_ignoring {
-                                 // 状态改变：鼠标刚进来 -> 开启交互
-                                 // 1. 先允许捕获鼠标
-                                 let _ = window.set_ignore_cursor_events(false);
-                                 
-                                 // 2. 【关键】Tauri 修改样式后，我们立马补刀，强制去掉边框
-                                 // 这一步只在状态切换瞬间执行一次，不要一直循环执行！
-                                 apply_pure_overlay_style(&window);
-                                 
-                                 was_ignoring = false; // 更新状态
-                                 // println!("[Overlay] Mouse Enter -> Interactive");
-                             }
-                        } else {
-                             if !was_ignoring {
-                                 // 状态改变：鼠标刚离开 -> 开启穿透
-                                 let _ = window.set_ignore_cursor_events(true);
-                                 
-                                 // 恢复无边框样式 (虽然穿透模式下通常看不清，但保持一致)
-                                 apply_pure_overlay_style(&window);
-                                 
-                                 // 把焦点还给游戏 (防止鼠标划出后，键盘输入还留在 overlay)
-                                 let _ = restore_game_focus();
-                                 
-                                 was_ignoring = true; // 更新状态
-                                 // println!("[Overlay] Mouse Leave -> Ignoring");
-                             }
-                        }
-                    }
+                    // Overlay 始终保持穿透模式，不再切换交互状态
+                    // 所有点击都会穿透到游戏，overlay 仅用于显示信息
 
-                    // 全局右键检测逻辑保持不变
+                    // 全局右键检测（用于中止YOLO扫描等功能）
                     unsafe {
                         static mut LAST_RBTN: bool = false;
                         let rbtn_down = (GetAsyncKeyState(VK_RBUTTON.0 as i32) as i16) < 0;
@@ -1659,6 +1617,9 @@ pub fn run() {
 
                 // 初始化 Overlay 窗口：设置为主显示器全屏覆盖
                 if let Some(overlay) = app.get_webview_window("overlay") {
+                    // 强制设置为穿透模式（所有点击都会穿透）
+                    let _ = overlay.set_ignore_cursor_events(true);
+                    
                     // 直接使用主显示器的全尺寸，确保可以在整个屏幕范围内交互
                     if let Ok(Some(monitor)) = overlay.primary_monitor() {
                         let size = monitor.size();
