@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjJ4cXNaNEZ5NkNZa0hlQTVxdmZZbE41Z0pCZXN5TVZCS3pMbmlzMlVPU0dRdXZTSlNVNlF6cjEvS0ZmMzlWY3IyVko4OEUrMXo1NXFVeTAvbUdkSXcwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5MjY5NDMzCWZpbGU6QmF6YWFySGVscGVyXzEuMy4xX3g2NC1zZXR1cC5leGUKSVkvZHgzRWt4WGtvUlB6alBSMXN6QjlWQnJnZWVPUStUdFZSbDFPYldvMHAvak83RnV6WkVtNkZGRHpPb24xbGRicTdROG9TZVhvc3gyekhUOE51QVE9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.3.1/BazaarHelper_1.3.1_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjU3NWg1QWlYL2lsT3YwaXYvb2NUb2h2eEFIenFMQ2EvakQ0NFp0VHVmU1BpYkN5aDYvaFh3YjBINnlrSGlGWExEeU9oLytHZFpXNE9BdWJRUG9kekFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5MzA5NTI4CWZpbGU6QmF6YWFySGVscGVyXzEuNC4wX3g2NC1zZXR1cC5leGUKUVJhb1p4R3RCTXA0ZmxObnk3QUw1YndlK1lTRDUzVmJTR1o2Q3JLRUcwUmVqZ1J1aHZaRTJlbU5vOGc0SGZWNkVicTA1YnpJZ3cyZ1h5T0pEYkc2QWc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.0/BazaarHelper_1.4.0_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-24T15:43:53Z",
-    "version":  "1.3.1",
-    "notes":  "🎉 v1.3.1 更新来了：1. 修复无法识别day10+怪物的bug，以及其他无法识别的怪物 现在的准确率应该真的是100了。 2.在day9新增所有神庙怪物。 3.修复焰风勇士的物品等级不一致 4.当卡牌升级是cd变化的时候，之前没有体现升级的变化，现在补上了"
+    "pub_date":  "2026-01-25T02:52:08Z",
+    "version":  "1.4.0",
+    "notes":  "🎉 v1.4.0 更新来了：1.修复百科的输入法问题，并优化百科搜索的交互。 2. 为了解决白条的问题，删除了手动移动右键详情页面的功能，现在需要手动设置参数调整。 3. 新增右键查询事件的功能。 4. 新增yolo自动识别+手动识别。"
 }

@@ -766,6 +766,8 @@ html, body, #root {
   width: 100%;
   height: 100%;
   position: relative;
+  isolation: isolate;
+  transform: translateZ(0); /* 开启硬件加速防抖 */
 }
 
 /* 背景图层 */
@@ -776,7 +778,8 @@ html, body, #root {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
+  z-index: 1; /* 背景放底层 */
+  backface-visibility: hidden;
 }
 
 /* 角色图层（叠在背景上方） */
@@ -787,7 +790,9 @@ html, body, #root {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 2;
+  z-index: 2; /* 角色放顶层 */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); /* 增加投影以区分层级，解决视觉跳动 */
+  backface-visibility: hidden;
 }
 
 .monster-avatar-v2 {

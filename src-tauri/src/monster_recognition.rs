@@ -1448,6 +1448,34 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
     
     println!("开始加载事件特征模板...");
     log_to_file("Loading event templates...");
+
+    // 1. 尝试加载单一大文件 (event_features_opencv.bin)
+    match app.path().resolve("resources/event_features_opencv.bin", tauri::path::BaseDirectory::Resource) {
+        Ok(bundled_cache) => {
+            if bundled_cache.exists() {
+                 log_to_file(&format!("Found bundled event cache at {:?}", bundled_cache));
+                 if let Ok(data) = std::fs::read(&bundled_cache) {
+                     match bincode::deserialize::<Vec<EventTemplateCache>>(&data) {
+                         Ok(cached_templates) => {
+                             if !cached_templates.is_empty() {
+                                 println!("Loaded {} event templates from binary package", cached_templates.len());
+                                 log_to_file(&format!("Loaded {} event templates from binary package", cached_templates.len()));
+                                 
+                                 let _ = EVENT_TEMPLATE_CACHE.set(cached_templates);
+                                 return Ok(());
+                             }
+                         },
+                         Err(e) => {
+                             log_to_file(&format!("Failed to deserialize event cache file: {}. Falling back to individual files.", e));
+                         }
+                     }
+                 }
+            }
+        },
+        Err(e) => {
+             log_to_file(&format!("Failed to resolve event cache path: {}", e));
+        }
+    }
     
     // 读取 event_encounters.json
     let event_json_path = app.path().resolve("resources/event_encounters.json", tauri::path::BaseDirectory::Resource)

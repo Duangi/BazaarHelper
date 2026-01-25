@@ -163,6 +163,12 @@ export default function App() {
     const saved = localStorage.getItem("yolo-scan-interval");
     return saved ? parseFloat(saved) : 1.0; // Default 1 second
   });
+
+  // 调试日志：检查初始加载的设置
+  useEffect(() => {
+    console.log(`[App Config] Loaded from cache - EnableYoloAuto: ${enableYoloAuto}, Interval: ${yoloScanInterval}s`);
+  }, []);
+
   const [useGpuAcceleration, setUseGpuAcceleration] = useState(() => {
     const saved = localStorage.getItem("use-gpu-acceleration");
     if (saved === null) {
@@ -236,10 +242,13 @@ export default function App() {
 
   // 隐藏标签图标URL缓存
   const [hiddenTagIcons, setHiddenTagIcons] = useState<Record<string, string>>({});
+  // 赞助图片URL缓存
+  const [sponsorIcons, setSponsorIcons] = useState<{vx: string, zfb: string}>({vx: '', zfb: ''});
 
-  // 预加载隐藏标签图标
+  // 预加载隐藏标签图标和赞助图片
   useEffect(() => {
     (async () => {
+      // 加载隐藏标签图标
       const iconNames = ["Ammo", "Burn", "Charge", "Cooldown", "CritChance", "Damage", "Income", 
                          "Freeze", "Haste", "Health", "MaxHPHeart", "Lifesteal", "Poison", 
                          "Regen", "Shield", "Slowness"];
@@ -250,12 +259,25 @@ export default function App() {
           const url = convertFileSrc(fullPath);
           icons[name] = url;
         } catch (e) {
-          console.warn(`Failed to load icon: ${name}`, e);
+          console.error(`Failed to load icon ${name}:`, e);
         }
       }
       setHiddenTagIcons(icons);
+
+      // 加载赞助图片
+      try {
+        const vxPath = await resolveResource('resources/sponsor/vx.png');
+        const zfbPath = await resolveResource('resources/sponsor/zfb.png');
+        setSponsorIcons({
+            vx: convertFileSrc(vxPath),
+            zfb: convertFileSrc(zfbPath)
+        });
+      } catch (e) {
+          console.error("Failed to load sponsor icons", e);
+      }
     })();
   }, []);
+
 
   // Load skills_db.json mapping (id -> art_key basename)
   const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
@@ -2375,13 +2397,31 @@ export default function App() {
                     const centerX = 50;
                     const centerY = 50;
                     const normalScale = 100;
+                    const defaultWidth = 420;
+                    const defaultHeight = 600;
+                    
+                    // 重置所有状态变量
                     setOverlayDetailX(centerX);
                     setOverlayDetailY(centerY);
                     setOverlayDetailScale(normalScale);
+                    setOverlayDetailWidth(defaultWidth);
+                    setOverlayDetailHeight(defaultHeight);
+                    
+                    // 更新所有LocalStorage
                     localStorage.setItem("overlay-detail-x", centerX.toString());
                     localStorage.setItem("overlay-detail-y", centerY.toString());
                     localStorage.setItem("overlay-detail-scale", normalScale.toString());
-                    invoke('update_overlay_detail_position', { x: centerX, y: centerY, scale: normalScale }).catch(console.error);
+                    localStorage.setItem("overlay-detail-width", defaultWidth.toString());
+                    localStorage.setItem("overlay-detail-height", defaultHeight.toString());
+                    
+                    // 通知Overlay更新所有属性
+                    invoke('update_overlay_detail_position', { 
+                      x: centerX, 
+                      y: centerY, 
+                      scale: normalScale,
+                      width: defaultWidth,
+                      height: defaultHeight
+                    }).catch(console.error);
                   }}>恢复默认</button>
                 </div>
                 <div style={{ marginBottom: '8px' }}>
@@ -2622,6 +2662,28 @@ export default function App() {
                   </div>
                 </div>
               )}
+
+              {/* 赞助与支持 */}
+              <div className="setting-item" style={{ marginTop: '20px', textAlign: 'center' }}>
+                <label style={{ display: 'block', marginBottom: '12px', color: '#ffcd19', fontSize: '14px', fontWeight: 'bold' }}>赞助与支持 (Sponsor)</label>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+                    {sponsorIcons.vx && (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                            <img src={sponsorIcons.vx} alt="WeChat" style={{ width: '180px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }} />
+                            <span style={{ fontSize: '12px', color: '#888' }}>微信 (WeChat)</span>
+                        </div>
+                    )}
+                    {sponsorIcons.zfb && (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                            <img src={sponsorIcons.zfb} alt="Alipay" style={{ width: '180px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }} />
+                            <span style={{ fontSize: '12px', color: '#888' }}>支付宝 (Alipay)</span>
+                        </div>
+                    )}
+                </div>
+                <div style={{ fontSize: '11px', color: '#666', marginTop: '12px' }}>
+                  如果这个工具对你有帮助，欢迎请作者喝杯咖啡 ☕
+                </div>
+              </div>
             </div>
           </div>
         </div>

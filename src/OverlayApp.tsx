@@ -95,19 +95,25 @@ interface MonsterData {
 }
 
 interface EventChoice {
-    icon: string;
-    icon_url: string;
-    text_key: string;
+    name?: string;              // 英文名
+    name_zh?: string;           // 中文名
+    icon?: string;              // 图标文件名
+    icon_url?: string;          // 图标URL
+    icon_path?: string;         // 本地图标路径
+    url?: string;
+    description?: string;       // 英文描述
+    description_zh?: string;    // 中文描述
+    text_key?: string;
     display_text?: string;
+    displayIcon?: string;       // 加载后的本地图片路径
 }
 
 interface EventData {
     Id: string;
     InternalName?: string;
-    Localization?: {
-        Title?: { Text?: string };
-        Description?: { Text?: string };
-    };
+    name?: string;          // 中文名称
+    name_en?: string;       // 英文名称
+    url?: string;
     choices?: EventChoice[];
     image_paths?: {
         char?: string;
@@ -141,6 +147,60 @@ const KEYWORD_COLORS: Record<string, string> = {
     "最大生命值": "#8eea31", "收入": "#ffcd19", "吸血": "#9d4a6f", "剧毒": "#0ebe4f",
     "生命再生": "#8eea31", "护盾": "#f4cf20", "减速": "#cb9f6e", "价值": "#ffcd19"
 };
+
+// 获取卡牌背景框图片路径
+const getCardFramePath = (tier: string, size: string): string => {
+    // 标准化等级名称
+    const tierMap: Record<string, string> = {
+        'bronze': 'Bronze',
+        'silver': 'Silver',
+        'gold': 'Gold',
+        'diamond': 'Diamond',
+        'legendary': 'Legendary'
+    };
+    const normalizedTier = tierMap[tier.toLowerCase()] || 'Bronze';
+    
+    // 标准化尺寸：Small->S, Medium->M, Large->L
+    const sizeMap: Record<string, string> = {
+        'small': 'S',
+        'medium': 'M',
+        'large': 'L'
+    };
+    const normalizedSize = sizeMap[size.toLowerCase()] || 'M';
+    
+    return `images_GUI/CardFrame_${normalizedTier}_${normalizedSize}_TUI.webp`;
+};
+
+// 提取到外部的组件，避免因为父组件重绘导致被重新创建而闪烁
+const CardBackground = React.memo(({ framePath, getImg }: { framePath: string, getImg: (path: string) => Promise<string> }) => {
+    const [frameUrl, setFrameUrl] = useState('');
+    
+    useEffect(() => {
+        let isMounted = true;
+        getImg(framePath).then(url => {
+            if (isMounted && url) setFrameUrl(url);
+        });
+        return () => { isMounted = false; };
+    }, [framePath, getImg]); // getImg should be stable (useCallback or outside definition)
+    
+    return (
+        <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage: frameUrl ? `url(${frameUrl})` : 'none',
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            pointerEvents: 'none',
+            zIndex: 2,
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden'
+        }} />
+    );
+});
 
 export default function OverlayApp() {
     const [yoloResult, setYoloResult] = useState<{type: 'item' | 'monster' | 'event', data: ItemData | MonsterData | EventData} | null>(null);
@@ -208,6 +268,30 @@ export default function OverlayApp() {
     });
 
     useEffect(() => { isResizingRef.current = isResizing; }, [isResizing]);
+
+    // 当详情卡片首次显示时，强制从localStorage重新读取位置
+    // 以防止因为App.tsx状态未同步导致的错位
+    useEffect(() => {
+        if (yoloResult) {
+            const x = localStorage.getItem('overlay-detail-x');
+            const y = localStorage.getItem('overlay-detail-y');
+            const scale = localStorage.getItem('overlay-detail-scale');
+            const width = localStorage.getItem('overlay-detail-width');
+            const height = localStorage.getItem('overlay-detail-height');
+            
+            console.log("[Overlay] Opened, forcing position reload from storage:", { x, y, scale, width, height });
+            
+            if (x || y || scale || width || height) {
+                setDetailPosition(prev => ({
+                    x: x ? parseInt(x) : prev.x,
+                    y: y ? parseInt(y) : prev.y,
+                    scale: scale ? parseInt(scale) : prev.scale,
+                    width: width ? parseInt(width) : prev.width,
+                    height: height ? parseInt(height) : prev.height
+                }));
+            }
+        }
+    }, [yoloResult]);
     
     // Debug: 检查YOLO Monitor ref
     useEffect(() => {
@@ -232,8 +316,10 @@ export default function OverlayApp() {
     }, []);
 
     useEffect(() => {
-        const startUnlisten = listen("yolo-scan-start", () => setIdentifying(true));
-        const endUnlisten = listen("yolo-scan-end", () => setIdentifying(false));
+        // const startUnlisten = listen("yolo-scan-start", () => setIdentifying(true));
+        // const endUnlisten = listen("yolo-scan-end", () => setIdentifying(false));
+        const startUnlisten = Promise.resolve(() => {});
+        const endUnlisten = Promise.resolve(() => {});
         
         // 监听主窗口关闭事件
         listen("main-window-closing", () => {
@@ -244,10 +330,18 @@ export default function OverlayApp() {
         
         // 监听来自App的YOLO统计更新
         const statsUnlisten = listen("yolo-stats-updated", (event: any) => {
-            console.log("[Overlay] Received yolo-stats-updated from App:", event.payload);
-            setYoloStats(event.payload);
-            setIsPolling(true);
-            setTimeout(() => setIsPolling(false), 800);
+            // 只在Stats Monitor显示时才更新状态，避免不必要的全局重绘（如果Stats没在主UI显示）
+            if (showYoloMonitor) {
+                // 做一个简单的比较，防止频繁更新相同的数据
+                setYoloStats(prev => {
+                   if (JSON.stringify(prev) === JSON.stringify(event.payload)) return prev;
+                   return event.payload;
+                });
+                
+                // 仅当Polling指示灯需要闪烁时才设置
+                // setIsPolling(true);
+                // setTimeout(() => setIsPolling(false), 800);
+            }
         });
         
         // 监听详情页面位置更新
@@ -475,23 +569,12 @@ export default function OverlayApp() {
             displayImgBg = await getImg(e.image_paths.bg);
         }
 
-        // 加载choices的图标和文本
+        // 加载choices的图标
         const processedChoices = e.choices ? await Promise.all(e.choices.map(async choice => {
-            const iconPath = `EncEvent_Icons/${choice.icon}.webp`;
-            const iconImg = await getImg(iconPath);
-            
-            // 获取中文文本，优先使用已有的display_text，否则使用text_key
-            let displayText = '';
-            if (choice.display_text) {
-                displayText = choice.display_text;
-            } else if (choice.text_key) {
-                displayText = choice.text_key;
-            }
-            
+            const iconImg = choice.icon_path ? await getImg(choice.icon_path) : '';
             return {
                 ...choice,
-                displayIcon: iconImg,
-                display_text: displayText
+                displayIcon: iconImg
             };
         })) : [];
 
@@ -1110,8 +1193,8 @@ export default function OverlayApp() {
                             <div className="event-card-container" style={{ border: 'none', boxShadow: 'none', background: 'transparent', margin: 0, padding: 0 }}>
                                 {(() => {
                                     const e = yoloResult.data as EventData;
-                                    const eventTitle = e.Localization?.Title?.Text || e.InternalName || '';
-                                    const eventDesc = e.Localization?.Description?.Text || '';
+                                    const eventTitle = e.name || e.name_en || e.InternalName || '';
+                                    const eventDesc = '';  // 事件本身没有描述，只有choices有描述
                                     
                                     return (
                                         <Fragment>
@@ -1207,11 +1290,21 @@ export default function OverlayApp() {
                                                             <div style={{ flex: 1 }}>
                                                                 <div style={{ 
                                                                     fontSize: '14px', 
-                                                                    color: '#fff',
-                                                                    lineHeight: '1.5'
+                                                                    fontWeight: 'bold',
+                                                                    color: '#ffd700',
+                                                                    marginBottom: '4px'
                                                                 }}>
-                                                                    {choice.display_text || choice.text_key}
+                                                                    {choice.name_zh || choice.name || ''}
                                                                 </div>
+                                                                {choice.description_zh && (
+                                                                    <div style={{ 
+                                                                        fontSize: '12px', 
+                                                                        color: 'rgba(255,255,255,0.7)',
+                                                                        lineHeight: '1.4'
+                                                                    }}>
+                                                                        {choice.description_zh}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     ))}
@@ -1276,6 +1369,7 @@ export default function OverlayApp() {
                                                                     }
                                                                     
                                                                     // Tier border colors
+                                                                    /*
                                                                     const tierBorderColors: Record<string, string> = {
                                                                         bronze: "#CD7F32",
                                                                         silver: "#C0C0C0", 
@@ -1284,6 +1378,7 @@ export default function OverlayApp() {
                                                                         legendary: "#FF4500"
                                                                     };
                                                                     const borderColor = tierBorderColors[currentTier] || tierBorderColors.bronze;
+                                                                    */
                                                                     
                                                                     // Size Logic (1:2:3)
                                                                     const sizeStr = (it.size || 'Medium').split(' / ')[0].toLowerCase();
@@ -1325,26 +1420,26 @@ export default function OverlayApp() {
                                                                         }
                                                                     }
 
+                                                                    // 获取卡牌背景图路径
+                                                                    const cardFramePath = getCardFramePath(currentTier, sizeStr);
+                                                                    
                                                                     return (
                                                                         <div 
                                                                             key={`${it.name}-${idx}`}
                                                                             style={{
                                                                                 width: `${finalWidth}px`,
-                                                                                height: '95px', // 增大高度
+                                                                                height: '95px',
                                                                                 display: 'flex',
                                                                                 alignItems: 'center',
                                                                                 justifyContent: 'center',
                                                                                 boxSizing: 'border-box',
-                                                                                overflow: 'visible', // 确保内容可见
+                                                                                overflow: 'visible',
                                                                                 cursor: 'pointer',
                                                                                 position: 'relative',
-                                                                                padding: '4px', // 略微增加内边距
-                                                                                background: 'linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(40,40,40,0.6) 100%)',
-                                                                                border: `3px solid ${borderColor}`,
-                                                                                borderRadius: '6px',
-                                                                                boxShadow: isHovered 
-                                                                                    ? `0 0 20px ${borderColor}, inset 0 0 15px rgba(255,255,255,0.1)` 
-                                                                                    : `0 0 8px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.8)`,
+                                                                                padding: '0',
+                                                                                border: 'none',
+                                                                                borderRadius: '0',
+                                                                                filter: isHovered ? 'brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.5))' : 'none',
                                                                                 transform: isHovered ? 'scale(1.08)' : 'scale(1)',
                                                                                 transition: 'all 0.3s ease',
                                                                                 zIndex: isHovered ? 100 : 1
@@ -1356,6 +1451,42 @@ export default function OverlayApp() {
                                                                                 setExpandedMonsterItem(isExpanded ? null : it);
                                                                             }}
                                                                         >
+                                                                            {/* 卡牌内容容器 - 负责剪裁溢出部分 */}
+                                                                            <div style={{
+                                                                                position: 'absolute',
+                                                                                top: 0,
+                                                                                left: 0,
+                                                                                width: '100%',
+                                                                                height: '100%',
+                                                                                borderRadius: '6px',
+                                                                                overflow: 'hidden',
+                                                                                zIndex: 0
+                                                                            }}>
+                                                                                {/* 卡牌背景框 */}
+                                                                                <CardBackground framePath={cardFramePath} getImg={getImg} />
+                                                                                
+                                                                                {/* 物品图片 */}
+                                                                                {it.displayImg && (
+                                                                                    <img 
+                                                                                        src={it.displayImg} 
+                                                                                        alt={it.name}
+                                                                                        style={{ 
+                                                                                            position: 'absolute',
+                                                                                            top: '2%',
+                                                                                            left: '2%',
+                                                                                            width: '96%',
+                                                                                            height: '96%',
+                                                                                            objectFit: 'fill',
+                                                                                            pointerEvents: 'none',
+                                                                                            zIndex: 1,
+                                                                                            borderRadius: '4px',
+                                                                                            transform: 'translateZ(0)',
+                                                                                            backfaceVisibility: 'hidden'
+                                                                                        }} 
+                                                                                    />
+                                                                                )}
+                                                                            </div>
+                                                                            
                                                                             {/* 数值标记（上方）*/}
                                                                             {stats.length > 0 && (
                                                                                 <div style={{
@@ -1426,16 +1557,7 @@ export default function OverlayApp() {
                                                                                 </div>
                                                                             )}
                                                                             
-                                                                            <img 
-                                                                                src={it.displayImg} 
-                                                                                alt={it.name}
-                                                                                style={{ 
-                                                                                    width: '100%', 
-                                                                                    height: '100%', 
-                                                                                    objectFit: 'cover',
-                                                                                    borderRadius: '2px'
-                                                                                }} 
-                                                                            />
+                                                                            
                                                                             
                                                                             {/* 弹药圆点（下方）*/}
                                                                             {ammo && ammo > 0 && (
