@@ -237,8 +237,11 @@ export default function App() {
   const [isSearchFilterCollapsed, setIsSearchFilterCollapsed] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedHiddenTags, setSelectedHiddenTags] = useState<string[]>([]);
+  const [matchMode, setMatchMode] = useState<'all' | 'any'>('all'); // 'all' = 匹配所有, 'any' = 匹配任一
   const [searchFilterHeight, setSearchFilterHeight] = useState(300);
   const [isResizingFilter, setIsResizingFilter] = useState(false);
+  const [resizeStartY, setResizeStartY] = useState(0);
+  const [resizeStartHeight, setResizeStartHeight] = useState(0);
 
   // 隐藏标签图标URL缓存
   const [hiddenTagIcons, setHiddenTagIcons] = useState<Record<string, string>>({});
@@ -337,16 +340,30 @@ export default function App() {
             !item.name.includes('Medium Package')
           );
           
-          // Apply multi-select tag filters
+          // Apply multi-select tag filters based on match mode
           if (selectedTags.length > 0) {
-            filtered = filtered.filter(item => 
-              selectedTags.some(tag => item.tags.toLowerCase().includes(tag.toLowerCase()))
-            );
+            filtered = filtered.filter(item => {
+              const itemTags = item.tags.toLowerCase();
+              if (matchMode === 'all') {
+                // 匹配所有：必须包含所有选中的标签
+                return selectedTags.every(tag => itemTags.includes(tag.toLowerCase()));
+              } else {
+                // 匹配任一：包含任意一个选中的标签即可
+                return selectedTags.some(tag => itemTags.includes(tag.toLowerCase()));
+              }
+            });
           }
           if (selectedHiddenTags.length > 0) {
-            filtered = filtered.filter(item => 
-              selectedHiddenTags.some(tag => item.hidden_tags.toLowerCase().includes(tag.toLowerCase()))
-            );
+            filtered = filtered.filter(item => {
+              const itemHiddenTags = item.hidden_tags.toLowerCase();
+              if (matchMode === 'all') {
+                // 匹配所有：必须包含所有选中的隐藏标签
+                return selectedHiddenTags.every(tag => itemHiddenTags.includes(tag.toLowerCase()));
+              } else {
+                // 匹配任一：包含任意一个选中的隐藏标签即可
+                return selectedHiddenTags.some(tag => itemHiddenTags.includes(tag.toLowerCase()));
+              }
+            });
           }
           
           // Image patching: Search results don't have displayImg set.
@@ -378,13 +395,14 @@ export default function App() {
       }
     }, 300);
     return () => clearTimeout(handler);
-  }, [searchQuery, activeTab, skillsArtMap, selectedTags, selectedHiddenTags]);
+  }, [searchQuery, activeTab, skillsArtMap, selectedTags, selectedHiddenTags, matchMode]);
 
   // Handle filter resize
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizingFilter) {
-        const newHeight = e.clientY - 130; // Adjust offset based on top bar height
+        const deltaY = e.clientY - resizeStartY;
+        const newHeight = resizeStartHeight + deltaY;
         setSearchFilterHeight(Math.max(200, Math.min(newHeight, window.innerHeight * 0.6)));
       }
     };
@@ -399,7 +417,7 @@ export default function App() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizingFilter]);
+  }, [isResizingFilter, resizeStartY, resizeStartHeight]);
 
 
   // 图片路径缓存，避免重复解析
@@ -2738,7 +2756,43 @@ export default function App() {
               }} className="custom-scrollbar">
               {/* Header row with collapse button */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontSize: '12px', color: '#ffcd19', fontWeight: 'bold' }}>搜索过滤器</div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ fontSize: '12px', color: '#ffcd19', fontWeight: 'bold' }}>搜索过滤器</div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                      onClick={() => setMatchMode('all')}
+                      className={`toggle-btn ${matchMode === 'all' ? 'active' : ''}`}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '11px',
+                        borderRadius: '4px',
+                        background: matchMode === 'all' ? '#ffcd19' : 'transparent',
+                        color: matchMode === 'all' ? '#1e1b18' : '#ffcd19',
+                        border: '1px solid #ffcd19',
+                        cursor: 'pointer'
+                      }}
+                      title="所有筛选项必须同时满足"
+                    >
+                      匹配所有
+                    </button>
+                    <button
+                      onClick={() => setMatchMode('any')}
+                      className={`toggle-btn ${matchMode === 'any' ? 'active' : ''}`}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '11px',
+                        borderRadius: '4px',
+                        background: matchMode === 'any' ? '#ffcd19' : 'transparent',
+                        color: matchMode === 'any' ? '#1e1b18' : '#ffcd19',
+                        border: '1px solid #ffcd19',
+                        cursor: 'pointer'
+                      }}
+                      title="满足任意一个筛选项即可"
+                    >
+                      匹配任一
+                    </button>
+                  </div>
+                </div>
                 <button 
                   onClick={() => setIsSearchFilterCollapsed(!isSearchFilterCollapsed)}
                   style={{
@@ -3010,6 +3064,8 @@ export default function App() {
                 <div 
                   onMouseDown={(e) => {
                     e.preventDefault();
+                    setResizeStartY(e.clientY);
+                    setResizeStartHeight(searchFilterHeight);
                     setIsResizingFilter(true);
                   }}
                   style={{
