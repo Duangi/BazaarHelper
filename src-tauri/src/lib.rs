@@ -533,6 +533,8 @@ pub struct PersistentState {
     pub toggle_collapse_hotkey: Option<i32>,
     #[serde(default)]
     pub yolo_hotkey: Option<i32>,
+    #[serde(default)]
+    pub detail_display_hotkey: Option<i32>,
     #[serde(default = "default_show_yolo_monitor")]
     pub show_yolo_monitor: bool,
 }
@@ -548,6 +550,7 @@ impl Default for PersistentState {
             card_detection_hotkey: Some(VK_MENU.0 as i32),
             toggle_collapse_hotkey: Some(192), // Default: ~ key (Backtick) (VK_OEM_3 is 192 usually, or 0xC0)
             yolo_hotkey: Some(81), // Default: Q key (VK_Q = 81)
+            detail_display_hotkey: Some(VK_RBUTTON.0 as i32), // Default: Right mouse button
             show_yolo_monitor: true,
         }
     }
@@ -1505,6 +1508,19 @@ fn set_yolo_hotkey(hotkey: i32) {
     println!("[Config] YOLO hotkey updated to: {}", hotkey);
 }
 
+#[tauri::command]
+fn get_detail_display_hotkey() -> Option<i32> {
+    load_state().detail_display_hotkey
+}
+
+#[tauri::command]
+fn set_detail_display_hotkey(hotkey: i32) {
+    let mut state = load_state();
+    state.detail_display_hotkey = Some(hotkey);
+    save_state(&state);
+    println!("[Config] Detail display hotkey updated to: {}", hotkey);
+}
+
 fn calculate_day_from_log(content: &str, _hours: u32, retro: bool) -> Option<u32> {
     let start_pos = if retro { content.rfind("NetMessageRunInitialized").unwrap_or(0) } else { 0 };
     let slice = &content[start_pos..];
@@ -1648,6 +1664,10 @@ pub fn run() {
             
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
+                
+                // 用于跟踪各种按键的上一帧状态（支持键盘和鼠标按键）
+                // 键盘按键用 GetAsyncKeyState，鼠标按键也可以用 GetAsyncKeyState
+                let mut last_key_states: std::collections::HashMap<i32, bool> = std::collections::HashMap::new();
 
                 loop {
                     let mouse: MouseState = device_state.get_mouse();
@@ -1657,14 +1677,20 @@ pub fn run() {
                     // Overlay 始终保持穿透模式，不再切换交互状态
                     // 所有点击都会穿透到游戏，overlay 仅用于显示信息
 
-                    // 全局右键检测（用于中止YOLO扫描等功能）
+                    // 读取当前配置的详情显示热键（支持键盘和鼠标按键）
+                    let detail_hotkey = load_state().detail_display_hotkey.unwrap_or(VK_RBUTTON.0 as i32);
+                    
+                    // 检测详情显示热键（通用键盘/鼠标按键检测）
                     unsafe {
-                        static mut LAST_RBTN: bool = false;
-                        let rbtn_down = (GetAsyncKeyState(VK_RBUTTON.0 as i32) as i16) < 0;
-                        if rbtn_down && !LAST_RBTN {
-                             let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
+                        let key_down = (GetAsyncKeyState(detail_hotkey) as i16) < 0;
+                        let last_state = last_key_states.get(&detail_hotkey).copied().unwrap_or(false);
+                        
+                        if key_down && !last_state {
+                            // 按键从未按下变为按下，触发事件
+                            let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
                         }
-                        LAST_RBTN = rbtn_down;
+                        
+                        last_key_states.insert(detail_hotkey, key_down);
                     }
 
                     std::thread::sleep(std::time::Duration::from_millis(50));
@@ -2746,6 +2772,8 @@ pub fn run() {
             get_toggle_collapse_hotkey,
             set_toggle_collapse_hotkey,
             set_yolo_hotkey,
+            get_detail_display_hotkey,
+            set_detail_display_hotkey,
             start_template_loading,
             get_item_info,
             search_items,

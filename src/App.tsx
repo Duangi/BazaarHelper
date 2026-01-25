@@ -437,10 +437,12 @@ export default function App() {
   const [detectionHotkey, setDetectionHotkey] = useState<number | null>(null);
   const [cardDetectionHotkey, setCardDetectionHotkey] = useState<number | null>(null);
   const [toggleCollapseHotkey, setToggleCollapseHotkey] = useState<number | null>(null);
+  const [detailDisplayHotkey, setDetailDisplayHotkey] = useState<number | null>(null);
   const [isRecordingHotkey, setIsRecordingHotkey] = useState(false);
   const [isRecordingCardHotkey, setIsRecordingCardHotkey] = useState(false);
   const [isRecordingToggleHotkey, setIsRecordingToggleHotkey] = useState(false);
   const [isRecordingYoloHotkey, setIsRecordingYoloHotkey] = useState(false);
+  const [isRecordingDetailHotkey, setIsRecordingDetailHotkey] = useState(false);
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -1059,6 +1061,7 @@ export default function App() {
       invoke<number | null>("get_detection_hotkey").then(val => isMounted && setDetectionHotkey(val));
       invoke<number | null>("get_card_detection_hotkey").then(val => isMounted && setCardDetectionHotkey(val));
       invoke<number | null>("get_toggle_collapse_hotkey").then(val => isMounted && setToggleCollapseHotkey(val));
+      invoke<number | null>("get_detail_display_hotkey").then(val => isMounted && setDetailDisplayHotkey(val));
     };
     
     setupListeners();
@@ -2148,6 +2151,71 @@ export default function App() {
                 )}
                 <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
                   按此键立即触发YOLO识别（默认: Q键, VK: 81）
+                </div>
+              </div>
+              
+              {/* 详情显示热键设置 */}
+              <div className="setting-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>卡牌详情显示按键</label>
+                  <button 
+                    className="bulk-btn" 
+                    style={{ padding: '2px 8px' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsRecordingDetailHotkey(true);
+                    }}
+                  >
+                    {isRecordingDetailHotkey ? "请按键..." : (detailDisplayHotkey ? getHotkeyLabel(detailDisplayHotkey) : "未设置")}
+                  </button>
+                </div>
+                {isRecordingDetailHotkey && (
+                  <div 
+                    style={{ 
+                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                      display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      let vk = 0;
+                      switch(e.button) {
+                        case 0: vk = 1; break;
+                        case 1: vk = 4; break;
+                        case 2: vk = 2; break;
+                        case 3: vk = 5; break;
+                        case 4: vk = 6; break;
+                      }
+                      if (vk > 0) {
+                        setDetailDisplayHotkey(vk);
+                        invoke("set_detail_display_hotkey", { hotkey: vk });
+                        setIsRecordingDetailHotkey(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (e.keyCode) {
+                        setDetailDisplayHotkey(e.keyCode);
+                        invoke("set_detail_display_hotkey", { hotkey: e.keyCode });
+                        setIsRecordingDetailHotkey(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    ref={(el) => el?.focus()}
+                  >
+                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                    <button 
+                      style={{ marginTop: '20px', padding: '5px 15px' }}
+                      onClick={(e) => { e.stopPropagation(); setIsRecordingDetailHotkey(false); }}
+                    >取消</button>
+                  </div>
+                )}
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                  按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 鼠标右键, VK: 2）
                 </div>
               </div>
               

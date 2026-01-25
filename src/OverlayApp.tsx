@@ -1926,7 +1926,7 @@ export default function OverlayApp() {
                     />
 
                     <div style={{ padding: '8px', fontSize: '10px', color: '#666', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.2)', flexShrink: 0 }}>
-                        左键拖动顶部识别结果 | 右键空白处关闭 | 右下角调整大小
+                        在设置中调整位置/大小 | 按设置的热键切换显示
                     </div>
                 </div>
             )}
