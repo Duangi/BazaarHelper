@@ -497,9 +497,7 @@ pub fn match_card_descriptors(scene_desc: &Mat) -> Result<Option<serde_json::Val
 
 pub fn match_monster_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Option<String>, String> {
     let cache = TEMPLATE_CACHE.get().ok_or("Monster templates not loaded")?;
-    let mut best_name = None;
-    let mut max_matches = 0;
-    let mut best_score = 0.0f32;
+    let mut results = Vec::new();
 
     for template in cache {
         if template.descriptors.is_empty() { continue; }
@@ -525,26 +523,34 @@ pub fn match_monster_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Opt
             let min_kp = scene_kp_count.min(template_kp_count);
             let score = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
 
-            if matches > max_matches {
-                max_matches = matches;
-                best_score = score;
-                best_name = Some(template.name.clone());
-            }
+            results.push((template.name.clone(), matches, score));
         }
     }
+    
+    results.sort_by(|a, b| b.1.cmp(&a.1));
 
-    if max_matches >= 10 || best_score > 0.15 {
-        return Ok(best_name);
+    // Print Top 3 Monster Candidates
+    println!("[Monster Recognition] Top 3 Candidates:");
+    for i in 0..results.len().min(3) {
+         let (name, matches, score) = &results[i];
+         println!("  {}. {} - Matches: {}, Score: {:.4}", i+1, name, matches, score);
     }
+
+    if let Some((best_name, max_matches, best_score)) = results.first() {
+        if *max_matches >= 10 || *best_score > 0.15 {
+            return Ok(Some(best_name.clone()));
+        }
+    }
+    
     Ok(None)
 }
 
 // 从 Mat 匹配事件描述符，返回事件ID
 pub fn match_event_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Option<String>, String> {
     let cache = EVENT_TEMPLATE_CACHE.get().ok_or("Event templates not loaded")?;
-    let mut best_id = None;
-    let mut max_matches = 0;
-    let mut best_score = 0.0f32;
+    let mut results = Vec::new();
+    
+    println!("[Event Recognition] Scene has {} descriptors", scene_descriptors.rows());
 
     for template in cache {
         if template.descriptors.is_empty() { continue; }
@@ -570,18 +576,30 @@ pub fn match_event_descriptors_from_mat(scene_descriptors: &Mat) -> Result<Optio
             let min_kp = scene_kp_count.min(template_kp_count);
             let score = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
 
-            if matches > max_matches {
-                max_matches = matches;
-                best_score = score;
-                best_id = Some(template.id.clone());
-            }
+            results.push((template.id.clone(), template.name.clone(), matches, score, template_kp_count as i32));
         }
     }
 
-    // 事件识别阈值：匹配点数 >= 15 且 得分 > 0.15
-    if max_matches >= 15 && best_score > 0.15 {
-        return Ok(best_id);
+    results.sort_by(|a, b| b.2.cmp(&a.2)); // Sort by matches desc
+
+    // Print Top 5 Candidate Events with more details
+    println!("[Event Recognition] Top 5 Candidates:");
+    for i in 0..results.len().min(5) {
+         let (_id, name, matches, score, template_kp) = &results[i];
+         println!("  {}. {} - Matches: {}/{} (Scene: {}), Score: {:.4}", 
+                  i+1, name, matches, template_kp, scene_descriptors.rows(), score);
     }
+    
+    if let Some((best_id, best_name, max_matches, best_score, _)) = results.first() {
+        // 事件识别阈值：匹配点数 >= 12 且 得分 > 0.12 (降低阈值以提高召回率)
+        if *max_matches >= 12 && *best_score > 0.12 {
+             println!("[Event Recognition] ✓ Matched: {} (Matches: {}, Score: {:.4})", best_name, max_matches, best_score);
+             return Ok(Some(best_id.clone()));
+        } else {
+             println!("[Event Recognition] ✗ No match above threshold (Best: {} with {} matches, {:.4} score)", best_name, max_matches, best_score);
+        }
+    }
+
     Ok(None)
 }
 
@@ -1401,6 +1419,13 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
     
     results.sort_by(|a, b| b.1.cmp(&a.1));
 
+    // Print raw top 3 candidates for debugging
+    println!("[Card Recognition] Top 3 Candidates:");
+    for i in 0..results.len().min(3) {
+        let (top, matches, confidence) = results[i];
+        println!("  {}. {} (ID: {}) - Matches: {}, Conf: {:.4}", i+1, top.name, top.day, matches, confidence);
+    }
+
     let mut matches_found = Vec::new();
     for i in 0..results.len().min(10) { // 先取前10个候选
         let (top, matches, confidence) = results[i];
@@ -1449,33 +1474,77 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
     println!("开始加载事件特征模板...");
     log_to_file("Loading event templates...");
 
-    // 1. 尝试加载单一大文件 (event_features_opencv.bin)
-    match app.path().resolve("resources/event_features_opencv.bin", tauri::path::BaseDirectory::Resource) {
-        Ok(bundled_cache) => {
-            if bundled_cache.exists() {
-                 log_to_file(&format!("Found bundled event cache at {:?}", bundled_cache));
-                 if let Ok(data) = std::fs::read(&bundled_cache) {
+    // 1. 尝试从资源目录加载 (Bundled)
+    let feature_bin_path = app.path().resolve("resources/event_features_opencv.bin", tauri::path::BaseDirectory::Resource);
+    if let Ok(bin_path) = feature_bin_path {
+         if bin_path.exists() {
+             match std::fs::read(&bin_path) {
+                 Ok(data) => {
                      match bincode::deserialize::<Vec<EventTemplateCache>>(&data) {
                          Ok(cached_templates) => {
                              if !cached_templates.is_empty() {
-                                 println!("Loaded {} event templates from binary package", cached_templates.len());
-                                 log_to_file(&format!("Loaded {} event templates from binary package", cached_templates.len()));
+                                 println!("Loaded {} event templates from binary package (Resource)", cached_templates.len());
+                                 log_to_file(&format!("Loaded {} event templates from binary package (Resource)", cached_templates.len()));
                                  
                                  let _ = EVENT_TEMPLATE_CACHE.set(cached_templates);
                                  return Ok(());
                              }
                          },
                          Err(e) => {
-                             log_to_file(&format!("Failed to deserialize event cache file: {}. Falling back to individual files.", e));
+                             log_to_file(&format!("Failed to deserialize resource cache: {}", e));
                          }
                      }
+                 },
+                 Err(e) => {
+                    log_to_file(&format!("Failed to read resource cache: {}", e));
                  }
             }
-        },
-        Err(e) => {
-             log_to_file(&format!("Failed to resolve event cache path: {}", e));
         }
     }
+
+    // 2. 尝试从 AppCache 加载 (Generated)
+    if let Ok(cache_dir) = app.path().app_cache_dir() {
+        let cached_bin = cache_dir.join("event_features_opencv.bin");
+        if cached_bin.exists() {
+            match std::fs::read(&cached_bin) {
+                Ok(data) => {
+                    match bincode::deserialize::<Vec<EventTemplateCache>>(&data) {
+                        Ok(cached_templates) => {
+                             if !cached_templates.is_empty() {
+                                 println!("Loaded {} event templates from generated cache", cached_templates.len());
+                                 log_to_file(&format!("Loaded {} event templates from generated cache", cached_templates.len()));
+                                 
+                                 let _ = EVENT_TEMPLATE_CACHE.set(cached_templates);
+                                 return Ok(());
+                             }
+                        },
+                         Err(e) => {
+                             log_to_file(&format!("Failed to deserialize generated cache: {}", e));
+                        }
+                    }
+                },
+                 Err(e) => {
+                    log_to_file(&format!("Failed to read generated cache: {}", e));
+                 }
+            }
+        }
+    }
+
+    log_to_file("Event cache not found or invalid. Starting generation from source images...");
+
+    // 3. 生成特征
+    // 初始化 ORB (增加特征点数量以提高匹配率)
+    let mut orb = ORB::create(
+        1000, // nfeatures (从500提升到1000，提取更多特征点)
+        1.2f32, // scaleFactor
+        8, // nlevels
+        31, // edgeThreshold
+        0, // firstLevel
+        2, // WTA_K
+        opencv::features2d::ORB_ScoreType::HARRIS_SCORE, // scoreType
+        31, // patchSize
+        20 // fastThreshold
+    ).map_err(|e| format!("Failed to create ORB detector: {}", e))?;
     
     // 读取 event_encounters.json
     let event_json_path = app.path().resolve("resources/event_encounters.json", tauri::path::BaseDirectory::Resource)
@@ -1487,9 +1556,9 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
     let events: Vec<serde_json::Value> = serde_json::from_str(&json_data)
         .map_err(|e| format!("Failed to parse event_encounters.json: {}", e))?;
     
-    // 特征文件目录
-    let features_dir = app.path().resolve("resources/event_features", tauri::path::BaseDirectory::Resource)
-        .map_err(|e| format!("Failed to resolve event_features dir: {}", e))?;
+    // 资源根目录
+    let resources_dir = app.path().resolve("resources", tauri::path::BaseDirectory::Resource)
+        .map_err(|e| format!("Failed to resolve resources dir: {}", e))?;
     
     let mut templates = Vec::new();
     let mut loaded_count = 0;
@@ -1517,63 +1586,137 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
         if id.is_empty() {
             continue;
         }
+
+        // 获取图片路径，支持多种策略查找
+        let mut potential_paths = Vec::new();
         
+        // 1. 优先使用 JSON 中的 image_paths
+        if let Some(p) = event.get("image_paths")
+            .and_then(|paths| paths.get("char"))
+            .and_then(|c| c.as_str()) {
+            
+            let path = resources_dir.join(p);
+            potential_paths.push(path.clone());
+            
+            // 尝试替换扩展名 (应对 webp/png 不一致)
+            if let Some(stem) = path.file_stem() {
+                 if let Some(parent) = path.parent() {
+                     potential_paths.push(parent.join(stem).with_extension("png"));
+                     potential_paths.push(parent.join(stem).with_extension("jpg"));
+                 }
+            }
+        }
+
+        // 2. 尝试 ID 组合猜测
+        potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.png", id)));
+        potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.webp", id)));
+        potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.jpg", id)));
+        
+        potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}_Char.png", id)));
+        potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}_Char.webp", id)));
+        
+        // 3. 尝试 BG 目录
+        potential_paths.push(resources_dir.join(format!("EncEvent_BG/{}.png", id)));
+        potential_paths.push(resources_dir.join(format!("EncEvent_BG/{}_BG.png", id)));
+
+        let img_path_final = potential_paths.into_iter().find(|p| p.exists());
+
+        if img_path_final.is_none() {
+            missing_count += 1;
+            // log_to_file(&format!("Missing image for event: {}", id));
+            continue;
+        }
+        
+        let valid_path = img_path_final.unwrap();
+        let img_path_str = valid_path.to_str().unwrap_or_default();
+        
+        // OpenCV 读取图片 (Grayscale)
+        let img = match opencv::imgcodecs::imread(img_path_str, opencv::imgcodecs::IMREAD_GRAYSCALE) {
+            Ok(img) => img,
+            Err(e) => {
+                log_to_file(&format!("Failed to load image for {}: {}", id, e));
+                continue;
+            }
+        };
+
+        if img.empty() {
+             // log_to_file(&format!("Loaded empty image for {}", id));
+             continue;
+        }
+
+        // 计算特征
+        let mut keypoints = Vector::<KeyPoint>::new();
+        let mut descriptors = Mat::default();
+        
+        if let Err(e) = orb.detect_and_compute(&img, &Mat::default(), &mut keypoints, &mut descriptors, false) {
+             log_to_file(&format!("ORB compute failed for {}: {}", id, e));
+             continue;
+        }
+        
+        if descriptors.rows() == 0 || descriptors.cols() == 0 {
+             // log_to_file(&format!("No descriptors found for {}", id));
+             continue;
+        }
+
         let name = event.get("Localization")
             .and_then(|l| l.get("Title"))
             .and_then(|t| t.get("Text"))
             .and_then(|t| t.as_str())
             .unwrap_or(&id)
             .to_string();
-        
-        // 读取 bin 文件
-        let feature_file = features_dir.join(format!("{}.bin", id));
-        
-        if !feature_file.exists() {
-            missing_count += 1;
-            continue;
+
+        // 将 Mat 转换为 Vec<u8>
+        let mut descriptors_vec = Vec::new();
+        if descriptors.is_continuous() {
+             if let Ok(data_slice) = descriptors.data_typed::<u8>() {
+                 descriptors_vec = data_slice.to_vec();
+             }
+        } else {
+             for i in 0..descriptors.rows() {
+                  for j in 0..descriptors.cols() {
+                       let val = descriptors.at_2d::<u8>(i, j).unwrap_or(&0);
+                       descriptors_vec.push(*val);
+                  }
+             }
         }
+
+        templates.push(EventTemplateCache {
+            id: id.clone(),
+            name: name.clone(),
+            descriptors: descriptors_vec,
+            descriptor_rows: descriptors.rows(),
+            descriptor_cols: descriptors.cols(),
+        });
         
-        match std::fs::read(&feature_file) {
-            Ok(data) => {
-                if data.len() < 8 {
-                    log_to_file(&format!("Warning: Invalid feature file for {}", name));
-                    continue;
+        loaded_count += 1;
+    }
+    
+    println!("Generated event templates: {} success, {} missing", loaded_count, missing_count);
+    log_to_file(&format!("Event templates generated: {} success, {} missing", loaded_count, missing_count));
+    
+    if !templates.is_empty() {
+        // 保存生成的缓存到 AppCache
+        if let Ok(cache_dir) = app.path().app_cache_dir() {
+            if let Err(e) = std::fs::create_dir_all(&cache_dir) {
+                 log_to_file(&format!("Failed to create cache dir: {}", e));
+            } else {
+                let cache_path = cache_dir.join("event_features_opencv.bin");
+                match bincode::serialize(&templates) {
+                    Ok(data) => {
+                        if let Err(e) = std::fs::write(&cache_path, data) {
+                             log_to_file(&format!("Failed to write generated cache to file: {}", e));
+                        } else {
+                             log_to_file(&format!("Saved generated event cache to {:?}", cache_path));
+                        }
+                    },
+                    Err(e) => {
+                        log_to_file(&format!("Failed to serialize generated templates: {}", e));
+                    }
                 }
-                
-                // 读取头部信息
-                let num_descriptors = u32::from_le_bytes([data[0], data[1], data[2], data[3]]) as i32;
-                let descriptor_size = u32::from_le_bytes([data[4], data[5], data[6], data[7]]) as i32;
-                
-                if descriptor_size != 32 {
-                    log_to_file(&format!("Warning: Invalid descriptor size for {}: {}", name, descriptor_size));
-                    continue;
-                }
-                
-                let expected_len = 8 + (num_descriptors * descriptor_size) as usize;
-                if data.len() != expected_len {
-                    log_to_file(&format!("Warning: Invalid data length for {}", name));
-                    continue;
-                }
-                
-                templates.push(EventTemplateCache {
-                    id: id.clone(),
-                    name: name.clone(),
-                    descriptors: data[8..].to_vec(),
-                    descriptor_rows: num_descriptors,
-                    descriptor_cols: descriptor_size,
-                });
-                
-                loaded_count += 1;
-            }
-            Err(e) => {
-                log_to_file(&format!("Failed to read feature file for {}: {}", name, e));
             }
         }
     }
-    
-    println!("事件特征模板加载完成: {} 个成功, {} 个缺失", loaded_count, missing_count);
-    log_to_file(&format!("Event templates loaded: {} success, {} missing", loaded_count, missing_count));
-    
+
     let _ = EVENT_TEMPLATE_CACHE.set(templates);
     Ok(())
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useRef, Fragment } from "react";
-import { listen } from "@tauri-apps/api/event";
+import { listen, emit } from "@tauri-apps/api/event";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import "./App.css";
@@ -269,6 +269,16 @@ export default function OverlayApp() {
 
     useEffect(() => { isResizingRef.current = isResizing; }, [isResizing]);
 
+    // 主动同步机制：
+    // 每当 Overlay 显示结果时，请求 App 主窗口再次广播一次位置配置
+    // 确保即使 localStorage 同步失败，也能通过事件总线获取到正确的配置
+    useEffect(() => {
+        if (yoloResult) {
+             console.log("[Overlay] Requesting config sync from App...");
+             emit("request-sync-overlay-settings", {}).catch(console.error);
+        }
+    }, [yoloResult]);
+
     // 当详情卡片首次显示时，强制从localStorage重新读取位置
     // 以防止因为App.tsx状态未同步导致的错位
     useEffect(() => {
@@ -346,15 +356,23 @@ export default function OverlayApp() {
         
         // 监听详情页面位置更新
         const positionUnlisten = listen("update-overlay-detail-position", (event: any) => {
-            console.log("[Overlay] Received position update:", event.payload);
+            console.log("[Overlay] Received position update and saving to storage:", event.payload);
             const { x, y, scale, width, height } = event.payload;
-            setDetailPosition({ 
-                x: x ?? detailPosition.x, 
-                y: y ?? detailPosition.y, 
-                scale: scale ?? detailPosition.scale,
-                width: width ?? detailPosition.width,
-                height: height ?? detailPosition.height
-            });
+            
+            // Persist to localStorage so it survives reload
+            if (x !== undefined) localStorage.setItem('overlay-detail-x', x.toString());
+            if (y !== undefined) localStorage.setItem('overlay-detail-y', y.toString());
+            if (scale !== undefined) localStorage.setItem('overlay-detail-scale', scale.toString());
+            if (width !== undefined) localStorage.setItem('overlay-detail-width', width.toString());
+            if (height !== undefined) localStorage.setItem('overlay-detail-height', height.toString());
+
+            setDetailPosition(prev => ({ 
+                x: x ?? prev.x, 
+                y: y ?? prev.y, 
+                scale: scale ?? prev.scale,
+                width: width ?? prev.width,
+                height: height ?? prev.height
+            }));
         });
 
         return () => {

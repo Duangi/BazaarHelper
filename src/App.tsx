@@ -1118,6 +1118,21 @@ export default function App() {
   }, [yoloHotkey]);
 
   // 基础环境侦测：分辨率适配
+  // 监听 Overlay 的主动同步请求
+  useEffect(() => {
+    const unlisten = listen('request-sync-overlay-settings', () => {
+      console.log("[App] Received config sync request from Overlay, sending settings...");
+      invoke('update_overlay_detail_position', { 
+        x: overlayDetailX, 
+        y: overlayDetailY, 
+        scale: overlayDetailScale,
+        width: overlayDetailWidth,
+        height: overlayDetailHeight
+      }).catch(console.error);
+    });
+    return () => { unlisten.then(f => f()); };
+  }, [overlayDetailX, overlayDetailY, overlayDetailScale, overlayDetailWidth, overlayDetailHeight]);
+
   useEffect(() => {
     const detectScale = async () => {
       try {

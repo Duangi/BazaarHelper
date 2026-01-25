@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjU3NWg1QWlYL2lsT3YwaXYvb2NUb2h2eEFIenFMQ2EvakQ0NFp0VHVmU1BpYkN5aDYvaFh3YjBINnlrSGlGWExEeU9oLytHZFpXNE9BdWJRUG9kekFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5MzA5NTI4CWZpbGU6QmF6YWFySGVscGVyXzEuNC4wX3g2NC1zZXR1cC5leGUKUVJhb1p4R3RCTXA0ZmxObnk3QUw1YndlK1lTRDUzVmJTR1o2Q3JLRUcwUmVqZ1J1aHZaRTJlbU5vOGc0SGZWNkVicTA1YnpJZ3cyZ1h5T0pEYkc2QWc9PQo=",
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjZLYm9Mb2phZHhuaVJXYnd6ckUyeFQySVRJSHBsMEMxQVFqbGJqVHFGWEFveFNEK0Iwa3FhOXIvK25aK1h3TWZKUEdNZEpYU0VhWFhzQVdqNm1wa2dvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5MzE0MjY0CWZpbGU6QmF6YWFySGVscGVyXzEuNC4wX3g2NC1zZXR1cC5leGUKdU5SYzd0enN3UFZXU01RalJ2ZkhzaHJMMjFSdk5tR0x2aXQ3ZEZKY2d4WnVSWDk3eG0zeVVRU25vaWR3S3F6aXBveTB3eVZyQ1pVazloWDUvWU9tQmc9PQo=",
                                              "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.0/BazaarHelper_1.4.0_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-25T02:52:08Z",
+    "pub_date":  "2026-01-25T04:11:04Z",
     "version":  "1.4.0",
     "notes":  "🎉 v1.4.0 更新来了：1.修复百科的输入法问题，并优化百科搜索的交互。 2. 为了解决白条的问题，删除了手动移动右键详情页面的功能，现在需要手动设置参数调整。 3. 新增右键查询事件的功能。 4. 新增yolo自动识别+手动识别。"
 }
