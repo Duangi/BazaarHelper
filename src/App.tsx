@@ -253,7 +253,7 @@ export default function App() {
     (async () => {
       // 加载隐藏标签图标
       const iconNames = ["Ammo", "Burn", "Charge", "Cooldown", "CritChance", "Damage", "Income", 
-                         "Freeze", "Haste", "Health", "MaxHPHeart", "Lifesteal", "Poison", 
+                         "Fly", "Freeze", "Haste", "Health", "MaxHPHeart", "Lifesteal", "Poison", 
                          "Regen", "Shield", "Slowness"];
       const icons: Record<string, string> = {};
       for (const name of iconNames) {
@@ -2977,6 +2977,7 @@ export default function App() {
                       { tags: [["Crit", "暴击"], ["CritRef", "暴击相关"]], icon: "CritChance", color: "var(--c-crit)" },
                       { tags: [["Damage", "伤害"], ["DamageRef", "伤害相关"]], icon: "Damage", color: "var(--c-damage)" },
                       { tags: [["EconomyRef", "经济相关"], ["Gold", "金币"]], icon: "Income", color: "var(--c-golden)" },
+                      { tags: [["Fly", "飞行"], ["FlyRef", "飞行相关"]], icon: "Fly", color: "var(--c-fly)" },
                       { tags: [["Freeze", "冻结"], ["FreezeRef", "冻结相关"]], icon: "Freeze", color: "var(--c-freeze)" },
                       { tags: [["Haste", "加速"], ["HasteRef", "加速相关"]], icon: "Haste", color: "var(--c-haste)" },
                       { tags: [["Heal", "治疗"], ["HealRef", "治疗相关"]], icon: "Health", color: "var(--c-heal)" },
