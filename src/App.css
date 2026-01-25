@@ -1712,77 +1712,39 @@ html, body, #root {
   min-height: 64px;
   position: relative;
   
-  /* 机械风格边框 */
-  background: linear-gradient(135deg, #5a5f69 0%, #9ca2af 40%, #2c313a 100%);
+  /* 使用和野怪一样的底色 */
+  background: rgba(50, 45, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.2),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22;
+    0 4px 15px rgba(0,0,0,0.3);
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .item-card:hover {
   transform: translateY(-2px);
+  background: rgba(70, 60, 40, 0.7);
   box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.5),
-    inset 0 0 20px rgba(0,0,0,0.5),
-    0 15px 25px rgba(0,0,0,0.7),
-    0 0 0 3px #1a1c22,
-    0 0 10px rgba(100, 200, 255, 0.2);
+    0 6px 20px rgba(0,0,0,0.4);
 }
 
-/* Tier Specific Borders - 在机械边框基础上添加颜色强调 */
+/* Tier Specific Borders - 简化边框样式 */
 .item-card.tier-bronze { 
   border-left: 4px solid #cd7f32; 
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.2),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    inset 10px 0 20px -15px rgba(205, 127, 50, 0.3),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22;
 }
 .item-card.tier-silver { 
   border-left: 4px solid #c0c0c0; 
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.2),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    inset 10px 0 20px -15px rgba(192, 192, 192, 0.3),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22;
 }
 .item-card.tier-gold { 
   border-left: 4px solid #ffd700; 
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.3),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    inset 10px 0 20px -15px rgba(255, 215, 0, 0.4),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22,
-    0 0 15px rgba(255, 215, 0, 0.2);
 }
 .item-card.tier-diamond { 
   border-left: 4px solid #b9f2ff; 
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.3),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    inset 10px 0 20px -15px rgba(185, 242, 255, 0.5),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22,
-    0 0 15px rgba(185, 242, 255, 0.3);
 }
 
 /* Legendary tier left bar */
 .item-card.tier-legendary { 
   border-left: 4px solid #ff4500; 
-  box-shadow: 
-    inset 0 0 0 1px rgba(255,255,255,0.3),
-    inset 0 0 10px rgba(0,0,0,0.8),
-    inset 10px 0 20px -15px rgba(255, 69, 0, 0.4),
-    0 10px 20px rgba(0,0,0,0.6),
-    0 0 0 3px #1a1c22,
-    0 0 20px rgba(255, 69, 0, 0.4);
 }
 
 /* Toggle button groups - Game UI Style (Ghost Button) */
