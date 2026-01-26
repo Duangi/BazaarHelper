@@ -1072,6 +1072,13 @@ export default function OverlayApp() {
                 pointerEvents: yoloResult ? 'auto' : 'none',
                 overflow: 'hidden'
             }}
+            onClick={(e) => {
+                // 左键点击空白处关闭详情页
+                if (yoloResult && e.target === e.currentTarget) {
+                    setYoloResult(null);
+                    invoke("set_overlay_ignore_cursor", { ignore: true }).catch(() => {});
+                }
+            }}
         >
             {yoloResult && (
                 <div 

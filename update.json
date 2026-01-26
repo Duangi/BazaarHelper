@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjYxbmc4MStwVWdNUVlCUGxIUWhsL2dBVzJsR2JLeHI4VFg2YUVRTFNzOEJ4em9IUUFpNXdaZmxOVFZXc1FqTFFqM1RYWVFLSVlsUUdlYnpiUGFWYmdzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5MzU1NzIyCWZpbGU6QmF6YWFySGVscGVyXzEuNC4xX3g2NC1zZXR1cC5leGUKcW9GZmE2WUhmOWg5Q2FhN2xtK1JPQTNMVGV4SGVQQ0J1bUU2RktkVlZhYTN5SGxYcm9ZYkMvaE9xdjZaZkhnVmZrRWdkdm1Pbm1NZWN0U01YRFFERGc9PQo=",
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjY5aXYzT3JKOEFQUnpCS3diaERtUUlSMGRnVEk2N0ZxTEVrTlVRSWZ2RlhEYkw1YXJiL3luR2lrRW9kbldabzd0OXdRbjkwczN2LzRLdXVDNHZNanc4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5Mzk1ODE1CWZpbGU6QmF6YWFySGVscGVyXzEuNC4xX3g2NC1zZXR1cC5leGUKcVNwTHhBSVZkMjJOTXFIckpGY1h5L3VQbG5RZWpSSVpzTGpLTTd3ZDByL0NDNlpySytuMWZsMUZmTFJVQWkveEIvUkVCbkdPL1R2VlJpNmdldlpvQkE9PQo=",
                                              "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.1/BazaarHelper_1.4.1_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-25T15:42:02Z",
+    "pub_date":  "2026-01-26T02:50:15Z",
     "version":  "1.4.1",
     "notes":  "🎉 v1.4.1 更新来了：1.支持右键识别改键 默认还是右键 需要手动修改 2.更改百科搜索的样式为黑灰色系"
 }

@@ -128,6 +128,7 @@
   --cooldown-rgb: 0, 236, 195;
   --charge-rgb: 255, 215, 0;
   --regen-rgb: 34, 139, 34;
+  --fly-rgb: 244, 207, 32;
 
   /* 阶级颜色 */
   --c-bronze: #CD7F32;
@@ -155,6 +156,7 @@
   --c-cooldown: rgb(var(--cooldown-rgb));
   --c-charge: rgb(var(--charge-rgb));
   --c-regen: rgb(var(--regen-rgb));
+  --c-fly: rgb(var(--fly-rgb));
 }
 
 html, body, #root {
