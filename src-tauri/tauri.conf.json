@@ -10,6 +10,7 @@
                   "frontendDist":  "../dist"
               },
     "app":  {
+                "macOSPrivateApi":  true,
                 "windows":  [
                                 {
                                     "label":  "main",
@@ -22,7 +23,8 @@
                                     "transparent":  true,
                                     "backgroundColor":  "#00000000",
                                     "visible":  false,
-                                    "dragDropEnabled":  true
+                                    "dragDropEnabled":  true,
+                                    "visibleOnAllWorkspaces":  true
                                 },
                                 {
                                     "label":  "overlay",
@@ -39,7 +41,8 @@
                                     "visible":  false,
                                     "skipTaskbar":  true,
                                     "shadow":  false,
-                                    "incognito":  true
+                                    "incognito":  true,
+                                    "visibleOnAllWorkspaces":  true
                                 }
                             ],
                 "security":  {

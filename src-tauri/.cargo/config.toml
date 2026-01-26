@@ -1,8 +1,24 @@
-[env]
-# OpenCV 环境变量
-OPENCV_DIR = "C:\\opencv\\build"
-OPENCV_INCLUDE_PATHS = "C:\\opencv\\build\\include"
-OPENCV_LINK_PATHS = "C:\\opencv\\build\\x64\\vc16\\lib"
-OPENCV_LINK_LIBS = "opencv_world4120"
-# LLVM for bindgen
-LIBCLANG_PATH = "C:\\LLVM\\bin"
+# ============== 跨平台构建配置 ==============
+#
+# 注意: Cargo 的 [env] 部分对所有平台生效，无法按平台条件设置
+# 因此不在此文件设置 OpenCV 环境变量，改用各平台的自动检测机制
+#
+# ============== Windows 构建 ==============
+# 1. 安装 OpenCV 4.x 到 C:\opencv
+# 2. 安装 LLVM 到 C:\LLVM
+# 3. 设置环境变量 (在 PowerShell 或系统设置中):
+#    $env:OPENCV_DIR = "C:\opencv\build"
+#    $env:OPENCV_INCLUDE_PATHS = "C:\opencv\build\include"
+#    $env:OPENCV_LINK_PATHS = "C:\opencv\build\x64\vc16\lib"
+#    $env:OPENCV_LINK_LIBS = "opencv_world4120"
+#    $env:LIBCLANG_PATH = "C:\LLVM\bin"
+#
+# ============== macOS 构建 ==============
+# 1. brew install opencv pkg-config llvm
+# 2. 设置 LIBCLANG_PATH (在 .zshrc 或构建前):
+#    export LIBCLANG_PATH="/opt/homebrew/opt/llvm/lib"
+# 3. pkg-config 会自动检测 OpenCV
+#
+# ============== Linux 构建 ==============
+# 1. 使用包管理器安装 opencv libclang
+# 2. pkg-config 会自动检测

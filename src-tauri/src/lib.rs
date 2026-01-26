@@ -1,6 +1,8 @@
-﻿use std::sync::{Arc, RwLock, OnceLock};
+use std::sync::{Arc, RwLock, OnceLock};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{State, Manager, Emitter};
+use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
+use tauri::menu::{Menu, MenuItem};
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -10,27 +12,117 @@ use std::fs::File;
 use std::{thread, time, panic};
 use tokio;
 use chrono::Local;
+
+// Windows 特定导入
+#[cfg(target_os = "windows")]
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
+#[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::{
     IsIconic, GetForegroundWindow, FindWindowW, GetWindowLongW, SetWindowLongW, SetWindowPos,
-    GWL_EXSTYLE, GWL_STYLE, 
+    GWL_EXSTYLE, GWL_STYLE,
     WS_EX_TOOLWINDOW, WS_EX_APPWINDOW, WS_EX_WINDOWEDGE, WS_EX_CLIENTEDGE, WS_EX_STATICEDGE,
-    WS_EX_LAYERED,
+    WS_EX_LAYERED, WS_EX_NOACTIVATE,
     WS_CAPTION, WS_THICKFRAME, WS_POPUP, WS_SYSMENU, WS_MAXIMIZEBOX, WS_MINIMIZEBOX, WS_BORDER, WS_DLGFRAME,
     WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN,
     SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_NOACTIVATE, SWP_FRAMECHANGED
 };
-#[cfg(feature = "enable_win32_dwm")]
+#[cfg(target_os = "windows")]
 use windows::Win32::Graphics::Dwm::{
     DwmSetWindowAttribute,
     DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_BORDER_COLOR, DWMWA_CAPTION_COLOR, DWMWA_TEXT_COLOR
 };
+#[cfg(target_os = "windows")]
 use windows::Win32::Foundation::{HWND, COLORREF};
+#[cfg(target_os = "windows")]
 use windows::core::PCWSTR;
-use opencv::core::MatTraitConst;
-use device_query::{DeviceQuery, DeviceState, MouseState};
 
-// 强力去除白条函数，顺便染黑
+use opencv::core::MatTraitConst;
+use device_query::{DeviceQuery, DeviceState, MouseState, Keycode};
+
+// macOS 原生窗口设置（用于全屏覆盖）
+// 注意: cocoa crate 已弃用，但 tauri-nspanel 仍依赖它
+#[cfg(target_os = "macos")]
+#[allow(deprecated)]
+use cocoa::appkit::{NSWindow, NSWindowCollectionBehavior};
+#[cfg(target_os = "macos")]
+#[allow(deprecated)]
+use cocoa::base::id;
+// tauri-nspanel 用于创建可以显示在全屏应用上方的 NSPanel
+#[cfg(target_os = "macos")]
+use tauri_nspanel::WebviewWindowExt as NSPanelExt;
+
+// ============== 跨平台热键检测 ==============
+// Windows 虚拟键码常量（用于配置兼容性）
+#[cfg(not(target_os = "windows"))]
+const VK_RBUTTON: i32 = 2;    // 右键
+#[cfg(not(target_os = "windows"))]
+const VK_MENU: i32 = 18;      // Alt 键
+
+/// 跨平台按键检测
+/// key_code: Windows 虚拟键码
+/// device_state: device_query 状态
+/// mouse_state: 鼠标状态
+fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &MouseState) -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        unsafe { (GetAsyncKeyState(key_code) as i16) < 0 }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        // 映射 Windows 虚拟键码到 device_query
+        match key_code {
+            1 => mouse_state.button_pressed.get(0).copied().unwrap_or(false), // 左键
+            2 => mouse_state.button_pressed.get(2).copied().unwrap_or(false), // 右键
+            4 => mouse_state.button_pressed.get(1).copied().unwrap_or(false), // 中键
+            18 => device_state.get_keys().contains(&Keycode::LAlt) || device_state.get_keys().contains(&Keycode::RAlt), // Alt
+            81 => device_state.get_keys().contains(&Keycode::Q), // Q
+            192 => device_state.get_keys().contains(&Keycode::Grave), // ` (反引号)
+            _ => {
+                // 尝试映射其他常见按键
+                let keys = device_state.get_keys();
+                match key_code {
+                    65..=90 => {
+                        // A-Z 字母键
+                        let letter = (key_code as u8 - 65 + b'A') as char;
+                        let keycode = match letter {
+                            'A' => Some(Keycode::A), 'B' => Some(Keycode::B), 'C' => Some(Keycode::C),
+                            'D' => Some(Keycode::D), 'E' => Some(Keycode::E), 'F' => Some(Keycode::F),
+                            'G' => Some(Keycode::G), 'H' => Some(Keycode::H), 'I' => Some(Keycode::I),
+                            'J' => Some(Keycode::J), 'K' => Some(Keycode::K), 'L' => Some(Keycode::L),
+                            'M' => Some(Keycode::M), 'N' => Some(Keycode::N), 'O' => Some(Keycode::O),
+                            'P' => Some(Keycode::P), 'Q' => Some(Keycode::Q), 'R' => Some(Keycode::R),
+                            'S' => Some(Keycode::S), 'T' => Some(Keycode::T), 'U' => Some(Keycode::U),
+                            'V' => Some(Keycode::V), 'W' => Some(Keycode::W), 'X' => Some(Keycode::X),
+                            'Y' => Some(Keycode::Y), 'Z' => Some(Keycode::Z),
+                            _ => None,
+                        };
+                        keycode.map(|k| keys.contains(&k)).unwrap_or(false)
+                    }
+                    _ => false
+                }
+            }
+        }
+    }
+}
+
+// 获取默认热键值（跨平台）
+fn default_monster_hotkey() -> i32 {
+    #[cfg(target_os = "windows")]
+    { VK_RBUTTON.0 as i32 }
+    #[cfg(not(target_os = "windows"))]
+    { VK_RBUTTON }
+}
+
+fn default_card_hotkey() -> i32 {
+    #[cfg(target_os = "windows")]
+    { VK_MENU.0 as i32 }
+    #[cfg(not(target_os = "windows"))]
+    { VK_MENU }
+}
+
+// ============== Windows 特定窗口样式函数 ==============
+#[cfg(target_os = "windows")]
 fn apply_dark_theme(window: &tauri::WebviewWindow) {
     if let Ok(hwnd) = window.hwnd() {
         unsafe {
@@ -45,16 +137,16 @@ fn apply_dark_theme(window: &tauri::WebviewWindow) {
                 std::mem::size_of::<i32>() as u32,
             );
 
-            // 2. [Win11 专用] 强制设置标题栏和边框颜色为纯黑 (实际上是透明的视觉效果)
-            let black_color = COLORREF(0x000000); 
-            
+            // 2. [Win11 专用] 强制设置标题栏和边框颜色为纯黑
+            let black_color = COLORREF(0x000000);
+
             let _ = DwmSetWindowAttribute(
                 handle,
                 DWMWA_BORDER_COLOR,
                 &black_color as *const _ as *const _,
                 std::mem::size_of::<COLORREF>() as u32,
             );
-            
+
             let _ = DwmSetWindowAttribute(
                 handle,
                 DWMWA_CAPTION_COLOR,
@@ -73,101 +165,176 @@ fn apply_dark_theme(window: &tauri::WebviewWindow) {
     }
 }
 
-// 强力去除白条函数（暂时未使用，保留供将来使用）
+#[cfg(target_os = "windows")]
 #[allow(dead_code)]
 fn apply_pure_overlay_style(window: &tauri::WebviewWindow) {
-    // 先尝试“染黑”
     apply_dark_theme(window);
 
     if let Ok(hwnd) = window.hwnd() {
         unsafe {
             let handle = HWND(hwnd.0 as _);
-            
-            // --- 1. 处理基础样式 (GWL_STYLE) ---
-            // 目标：纯净的 WS_POPUP | WS_VISIBLE
+
             let current_style = GetWindowLongW(handle, GWL_STYLE) as u32;
-            
-            // 移除所有装饰性样式
             let mut new_style = current_style & !(
-                WS_CAPTION.0 | 
-                WS_THICKFRAME.0 | 
-                WS_MINIMIZEBOX.0 | 
-                WS_MAXIMIZEBOX.0 | 
-                WS_SYSMENU.0 | 
-                WS_BORDER.0 | 
+                WS_CAPTION.0 |
+                WS_THICKFRAME.0 |
+                WS_MINIMIZEBOX.0 |
+                WS_MAXIMIZEBOX.0 |
+                WS_SYSMENU.0 |
+                WS_BORDER.0 |
                 WS_DLGFRAME.0
             );
-            
-            // 强制加上 WS_POPUP (这是消除白条的关键)
             new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_CLIPSIBLINGS.0 | WS_CLIPCHILDREN.0;
-            
             SetWindowLongW(handle, GWL_STYLE, new_style as i32);
 
-            // --- 2. 处理扩展样式 (GWL_EXSTYLE) ---
             let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;
-            
-            // 移除会导致边框阴影的样式
             let mut new_ex_style = current_ex_style & !(
-                WS_EX_APPWINDOW.0 | 
-                WS_EX_WINDOWEDGE.0 | 
-                WS_EX_CLIENTEDGE.0 | 
+                WS_EX_APPWINDOW.0 |
+                WS_EX_WINDOWEDGE.0 |
+                WS_EX_CLIENTEDGE.0 |
                 WS_EX_STATICEDGE.0
             );
-            
-            // 确保是 TOOLWINDOW (不在任务栏显示) 和 LAYERED (支持透明)
             new_ex_style |= WS_EX_TOOLWINDOW.0 | WS_EX_LAYERED.0;
-            
             SetWindowLongW(handle, GWL_EXSTYLE, new_ex_style as i32);
 
-            // --- 3. 强制刷新 (SWP_FRAMECHANGED) ---
             let _ = SetWindowPos(
-                handle, 
-                None, 
-                0, 0, 0, 0, 
+                handle,
+                None,
+                0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
             );
         }
     }
 }
 
-// 温和的样式处理 (用于Main窗口 - 保留调整大小能力)
+#[cfg(target_os = "windows")]
 fn apply_main_window_style(window: &tauri::WebviewWindow) {
-    // 先尝试"染黑"
     apply_dark_theme(window);
 
     if let Ok(hwnd) = window.hwnd() {
         unsafe {
             let handle = HWND(hwnd.0 as _);
-            
-            // 获取当前样式
+
             let current_style = GetWindowLongW(handle, GWL_STYLE) as u32;
-            
-            // 只移除标题栏和系统菜单，但保留 WS_THICKFRAME（允许调整大小）
             let mut new_style = current_style & !(
-                WS_CAPTION.0 | 
+                WS_CAPTION.0 |
                 WS_SYSMENU.0 |
                 WS_MINIMIZEBOX.0 |
                 WS_MAXIMIZEBOX.0
             );
-            
-            // 保留 WS_THICKFRAME 并添加 WS_POPUP
             new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_THICKFRAME.0;
-            
             SetWindowLongW(handle, GWL_STYLE, new_style as i32);
 
-            // 扩展样式保持简单
             let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;
             let mut new_ex_style = current_ex_style & !(WS_EX_APPWINDOW.0);
             new_ex_style |= WS_EX_TOOLWINDOW.0 | WS_EX_LAYERED.0;
-            
             SetWindowLongW(handle, GWL_EXSTYLE, new_ex_style as i32);
 
             let _ = SetWindowPos(
-                handle, 
-                None, 
-                0, 0, 0, 0, 
+                handle,
+                None,
+                0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
             );
+        }
+    }
+}
+
+// ============== macOS/其他平台的空实现 ==============
+#[cfg(not(target_os = "windows"))]
+#[allow(dead_code)]
+fn apply_dark_theme(_window: &tauri::WebviewWindow) {
+    // macOS 使用系统主题，无需特殊处理
+}
+
+#[cfg(not(target_os = "windows"))]
+#[allow(dead_code)]
+fn apply_pure_overlay_style(_window: &tauri::WebviewWindow) {
+    // macOS 通过 Tauri 配置处理
+}
+
+#[cfg(not(target_os = "windows"))]
+#[allow(dead_code)]
+fn apply_main_window_style(_window: &tauri::WebviewWindow) {
+    // macOS 通过 Tauri 配置处理
+}
+
+/// macOS: 使用 NSPanel 设置窗口可以覆盖在全屏应用上方
+/// NSPanel 与 NSWindowStyleMaskNonActivatingPanel 可以显示在全屏应用上方
+/// 这是 Discord overlay、Spotlight 等应用使用的技术
+#[cfg(target_os = "macos")]
+#[allow(deprecated)] // tauri-nspanel 使用已弃用的 cocoa API
+fn setup_macos_fullscreen_overlay(window: &tauri::WebviewWindow) {
+    // 使用 tauri-nspanel 将窗口转换为 NSPanel
+    // NSPanel 可以显示在全屏应用上方，而普通 NSWindow 不行
+    // 参考: https://github.com/tauri-apps/tauri/issues/9556
+    match window.to_panel() {
+        Ok(panel) => {
+            // 关键：设置 NSWindowStyleMaskNonActivatingPanel (1 << 7 = 128)
+            // 这防止面板激活所属应用，是全屏覆盖的关键
+            const NS_WINDOW_STYLE_MASK_NON_ACTIVATING_PANEL: i32 = 1 << 7; // 128
+            panel.set_style_mask(NS_WINDOW_STYLE_MASK_NON_ACTIVATING_PANEL);
+
+            // 设置 Panel 级别为 NSMainMenuWindowLevel + 1 (24 + 1 = 25)
+            // 根据 lumehq/lume 的实现，这个级别足够高以显示在全屏上方
+            const NS_MAIN_MENU_WINDOW_LEVEL: i32 = 24;
+            panel.set_level(NS_MAIN_MENU_WINDOW_LEVEL + 1);
+
+            // 设置 collection behavior
+            // - CanJoinAllSpaces: 出现在所有桌面空间
+            // - FullScreenAuxiliary: 可以与全屏窗口一起显示（关键！）
+            // - Stationary: 固定位置
+            panel.set_collection_behaviour(
+                tauri_nspanel::cocoa::appkit::NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+                | tauri_nspanel::cocoa::appkit::NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
+                | tauri_nspanel::cocoa::appkit::NSWindowCollectionBehavior::NSWindowCollectionBehaviorStationary
+            );
+
+            // 设置为浮动面板
+            panel.set_floating_panel(true);
+
+            // 设置窗口不隐藏在失去焦点时
+            panel.set_hides_on_deactivate(false);
+
+            println!("[macOS] Overlay converted to NSPanel with NonActivatingPanel style, level=25");
+        }
+        Err(e) => {
+            // 如果转换失败，回退到传统 NSWindow 方法
+            println!("[macOS] Failed to convert to NSPanel: {:?}, falling back to NSWindow", e);
+            fallback_setup_macos_overlay(window);
+        }
+    }
+}
+
+/// macOS: 回退方案 - 使用传统 NSWindow 设置
+#[cfg(target_os = "macos")]
+#[allow(deprecated)] // cocoa crate 已弃用
+fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
+    use objc::{msg_send, sel, sel_impl};
+    use cocoa::base::BOOL;
+
+    #[link(name = "CoreGraphics", kind = "framework")]
+    extern "C" {
+        fn CGWindowLevelForKey(key: i32) -> i32;
+    }
+    const K_CG_MAXIMUM_WINDOW_LEVEL_KEY: i32 = 14;
+
+    if let Ok(ns_window) = window.ns_window() {
+        unsafe {
+            let ns_win: id = ns_window as id;
+
+            let behavior = NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+                | NSWindowCollectionBehavior::NSWindowCollectionBehaviorStationary
+                | NSWindowCollectionBehavior::NSWindowCollectionBehaviorIgnoresCycle
+                | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary;
+            ns_win.setCollectionBehavior_(behavior);
+
+            let max_level = CGWindowLevelForKey(K_CG_MAXIMUM_WINDOW_LEVEL_KEY);
+            ns_win.setLevel_(max_level as i64);
+
+            let _: () = msg_send![ns_win, setHidesOnDeactivate: false as BOOL];
+
+            println!("[macOS] Overlay window (fallback) configured with maximum level: {}", max_level);
         }
     }
 }
@@ -539,6 +706,10 @@ pub struct PersistentState {
     pub show_yolo_monitor: bool,
 }
 
+// 跨平台虚拟键常量
+const VK_RBUTTON_CODE: i32 = 2;   // 鼠标右键 (Windows VK_RBUTTON = 0x02)
+const VK_MENU_CODE: i32 = 18;     // Alt 键 (Windows VK_MENU = 0x12)
+
 impl Default for PersistentState {
     fn default() -> Self {
         Self {
@@ -546,11 +717,11 @@ impl Default for PersistentState {
             inst_to_temp: HashMap::new(),
             current_hand: HashSet::new(),
             current_stash: HashSet::new(),
-            detection_hotkey: Some(VK_RBUTTON.0 as i32),
-            card_detection_hotkey: Some(VK_MENU.0 as i32),
+            detection_hotkey: Some(VK_RBUTTON_CODE),
+            card_detection_hotkey: Some(VK_MENU_CODE),
             toggle_collapse_hotkey: Some(192), // Default: ~ key (Backtick) (VK_OEM_3 is 192 usually, or 0xC0)
             yolo_hotkey: Some(81), // Default: Q key (VK_Q = 81)
-            detail_display_hotkey: Some(VK_RBUTTON.0 as i32), // Default: Right mouse button
+            detail_display_hotkey: Some(VK_RBUTTON_CODE), // Default: Right mouse button
             show_yolo_monitor: true,
         }
     }
@@ -1611,7 +1782,7 @@ pub fn run() {
     let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .manage(OverlayState(bounds))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -1622,7 +1793,15 @@ pub fn run() {
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_updater::Builder::new().build());
+
+    // macOS: 添加 tauri-nspanel 插件（用于全屏覆盖）
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder.plugin(tauri_nspanel::init());
+    }
+
+    builder
         .manage(DbState {
             items: Arc::new(RwLock::new(ItemDb {
                 list: Vec::new(),
@@ -1638,7 +1817,15 @@ pub fn run() {
         .setup(move |app| {
             let handle = app.handle().clone();
             log_system_info(&handle);
-            
+
+            // macOS: 设置为 Accessory 模式（隐藏 dock 图标）
+            // 这对于让窗口显示在全屏应用上方是必要的
+            #[cfg(target_os = "macos")]
+            {
+                app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+                println!("[macOS] Set activation policy to Accessory (dock hidden)");
+            }
+
             // --- Helper: Hide from Alt-Tab (ToolWindow Style) & Remove White Bar ---
             if let Some(window) = app.get_webview_window("main") {
                 // 使用温和的样式处理，保留调整大小能力
@@ -1646,11 +1833,12 @@ pub fn run() {
                 
                 // Aggressively remove menu for this window
                 let _ = window.remove_menu();
-                
+
+                // Windows: 设置工具窗口样式
+                #[cfg(target_os = "windows")]
                 if let Ok(hwnd) = window.hwnd() {
                     unsafe {
                         use windows::Win32::Foundation::HWND as HWND_TYPE;
-                        // HWND wrapper differs in windows crate versions, casting usually fine
                         let hwnd_val = HWND_TYPE(hwnd.0 as _);
                         let style = GetWindowLongW(hwnd_val, GWL_EXSTYLE);
                         SetWindowLongW(hwnd_val, GWL_EXSTYLE, (style | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32);
@@ -1661,81 +1849,101 @@ pub fn run() {
             // --- Helper: Start Mouse Monitor Thread (Global Click Detection Only) ---
             let handle_monitor = handle.clone();
             let _bounds_monitor = bounds_clone.clone();
-            
+
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
-                
-                // 用于跟踪各种按键的上一帧状态（支持键盘和鼠标按键）
-                // 键盘按键用 GetAsyncKeyState，鼠标按键也可以用 GetAsyncKeyState
-                let mut last_key_states: std::collections::HashMap<i32, bool> = std::collections::HashMap::new();
+                let mut last_right_click = false;
 
                 loop {
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
-                    
-                    // Overlay 始终保持穿透模式，不再切换交互状态
-                    // 所有点击都会穿透到游戏，overlay 仅用于显示信息
 
-                    // 读取当前配置的详情显示热键（支持键盘和鼠标按键）
-                    let detail_hotkey = load_state().detail_display_hotkey.unwrap_or(VK_RBUTTON.0 as i32);
-                    
-                    // 检测详情显示热键（通用键盘/鼠标按键检测）
-                    unsafe {
-                        let key_down = (GetAsyncKeyState(detail_hotkey) as i16) < 0;
-                        let last_state = last_key_states.get(&detail_hotkey).copied().unwrap_or(false);
-                        
-                        if key_down && !last_state {
-                            // 按键从未按下变为按下，触发事件
-                            let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
-                        }
-                        
-                        last_key_states.insert(detail_hotkey, key_down);
+                    // 跨平台检测右键点击（使用 device_query）
+                    let right_click = mouse.button_pressed[2]; // 右键是索引 2
+                    if right_click && !last_right_click {
+                        let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
                     }
+                    last_right_click = right_click;
 
                     std::thread::sleep(std::time::Duration::from_millis(50));
                 }
             });
             
-            // 设置窗口不占据焦点，穿透焦点解决遮挡游戏悬浮的问题 (仅 Windows)
+            // ============== Windows 特定窗口初始化 ==============
             #[cfg(target_os = "windows")]
             {
                 use tauri::Manager;
                 if let Some(window) = app.get_webview_window("main") {
                     if let Ok(hwnd) = window.hwnd() {
                         use windows::Win32::Foundation::HWND;
-                        use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongW, SetWindowLongW, GWL_EXSTYLE, WS_EX_NOACTIVATE};
                         unsafe {
                             let handle = HWND(hwnd.0 as _);
                             let ex_style = GetWindowLongW(handle, GWL_EXSTYLE);
-                            // 同时设置透传点击和不占焦点 + 隐藏于 Alt-Tab (WS_EX_TOOLWINDOW)
                             let new_style = (ex_style | WS_EX_NOACTIVATE.0 as i32 | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32;
                             SetWindowLongW(handle, GWL_EXSTYLE, new_style);
                         }
                     }
                 }
+            }
 
-                // 初始化 Overlay 窗口：设置为主显示器全屏覆盖
-                if let Some(overlay) = app.get_webview_window("overlay") {
-                    // 强制设置为穿透模式（所有点击都会穿透）
-                    let _ = overlay.set_ignore_cursor_events(true);
-                    
-                    // 直接使用主显示器的全尺寸，确保可以在整个屏幕范围内交互
-                    if let Ok(Some(monitor)) = overlay.primary_monitor() {
-                        let size = monitor.size();
-                        let position = monitor.position();
-                        println!("[Overlay Init] Setting overlay: x={}, y={}, w={}, h={}", 
-                                position.x, position.y, size.width, size.height);
-                        let _ = overlay.set_size(tauri::PhysicalSize::new(size.width, size.height));
-                        let _ = overlay.set_position(tauri::PhysicalPosition::new(position.x, position.y));
-                    } else {
-                        // 最终降级：4K分辨率作为默认
-                        println!("[Overlay Init] Using fallback 4K resolution");
-                        let _ = overlay.set_size(tauri::PhysicalSize::new(3840, 2160));
-                        let _ = overlay.set_position(tauri::PhysicalPosition::new(0, 0));
-                    }
-                    overlay.show().unwrap();
+            // ============== macOS 托盘图标（点击激活窗口到当前空间） ==============
+            #[cfg(target_os = "macos")]
+            {
+                let tray_handle = app.handle().clone();
+                let quit_item = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&quit_item])?;
+
+                let _tray = TrayIconBuilder::new()
+                    .icon(app.default_window_icon().unwrap().clone())
+                    .menu(&menu)
+                    .on_menu_event(move |app, event| {
+                        if event.id.as_ref() == "quit" {
+                            app.exit(0);
+                        }
+                    })
+                    .on_tray_icon_event(move |_tray, event| {
+                        if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
+                            // 点击托盘图标时，显示窗口到当前空间
+                            if let Some(main_win) = tray_handle.get_webview_window("main") {
+                                let _ = main_win.show();
+                                let _ = main_win.set_focus();
+                            }
+                            if let Some(overlay_win) = tray_handle.get_webview_window("overlay") {
+                                let _ = overlay_win.show();
+                            }
+                        }
+                    })
+                    .build(app)?;
+            }
+
+            // ============== 跨平台 Overlay 初始化 ==============
+            if let Some(overlay) = app.get_webview_window("overlay") {
+                let _ = overlay.set_ignore_cursor_events(true);
+
+                // macOS: 设置窗口可覆盖全屏应用
+                #[cfg(target_os = "macos")]
+                setup_macos_fullscreen_overlay(&overlay);
+
+                if let Ok(Some(monitor)) = overlay.primary_monitor() {
+                    let size = monitor.size();
+                    let position = monitor.position();
+                    println!("[Overlay Init] Setting overlay: x={}, y={}, w={}, h={}",
+                            position.x, position.y, size.width, size.height);
+                    let _ = overlay.set_size(tauri::PhysicalSize::new(size.width, size.height));
+                    let _ = overlay.set_position(tauri::PhysicalPosition::new(position.x, position.y));
+                } else {
+                    println!("[Overlay Init] Using fallback 4K resolution");
+                    let _ = overlay.set_size(tauri::PhysicalSize::new(3840, 2160));
+                    let _ = overlay.set_position(tauri::PhysicalPosition::new(0, 0));
                 }
+                let _ = overlay.show();
+            }
+
+            // macOS: 主窗口也设置全屏覆盖
+            #[cfg(target_os = "macos")]
+            if let Some(main_win) = app.get_webview_window("main") {
+                setup_macos_fullscreen_overlay(&main_win);
             }
 
             let handle = app.handle().clone();
@@ -1749,88 +1957,46 @@ pub fn run() {
             log_to_file(&format!("Resolved Resources Path: {:?}", resources_path));
 
             let db_state = app.state::<DbState>();
-            
-            // --- 窗口同步逻辑：跟随游戏最小化/隐藏 ---
+
+            // ============== 窗口同步线程（跨平台） ==============
             let sync_handle = app.handle().clone();
             std::thread::spawn(move || {
-                let window_name: Vec<u16> = "The Bazaar\0".encode_utf16().collect();
-                let pc_name = PCWSTR(window_name.as_ptr());
-                let mut was_minimized = false;
                 let mut was_game_running = true;
 
                 loop {
                     std::thread::sleep(std::time::Duration::from_millis(500));
-                    
-                    unsafe {
-                        let game_hwnd_res = FindWindowW(PCWSTR::null(), pc_name);
-                        let is_running = game_hwnd_res.is_ok();
 
-                        if is_running {
-                            let game_hwnd = game_hwnd_res.unwrap();
-                            let is_minimized = IsIconic(game_hwnd).as_bool();
-                            let foreground_hwnd = GetForegroundWindow();
-                            let is_foreground = foreground_hwnd == game_hwnd;
+                    // 使用 xcap 跨平台查找游戏窗口
+                    let game_window = xcap::Window::all()
+                        .ok()
+                        .and_then(|windows| {
+                            windows.into_iter().find(|w| w.title().contains("The Bazaar"))
+                        });
 
-                            // 获取主窗口和 Overlay 窗口
-                            let main_win = sync_handle.get_webview_window("main");
-                            let overlay_win = sync_handle.get_webview_window("overlay");
+                    let main_win = sync_handle.get_webview_window("main");
+                    let overlay_win = sync_handle.get_webview_window("overlay");
 
-                            if is_minimized {
-                                if !was_minimized {
-                                    if let Some(ref w) = main_win { let _ = w.hide(); }
-                                    if let Some(ref w) = overlay_win { let _ = w.hide(); }
-                                    was_minimized = true;
-                                }
-                            } else {
-                                if was_minimized {
-                                    // 游戏恢复了，显示窗口并置顶
-                                    if let Some(ref w) = main_win { 
-                                        let _ = w.show(); 
-                                        let _ = w.set_always_on_top(true);
-                                    }
-                                    if let Some(ref w) = overlay_win { 
-                                        let _ = w.show(); 
-                                        let _ = w.set_always_on_top(true);
-                                    }
-                                    was_minimized = false;
-                                }
-
-                                // 如果游戏不是前台，且用户点击了其他非本程序的窗口，隐藏 Overlay 以免干扰
-                                // (可选逻辑，根据用户需求“只悬浮在游戏上方”)
-                                if let Some(ref w_overlay) = overlay_win {
-                                    let helper_active = if let Some(mw) = main_win.as_ref() {
-                                        if let Ok(hwnd) = mw.hwnd() {
-                                            foreground_hwnd.0 as isize == hwnd.0 as isize
-                                        } else { false }
-                                    } else { false };
-                                    
-                                    let overlay_active = if let Ok(hwnd) = w_overlay.hwnd() {
-                                        foreground_hwnd.0 as isize == hwnd.0 as isize
-                                    } else { false };
-
-                                    // 如果当前活跃窗口既不是游戏，也不是辅助工具的窗口，则隐藏 Overlay
-                                    if !is_foreground && !helper_active && !overlay_active {
-                                        if w_overlay.is_visible().unwrap_or(false) {
-                                            let _ = w_overlay.hide();
-                                        }
-                                    } else {
-                                        if !w_overlay.is_visible().unwrap_or(false) {
-                                            let _ = w_overlay.show();
-                                            let _ = w_overlay.set_always_on_top(true);
-                                        }
-                                    }
-                                }
+                    if let Some(_game_win) = game_window {
+                        // 游戏正在运行
+                        if !was_game_running {
+                            // 游戏刚启动，显示窗口
+                            if let Some(ref w) = main_win {
+                                let _ = w.show();
+                                let _ = w.set_always_on_top(true);
                             }
-                            was_game_running = true;
-                        } else {
-                            // 游戏没运行
-                            if was_game_running {
-                                // 隐藏 Overlay
-                                if let Some(w) = sync_handle.get_webview_window("overlay") {
-                                    let _ = w.hide();
-                                }
-                                was_game_running = false;
+                            if let Some(ref w) = overlay_win {
+                                let _ = w.show();
+                                let _ = w.set_always_on_top(true);
                             }
+                        }
+                        was_game_running = true;
+                    } else {
+                        // 游戏没运行
+                        if was_game_running {
+                            if let Some(ref w) = overlay_win {
+                                let _ = w.hide();
+                            }
+                            was_game_running = false;
                         }
                     }
                 }
@@ -2609,28 +2775,30 @@ pub fn run() {
                 }
             });
 
-            // 启动鼠标监听线程 (识别怪物与卡牌)
+            // 启动鼠标监听线程 (识别怪物与卡牌) - 跨平台实现
             let handle_mouse = handle.clone();
             std::thread::spawn(move || {
+                let device_state = DeviceState::new();
                 let mut last_trigger = time::Instant::now();
                 let mut last_card_trigger = time::Instant::now();
                 let mut last_toggle_trigger = time::Instant::now();
                 let mut last_yolo_trigger = time::Instant::now();
                 loop {
+                    let mouse_state = device_state.get_mouse();
+
                     // 读取配置的按键
                     let (monster_hotkey, card_hotkey, toggle_hotkey, yolo_hotkey) = {
                         let state = load_state();
                         (
-                            state.detection_hotkey.unwrap_or(VK_RBUTTON.0 as i32),
-                            state.card_detection_hotkey.unwrap_or(VK_MENU.0 as i32),
+                            state.detection_hotkey.unwrap_or(default_monster_hotkey()),
+                            state.card_detection_hotkey.unwrap_or(default_card_hotkey()),
                             state.toggle_collapse_hotkey.unwrap_or(192),
                             state.yolo_hotkey.unwrap_or(81)
                         )
                     };
-                    
-                    unsafe {
-                        // 1. 检测怪物识别按键
-                        if (GetAsyncKeyState(monster_hotkey) as i16) < 0 {
+
+                    // 1. 检测怪物识别按键
+                    if is_key_pressed(monster_hotkey, &device_state, &mouse_state) {
                             if last_trigger.elapsed() > time::Duration::from_millis(500) {
                                 last_trigger = time::Instant::now();
                                 log_to_file("Monster Hotkey pressed, starting scan...");
@@ -2721,34 +2889,33 @@ pub fn run() {
                             }
                         }
 
-                        // 2. 检测卡牌识别按键
-                        if (GetAsyncKeyState(card_hotkey) as i16) < 0 {
-                            if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
-                                last_card_trigger = time::Instant::now();
-                                log_to_file("Card Hotkey pressed, triggering recognition...");
-                                // 只发送前端识别事件，不再自动触发YOLO
-                                let _ = handle_mouse.emit("hotkey-detect-card", ());
-                            }
-                        }
-
-                        // 3. 检测折叠/展开按键
-                        if (GetAsyncKeyState(toggle_hotkey) as i16) < 0 {
-                            if last_toggle_trigger.elapsed() > time::Duration::from_millis(500) {
-                                last_toggle_trigger = time::Instant::now();
-                                log_to_file("Toggle Hotkey pressed");
-                                let _ = handle_mouse.emit("toggle-collapse", ());
-                            }
-                        }
-
-                        // 4. 检测YOLO手动触发按键（排除左右键）
-                        if yolo_hotkey != 1 && yolo_hotkey != 2 && (GetAsyncKeyState(yolo_hotkey) as i16) < 0 {
-                            if last_yolo_trigger.elapsed() > time::Duration::from_millis(500) {
-                                last_yolo_trigger = time::Instant::now();
-                                log_to_file("YOLO Hotkey pressed");
-                                let _ = handle_mouse.emit("yolo_hotkey_pressed", ());
-                            }
+                    // 2. 检测卡牌识别按键
+                    if is_key_pressed(card_hotkey, &device_state, &mouse_state) {
+                        if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
+                            last_card_trigger = time::Instant::now();
+                            log_to_file("Card Hotkey pressed, triggering recognition...");
+                            let _ = handle_mouse.emit("hotkey-detect-card", ());
                         }
                     }
+
+                    // 3. 检测折叠/展开按键
+                    if is_key_pressed(toggle_hotkey, &device_state, &mouse_state) {
+                        if last_toggle_trigger.elapsed() > time::Duration::from_millis(500) {
+                            last_toggle_trigger = time::Instant::now();
+                            log_to_file("Toggle Hotkey pressed");
+                            let _ = handle_mouse.emit("toggle-collapse", ());
+                        }
+                    }
+
+                    // 4. 检测YOLO手动触发按键（排除左右键）
+                    if yolo_hotkey != 1 && yolo_hotkey != 2 && is_key_pressed(yolo_hotkey, &device_state, &mouse_state) {
+                        if last_yolo_trigger.elapsed() > time::Duration::from_millis(500) {
+                            last_yolo_trigger = time::Instant::now();
+                            log_to_file("YOLO Hotkey pressed");
+                            let _ = handle_mouse.emit("yolo_hotkey_pressed", ());
+                        }
+                    }
+
                     thread::sleep(time::Duration::from_millis(100));
                 }
             });

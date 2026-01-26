@@ -6,10 +6,11 @@ use std::sync::{Arc, Mutex, OnceLock};
 use rayon::prelude::*;
 use ndarray::Array;
 use ort::{
-    execution_providers::DirectMLExecutionProvider,
-    session::{builder::GraphOptimizationLevel, Session}, 
+    session::{builder::GraphOptimizationLevel, Session},
     value::Value
 };
+#[cfg(target_os = "windows")]
+use ort::execution_providers::DirectMLExecutionProvider;
 use opencv::{
     core::{Mat, Vector, KeyPoint, DMatch, NORM_HAMMING},
     features2d::{ORB, BFMatcher},
@@ -19,6 +20,7 @@ use opencv::{
 use tauri::Manager;
 use crate::log_to_file;
 use chrono;
+use device_query::{DeviceQuery, DeviceState};
 
 // YOLO 检测结果
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -33,26 +35,36 @@ pub struct YoloDetection {
 
 static YOLO_SESSION: OnceLock<Mutex<Session>> = OnceLock::new();
 
-pub fn get_yolo_session(model_path: &PathBuf, use_gpu: bool) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
+pub fn get_yolo_session(model_path: &PathBuf, #[allow(unused_variables)] use_gpu: bool) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
     if let Some(mutex) = YOLO_SESSION.get() {
         return mutex.lock().map_err(|e| e.to_string());
     }
-    
-    if use_gpu {
+
+    // Windows: 支持 DirectML GPU 加速
+    // macOS/Linux: 仅 CPU 推理
+    #[cfg(target_os = "windows")]
+    let actually_use_gpu = use_gpu;
+    #[cfg(not(target_os = "windows"))]
+    let actually_use_gpu = false;
+
+    if actually_use_gpu {
         log_to_file("[YOLO] Initializing session with DirectML execution provider...");
     } else {
         log_to_file("[YOLO] Initializing session with CPU execution provider...");
     }
-    
-    let mut builder = Session::builder()
+
+    let builder = Session::builder()
         .map_err(|e| format!("创建Session Builder失败: {}", e))?;
-    
-    if use_gpu {
-        builder = builder
+
+    #[cfg(target_os = "windows")]
+    let builder = if actually_use_gpu {
+        builder
             .with_execution_providers([DirectMLExecutionProvider::default().build()])
-            .map_err(|e| format!("DirectML执行提供者加载失败: {}. 请确保已安装GPU驱动和DirectML.dll在程序目录中。", e))?;
-    }
-    
+            .map_err(|e| format!("DirectML执行提供者加载失败: {}. 请确保已安装GPU驱动和DirectML.dll在程序目录中。", e))?
+    } else {
+        builder
+    };
+
     let session = builder
         .with_optimization_level(GraphOptimizationLevel::Level3)
         .map_err(|e| format!("设置优化级别失败: {}", e))?
@@ -60,8 +72,8 @@ pub fn get_yolo_session(model_path: &PathBuf, use_gpu: bool) -> Result<impl std:
         .map_err(|e| format!("设置线程数失败: {}", e))?
         .commit_from_file(model_path)
         .map_err(|e| format!("加载ONNX模型失败: {}. 模型路径: {:?}", e, model_path))?;
-        
-    if use_gpu {
+
+    if actually_use_gpu {
         log_to_file("[YOLO] Session initialized successfully with DirectML");
     } else {
         log_to_file("[YOLO] Session initialized successfully with CPU");
@@ -876,17 +888,19 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
 }
 
 
+// 跨平台获取鼠标位置
+fn get_mouse_position() -> (i32, i32) {
+    let device_state = DeviceState::new();
+    let mouse = device_state.get_mouse();
+    (mouse.coords.0, mouse.coords.1)
+}
+
 // 公共函数：鼠标触发的怪物识别
 pub fn scan_and_identify_monster_at_mouse() -> Result<Option<String>, String> {
     use xcap::Monitor;
-    use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
-    use windows::Win32::Foundation::POINT;
-    
-    // 1. 获取鼠标位置
-    let mut point = POINT::default();
-    unsafe { GetCursorPos(&mut point).map_err(|e| e.to_string())? };
-    let mouse_x = point.x;
-    let mouse_y = point.y;
+
+    // 1. 获取鼠标位置（跨平台）
+    let (mouse_x, mouse_y) = get_mouse_position();
 
     // 2. 查找窗口并截图
     let windows = xcap::Window::all().map_err(|e| e.to_string())?;
@@ -1725,14 +1739,9 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
 #[tauri::command]
 pub async fn recognize_event_at_mouse() -> Result<Option<serde_json::Value>, String> {
     use xcap::Monitor;
-    use windows::Win32::UI::WindowsAndMessaging::GetCursorPos;
-    use windows::Win32::Foundation::POINT;
-    
-    // 1. 获取鼠标位置
-    let mut point = POINT::default();
-    unsafe { GetCursorPos(&mut point).map_err(|e| e.to_string())? };
-    let mouse_x = point.x;
-    let mouse_y = point.y;
+
+    // 1. 获取鼠标位置（跨平台）
+    let (mouse_x, mouse_y) = get_mouse_position();
 
     // 2. 截图
     let windows = xcap::Window::all().map_err(|e| e.to_string())?;
