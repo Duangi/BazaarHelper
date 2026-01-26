@@ -71,10 +71,12 @@ fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &Mouse
     #[cfg(not(target_os = "windows"))]
     {
         // 映射 Windows 虚拟键码到 device_query
+        // Windows VK codes: VK_LBUTTON=1, VK_RBUTTON=2, VK_MBUTTON=4
+        // device_query indices: 0=left, 1=middle, 2=right (varies by platform)
         match key_code {
-            1 => mouse_state.button_pressed.get(0).copied().unwrap_or(false), // 左键
-            2 => mouse_state.button_pressed.get(2).copied().unwrap_or(false), // 右键
-            4 => mouse_state.button_pressed.get(1).copied().unwrap_or(false), // 中键
+            1 => mouse_state.button_pressed.get(0).copied().unwrap_or(false), // VK_LBUTTON -> index 0 (left)
+            2 => mouse_state.button_pressed.get(2).copied().unwrap_or(false), // VK_RBUTTON -> index 2 (right)
+            4 => mouse_state.button_pressed.get(1).copied().unwrap_or(false), // VK_MBUTTON -> index 1 (middle)
             18 => device_state.get_keys().contains(&Keycode::LAlt) || device_state.get_keys().contains(&Keycode::RAlt), // Alt
             81 => device_state.get_keys().contains(&Keycode::Q), // Q
             192 => device_state.get_keys().contains(&Keycode::Grave), // ` (反引号)
@@ -272,12 +274,14 @@ fn setup_macos_fullscreen_overlay(window: &tauri::WebviewWindow) {
         Ok(panel) => {
             // 关键：设置 NSWindowStyleMaskNonActivatingPanel (1 << 7 = 128)
             // 这防止面板激活所属应用，是全屏覆盖的关键
-            const NS_WINDOW_STYLE_MASK_NON_ACTIVATING_PANEL: i32 = 1 << 7; // 128
+            // 参考: https://developer.apple.com/documentation/appkit/nspanel/stylemask/nonactivatingpanel
+            const NS_WINDOW_STYLE_MASK_NON_ACTIVATING_PANEL: i32 = 1 << 7; // 128, NSPanel.StyleMask.nonactivatingPanel
             panel.set_style_mask(NS_WINDOW_STYLE_MASK_NON_ACTIVATING_PANEL);
 
             // 设置 Panel 级别为 NSMainMenuWindowLevel + 1 (24 + 1 = 25)
             // 根据 lumehq/lume 的实现，这个级别足够高以显示在全屏上方
-            const NS_MAIN_MENU_WINDOW_LEVEL: i32 = 24;
+            // 参考: https://developer.apple.com/documentation/appkit/nswindow/level/mainmenu
+            const NS_MAIN_MENU_WINDOW_LEVEL: i32 = 24; // NSWindow.Level.mainMenu raw value
             panel.set_level(NS_MAIN_MENU_WINDOW_LEVEL + 1);
 
             // 设置 collection behavior
@@ -317,7 +321,8 @@ fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
     extern "C" {
         fn CGWindowLevelForKey(key: i32) -> i32;
     }
-    const K_CG_MAXIMUM_WINDOW_LEVEL_KEY: i32 = 14;
+    // 参考: https://developer.apple.com/documentation/coregraphics/cgwindowlevelkey/kCGMaximumWindowLevelKey
+    const K_CG_MAXIMUM_WINDOW_LEVEL_KEY: i32 = 14; // CGWindowLevelKey.maximumWindow raw value
 
     if let Ok(ns_window) = window.ns_window() {
         unsafe {
