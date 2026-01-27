@@ -1909,15 +1909,47 @@ export default function App() {
           <div className="bulletin-actions">
             {updateStatus === "available" && (
               <button className="update-now-btn" onClick={() => {
-                // 如果有更新，可以引导去下载或直接触发更新逻辑
-                // 这里暂时保持原样，或者可以调用 installUpdate
+                console.log("[Update] 用户在开始界面点击立即更新");
+                startUpdateDownload();
               }}>
                 立即更新
               </button>
             )}
-            <button className="enter-btn" onClick={enterApp}>
-              进入插件
-            </button>
+            {updateStatus === "downloading" && (
+              <div style={{ width: '100%', textAlign: 'center' }}>
+                <div style={{ fontSize: '14px', color: '#58a6ff', marginBottom: '8px' }}>
+                  正在下载更新... {downloadProgress}%
+                </div>
+                <div style={{ 
+                  width: '100%', 
+                  height: '6px', 
+                  background: 'rgba(255, 255, 255, 0.1)', 
+                  borderRadius: '3px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{ 
+                    width: `${downloadProgress}%`, 
+                    height: '100%', 
+                    background: 'linear-gradient(to right, var(--c-golden), #fff)',
+                    transition: 'width 0.3s ease'
+                  }}></div>
+                </div>
+              </div>
+            )}
+            {updateStatus === "ready" && (
+              <button className="update-now-btn" onClick={() => {
+                console.log("[Update] 更新下载完成，准备安装并重启");
+                setIsInstalling(true);
+                setTimeout(() => relaunch(), 1000);
+              }}>
+                更新已就绪，点击安装
+              </button>
+            )}
+            {(updateStatus === "none" || updateStatus === "checking") && (
+              <button className="enter-btn" onClick={enterApp}>
+                进入插件
+              </button>
+            )}
           </div>
         </div>
       </div>

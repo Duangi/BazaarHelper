@@ -1,8 +1,7 @@
 use std::sync::{Arc, RwLock, OnceLock};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{State, Manager, Emitter};
-use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
-use tauri::menu::{Menu, MenuItem};
+
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -18,7 +17,7 @@ use chrono::Local;
 use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::{
-    IsIconic, GetForegroundWindow, FindWindowW, GetWindowLongW, SetWindowLongW, SetWindowPos,
+    GetWindowLongW, SetWindowLongW, SetWindowPos,
     GWL_EXSTYLE, GWL_STYLE,
     WS_EX_TOOLWINDOW, WS_EX_APPWINDOW, WS_EX_WINDOWEDGE, WS_EX_CLIENTEDGE, WS_EX_STATICEDGE,
     WS_EX_LAYERED, WS_EX_NOACTIVATE,
@@ -33,11 +32,9 @@ use windows::Win32::Graphics::Dwm::{
 };
 #[cfg(target_os = "windows")]
 use windows::Win32::Foundation::{HWND, COLORREF};
-#[cfg(target_os = "windows")]
-use windows::core::PCWSTR;
 
 use opencv::core::MatTraitConst;
-use device_query::{DeviceQuery, DeviceState, MouseState, Keycode};
+use device_query::{DeviceQuery, DeviceState, MouseState};
 
 // macOS 原生窗口设置（用于全屏覆盖）
 // 注意: cocoa crate 已弃用，但 tauri-nspanel 仍依赖它
@@ -62,7 +59,7 @@ const VK_MENU: i32 = 18;      // Alt 键
 /// key_code: Windows 虚拟键码
 /// device_state: device_query 状态
 /// mouse_state: 鼠标状态
-fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &MouseState) -> bool {
+fn is_key_pressed(key_code: i32, _device_state: &DeviceState, _mouse_state: &MouseState) -> bool {
     #[cfg(target_os = "windows")]
     {
         unsafe { (GetAsyncKeyState(key_code) as i16) < 0 }
@@ -367,6 +364,7 @@ fn update_overlay_bounds(bounds: Vec<BoundsRect>, state: State<'_, OverlayState>
 
 static YOLO_SCAN_RESULTS: OnceLock<RwLock<Vec<YoloDetection>>> = OnceLock::new();
 static YOLO_SCAN_IMAGE: OnceLock<RwLock<Option<image::DynamicImage>>> = OnceLock::new();
+static YOLO_WINDOW_OFFSET: OnceLock<RwLock<(i32, i32)>> = OnceLock::new();
 static ABORT_YOLO: AtomicBool = AtomicBool::new(false);
 
 fn get_yolo_scan_results() -> &'static RwLock<Vec<YoloDetection>> {
@@ -1806,7 +1804,7 @@ pub fn run() {
     let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
-    let mut builder = tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .manage(OverlayState(bounds))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
