@@ -1868,12 +1868,9 @@ pub fn run() {
     let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
-    #[cfg(target_os = "macos")]
-    let mut builder = tauri::Builder::default();
-    #[cfg(not(target_os = "macos"))]
-    let builder = tauri::Builder::default();
-    
-    let builder = builder
+    // 在 macOS 上需要 mut（因为要添加额外的 plugin），在其他平台上不需要但也无害
+    #[allow(unused_mut)]
+    let mut builder = tauri::Builder::default()
         .manage(OverlayState(bounds))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -1891,6 +1888,8 @@ pub fn run() {
     {
         builder = builder.plugin(tauri_nspanel::init());
     }
+    
+    let builder = builder;
 
     builder
         .manage(DbState {

@@ -97,6 +97,13 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Clean old bundles
+        run: |
+          if (Test-Path "src-tauri/target/release/bundle/nsis") {
+            Remove-Item "src-tauri/target/release/bundle/nsis/*" -Recurse -Force
+          }
+        shell: pwsh
+
       - name: Build Tauri app (Windows)
         env:
           OPENCV_LINK_LIBS: opencv_world4
@@ -104,12 +111,75 @@ jobs:
           OPENCV_INCLUDE_PATHS: C:\vcpkg\installed\x64-windows\include
         run: npm run tauri build
 
+      - name: Copy dependencies to release directory
+        run: |
+          $releaseDir = "src-tauri/target/release"
+          $resourcesDir = "src-tauri/resources"
+          
+          # 复制 OpenCV DLL
+          $opencvDll = "C:\vcpkg\installed\x64-windows\bin\opencv_world4.dll"
+          if (Test-Path $opencvDll) {
+            Copy-Item $opencvDll -Destination "$releaseDir\" -Force
+            Write-Host "✅ Copied OpenCV DLL"
+          }
+          
+          # 复制 ONNX Runtime DLL
+          $onnxDlls = @(
+            "onnxruntime.dll",
+            "DirectML.dll",
+            "onnxruntime_providers_shared.dll",
+            "onnxruntime_providers_dml.dll"
+          )
+          
+          foreach ($dll in $onnxDlls) {
+            $sourcePath = "$resourcesDir\$dll"
+            if (Test-Path $sourcePath) {
+              Copy-Item $sourcePath -Destination "$releaseDir\" -Force
+              Write-Host "✅ Copied $dll"
+            }
+          }
+        shell: pwsh
+
+      - name: Manual signing with Tauri signer
+        run: |
+          # 创建临时私钥文件
+          $keyPath = "src-tauri/tauri.key"
+          $env:TAURI_SIGNING_PRIVATE_KEY | Out-File -FilePath $keyPath -Encoding ASCII
+          
+          # 查找安装包
+          $bundlePath = "src-tauri/target/release/bundle/nsis"
+          $exeFile = Get-ChildItem -Path "$bundlePath\*setup.exe" | Select-Object -First 1
+          
+          if ($null -eq $exeFile) {
+            throw "Installer file not found"
+          }
+          
+          Write-Host "Found installer: $($exeFile.Name)"
+          
+          # 执行签名
+          npx tauri signer sign --private-key-path $keyPath $exeFile.FullName
+          
+          # 验证签名文件是否生成
+          $sigFile = "$($exeFile.FullName).sig"
+          if (-not (Test-Path $sigFile)) {
+            throw "Signature file not generated"
+          }
+          
+          Write-Host "✅ Signature generated successfully"
+          
+          # 清理临时私钥
+          Remove-Item $keyPath -Force
+        shell: pwsh
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             src-tauri/target/release/bundle/nsis/*.exe
-            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/nsis/*.exe.sig
           draft: false
           prerelease: false
         env:
