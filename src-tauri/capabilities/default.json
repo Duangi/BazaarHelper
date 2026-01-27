@@ -15,7 +15,8 @@
     "core:window:allow-set-shadow",
     "core:window:allow-start-dragging",
     "core:window:allow-set-ignore-cursor-events",
-    
+    "core:window:allow-set-visible-on-all-workspaces",
+
     "process:allow-restart",
     "process:allow-exit",
 
