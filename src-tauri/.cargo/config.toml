@@ -1,17 +1,17 @@
 # ============== 构建配置 ==============
 #
-# Windows: 使用下方 [env] 配置
-# macOS/Linux: pkg-config 会自动检测 OpenCV，[env] 配置会被忽略
+# macOS/Linux: pkg-config 会自动检测 OpenCV
+# macOS 额外需要在终端设置环境变量:
+#   export LIBCLANG_PATH="/Library/Developer/CommandLineTools/usr/lib"
+#   export DYLD_FALLBACK_LIBRARY_PATH="/Library/Developer/CommandLineTools/usr/lib"
+#   export PKG_CONFIG_PATH="/opt/homebrew/opt/opencv/lib/pkgconfig"
+#   export ORT_DYLIB_PATH="/opt/homebrew/lib/libonnxruntime.dylib"
 #
-# macOS 额外需要设置 LIBCLANG_PATH:
-#   export LIBCLANG_PATH="/opt/homebrew/opt/llvm/lib"
+# Windows: 需要手动设置这些环境变量（在 PowerShell 中）:
+#   $env:OPENCV_DIR = "C:\opencv\build"
+#   $env:OPENCV_INCLUDE_PATHS = "C:\opencv\build\include"
+#   $env:OPENCV_LINK_PATHS = "C:\opencv\build\x64\vc16\lib"
+#   $env:OPENCV_LINK_LIBS = "opencv_world4120"
+#   $env:LIBCLANG_PATH = "C:\LLVM\bin"
 #
-
-[env]
-# OpenCV 环境变量 (Windows)
-OPENCV_DIR = "C:\\opencv\\build"
-OPENCV_INCLUDE_PATHS = "C:\\opencv\\build\\include"
-OPENCV_LINK_PATHS = "C:\\opencv\\build\\x64\\vc16\\lib"
-OPENCV_LINK_LIBS = "opencv_world4120"
-# LLVM for bindgen (Windows)
-LIBCLANG_PATH = "C:\\LLVM\\bin"
+# 注意: 不要在这里使用 [env] 配置，因为它会覆盖所有平台的自动检测

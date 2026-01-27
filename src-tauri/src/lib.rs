@@ -1,6 +1,8 @@
 use std::sync::{Arc, RwLock, OnceLock};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{State, Manager, Emitter};
+use tauri::menu::{Menu, MenuItem};
+use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
 
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
@@ -34,7 +36,7 @@ use windows::Win32::Graphics::Dwm::{
 use windows::Win32::Foundation::{HWND, COLORREF};
 
 use opencv::core::MatTraitConst;
-use device_query::{DeviceQuery, DeviceState, MouseState};
+use device_query::{DeviceQuery, DeviceState, MouseState, Keycode};
 
 // macOS 原生窗口设置（用于全屏覆盖）
 // 注意: cocoa crate 已弃用，但 tauri-nspanel 仍依赖它
@@ -59,7 +61,7 @@ const VK_MENU: i32 = 18;      // Alt 键
 /// key_code: Windows 虚拟键码
 /// device_state: device_query 状态
 /// mouse_state: 鼠标状态
-fn is_key_pressed(key_code: i32, _device_state: &DeviceState, _mouse_state: &MouseState) -> bool {
+fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &MouseState) -> bool {
     #[cfg(target_os = "windows")]
     {
         unsafe { (GetAsyncKeyState(key_code) as i16) < 0 }
@@ -310,6 +312,7 @@ fn setup_macos_fullscreen_overlay(window: &tauri::WebviewWindow) {
 /// macOS: 回退方案 - 使用传统 NSWindow 设置
 #[cfg(target_os = "macos")]
 #[allow(deprecated)] // cocoa crate 已弃用
+#[allow(unexpected_cfgs)] // msg_send! macro uses cargo-clippy cfg
 fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
     use objc::{msg_send, sel, sel_impl};
     use cocoa::base::BOOL;
@@ -334,6 +337,7 @@ fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
             let max_level = CGWindowLevelForKey(K_CG_MAXIMUM_WINDOW_LEVEL_KEY);
             ns_win.setLevel_(max_level as i64);
 
+            #[allow(clippy::let_unit_value)]
             let _: () = msg_send![ns_win, setHidesOnDeactivate: false as BOOL];
 
             println!("[macOS] Overlay window (fallback) configured with maximum level: {}", max_level);
@@ -511,19 +515,43 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
     let img_opt = get_yolo_scan_image().read().unwrap().clone();
     let (window_x, window_y) = *get_yolo_window_offset().read().unwrap();
     
-    // 将屏幕坐标转换为相对窗口坐标
-    let rel_x = x - window_x;
-    let rel_y = y - window_y;
-    
-    println!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Relative: ({}, {})", 
-             x, y, window_x, window_y, rel_x, rel_y);
-    
     if img_opt.is_none() {
         return Ok(None);
     }
     let img = img_opt.unwrap();
+    let (img_w, img_h) = img.dimensions();
+    
+    // 将屏幕坐标转换为相对窗口坐标
+    let rel_x_logical = x - window_x;
+    let rel_y_logical = y - window_y;
+    
+    // macOS Retina 屏幕缩放修正：检测图像物理分辨率 vs 逻辑坐标
+    // 假设 window_x/y 也是逻辑坐标，需要计算缩放比例
+    // 实际上我们需要用图像尺寸来反推缩放比例
+    // 简单方法：用鼠标逻辑坐标直接乘以 scale_factor
+    #[cfg(target_os = "macos")]
+    let scale_factor = {
+        // 在 macOS 上，截图返回物理像素，但鼠标坐标是逻辑像素
+        // 我们可以通过检查图像尺寸来估算缩放因子
+        // 通常是 2.0 (Retina) 或 1.0 (非 Retina)
+        if img_w > 1920 { 2.0 } else { 1.0 }
+    };
+    #[cfg(not(target_os = "macos"))]
+    let scale_factor = 1.0;
+    
+    let rel_x = (rel_x_logical as f32 * scale_factor) as i32;
+    let rel_y = (rel_y_logical as f32 * scale_factor) as i32;
+    
+    println!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Logical relative: ({}, {}), Scale: {}, Physical relative: ({}, {})", 
+             x, y, window_x, window_y, rel_x_logical, rel_y_logical, scale_factor, rel_x, rel_y);
+    println!("[DEBUG] Image dimensions: {}x{}, Total detections: {}", img_w, img_h, detections.len());
+    
+    for (i, d) in detections.iter().enumerate() {
+        println!("[DEBUG] Detection {}: class={}, bounds=[{},{},{},{}], size={}x{}", 
+                 i, d.class_id, d.x1, d.y1, d.x2, d.y2, d.x2 - d.x1, d.y2 - d.y1);
+    }
 
-    // Check for any detection hit (使用相对坐标)
+    // Check for any detection hit (使用物理像素坐标)
     let target_detection = detections.iter().find(|d| {
         rel_x >= d.x1 && rel_x <= d.x2 && rel_y >= d.y1 && rel_y <= d.y2
     });
@@ -1804,7 +1832,7 @@ pub fn run() {
     let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
-    let builder = tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .manage(OverlayState(bounds))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
@@ -1919,7 +1947,7 @@ pub fn run() {
                 let _tray = TrayIconBuilder::new()
                     .icon(app.default_window_icon().unwrap().clone())
                     .menu(&menu)
-                    .on_menu_event(move |app, event| {
+                    .on_menu_event(move |app: &tauri::AppHandle, event| {
                         if event.id.as_ref() == "quit" {
                             app.exit(0);
                         }

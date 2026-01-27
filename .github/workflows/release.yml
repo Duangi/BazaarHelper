@@ -1,0 +1,109 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送 v 开头的 tag 时触发，如 v1.4.1
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Install dependencies (Homebrew)
+        run: |
+          brew install opencv onnxruntime onnx protobuf re2
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Tauri app (macOS)
+        env:
+          LIBCLANG_PATH: /Library/Developer/CommandLineTools/usr/lib
+          DYLD_FALLBACK_LIBRARY_PATH: /Library/Developer/CommandLineTools/usr/lib
+          PKG_CONFIG_PATH: /opt/homebrew/opt/opencv/lib/pkgconfig
+          ORT_DYLIB_PATH: /opt/homebrew/lib/libonnxruntime.dylib
+        run: npm run tauri build
+
+      - name: Bundle ONNX Runtime libraries
+        run: |
+          chmod +x src-tauri/scripts/bundle_onnxruntime_macos.sh
+          ./src-tauri/scripts/bundle_onnxruntime_macos.sh
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            src-tauri/target/release/bundle/dmg/*.dmg
+            src-tauri/target/release/bundle/macos/*.app.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Install OpenCV (vcpkg)
+        run: |
+          vcpkg install opencv:x64-windows
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Tauri app (Windows)
+        env:
+          OPENCV_LINK_LIBS: opencv_world4
+          OPENCV_LINK_PATHS: C:\vcpkg\installed\x64-windows\lib
+          OPENCV_INCLUDE_PATHS: C:\vcpkg\installed\x64-windows\include
+        run: npm run tauri build
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
