@@ -594,6 +594,57 @@ export default function App() {
               if (nums.length === 2) colorIdx = idx + 2;
               else if (nums.length === 3) colorIdx = idx + 1;
               
+              return (
+                <span key={idx}>
+                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{n}</span>
+                  {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
+                </span>
+              );
+            })}
+          </span>
+        );
+      }
+
+      // 2. 处理关键词和标签颜色
+      // 构建正则，包含关键词和动态从 backend 获取的 tags
+      const keywords = Object.keys(KEYWORD_COLORS);
+      const tags = syncData.all_tags || [];
+      const allMatches = [...new Set([...keywords, ...tags])].filter(k => k.length > 0);
+      
+      if (allMatches.length === 0) return part;
+      
+      const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
+      const subParts = part.split(regex);
+      
+      return subParts.map((sub, j) => {
+        if (KEYWORD_COLORS[sub]) {
+          return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
+        }
+        if (tags.includes(sub)) {
+          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>; // 统一标签颜色
+        }
+        return sub;
+      });
+    });
+  };
+
+  // 专门用于渲染附魔文本的函数，保留除以1000逻辑
+  const renderEnchantText = (content: string) => {
+    if (!content) return null;
+    
+    // 1. 处理数值序列如 3/6/9/12 或 9/12
+    const parts = content.split(/(\d+(?:\/\d+)+)/g);
+    
+    return parts.map((part, i) => {
+      if (part.includes('/')) {
+        const nums = part.split('/');
+        return (
+          <span key={i} className="progression-nums">
+            {nums.map((n, idx) => {
+              let colorIdx = idx;
+              if (nums.length === 2) colorIdx = idx + 2;
+              else if (nums.length === 3) colorIdx = idx + 1;
+              
               const val = parseFloat(n);
               const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
               
@@ -608,7 +659,7 @@ export default function App() {
         );
       }
 
-      // 1.5 处理单个大数值 (ms -> s) 例如：冻结一件物品500秒
+      // 1.5 处理单个大数值 (ms -> s)
       let processedPart = part;
       processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
           const val = parseInt(match, 10);
@@ -616,12 +667,11 @@ export default function App() {
       });
 
       // 2. 处理关键词和标签颜色
-      // 构建正则，包含关键词和动态从 backend 获取的 tags
       const keywords = Object.keys(KEYWORD_COLORS);
       const tags = syncData.all_tags || [];
       const allMatches = [...new Set([...keywords, ...tags])].filter(k => k.length > 0);
       
-      if (allMatches.length === 0) return part;
+      if (allMatches.length === 0) return processedPart;
       
       const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
       const subParts = processedPart.split(regex);
@@ -631,7 +681,7 @@ export default function App() {
           return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
         }
         if (tags.includes(sub)) {
-          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>; // 统一标签颜色
+          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>;
         }
         return sub;
       });
@@ -3456,7 +3506,7 @@ export default function App() {
                                     <span className="enchant-badge" style={{ 
                                       '--enc-clr': color
                                     } as React.CSSProperties}>{name}</span>
-                                    <span className="enchant-effect">{renderText(effect)}</span>
+                                    <span className="enchant-effect">{renderEnchantText(effect)}</span>
                                   </div>
                                 );
                               }

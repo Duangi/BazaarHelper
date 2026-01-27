@@ -205,6 +205,10 @@ fn get_yolo_scan_image() -> &'static RwLock<Option<image::DynamicImage>> {
     YOLO_SCAN_IMAGE.get_or_init(|| RwLock::new(None))
 }
 
+fn get_yolo_window_offset() -> &'static RwLock<(i32, i32)> {
+    YOLO_WINDOW_OFFSET.get_or_init(|| RwLock::new((0, 0)))
+}
+
 #[tauri::command]
 fn abort_yolo_scan() {
     println!("[YOLO] Abort requested.");
@@ -268,14 +272,16 @@ async fn trigger_yolo_scan(app: tauri::AppHandle, useGpu: bool) -> Result<usize,
             is_bazaar && !title.contains("bazaarhelper")
         });
 
-        let screenshot = if let Some(w) = target_window {
+        let (screenshot, window_x, window_y) = if let Some(w) = target_window {
             println!("[YOLO] Found Game Window: '{}' at ({},{})", w.title(), w.x(), w.y());
-            w.capture_image().map_err(|e| e.to_string())?
+            let wx = w.x();
+            let wy = w.y();
+            (w.capture_image().map_err(|e| e.to_string())?, wx, wy)
         } else {
             println!("[YOLO] The Bazaar window not found, falling back to primary monitor scan.");
             let monitors = Monitor::all().map_err(|e| e.to_string())?;
             let monitor = monitors.into_iter().next().ok_or("No monitor found")?;
-            monitor.capture_image().map_err(|e| e.to_string())?
+            (monitor.capture_image().map_err(|e| e.to_string())?, 0, 0)
         };
 
         if ABORT_YOLO.load(Ordering::SeqCst) { return Err("Aborted".into()); }
@@ -292,7 +298,7 @@ async fn trigger_yolo_scan(app: tauri::AppHandle, useGpu: bool) -> Result<usize,
         
         // ... (rest of the debug printing and saving)
         // (existing code)
-        // 3. 保存结果
+        // 3. 保存结果和窗口偏移量
         {
             let mut results = get_yolo_scan_results().write().unwrap();
             *results = detections.clone();
@@ -300,6 +306,11 @@ async fn trigger_yolo_scan(app: tauri::AppHandle, useGpu: bool) -> Result<usize,
         {
             let mut saved_img = get_yolo_scan_image().write().unwrap();
             *saved_img = Some(img);
+        }
+        {
+            let mut offset = get_yolo_window_offset().write().unwrap();
+            *offset = (window_x, window_y);
+            println!("[YOLO] Saved window offset: ({}, {})", window_x, window_y);
         }
         
         Ok(detections.len())
@@ -328,15 +339,23 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
     use image::GenericImageView;
     let detections = get_yolo_scan_results().read().unwrap().clone();
     let img_opt = get_yolo_scan_image().read().unwrap().clone();
+    let (window_x, window_y) = *get_yolo_window_offset().read().unwrap();
+    
+    // 将屏幕坐标转换为相对窗口坐标
+    let rel_x = x - window_x;
+    let rel_y = y - window_y;
+    
+    println!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Relative: ({}, {})", 
+             x, y, window_x, window_y, rel_x, rel_y);
     
     if img_opt.is_none() {
         return Ok(None);
     }
     let img = img_opt.unwrap();
 
-    // Check for any detection hit
+    // Check for any detection hit (使用相对坐标)
     let target_detection = detections.iter().find(|d| {
-        x >= d.x1 && x <= d.x2 && y >= d.y1 && y <= d.y2
+        rel_x >= d.x1 && rel_x <= d.x2 && rel_y >= d.y1 && rel_y <= d.y2
     });
 
     if let Some(det) = target_detection {

@@ -729,16 +729,13 @@ export default function OverlayApp() {
                             if (nums.length === 2) colorIdx = idx + 2;
                             else if (nums.length === 3) colorIdx = idx + 1;
                             
-                            const val = parseFloat(n);
-                            const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
-                            
                             return (
                                 <Fragment key={idx}>
                                     <span style={{ 
                                         color: TIER_COLORS[colorIdx] || '#fff', 
                                         fontWeight: 'bold',
                                         textShadow: '0 0 4px rgba(0,0,0,0.5)'
-                                    }}>{displayVal}</span>
+                                    }}>{n}</span>
                                     {idx < nums.length - 1 && <span style={{ color: '#fff', opacity: 0.3 }}>/</span>}
                                 </Fragment>
                             );
@@ -747,15 +744,8 @@ export default function OverlayApp() {
                 );
             }
 
-            // 1.5 处理单个大数值 (ms -> s) 例如：冻结一件物品500秒
-            let processedPart = part;
-            processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
-                const val = parseInt(match, 10);
-                return val > 100 ? (val / 1000).toFixed(1) : match;
-            });
-
             // 处理关键词变色
-            let resultParts: any[] = [processedPart];
+            let resultParts: any[] = [part];
             Object.entries(KEYWORD_COLORS).forEach(([keyword, color]) => {
                 const newResultParts: any[] = [];
                 resultParts.forEach(segment => {
@@ -786,6 +776,72 @@ export default function OverlayApp() {
             if (part === "[Locked]") return <span key={i} className="icon-locked" title="Locked" style={{ color: '#f5503d', fontSize: '1.1em' }}>🔒</span>;
             if (part === "Quest:") return <span key={i} className="icon-quest" title="Quest" style={{ color: '#ffd700', fontSize: '1.1em' }}>📜</span>;
             return renderTextContent(part);
+        });
+    };
+
+    // 专门用于渲染附魔文本的函数，保留除以1000逻辑
+    const formatEnchantDescription = (text: string) => {
+        if (!text) return null;
+        
+        const parts = text.split(/(\d+(?:\/\d+)+)/g);
+        
+        return parts.map((part, i) => {
+            if (part.includes('/')) {
+                const nums = part.split('/');
+                return (
+                    <span key={i} className="progression-nums" style={{ display: 'inline-flex', gap: '2px', alignItems: 'center' }}>
+                        {nums.map((n, idx) => {
+                            let colorIdx = idx;
+                            if (nums.length === 2) colorIdx = idx + 2;
+                            else if (nums.length === 3) colorIdx = idx + 1;
+                            
+                            const val = parseFloat(n);
+                            const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
+                            
+                            return (
+                                <Fragment key={idx}>
+                                    <span style={{ 
+                                        color: TIER_COLORS[colorIdx] || '#fff', 
+                                        fontWeight: 'bold',
+                                        textShadow: '0 0 4px rgba(0,0,0,0.5)'
+                                    }}>{displayVal}</span>
+                                    {idx < nums.length - 1 && <span style={{ color: '#fff', opacity: 0.3 }}>/</span>}
+                                </Fragment>
+                            );
+                        })}
+                    </span>
+                );
+            }
+
+            // 处理单个大数值 (ms -> s)
+            let processedPart = part;
+            processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
+                const val = parseInt(match, 10);
+                return val > 100 ? (val / 1000).toFixed(1) : match;
+            });
+
+            // 处理关键词变色
+            let resultParts: any[] = [processedPart];
+            Object.entries(KEYWORD_COLORS).forEach(([keyword, color]) => {
+                const newResultParts: any[] = [];
+                resultParts.forEach(segment => {
+                    if (typeof segment !== 'string') {
+                        newResultParts.push(segment);
+                    } else {
+                        const subSegments = segment.split(new RegExp(`(${keyword})`, 'g'));
+                        subSegments.forEach((sub, subIdx) => {
+                            if (sub === keyword) {
+                                newResultParts.push(<span key={`${keyword}-${subIdx}`} style={{ color, fontWeight: 'bold' }}>{sub}</span>);
+                            } else if (sub) {
+                                newResultParts.push(sub);
+                            }
+                        });
+                    }
+                });
+                resultParts = newResultParts;
+            });
+
+            return <Fragment key={i}>{resultParts}</Fragment>;
         });
     };
 
@@ -1192,11 +1248,11 @@ export default function OverlayApp() {
                                                                     <span className="enchant-badge" style={{ 
                                                                         '--enc-clr': color
                                                                     } as React.CSSProperties}>{name}</span>
-                                                                    <span className="enchant-effect">{formatDescription(effect)}</span>
+                                                                    <span className="enchant-effect">{formatEnchantDescription(effect)}</span>
                                                                 </div>
                                                             );
                                                         }
-                                                        return <div key={idx} className="enchant-item">{formatDescription(enc)}</div>;
+                                                        return <div key={idx} className="enchant-item">{formatEnchantDescription(enc)}</div>;
                                                     })}
                                                 </div>
                                             )}
