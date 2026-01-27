@@ -1,7 +1,10 @@
 use std::sync::{Arc, RwLock, OnceLock};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{State, Manager, Emitter};
+
+#[cfg(target_os = "macos")]
 use tauri::menu::{Menu, MenuItem};
+#[cfg(target_os = "macos")]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
 
 use serde::{Serialize, Deserialize};
@@ -36,7 +39,10 @@ use windows::Win32::Graphics::Dwm::{
 use windows::Win32::Foundation::{HWND, COLORREF};
 
 use opencv::core::MatTraitConst;
-use device_query::{DeviceQuery, DeviceState, MouseState, Keycode};
+use device_query::{DeviceQuery, DeviceState, MouseState};
+
+#[cfg(not(target_os = "windows"))]
+use device_query::Keycode;
 
 // macOS 原生窗口设置（用于全屏覆盖）
 // 注意: cocoa crate 已弃用，但 tauri-nspanel 仍依赖它
@@ -61,7 +67,7 @@ const VK_MENU: i32 = 18;      // Alt 键
 /// key_code: Windows 虚拟键码
 /// device_state: device_query 状态
 /// mouse_state: 鼠标状态
-fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &MouseState) -> bool {
+fn is_key_pressed(key_code: i32, _device_state: &DeviceState, _mouse_state: &MouseState) -> bool {
     #[cfg(target_os = "windows")]
     {
         unsafe { (GetAsyncKeyState(key_code) as i16) < 0 }
@@ -69,6 +75,8 @@ fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &Mouse
 
     #[cfg(not(target_os = "windows"))]
     {
+        let device_state = _device_state;
+        let mouse_state = _mouse_state;
         // 映射 Windows 虚拟键码到 device_query
         // Windows VK codes: VK_LBUTTON=1, VK_RBUTTON=2, VK_MBUTTON=4
         // device_query indices: 0=left, 1=middle, 2=right (varies by platform)
@@ -513,7 +521,28 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
     use image::GenericImageView;
     let detections = get_yolo_scan_results().read().unwrap().clone();
     let img_opt = get_yolo_scan_image().read().unwrap().clone();
-    let (window_x, window_y) = *get_yolo_window_offset().read().unwrap();
+    
+    // 动态获取游戏窗口位置，如果找不到则使用保存的偏移量
+    let (window_x, window_y, window_logical_width, window_logical_height) = {
+        let game_window = xcap::Window::all()
+            .ok()
+            .and_then(|windows| {
+                windows.into_iter().find(|w| {
+                    let title = w.title().to_lowercase();
+                    let app_name = w.app_name().to_lowercase();
+                    title.contains("the bazaar") || app_name.contains("the bazaar") || 
+                    title.contains("thebazaar") || app_name.contains("thebazaar")
+                })
+            });
+        
+        if let Some(window) = game_window {
+            (window.x(), window.y(), window.width(), window.height())
+        } else {
+            // 如果找不到游戏窗口，使用之前保存的偏移量
+            let (x, y) = *get_yolo_window_offset().read().unwrap();
+            (x, y, 0, 0)
+        }
+    };
     
     if img_opt.is_none() {
         return Ok(None);
@@ -525,25 +554,32 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
     let rel_x_logical = x - window_x;
     let rel_y_logical = y - window_y;
     
-    // macOS Retina 屏幕缩放修正：检测图像物理分辨率 vs 逻辑坐标
-    // 假设 window_x/y 也是逻辑坐标，需要计算缩放比例
-    // 实际上我们需要用图像尺寸来反推缩放比例
-    // 简单方法：用鼠标逻辑坐标直接乘以 scale_factor
-    #[cfg(target_os = "macos")]
-    let scale_factor = {
-        // 在 macOS 上，截图返回物理像素，但鼠标坐标是逻辑像素
-        // 我们可以通过检查图像尺寸来估算缩放因子
-        // 通常是 2.0 (Retina) 或 1.0 (非 Retina)
-        if img_w > 1920 { 2.0 } else { 1.0 }
+    // 跨平台 DPI 缩放修正：检测图像物理分辨率 vs 逻辑坐标
+    // 截图返回物理像素，但鼠标坐标是逻辑像素
+    // 通过窗口的逻辑尺寸和图像的物理尺寸计算缩放因子
+    let scale_factor = if window_logical_width > 0 && window_logical_height > 0 {
+        let scale_x = img_w as f32 / window_logical_width as f32;
+        let scale_y = img_h as f32 / window_logical_height as f32;
+        // 取平均值，通常两个方向的缩放比例应该相同
+        (scale_x + scale_y) / 2.0
+    } else {
+        // 降级方案：根据图像大小估算
+        #[cfg(target_os = "macos")]
+        {
+            if img_w > 1920 { 2.0 } else { 1.0 }
+        }
+        #[cfg(not(target_os = "macos"))]
+        {
+            // Windows: 常见的DPI缩放比例
+            if img_w > 3000 { 1.5 } else { 1.0 }
+        }
     };
-    #[cfg(not(target_os = "macos"))]
-    let scale_factor = 1.0;
     
     let rel_x = (rel_x_logical as f32 * scale_factor) as i32;
     let rel_y = (rel_y_logical as f32 * scale_factor) as i32;
     
-    println!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Logical relative: ({}, {}), Scale: {}, Physical relative: ({}, {})", 
-             x, y, window_x, window_y, rel_x_logical, rel_y_logical, scale_factor, rel_x, rel_y);
+    println!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Window size: {}x{}, Logical relative: ({}, {}), Scale: {:.2}, Physical relative: ({}, {})", 
+             x, y, window_x, window_y, window_logical_width, window_logical_height, rel_x_logical, rel_y_logical, scale_factor, rel_x, rel_y);
     println!("[DEBUG] Image dimensions: {}x{}, Total detections: {}", img_w, img_h, detections.len());
     
     for (i, d) in detections.iter().enumerate() {
@@ -1832,7 +1868,12 @@ pub fn run() {
     let bounds = Arc::new(std::sync::Mutex::new(Vec::new()));
     let bounds_clone = bounds.clone();
 
-    let mut builder = tauri::Builder::default()
+    #[cfg(target_os = "macos")]
+    let mut builder = tauri::Builder::default();
+    #[cfg(not(target_os = "macos"))]
+    let builder = tauri::Builder::default();
+    
+    let builder = builder
         .manage(OverlayState(bounds))
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
