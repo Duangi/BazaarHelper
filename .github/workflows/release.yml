@@ -53,7 +53,8 @@ jobs:
       - name: Bundle ONNX Runtime libraries
         run: |
           chmod +x src-tauri/scripts/bundle_onnxruntime_macos.sh
-          ./src-tauri/scripts/bundle_onnxruntime_macos.sh
+          cd src-tauri
+          ./scripts/bundle_onnxruntime_macos.sh
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
