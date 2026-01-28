@@ -9,6 +9,7 @@ import { check, Update } from '@tauri-apps/plugin-updater';
 import "./App.css";
 
 import { exit, relaunch } from '@tauri-apps/plugin-process';
+import { SettingGroup } from './components/SettingsPanel';
 
 // --- 接口定义 ---
 interface ItemData {
@@ -187,11 +188,17 @@ export default function App() {
     }
     return saved === "true";
   });
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  // Toast 提示系统
+  interface Toast {
+    id: number;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+  }
+  const [toasts, setToasts] = useState<Toast[]>([]);
   
   const [yoloHotkey, setYoloHotkey] = useState(() => {
     const saved = localStorage.getItem("yolo-hotkey");
-    return saved ? parseInt(saved) : 81; // 默认Q键 (VK: 81)
+    return saved ? parseInt(saved) : 0; // 默认未设置
   });
   const [announcement, setAnnouncement] = useState(""); // 公告内容
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set()); // 手牌/仓库点击展开附魔
@@ -421,7 +428,15 @@ export default function App() {
   const [isRecordingCardHotkey, setIsRecordingCardHotkey] = useState(false);
   const [isRecordingToggleHotkey, setIsRecordingToggleHotkey] = useState(false);
   const [isRecordingYoloHotkey, setIsRecordingYoloHotkey] = useState(false);
+  const [showResetHotkeysConfirm, setShowResetHotkeysConfirm] = useState(false);
   const [isRecordingDetailHotkey, setIsRecordingDetailHotkey] = useState(false);
+  
+  // 设置分类展开状态
+  const [settingsExpanded, setSettingsExpanded] = useState({
+    ui: false,
+    yolo: false,
+    hotkeys: false
+  });
   
   // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
@@ -437,6 +452,17 @@ export default function App() {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Toast 提示函数
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
+  };
 
   // 禁用右键菜单
   useEffect(() => {
@@ -527,8 +553,7 @@ export default function App() {
             fullInfos.forEach(info => next.add(info.uuid));
             return next;
           });
-          setStatusMsg(`识别成功: 找到 ${fullInfos.length} 个匹配项`);
-          setTimeout(() => setStatusMsg(null), 2000);
+          showToast(`识别成功: 找到 ${fullInfos.length} 个匹配项`, 'success');
         } else {
           setErrorMessage("识别到了卡牌，但没能在数据库中找到对应信息");
         }
@@ -1752,9 +1777,8 @@ export default function App() {
       }
     };
 
-    const delay = showVersionScreen ? 100 : 20; 
-    const timer = setTimeout(syncLayout, delay); 
-    return () => clearTimeout(timer);
+    // 立即同步布局，避免启动时出现白框
+    syncLayout();
   }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
 
   // 分离的手动调整逻辑
@@ -2032,175 +2056,298 @@ export default function App() {
               <button className="close-panel-btn" onClick={() => setShowSettings(false)}>×</button>
             </div>
             <div className="settings-content">
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <label>字体大小: {fontSize}px</label>
-                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
-                    setFontSize(16);
-                    localStorage.setItem("user-font-size", "16");
-                  }}>重置</button>
+              
+              {/* 界面设置分组 */}
+              <SettingGroup
+                title="⚙️ 界面设置"
+                expanded={settingsExpanded.ui}
+                onToggle={() => setSettingsExpanded(prev => ({ ...prev, ui: !prev.ui }))}
+              >
+                {/* 字体大小 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <label>字体大小: {fontSize}px</label>
+                    <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                      setFontSize(16);
+                      localStorage.setItem("user-font-size", "16");
+                      showToast('字体大小已重置', 'success');
+                    }}>重置</button>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="10" 
+                    max="32" 
+                    value={fontSize} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setFontSize(val);
+                      localStorage.setItem("user-font-size", val.toString());
+                    }} 
+                  />
                 </div>
-                <input 
-                  type="range" 
-                  min="10" 
-                  max="32" 
-                  value={fontSize} 
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    setFontSize(val);
-                    localStorage.setItem("user-font-size", val.toString());
-                  }} 
-                />
-              </div>
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>YOLO自动识别</label>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    {enableYoloAuto && (
-                      <button 
-                        className="bulk-btn" 
-                        style={{ 
-                          padding: '4px 12px',
-                          background: useGpuAcceleration ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
-                          borderColor: useGpuAcceleration ? '#4CAF50' : '#f44336',
-                          color: useGpuAcceleration ? '#4CAF50' : '#f44336'
-                        }} 
-                        onClick={() => {
-                          const newVal = !useGpuAcceleration;
-                          setUseGpuAcceleration(newVal);
-                          localStorage.setItem("use-gpu-acceleration", newVal.toString());
-                        }}
-                      >
-                        GPU加速: {useGpuAcceleration ? '开' : '关'}
-                      </button>
-                    )}
+
+                {/* 窗口布局 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <label>窗口布局</label>
+                    <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                      localStorage.removeItem("plugin-width");
+                      localStorage.removeItem("plugin-height");
+                      setExpandedWidth(400);
+                      setExpandedHeight(700);
+                      setHasCustomPosition(false);
+                      showToast('窗口布局已重置', 'success');
+                    }}>重置宽高与位置</button>
+                  </div>
+                  <div className="setting-tip">调整后将实时影响所有文字大小</div>
+                </div>
+
+                {/* 详情弹窗位置 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>详情弹窗位置</label>
+                    <button className="bulk-btn" style={{ padding: '4px 12px' }} onClick={async () => {
+                      try {
+                        await invoke('reset_detail_popup_position');
+                        showToast('详情弹窗位置已重置', 'success');
+                      } catch (e) {
+                        console.error("Failed to reset detail popup position:", e);
+                        showToast('重置失败', 'error');
+                      }
+                    }}>重置位置</button>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
+                    重置详情弹窗到默认位置（鼠标所在屏幕的中心）
+                  </div>
+                </div>
+
+                {/* 野怪识别校准 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>野怪识别校准</label>
                     <button 
                       className="bulk-btn" 
                       style={{ 
                         padding: '4px 12px',
-                        background: enableYoloAuto ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
-                        borderColor: enableYoloAuto ? '#4CAF50' : '#f44336',
-                        color: enableYoloAuto ? '#4CAF50' : '#f44336'
+                        background: 'linear-gradient(135deg, rgba(255, 205, 25, 0.15), rgba(255, 180, 25, 0.1))',
+                        borderColor: 'rgba(255, 205, 25, 0.5)',
+                        color: '#ffcd19',
+                        fontWeight: 'bold'
                       }} 
-                      onClick={() => {
-                        const newVal = !enableYoloAuto;
-                        setEnableYoloAuto(newVal);
-                        localStorage.setItem("enable-yolo-auto", newVal.toString());
+                      onClick={async () => {
+                        try {
+                          await invoke('open_calibration_window');
+                          showToast('校准窗口已打开', 'info');
+                        } catch (err) {
+                          console.error('[Settings] Failed to open calibration window:', err);
+                          showToast('打开校准窗口失败: ' + err, 'error');
+                        }
                       }}
                     >
-                      {enableYoloAuto ? '已开启' : '已关闭'}
+                      开始校准
                     </button>
                   </div>
-                </div>
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  启用后每隔固定时间自动触发YOLO识别卡牌（下方可调整频率）
-                </div>
-              </div>
-              
-              {/* YOLO扫描频率设置 */}
-              <div className="setting-item" style={{ opacity: enableYoloAuto ? 1 : 0.5 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>YOLO扫描频率</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input 
-                      type="range"
-                      min="0.5"
-                      max="2"
-                      step="0.1"
-                      value={yoloScanInterval}
-                      disabled={!enableYoloAuto}
-                      onChange={(e) => {
-                        const newVal = parseFloat(e.target.value);
-                        setYoloScanInterval(newVal);
-                        localStorage.setItem("yolo-scan-interval", newVal.toString());
-                      }}
-                      style={{
-                        width: '120px',
-                        accentColor: '#ffcd19'
-                      }}
-                    />
-                    <span style={{ 
-                      fontSize: '13px', 
-                      color: '#ffcd19', 
-                      fontWeight: 'bold',
-                      minWidth: '50px'
-                    }}>
-                      {yoloScanInterval.toFixed(1)}s
-                    </span>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
+                    校准三个野怪识别区域，用于一键识别所有野怪功能
                   </div>
                 </div>
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  设置YOLO自动识别的时间间隔（0.5秒 - 2秒）
+              </SettingGroup>
+              
+              {/* YOLO设置分组 */}
+              <SettingGroup
+                title="🔍 YOLO设置"
+                expanded={settingsExpanded.yolo}
+                onToggle={() => setSettingsExpanded(prev => ({ ...prev, yolo: !prev.yolo }))}
+              >
+                {/* YOLO自动识别 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>YOLO自动识别</label>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      {enableYoloAuto && (
+                        <button 
+                          className="bulk-btn" 
+                          style={{ 
+                            padding: '4px 12px',
+                            background: useGpuAcceleration ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                            borderColor: useGpuAcceleration ? '#4CAF50' : '#f44336',
+                            color: useGpuAcceleration ? '#4CAF50' : '#f44336'
+                          }} 
+                          onClick={() => {
+                            const newVal = !useGpuAcceleration;
+                            setUseGpuAcceleration(newVal);
+                            localStorage.setItem("use-gpu-acceleration", newVal.toString());
+                            showToast(`GPU加速已${newVal ? '开启' : '关闭'}`, 'info');
+                          }}
+                        >
+                          GPU加速: {useGpuAcceleration ? '开' : '关'}
+                        </button>
+                      )}
+                      <button 
+                        className="bulk-btn" 
+                        style={{ 
+                          padding: '4px 12px',
+                          background: enableYoloAuto ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                          borderColor: enableYoloAuto ? '#4CAF50' : '#f44336',
+                          color: enableYoloAuto ? '#4CAF50' : '#f44336'
+                        }} 
+                        onClick={() => {
+                          const newVal = !enableYoloAuto;
+                          setEnableYoloAuto(newVal);
+                          localStorage.setItem("enable-yolo-auto", newVal.toString());
+                          showToast(`YOLO自动识别已${newVal ? '开启' : '关闭'}`, 'info');
+                        }}
+                      >
+                        {enableYoloAuto ? '已开启' : '已关闭'}
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    启用后每隔固定时间自动触发YOLO识别卡牌（下方可调整频率）
+                  </div>
                 </div>
-              </div>
-
-              {/* YOLO手动触发快捷键设置 */}
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>YOLO手动触发快捷键</label>
-                  <button 
-                    className="bulk-btn" 
-                    style={{ padding: '2px 8px' }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsRecordingYoloHotkey(true);
-                    }}
-                  >
-                    {isRecordingYoloHotkey ? "请按键..." : (yoloHotkey ? getHotkeyLabel(yoloHotkey) : "未设置")}
-                  </button>
+                
+                {/* YOLO扫描频率设置 */}
+                <div className="setting-item" style={{ opacity: enableYoloAuto ? 1 : 0.5 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>YOLO扫描频率</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input 
+                        type="range"
+                        min="0.5"
+                        max="2"
+                        step="0.1"
+                        value={yoloScanInterval}
+                        disabled={!enableYoloAuto}
+                        onChange={(e) => {
+                          const newVal = parseFloat(e.target.value);
+                          setYoloScanInterval(newVal);
+                          localStorage.setItem("yolo-scan-interval", newVal.toString());
+                        }}
+                        style={{
+                          width: '120px',
+                          accentColor: '#ffcd19'
+                        }}
+                      />
+                      <span style={{ 
+                        fontSize: '13px', 
+                        color: '#ffcd19', 
+                        fontWeight: 'bold',
+                        minWidth: '50px'
+                      }}>
+                        {yoloScanInterval.toFixed(1)}s
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    设置YOLO自动识别的时间间隔（0.5秒 - 2秒）
+                  </div>
                 </div>
-                {isRecordingYoloHotkey && (
-                  <div 
-                    style={{ 
-                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
-                      display: 'flex', flexDirection: 'column',
-                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      // 禁止左键和右键
-                      if (e.button === 0 || e.button === 2) {
-                        return;
-                      }
-                      let vk = 0;
-                      switch(e.button) {
-                        case 1: vk = 4; break;
-                        case 3: vk = 5; break;
-                        case 4: vk = 6; break;
-                      }
-                      if (vk > 0) {
-                        setYoloHotkey(vk);
-                        localStorage.setItem("yolo-hotkey", vk.toString());
-                        setIsRecordingYoloHotkey(false);
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (e.keyCode) {
-                        setYoloHotkey(e.keyCode);
-                        localStorage.setItem("yolo-hotkey", e.keyCode.toString());
-                        setIsRecordingYoloHotkey(false);
-                      }
-                    }}
-                    tabIndex={0}
-                    ref={(el) => el?.focus()}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
-                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标中键/侧键（不支持左右键）</div>
+                
+                {/* YOLO实时监控 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>YOLO实时监控</label>
                     <button 
-                      style={{ marginTop: '20px', padding: '5px 15px' }}
-                      onClick={(e) => { e.stopPropagation(); setIsRecordingYoloHotkey(false); }}
-                    >取消</button>
+                      className="bulk-btn" 
+                      style={{ 
+                        padding: '4px 12px',
+                        background: showYoloMonitor ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                        borderColor: showYoloMonitor ? '#4CAF50' : '#f44336',
+                        color: showYoloMonitor ? '#4CAF50' : '#f44336'
+                      }} 
+                      onClick={() => {
+                        const newVal = !showYoloMonitor;
+                        setShowYoloMonitor(newVal);
+                        localStorage.setItem("show-yolo-monitor", newVal.toString());
+                        try {
+                          invoke('set_show_yolo_monitor', { show: newVal }).catch(console.error);
+                        } catch (e) { console.error(e); }
+                        showToast(`YOLO监控已${newVal ? '显示' : '隐藏'}`, 'info');
+                      }}
+                    >
+                      {showYoloMonitor ? '隐藏' : '显示'}
+                    </button>
                   </div>
-                )}
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  按此键立即触发YOLO识别（默认: Q键, VK: 81）
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    显示/隐藏YOLO实时监控窗口，用于查看识别结果
+                  </div>
                 </div>
-              </div>
+
+                {/* YOLO手动触发快捷键设置 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>YOLO手动触发快捷键</label>
+                    <button 
+                      className="bulk-btn" 
+                      style={{ padding: '2px 8px' }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsRecordingYoloHotkey(true);
+                      }}
+                    >
+                      {isRecordingYoloHotkey ? "请按键..." : (yoloHotkey ? getHotkeyLabel(yoloHotkey) : "未设置")}
+                    </button>
+                  </div>
+                  {isRecordingYoloHotkey && (
+                    <div 
+                      style={{ 
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                        background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                        display: 'flex', flexDirection: 'column',
+                        justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // 禁止左键和右键
+                        if (e.button === 0 || e.button === 2) {
+                          return;
+                        }
+                        let vk = 0;
+                        switch(e.button) {
+                          case 1: vk = 4; break;
+                          case 3: vk = 5; break;
+                          case 4: vk = 6; break;
+                        }
+                        if (vk > 0) {
+                          setYoloHotkey(vk);
+                          localStorage.setItem("yolo-hotkey", vk.toString());
+                          setIsRecordingYoloHotkey(false);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (e.keyCode) {
+                          setYoloHotkey(e.keyCode);
+                          localStorage.setItem("yolo-hotkey", e.keyCode.toString());
+                          setIsRecordingYoloHotkey(false);
+                        }
+                      }}
+                      tabIndex={0}
+                      ref={(el) => el?.focus()}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                      <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标中键/侧键（不支持左右键）</div>
+                      <button 
+                        style={{ marginTop: '20px', padding: '5px 15px' }}
+                        onClick={(e) => { e.stopPropagation(); setIsRecordingYoloHotkey(false); }}
+                      >取消</button>
+                    </div>
+                  )}
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    按此键立即触发YOLO识别（默认: 未设置）
+                  </div>
+                </div>
+              </SettingGroup>
               
+              {/* 快捷键设置分组 */}
+              <SettingGroup
+                title="⌨️ 快捷键设置"
+                expanded={settingsExpanded.hotkeys}
+                onToggle={() => setSettingsExpanded(prev => ({ ...prev, hotkeys: !prev.hotkeys }))}
+              >
               {/* 详情显示热键设置 */}
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2262,78 +2409,9 @@ export default function App() {
                   </div>
                 )}
                 <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 鼠标右键, VK: 2）
+                  按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 未设置）
                 </div>
               </div>
-              
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>YOLO实时监控</label>
-                  <button 
-                    className="bulk-btn" 
-                    style={{ 
-                      padding: '4px 12px',
-                      background: showYoloMonitor ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
-                      borderColor: showYoloMonitor ? '#4CAF50' : '#f44336',
-                      color: showYoloMonitor ? '#4CAF50' : '#f44336'
-                    }} 
-                    onClick={() => {
-                      console.log("[App] YOLO实时监控按钮点击，当前值:", showYoloMonitor);
-                      const newVal = !showYoloMonitor;
-                      console.log("[App] 设置新值:", newVal);
-                      setShowYoloMonitor(newVal);
-                      localStorage.setItem("show-yolo-monitor", newVal.toString());
-                      console.log("[App] localStorage已更新:", localStorage.getItem("show-yolo-monitor"));
-                      // Notify backend to forward the change to overlay window
-                      try {
-                        invoke('set_show_yolo_monitor', { show: newVal }).catch(console.error);
-                      } catch (e) { console.error(e); }
-                    }}
-                  >
-                    {showYoloMonitor ? '隐藏' : '显示'}
-                  </button>
-                </div>
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  显示/隐藏YOLO实时监控窗口，用于查看识别结果
-                </div>
-              </div>
-
-              
-              {statusMsg && (
-                <div style={{ 
-                  background: 'rgba(255, 205, 25, 0.1)', 
-                  border: '1px solid rgba(255, 205, 25, 0.3)', 
-                  color: '#ffcd19', 
-                  padding: '8px', 
-                  fontSize: 'calc(12px * var(--font-scale, 1))',
-                  borderRadius: '4px',
-                  marginTop: '10px',
-                  position: 'relative'
-                }}>
-                  {statusMsg}
-                  <button 
-                    onClick={() => setStatusMsg(null)}
-                    style={{ 
-                      position: 'absolute', right: '5px', top: '5px', 
-                      background: 'transparent', border: 'none', color: '#ffcd19',
-                      cursor: 'pointer', fontSize: '14px'
-                    }}>×</button>
-                </div>
-              )}
-
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <label>窗口布局</label>
-                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
-                    localStorage.removeItem("plugin-width");
-                    localStorage.removeItem("plugin-height");
-                    setExpandedWidth(400);
-                    setExpandedHeight(700);
-                    setHasCustomPosition(false);
-                  }}>重置宽高与位置</button>
-                </div>
-              </div>
-              <div className="setting-tip">调整后将实时影响所有文字大小</div>
 
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -2406,7 +2484,7 @@ export default function App() {
                     >取消</button>
                   </div>
                 )}
-                <div className="setting-tip">默认: 鼠标右键 (VK: 2)</div>
+                <div className="setting-tip">默认: 未设置</div>
               </div>
 
               <div className="setting-item">
@@ -2468,7 +2546,7 @@ export default function App() {
                     >取消</button>
                   </div>
                 )}
-                <div className="setting-tip">默认: Alt (VK: 18)</div>
+                <div className="setting-tip">默认: 未设置</div>
               </div>
 
               <div className="setting-item">
@@ -2532,31 +2610,180 @@ export default function App() {
                     >取消</button>
                   </div>
                 )}
-                <div className="setting-tip">默认: ~ (VK: 192)</div>
+                <div className="setting-tip">默认: 未设置</div>
               </div>
 
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
-              {/* 重置详情弹窗位置 */}
+              {/* 重置所有热键 */}
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>详情弹窗位置</label>
-                  <button className="bulk-btn" style={{ padding: '4px 12px' }} onClick={async () => {
-                    try {
-                      await invoke('reset_detail_popup_position');
-                      setStatusMsg("详情弹窗位置已重置");
-                      setTimeout(() => setStatusMsg(null), 2000);
-                    } catch (e) {
-                      console.error("Failed to reset detail popup position:", e);
-                      setStatusMsg("重置失败");
-                      setTimeout(() => setStatusMsg(null), 2000);
-                    }
-                  }}>重置位置</button>
+                  <label>快捷键管理</label>
+                  <button className="bulk-btn" style={{ padding: '4px 12px', background: 'rgba(255, 69, 58, 0.15)', borderColor: 'rgba(255, 69, 58, 0.4)' }} onClick={() => {
+                    setShowResetHotkeysConfirm(true);
+                  }}>重置所有快捷键</button>
                 </div>
                 <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
-                  重置详情弹窗到默认位置（鼠标所在屏幕的中心）
+                  将所有快捷键重置为"未设置"状态，禁用所有快捷键功能
                 </div>
               </div>
+              
+              {/* 自定义确认对话框 */}
+              {showResetHotkeysConfirm && (
+                <div style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(0, 0, 0, 0.85)',
+                  backdropFilter: 'blur(8px)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 10000,
+                  animation: 'fadeIn 0.2s ease'
+                }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, rgba(20, 18, 15, 0.98) 0%, rgba(30, 25, 20, 0.98) 100%)',
+                    border: '2px solid rgba(255, 205, 25, 0.4)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    maxWidth: '420px',
+                    width: '90%',
+                    boxShadow: '0 16px 48px rgba(0, 0, 0, 0.9), 0 0 32px rgba(255, 205, 25, 0.15)',
+                    animation: 'scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  }}>
+                    {/* 标题 */}
+                    <div style={{
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: '#ffcd19',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      textShadow: '0 2px 8px rgba(255, 205, 25, 0.3)'
+                    }}>
+                      <span style={{ fontSize: '24px' }}>⚠️</span>
+                      <span>重置确认</span>
+                    </div>
+                    
+                    {/* 内容 */}
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#ddd',
+                      lineHeight: '1.6',
+                      marginBottom: '24px',
+                      padding: '16px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 205, 25, 0.1)'
+                    }}>
+                      <p style={{ margin: '0 0 12px 0' }}>
+                        此操作将<span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>重置所有快捷键设置</span>，包括：
+                      </p>
+                      <ul style={{ margin: '8px 0', paddingLeft: '24px', color: '#aaa' }}>
+                        <li>怪物识别热键</li>
+                        <li>卡牌识别热键</li>
+                        <li>YOLO 扫描热键</li>
+                        <li>详情显示热键</li>
+                        <li>折叠/展开热键</li>
+                      </ul>
+                      <p style={{ margin: '12px 0 0 0', color: '#888', fontSize: '13px' }}>
+                        重置后，所有快捷键功能将被禁用，您需要重新设置才能使用。
+                      </p>
+                    </div>
+                    
+                    {/* 按钮组 */}
+                    <div style={{
+                      display: 'flex',
+                      gap: '12px',
+                      justifyContent: 'flex-end'
+                    }}>
+                      <button
+                        style={{
+                          padding: '10px 24px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          fontWeight: '500'
+                        }}
+                        onClick={() => setShowResetHotkeysConfirm(false)}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                        }}
+                      >
+                        取消
+                      </button>
+                      <button
+                        style={{
+                          padding: '10px 24px',
+                          background: 'linear-gradient(135deg, rgba(255, 69, 58, 0.8), rgba(255, 59, 48, 0.9))',
+                          border: '1px solid rgba(255, 69, 58, 0.6)',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          fontWeight: '600',
+                          boxShadow: '0 4px 12px rgba(255, 69, 58, 0.3)'
+                        }}
+                        onClick={async () => {
+                          setShowResetHotkeysConfirm(false);
+                          try {
+                      await invoke('reset_all_hotkeys');
+                      // 重新加载所有热键设置
+                      const detection = await invoke<number | null>("get_detection_hotkey");
+                      const card = await invoke<number | null>("get_card_detection_hotkey");
+                      const toggle = await invoke<number | null>("get_toggle_collapse_hotkey");
+                      const yolo = await invoke<number | null>("get_yolo_hotkey");
+                      const detail = await invoke<number | null>("get_detail_display_hotkey");
+                      
+                      setDetectionHotkey(detection || 0);
+                      setCardDetectionHotkey(card || 0);
+                      setToggleCollapseHotkey(toggle || 0);
+                      setYoloHotkey(yolo || 0);
+                      setDetailDisplayHotkey(detail || 0);
+                      
+                      // 清除 localStorage
+                      localStorage.removeItem("detection-hotkey");
+                      localStorage.removeItem("card-detection-hotkey");
+                      localStorage.removeItem("toggle-collapse-hotkey");
+                      localStorage.removeItem("yolo-hotkey");
+                      localStorage.removeItem("detail-display-hotkey");
+                      
+                      showToast("所有快捷键已重置", 'success');
+                    } catch (e) {
+                      console.error("Failed to reset hotkeys:", e);
+                      showToast("重置失败", 'error');
+                    }
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 79, 68, 0.9), rgba(255, 69, 58, 1))';
+                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 69, 58, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 69, 58, 0.8), rgba(255, 59, 48, 0.9))';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 69, 58, 0.3)';
+                        }}
+                      >
+                        确认重置
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              </SettingGroup>
 
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
@@ -3106,7 +3333,46 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* 原识别按钮已移除 */}
+                    {/* 一键识别当前野怪按钮 */}
+                    <button
+                      className="bulk-btn"
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        marginTop: '12px',
+                        background: 'linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(255, 180, 25, 0.15))',
+                        border: '2px solid rgba(255, 205, 25, 0.5)',
+                        borderRadius: '8px',
+                        color: '#ffcd19',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+                        boxShadow: '0 4px 12px rgba(255, 205, 25, 0.2)',
+                      }}
+                      onClick={async () => {
+                        try {
+                          // TODO: 调用一键识别命令
+                          showToast('一键识别功能开发中...', 'info');
+                        } catch (err) {
+                          console.error('[Monster Recognition] Failed:', err);
+                          showToast('识别失败: ' + err, 'error');
+                        }
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 205, 25, 0.3), rgba(255, 180, 25, 0.2))';
+                        e.currentTarget.style.borderColor = 'rgba(255, 205, 25, 0.8)';
+                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 205, 25, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(255, 180, 25, 0.15))';
+                        e.currentTarget.style.borderColor = 'rgba(255, 205, 25, 0.5)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 205, 25, 0.2)';
+                      }}
+                    >
+                      🎯 一键识别当前野怪
+                    </button>
 
                     {!templateLoading.is_complete && templateLoading.total > 0 && (
                       <div className="loading-progress">
@@ -3416,6 +3682,23 @@ export default function App() {
           <div style={{ fontSize: '18px', marginBottom: '10px' }}>正在启动更新安装程序...</div>
           <div style={{ fontSize: '12px', opacity: 0.7 }}>程序即将自动重启以完成安装</div>
           <div className="loader" style={{ marginTop: '20px' }}></div>
+        </div>
+      )}
+      
+      {/* Toast 提示容器 */}
+      {toasts.length > 0 && (
+        <div className="toast-container">
+          {toasts.map(toast => (
+            <div key={toast.id} className={`toast toast-${toast.type}`}>
+              <div className="toast-icon">
+                {toast.type === 'success' && '✓'}
+                {toast.type === 'error' && '✕'}
+                {toast.type === 'warning' && '⚠'}
+                {toast.type === 'info' && 'ℹ'}
+              </div>
+              <div className="toast-message">{toast.message}</div>
+            </div>
+          ))}
         </div>
       )}
     </div>

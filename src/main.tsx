@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import YoloMonitor from "./YoloMonitor";
 import DetailPopup from "./DetailPopup";
+import MonsterCalibration from "./MonsterCalibration";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 function Root() {
@@ -35,6 +36,9 @@ function Root() {
   } else if (component === "detail-popup") {
     console.log("[Main.tsx] ✅ Rendering DetailPopup");
     return <React.StrictMode><DetailPopup /></React.StrictMode>;
+  } else if (component === "monster-calibration") {
+    console.log("[Main.tsx] ✅ Rendering MonsterCalibration");
+    return <React.StrictMode><MonsterCalibration /></React.StrictMode>;
   } else {
     console.log("[Main.tsx] ✅ Rendering App (main window)");
     return <React.StrictMode><App /></React.StrictMode>;

@@ -776,7 +776,26 @@ pub fn log_system_info(app_handle: &tauri::AppHandle) {
 }
 
 // --- Data Models ---
-#[derive(Debug, Serialize, Deserialize, Clone)]
+// 野怪识别区域数据结构
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MonsterRegion {
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+}
+
+// 野怪识别校准数据
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct MonsterCalibration {
+    pub regions: Vec<MonsterRegion>, // 三个区域，按照x坐标从左到右排序
+    pub game_window_width: u32,
+    pub game_window_height: u32,
+    pub screen_width: u32,
+    pub screen_height: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PersistentState {
     pub day: u32,
     pub inst_to_temp: HashMap<String, String>,
@@ -802,6 +821,8 @@ pub struct PersistentState {
     pub detail_popup_width: Option<u32>,
     #[serde(default)]
     pub detail_popup_height: Option<u32>,
+    #[serde(default)]
+    pub monster_calibration: Option<MonsterCalibration>,
 }
 
 // 跨平台虚拟键常量
@@ -825,6 +846,7 @@ impl Default for PersistentState {
             detail_popup_y: None,
             detail_popup_width: None,
             detail_popup_height: None,
+            monster_calibration: None,
         }
     }
 }
@@ -1397,7 +1419,6 @@ async fn show_detail_popup_at(app: tauri::AppHandle, x: i32, y: i32, data_type: 
             (saved_x, saved_y)
         } else {
             // 获取鼠标所在的屏幕
-            use tauri::Monitor;
             let monitors = window.available_monitors().map_err(|e| e.to_string())?;
             
             // 找到包含鼠标位置的屏幕
@@ -1529,13 +1550,105 @@ async fn reset_detail_popup_position(app: tauri::AppHandle) -> Result<(), String
     Ok(())
 }
 
+// 存储最后一个前台窗口的信息
+static LAST_FOREGROUND_WINDOW: std::sync::RwLock<Option<String>> = std::sync::RwLock::new(None);
+
+// 检查游戏窗口是否活跃（是否是前台窗口）
+fn is_game_window_active() -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowTextW};
+        
+        unsafe {
+            let hwnd = GetForegroundWindow();
+            if !hwnd.is_invalid() {
+                let mut title: [u16; 512] = [0; 512];
+                let len = GetWindowTextW(hwnd, &mut title);
+                if len > 0 {
+                    let window_title = String::from_utf16_lossy(&title[..len as usize]);
+                    let is_game = window_title.to_lowercase().contains("the bazaar") || window_title.to_lowercase().contains("thebazaar");
+                    return is_game;
+                }
+            }
+        }
+        false
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        // macOS 等其他平台，默认返回 true
+        true
+    }
+}
+
+// 更新最后一个前台窗口
+fn update_last_foreground_window() {
+    #[cfg(target_os = "windows")]
+    {
+        use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowTextW};
+        
+        unsafe {
+            let hwnd = GetForegroundWindow();
+            if !hwnd.is_invalid() {
+                let mut title: [u16; 512] = [0; 512];
+                let len = GetWindowTextW(hwnd, &mut title);
+                if len > 0 {
+                    let window_title = String::from_utf16_lossy(&title[..len as usize]);
+                    if let Ok(mut last) = LAST_FOREGROUND_WINDOW.write() {
+                        *last = Some(window_title.clone());
+                        println!("[Focus] Last foreground window: {}", window_title);
+                    }
+                }
+            }
+        }
+    }
+}
+
 #[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
-        use windows::Win32::UI::WindowsAndMessaging::{FindWindowW, SetForegroundWindow, ShowWindow, SW_SHOW};
+        use windows::Win32::UI::WindowsAndMessaging::{FindWindowW, SetForegroundWindow, ShowWindow, SW_SHOW, GetForegroundWindow, GetWindowTextW};
         use windows::core::PCWSTR;
 
+        // 检查最后一个前台窗口是否是游戏
+        let should_restore = {
+            let last = LAST_FOREGROUND_WINDOW.read().ok();
+            match last.as_ref().and_then(|l| l.as_ref()) {
+                Some(title) => {
+                    let is_game = title.to_lowercase().contains("the bazaar") || title.to_lowercase().contains("thebazaar");
+                    println!("[Focus] Last foreground was '{}', is_game: {}", title, is_game);
+                    is_game
+                }
+                None => {
+                    println!("[Focus] No last foreground window recorded, checking current");
+                    // 如果没有记录，检查当前前台窗口
+                    unsafe {
+                        let current_hwnd = GetForegroundWindow();
+                        if !current_hwnd.is_invalid() {
+                            let mut title: [u16; 512] = [0; 512];
+                            let len = GetWindowTextW(current_hwnd, &mut title);
+                            if len > 0 {
+                                let window_title = String::from_utf16_lossy(&title[..len as usize]);
+                                let is_game = window_title.to_lowercase().contains("the bazaar") || window_title.to_lowercase().contains("thebazaar");
+                                println!("[Focus] Current foreground is '{}', is_game: {}", window_title, is_game);
+                                is_game
+                            } else {
+                                false
+                            }
+                        } else {
+                            false
+                        }
+                    }
+                }
+            }
+        };
+
+        if !should_restore {
+            println!("[Focus] Not restoring game focus - user was not in game");
+            return Ok(());
+        }
+
+        println!("[Focus] Restoring game focus");
         let window_name: Vec<u16> = "The Bazaar\0".encode_utf16().collect();
         unsafe {
             if let Ok(hwnd) = FindWindowW(PCWSTR::null(), PCWSTR(window_name.as_ptr())) {
@@ -1939,11 +2052,163 @@ fn set_toggle_collapse_hotkey(hotkey: i32) {
 }
 
 #[tauri::command]
+fn get_yolo_hotkey() -> Option<i32> {
+    load_state().yolo_hotkey
+}
+
+#[tauri::command]
 fn set_yolo_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.yolo_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] YOLO hotkey updated to: {}", hotkey);
+}
+
+#[tauri::command]
+fn reset_all_hotkeys() {
+    let mut state = load_state();
+    state.detection_hotkey = None;
+    state.card_detection_hotkey = None;
+    state.toggle_collapse_hotkey = None;
+    state.yolo_hotkey = None;
+    state.detail_display_hotkey = None;
+    save_state(&state);
+    println!("[Config] All hotkeys reset to None (disabled)");
+}
+
+// 保存野怪识别校准数据
+#[tauri::command]
+fn save_monster_calibration(calibration: MonsterCalibration) {
+    let mut state = load_state();
+    
+    // 按照x坐标从左到右排序
+    let mut sorted_regions = calibration.regions;
+    sorted_regions.sort_by(|a, b| a.x.cmp(&b.x));
+    
+    let sorted_calibration = MonsterCalibration {
+        regions: sorted_regions,
+        game_window_width: calibration.game_window_width,
+        game_window_height: calibration.game_window_height,
+        screen_width: calibration.screen_width,
+        screen_height: calibration.screen_height,
+    };
+    
+    state.monster_calibration = Some(sorted_calibration.clone());
+    save_state(&state);
+    println!("[Monster Calibration] Saved calibration data: {:?}", sorted_calibration);
+}
+
+// 加载野怪识别校准数据
+#[tauri::command]
+fn load_monster_calibration() -> Option<MonsterCalibration> {
+    let state = load_state();
+    state.monster_calibration
+}
+
+// 获取游戏窗口信息
+#[tauri::command]
+fn get_game_window_info() -> Result<serde_json::Value, String> {
+    let windows = xcap::Window::all().map_err(|e| e.to_string())?;
+    
+    for window in windows {
+        let title = window.title();
+        if title.to_lowercase().contains("the bazaar") {
+            let (x, y, width, height) = (window.x(), window.y(), window.width(), window.height());
+            return Ok(serde_json::json!({
+                "x": x,
+                "y": y,
+                "width": width,
+                "height": height,
+                "title": title
+            }));
+        }
+    }
+    
+    Err("Game window not found".to_string())
+}
+
+// 打开校准窗口
+#[tauri::command]
+async fn open_calibration_window(app: tauri::AppHandle) -> Result<(), String> {
+    use tauri::Manager;
+    
+    // 先检查窗口是否已存在
+    if let Some(window) = app.get_webview_window("monster-calibration") {
+        let _ = window.set_focus();
+        return Ok(());
+    }
+    
+    // 获取游戏窗口信息（物理像素坐标）
+    let windows = xcap::Window::all().map_err(|e| e.to_string())?;
+    let mut game_window: Option<(i32, i32, u32, u32)> = None;
+    
+    for window in windows {
+        let title = window.title();
+        if title.to_lowercase().contains("the bazaar") {
+            game_window = Some((window.x(), window.y(), window.width(), window.height()));
+            println!("[Calibration] Game window found: x={}, y={}, width={}, height={}", 
+                     window.x(), window.y(), window.width(), window.height());
+            break;
+        }
+    }
+    
+    let (phys_x, phys_y, phys_width, phys_height) = game_window.ok_or("Game window not found".to_string())?;
+    
+    // 获取主窗口来确定DPI缩放
+    let main_window = app.get_webview_window("main").ok_or("Main window not found")?;
+    let scale_factor = main_window.scale_factor().map_err(|e| e.to_string())?;
+    
+    println!("[Calibration] Scale factor: {}", scale_factor);
+    
+    // 转换为逻辑坐标（Tauri使用逻辑像素）
+    let logical_x = (phys_x as f64) / scale_factor;
+    let logical_y = (phys_y as f64) / scale_factor;
+    let logical_width = (phys_width as f64) / scale_factor;
+    let logical_height = (phys_height as f64) / scale_factor;
+    
+    println!("[Calibration] Logical coordinates: x={}, y={}, width={}, height={}", 
+             logical_x, logical_y, logical_width, logical_height);
+    
+    // 创建校准窗口
+    use tauri::WebviewWindowBuilder;
+    use tauri::WebviewUrl;
+    
+    let window = WebviewWindowBuilder::new(
+        &app,
+        "monster-calibration",
+        WebviewUrl::App("index.html".into())
+    )
+    .title("野怪识别校准")
+    .inner_size(logical_width, logical_height)
+    .position(logical_x, logical_y)
+    .resizable(false)
+    .decorations(false)
+    .transparent(true)
+    .always_on_top(true)
+    .skip_taskbar(true)
+    .visible_on_all_workspaces(true)
+    .initialization_script("window.__WINDOW_TYPE__ = 'monster-calibration';")
+    .build()
+    .map_err(|e| e.to_string())?;
+    
+    // 设置为不可点击穿透（校准时需要交互）
+    window.set_ignore_cursor_events(false).map_err(|e| e.to_string())?;
+    
+    println!("[Calibration] Window created successfully");
+    
+    Ok(())
+}
+
+// 关闭校准窗口
+#[tauri::command]
+async fn close_calibration_window(app: tauri::AppHandle) -> Result<(), String> {
+    use tauri::Manager;
+    
+    if let Some(window) = app.get_webview_window("monster-calibration") {
+        window.close().map_err(|e| e.to_string())?;
+    }
+    
+    Ok(())
 }
 
 #[tauri::command]
@@ -2123,6 +2388,7 @@ pub fn run() {
 
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
+                let mut last_left_click = false;
                 let mut last_right_click = false;
                 let mut heartbeat_counter = 0;
 
@@ -2138,11 +2404,56 @@ pub fn run() {
                         heartbeat_counter = 0;
                     }
 
-                    // 跨平台检测右键点击（使用 device_query）
+                    // 跨平台检测鼠标点击
+                    let left_click = mouse.button_pressed[0]; // 左键是索引 0
                     let right_click = mouse.button_pressed[2]; // 右键是索引 2
+                    
+                    // 调试：检测左键点击
+                    if left_click && !last_left_click {
+                        println!("[Mouse Monitor] Left click detected at ({}, {})", mx, my);
+                    }
+                    
+                    // 检测左键或右键点击时，如果 detail-popup 可见且点击在窗口外，则隐藏
+                    if (left_click && !last_left_click) || (right_click && !last_right_click) {
+                        let handle_check = handle_monitor.clone();
+                        let check_x = mx;
+                        let check_y = my;
+                        
+                        // 检查 detail-popup 窗口
+                        if let Some(popup_window) = handle_check.get_webview_window("detail-popup") {
+                            if let Ok(is_visible) = popup_window.is_visible() {
+                                if is_visible {
+                                    // 获取窗口位置和大小
+                                    if let (Ok(position), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
+                                        let x1 = position.x;
+                                        let y1 = position.y;
+                                        let x2 = x1 + size.width as i32;
+                                        let y2 = y1 + size.height as i32;
+                                        
+                                        // 检查点击是否在窗口外部
+                                        let outside = check_x < x1 || check_x > x2 || check_y < y1 || check_y > y2;
+                                        
+                                        if outside {
+                                            println!("[Mouse Monitor] Click outside detail-popup at ({}, {}), hiding popup", check_x, check_y);
+                                            let handle_hide = handle_check.clone();
+                                            std::thread::spawn(move || {
+                                                let runtime = tokio::runtime::Runtime::new().unwrap();
+                                                runtime.block_on(async move {
+                                                    let _ = hide_detail_popup(handle_hide).await;
+                                                });
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
                     if right_click && !last_right_click {
                         println!("[Global Right Click] Detected at ({}, {})", mx, my);
+                        
+                        // 记录当前前台窗口（用于后续判断是否恢复焦点）
+                        update_last_foreground_window();
                         
                         // 在新线程中处理（因为需要异步调用）
                         let handle_clone = handle_monitor.clone();
@@ -2190,6 +2501,7 @@ pub fn run() {
                             });
                         });
                     }
+                    last_left_click = left_click;
                     last_right_click = right_click;
 
                     std::thread::sleep(std::time::Duration::from_millis(50));
@@ -3173,6 +3485,12 @@ pub fn run() {
                 loop {
                     let mouse_state = device_state.get_mouse();
 
+                    // 检查游戏窗口是否活跃，如果不活跃则跳过所有热键检测
+                    if !is_game_window_active() {
+                        thread::sleep(time::Duration::from_millis(100));
+                        continue;
+                    }
+                    
                     // 读取配置的按键
                     let (monster_hotkey, card_hotkey, toggle_hotkey, yolo_hotkey) = {
                         let state = load_state();
@@ -3346,9 +3664,16 @@ pub fn run() {
             set_card_detection_hotkey,
             get_toggle_collapse_hotkey,
             set_toggle_collapse_hotkey,
+            get_yolo_hotkey,
             set_yolo_hotkey,
+            reset_all_hotkeys,
             get_detail_display_hotkey,
             set_detail_display_hotkey,
+            save_monster_calibration,
+            load_monster_calibration,
+            get_game_window_info,
+            open_calibration_window,
+            close_calibration_window,
             start_template_loading,
             get_item_info,
             search_items,

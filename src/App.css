@@ -349,6 +349,31 @@ html, body, #root {
   gap: 15px;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 205, 25, 0.6) rgba(0, 0, 0, 0.3);
+}
+
+/* Webkit 滚动条样式 (Chrome, Safari, Edge) */
+.settings-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 205, 25, 0.1);
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 205, 25, 0.7), rgba(255, 180, 25, 0.6));
+  border-radius: 5px;
+  border: 1px solid rgba(255, 205, 25, 0.3);
+  transition: all 0.3s ease;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(255, 215, 35, 0.9), rgba(255, 190, 35, 0.8));
+  box-shadow: 0 0 8px rgba(255, 205, 25, 0.5);
 }
 .setting-item {
   display: flex;
@@ -2239,4 +2264,125 @@ html, body, #root {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #ffcd19 rgba(0, 0, 0, 0.3);
+}
+
+/* 确认对话框动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToTop {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Toast 提示系统 */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.toast {
+  min-width: 300px;
+  max-width: 500px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 205, 25, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  animation: slideInFromTop 0.3s ease;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+}
+
+.toast.removing {
+  animation: slideOutToTop 0.3s ease forwards;
+}
+
+.toast-success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(56, 142, 60, 0.95));
+  border: 1px solid rgba(129, 199, 132, 0.5);
+  color: #fff;
+}
+
+.toast-error {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.95), rgba(211, 47, 47, 0.95));
+  border: 1px solid rgba(239, 83, 80, 0.5);
+  color: #fff;
+}
+
+.toast-warning {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.95), rgba(245, 124, 0, 0.95));
+  border: 1px solid rgba(255, 183, 77, 0.5);
+  color: #fff;
+}
+
+.toast-info {
+  background: linear-gradient(135deg, rgba(255, 205, 25, 0.95), rgba(255, 180, 25, 0.95));
+  border: 1px solid rgba(255, 215, 64, 0.5);
+  color: #000;
+  font-weight: 500;
+}
+
+.toast-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
 }
