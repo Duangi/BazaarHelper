@@ -189,27 +189,6 @@ export default function App() {
   });
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   
-  // Overlay详情页面位置和大小设置
-  const [overlayDetailX, setOverlayDetailX] = useState(() => {
-    const saved = localStorage.getItem("overlay-detail-x");
-    return saved ? parseInt(saved) : 50; // 默认50%（屏幕中间）
-  });
-  const [overlayDetailY, setOverlayDetailY] = useState(() => {
-    const saved = localStorage.getItem("overlay-detail-y");
-    return saved ? parseInt(saved) : 50; // 默认50%（屏幕中间）
-  });
-  const [overlayDetailScale, setOverlayDetailScale] = useState(() => {
-    const saved = localStorage.getItem("overlay-detail-scale");
-    return saved ? parseInt(saved) : 100; // 默认100%
-  });
-  const [overlayDetailWidth, setOverlayDetailWidth] = useState(() => {
-    const saved = localStorage.getItem("overlay-detail-width");
-    return saved ? parseInt(saved) : 420; // 默认420px
-  });
-  const [overlayDetailHeight, setOverlayDetailHeight] = useState(() => {
-    const saved = localStorage.getItem("overlay-detail-height");
-    return saved ? parseInt(saved) : 600; // 默认600px
-  });
   const [yoloHotkey, setYoloHotkey] = useState(() => {
     const saved = localStorage.getItem("yolo-hotkey");
     return saved ? parseInt(saved) : 81; // 默认Q键 (VK: 81)
@@ -1189,20 +1168,6 @@ export default function App() {
   }, [yoloHotkey]);
 
   // 基础环境侦测：分辨率适配
-  // 监听 Overlay 的主动同步请求
-  useEffect(() => {
-    const unlisten = listen('request-sync-overlay-settings', () => {
-      console.log("[App] Received config sync request from Overlay, sending settings...");
-      invoke('update_overlay_detail_position', { 
-        x: overlayDetailX, 
-        y: overlayDetailY, 
-        scale: overlayDetailScale,
-        width: overlayDetailWidth,
-        height: overlayDetailHeight
-      }).catch(console.error);
-    });
-    return () => { unlisten.then(f => f()); };
-  }, [overlayDetailX, overlayDetailY, overlayDetailScale, overlayDetailWidth, overlayDetailHeight]);
 
   useEffect(() => {
     const detectScale = async () => {
@@ -2572,163 +2537,24 @@ export default function App() {
 
               <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
-              {/* Overlay详情页面位置和大小控制 */}
+              {/* 重置详情弹窗位置 */}
               <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <label>Overlay详情页面位置</label>
-                  <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
-                    const centerX = 50;
-                    const centerY = 50;
-                    const normalScale = 100;
-                    const defaultWidth = 420;
-                    const defaultHeight = 600;
-                    
-                    // 重置所有状态变量
-                    setOverlayDetailX(centerX);
-                    setOverlayDetailY(centerY);
-                    setOverlayDetailScale(normalScale);
-                    setOverlayDetailWidth(defaultWidth);
-                    setOverlayDetailHeight(defaultHeight);
-                    
-                    // 更新所有LocalStorage
-                    localStorage.setItem("overlay-detail-x", centerX.toString());
-                    localStorage.setItem("overlay-detail-y", centerY.toString());
-                    localStorage.setItem("overlay-detail-scale", normalScale.toString());
-                    localStorage.setItem("overlay-detail-width", defaultWidth.toString());
-                    localStorage.setItem("overlay-detail-height", defaultHeight.toString());
-                    
-                    // 通知Overlay更新所有属性
-                    invoke('update_overlay_detail_position', { 
-                      x: centerX, 
-                      y: centerY, 
-                      scale: normalScale,
-                      width: defaultWidth,
-                      height: defaultHeight
-                    }).catch(console.error);
-                  }}>恢复默认</button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label>详情弹窗位置</label>
+                  <button className="bulk-btn" style={{ padding: '4px 12px' }} onClick={async () => {
+                    try {
+                      await invoke('reset_detail_popup_position');
+                      setStatusMsg("详情弹窗位置已重置");
+                      setTimeout(() => setStatusMsg(null), 2000);
+                    } catch (e) {
+                      console.error("Failed to reset detail popup position:", e);
+                      setStatusMsg("重置失败");
+                      setTimeout(() => setStatusMsg(null), 2000);
+                    }
+                  }}>重置位置</button>
                 </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                    <span style={{ color: '#fff' }}>水平位置: {overlayDetailX}%</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={overlayDetailX} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setOverlayDetailX(val);
-                      localStorage.setItem("overlay-detail-x", val.toString());
-                      invoke('update_overlay_detail_position', { 
-                        x: val, 
-                        y: overlayDetailY, 
-                        scale: overlayDetailScale,
-                        width: overlayDetailWidth,
-                        height: overlayDetailHeight
-                      }).catch(console.error);
-                    }} 
-                    style={{ width: '100%', accentColor: '#ffcd19' }}
-                  />
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                    <span style={{ color: '#fff' }}>垂直位置: {overlayDetailY}%</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={overlayDetailY} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setOverlayDetailY(val);
-                      localStorage.setItem("overlay-detail-y", val.toString());
-                      invoke('update_overlay_detail_position', { 
-                        x: overlayDetailX, 
-                        y: val, 
-                        scale: overlayDetailScale,
-                        width: overlayDetailWidth,
-                        height: overlayDetailHeight
-                      }).catch(console.error);
-                    }} 
-                    style={{ width: '100%', accentColor: '#ffcd19' }}
-                  />
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                    <span style={{ color: '#fff' }}>缩放: {overlayDetailScale}%</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="50" 
-                    max="150" 
-                    value={overlayDetailScale} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setOverlayDetailScale(val);
-                      localStorage.setItem("overlay-detail-scale", val.toString());
-                      invoke('update_overlay_detail_position', { 
-                        x: overlayDetailX, 
-                        y: overlayDetailY, 
-                        scale: val,
-                        width: overlayDetailWidth,
-                        height: overlayDetailHeight
-                      }).catch(console.error);
-                    }} 
-                    style={{ width: '100%', accentColor: '#ffcd19' }}
-                  />
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                    <span style={{ color: '#fff' }}>宽度: {overlayDetailWidth}px</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="200" 
-                    max="800" 
-                    value={overlayDetailWidth} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setOverlayDetailWidth(val);
-                      localStorage.setItem("overlay-detail-width", val.toString());
-                      invoke('update_overlay_detail_position', { 
-                        x: overlayDetailX, 
-                        y: overlayDetailY, 
-                        scale: overlayDetailScale,
-                        width: val,
-                        height: overlayDetailHeight
-                      }).catch(console.error);
-                    }} 
-                    style={{ width: '100%', accentColor: '#ffcd19' }}
-                  />
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                    <span style={{ color: '#fff' }}>高度: {overlayDetailHeight}px</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="200" 
-                    max="1000" 
-                    value={overlayDetailHeight} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setOverlayDetailHeight(val);
-                      localStorage.setItem("overlay-detail-height", val.toString());
-                      invoke('update_overlay_detail_position', { 
-                        x: overlayDetailX, 
-                        y: overlayDetailY, 
-                        scale: overlayDetailScale,
-                        width: overlayDetailWidth,
-                        height: val
-                      }).catch(console.error);
-                    }} 
-                    style={{ width: '100%', accentColor: '#ffcd19' }}
-                  />
-                </div>
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  调整Overlay窗口中详情页面的显示位置和大小
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
+                  重置详情弹窗到默认位置（鼠标所在屏幕的中心）
                 </div>
               </div>
 

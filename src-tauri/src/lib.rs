@@ -399,25 +399,29 @@ fn abort_yolo_scan() {
 
 #[tauri::command]
 fn set_show_yolo_monitor(app: tauri::AppHandle, show: bool) -> Result<(), String> {
-    // Broadcast the show/hide event to all windows; overlay will handle it
-    let _ = app.emit("set-show-yolo-monitor", show);
+    println!("[YOLO Monitor] Setting visibility to: {}", show);
+    
+    // 直接控制 yolo-monitor 窗口的显示/隐藏
+    if let Some(window) = app.get_webview_window("yolo-monitor") {
+        if show {
+            match window.show() {
+                Ok(_) => println!("[YOLO Monitor] Window shown successfully"),
+                Err(e) => println!("[YOLO Monitor] Failed to show window: {}", e),
+            }
+        } else {
+            match window.hide() {
+                Ok(_) => println!("[YOLO Monitor] Window hidden successfully"),
+                Err(e) => println!("[YOLO Monitor] Failed to hide window: {}", e),
+            }
+        }
+    } else {
+        println!("[YOLO Monitor] WARNING: Window not found!");
+    }
+    
     // Persist preference
     let mut state = load_state();
     state.show_yolo_monitor = show;
     save_state(&state);
-    Ok(())
-}
-
-#[tauri::command]
-fn update_overlay_detail_position(app: tauri::AppHandle, x: i32, y: i32, scale: i32, width: Option<i32>, height: Option<i32>) -> Result<(), String> {
-    // Broadcast the position update to overlay window
-    let _ = app.emit("update-overlay-detail-position", serde_json::json!({
-        "x": x,
-        "y": y,
-        "scale": scale,
-        "width": width.unwrap_or(420),
-        "height": height.unwrap_or(600)
-    }));
     Ok(())
 }
 
@@ -790,6 +794,14 @@ pub struct PersistentState {
     pub detail_display_hotkey: Option<i32>,
     #[serde(default = "default_show_yolo_monitor")]
     pub show_yolo_monitor: bool,
+    #[serde(default)]
+    pub detail_popup_x: Option<i32>,
+    #[serde(default)]
+    pub detail_popup_y: Option<i32>,
+    #[serde(default)]
+    pub detail_popup_width: Option<u32>,
+    #[serde(default)]
+    pub detail_popup_height: Option<u32>,
 }
 
 // 跨平台虚拟键常量
@@ -809,6 +821,10 @@ impl Default for PersistentState {
             yolo_hotkey: Some(81), // Default: Q key (VK_Q = 81)
             detail_display_hotkey: Some(VK_RBUTTON_CODE), // Default: Right mouse button
             show_yolo_monitor: true,
+            detail_popup_x: None,
+            detail_popup_y: None,
+            detail_popup_width: None,
+            detail_popup_height: None,
         }
     }
 }
@@ -1341,10 +1357,175 @@ async fn get_item_info(state: tauri::State<'_, DbState>, id: String) -> Result<O
 }
 
 #[tauri::command]
-async fn set_overlay_ignore_cursor(app: tauri::AppHandle, ignore: bool) -> Result<(), String> {
-    if let Some(overlay) = app.get_webview_window("overlay") {
-        overlay.set_ignore_cursor_events(ignore).map_err(|e| e.to_string())?;
+async fn set_overlay_ignore_cursor(_app: tauri::AppHandle, _ignore: bool) -> Result<(), String> {
+    // 新方案：yolo-monitor 和 detail-popup 窗口始终可交互
+    // 通过缩小窗口来避免妨碍用户，而不是设置鼠标穿透
+    // 此命令保留以兼容旧代码，但不执行任何操作
+    Ok(())
+}
+
+#[tauri::command]
+async fn show_yolo_monitor_window(app: tauri::AppHandle, show: bool) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("yolo-monitor") {
+        if show {
+            let _ = window.show();
+        } else {
+            let _ = window.hide();
+        }
     }
+    Ok(())
+}
+
+#[tauri::command]
+async fn show_detail_popup_at(app: tauri::AppHandle, x: i32, y: i32, data_type: String, data: serde_json::Value) -> Result<(), String> {
+    println!("[Show Detail Popup] Requested position: ({}, {}), Type: {}", x, y, data_type);
+    
+    if let Some(window) = app.get_webview_window("detail-popup") {
+        println!("[Show Detail Popup] Window found");
+        
+        // 加载保存的状态
+        let state = load_state();
+        
+        // 使用保存的位置和大小
+        let saved_width = state.detail_popup_width.unwrap_or(480);
+        let saved_height = state.detail_popup_height.unwrap_or(700);
+        let final_width = if saved_width < 100 { 480 } else { saved_width };
+        let final_height = if saved_height < 100 { 700 } else { saved_height };
+        
+        // 如果有保存的位置，使用保存的位置；否则在鼠标所在屏幕中心显示
+        let (final_x, final_y) = if let (Some(saved_x), Some(saved_y)) = (state.detail_popup_x, state.detail_popup_y) {
+            (saved_x, saved_y)
+        } else {
+            // 获取鼠标所在的屏幕
+            use tauri::Monitor;
+            let monitors = window.available_monitors().map_err(|e| e.to_string())?;
+            
+            // 找到包含鼠标位置的屏幕
+            let target_monitor = monitors.iter().find(|m| {
+                let pos = m.position();
+                let size = m.size();
+                x >= pos.x && x < (pos.x + size.width as i32) &&
+                y >= pos.y && y < (pos.y + size.height as i32)
+            });
+            
+            if let Some(monitor) = target_monitor {
+                // 在该屏幕中心显示
+                let pos = monitor.position();
+                let size = monitor.size();
+                let center_x = pos.x + (size.width as i32 / 2) - (final_width as i32 / 2);
+                let center_y = pos.y + (size.height as i32 / 2) - (final_height as i32 / 2);
+                println!("[Show Detail Popup] Mouse on monitor at ({}, {}), size {}x{}, centering at ({}, {})", 
+                         pos.x, pos.y, size.width, size.height, center_x, center_y);
+                (center_x, center_y)
+            } else {
+                // 降级：使用传入的位置
+                (x - 200, y - 300)
+            }
+        };
+        
+        println!("[Show Detail Popup] Using position: ({}, {}), size: {}x{}", final_x, final_y, final_width, final_height);
+        
+        // 设置窗口大小
+        let _ = window.set_size(tauri::PhysicalSize::new(final_width, final_height));
+        
+        // 限制位置在屏幕范围内
+        let safe_x = final_x.max(0).min(3000);
+        let safe_y = final_y.max(0).min(2000);
+        
+        // 设置窗口位置
+        match window.set_position(tauri::PhysicalPosition::new(safe_x, safe_y)) {
+            Ok(_) => println!("[Show Detail Popup] Position set successfully"),
+            Err(e) => println!("[Show Detail Popup] Failed to set position: {}", e),
+        }
+        
+        // 确保窗口在最前面
+        match window.set_always_on_top(true) {
+            Ok(_) => println!("[Show Detail Popup] Set always on top"),
+            Err(e) => println!("[Show Detail Popup] Failed to set always on top: {}", e),
+        }
+        
+        // 显示窗口
+        match window.show() {
+            Ok(_) => {
+                println!("[Show Detail Popup] Window shown successfully");
+                // 再次检查可见性
+                if let Ok(visible) = window.is_visible() {
+                    println!("[Show Detail Popup] Visibility after show: {}", visible);
+                }
+            },
+            Err(e) => println!("[Show Detail Popup] Failed to show window: {}", e),
+        }
+        
+        // 尝试设置焦点
+        let _ = window.set_focus();
+        
+        // 发送数据给前端 - 直接向 detail-popup 窗口发射事件
+        let payload = serde_json::json!({
+            "type": data_type,
+            "data": data
+        });
+        println!("[Show Detail Popup] Emitting event with payload type: {}", data_type);
+        match window.emit("show-detail-popup", payload) {
+            Ok(_) => println!("[Show Detail Popup] Event emitted to detail-popup window successfully"),
+            Err(e) => println!("[Show Detail Popup] Failed to emit event: {}", e),
+        }
+        
+        // 最后检查窗口的 label
+        println!("[Show Detail Popup] Window label: {}", window.label());
+    } else {
+        println!("[Show Detail Popup] ERROR: detail-popup window not found!");
+        return Err("detail-popup window not found".to_string());
+    }
+    Ok(())
+}
+
+#[tauri::command]
+async fn hide_detail_popup(app: tauri::AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("detail-popup") {
+        // 保存当前位置和大小（但不保存太小的尺寸）
+        if let (Ok(position), Ok(size)) = (window.outer_position(), window.outer_size()) {
+            // 只有当窗口尺寸合理时才保存（避免保存缩小后的 1x1）
+            if size.width >= 100 && size.height >= 100 {
+                let mut state = load_state();
+                state.detail_popup_x = Some(position.x);
+                state.detail_popup_y = Some(position.y);
+                state.detail_popup_width = Some(size.width);
+                state.detail_popup_height = Some(size.height);
+                save_state(&state);
+                println!("[Hide Detail Popup] Saved position: ({}, {}), size: {}x{}", position.x, position.y, size.width, size.height);
+            } else {
+                println!("[Hide Detail Popup] Skipping save - window too small: {}x{}", size.width, size.height);
+            }
+        }
+        
+        // 发送隐藏事件（触发缩小动画）- 直接向窗口发射
+        let _ = window.emit("hide-detail-popup", ());
+    }
+    
+    Ok(())
+}
+
+#[tauri::command]
+async fn reset_detail_popup_position(app: tauri::AppHandle) -> Result<(), String> {
+    println!("[Reset Detail Popup] Clearing saved position and size");
+    
+    // 清除保存的位置和大小
+    let mut state = load_state();
+    state.detail_popup_x = None;
+    state.detail_popup_y = None;
+    state.detail_popup_width = None;
+    state.detail_popup_height = None;
+    save_state(&state);
+    
+    // 如果窗口当前可见，隐藏它
+    if let Some(window) = app.get_webview_window("detail-popup") {
+        if window.is_visible().unwrap_or(false) {
+            let _ = window.hide();
+            println!("[Reset Detail Popup] Window was visible, hiding it");
+        }
+    }
+    
+    println!("[Reset Detail Popup] Position reset complete");
     Ok(())
 }
 
@@ -1943,16 +2124,71 @@ pub fn run() {
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
                 let mut last_right_click = false;
+                let mut heartbeat_counter = 0;
 
                 loop {
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
 
+                    // 每100次循环（约5秒）打印一次心跳
+                    heartbeat_counter += 1;
+                    if heartbeat_counter >= 100 {
+                        println!("[Mouse Monitor] Heartbeat - thread alive, mouse at ({}, {}), buttons: {:?}", mx, my, mouse.button_pressed);
+                        heartbeat_counter = 0;
+                    }
+
                     // 跨平台检测右键点击（使用 device_query）
                     let right_click = mouse.button_pressed[2]; // 右键是索引 2
+                    
                     if right_click && !last_right_click {
-                        let _ = handle_monitor.emit("global-right-click", serde_json::json!({ "x": mx, "y": my }));
+                        println!("[Global Right Click] Detected at ({}, {})", mx, my);
+                        
+                        // 在新线程中处理（因为需要异步调用）
+                        let handle_clone = handle_monitor.clone();
+                        let click_x = mx;
+                        let click_y = my;
+                        
+                        std::thread::spawn(move || {
+                            let runtime = tokio::runtime::Runtime::new().unwrap();
+                            runtime.block_on(async move {
+                                match handle_overlay_right_click(handle_clone.clone(), click_x, click_y).await {
+                                    Ok(Some(result)) => {
+                                        println!("[Right Click] Found result: {:?}", result.get("type"));
+                                        
+                                        // 显示详情弹出窗口
+                                        let result_type = result.get("type")
+                                            .and_then(|v| v.as_str())
+                                            .unwrap_or("unknown")
+                                            .to_string();
+                                        
+                                        let data = result.get("data").cloned().unwrap_or(serde_json::json!({}));
+                                        
+                                        // 计算窗口位置（让窗口居中在点击位置）
+                                        let window_x = click_x - 200;
+                                        let window_y = click_y - 300;
+                                        
+                                        if let Err(e) = show_detail_popup_at(
+                                            handle_clone.clone(),
+                                            window_x,
+                                            window_y,
+                                            result_type,
+                                            data
+                                        ).await {
+                                            println!("[Right Click] Failed to show popup: {}", e);
+                                        }
+                                    }
+                                    Ok(None) => {
+                                        println!("[Right Click] No result, hiding popup");
+                                        // 点击空白处，隐藏详情
+                                        let _ = hide_detail_popup(handle_clone).await;
+                                    }
+                                    Err(e) => {
+                                        println!("[Right Click] Error: {}", e);
+                                    }
+                                }
+                            });
+                        });
                     }
                     last_right_click = right_click;
 
@@ -1994,40 +2230,98 @@ pub fn run() {
                     })
                     .on_tray_icon_event(move |_tray, event| {
                         if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
-                            // 点击托盘图标时，显示窗口到当前空间
+                            // 点击托盘图标时，显示主窗口
                             if let Some(main_win) = tray_handle.get_webview_window("main") {
                                 let _ = main_win.show();
                                 let _ = main_win.set_focus();
-                            }
-                            if let Some(overlay_win) = tray_handle.get_webview_window("overlay") {
-                                let _ = overlay_win.show();
                             }
                         }
                     })
                     .build(app)?;
             }
 
-            // ============== 跨平台 Overlay 初始化 ==============
-            if let Some(overlay) = app.get_webview_window("overlay") {
-                let _ = overlay.set_ignore_cursor_events(true);
-
-                // macOS: 设置窗口可覆盖全屏应用
-                #[cfg(target_os = "macos")]
-                setup_macos_fullscreen_overlay(&overlay);
-
-                if let Ok(Some(monitor)) = overlay.primary_monitor() {
-                    let size = monitor.size();
-                    let position = monitor.position();
-                    println!("[Overlay Init] Setting overlay: x={}, y={}, w={}, h={}",
-                            position.x, position.y, size.width, size.height);
-                    let _ = overlay.set_size(tauri::PhysicalSize::new(size.width, size.height));
-                    let _ = overlay.set_position(tauri::PhysicalPosition::new(position.x, position.y));
-                } else {
-                    println!("[Overlay Init] Using fallback 4K resolution");
-                    let _ = overlay.set_size(tauri::PhysicalSize::new(3840, 2160));
-                    let _ = overlay.set_position(tauri::PhysicalPosition::new(0, 0));
+            // ============== 跨平台新窗口初始化 ==============
+            // 动态创建窗口而不是从配置文件加载
+            use tauri::WebviewWindowBuilder;
+            use tauri::WebviewUrl;
+            
+            // 创建 yolo-monitor 窗口
+            println!("[Setup] Creating yolo-monitor window...");
+            match WebviewWindowBuilder::new(app, "yolo-monitor", WebviewUrl::App("index.html".into()))
+                .title("YOLO Monitor")
+                .inner_size(300.0, 200.0)
+                .position(20.0, 20.0)
+                .resizable(true) // 允许调整大小
+                .maximizable(false)
+                .minimizable(false)
+                .always_on_top(true)
+                .decorations(false) // 无边框
+                .transparent(true) // 透明背景
+                .visible(false) // 默认隐藏，通过命令显示
+                .skip_taskbar(true) // 不在任务栏显示
+                .shadow(false)
+                .visible_on_all_workspaces(true)
+                .focusable(true) // 可聚焦和交互
+                .initialization_script(r#"
+                    window.__WINDOW_TYPE__ = 'yolo-monitor';
+                    console.log('[Initialization] Window type set to:', window.__WINDOW_TYPE__);
+                "#)
+                .build()
+            {
+                Ok(yolo_monitor) => {
+                    println!("[Setup] yolo-monitor window created successfully");
+                    
+                    #[cfg(target_os = "macos")]
+                    setup_macos_fullscreen_overlay(&yolo_monitor);
+                    
+                    // 根据保存的设置决定是否显示
+                    let state = load_state();
+                    if state.show_yolo_monitor {
+                        let _ = yolo_monitor.show();
+                        println!("[Setup] yolo-monitor window initialized and shown (from saved state)");
+                    } else {
+                        println!("[Setup] yolo-monitor window initialized (hidden by default)");
+                    }
                 }
-                let _ = overlay.show();
+                Err(e) => {
+                    println!("[Setup] Failed to create yolo-monitor window: {}", e);
+                }
+            }
+            
+            // 创建 detail-popup 窗口
+            println!("[Setup] Creating detail-popup window...");
+            match WebviewWindowBuilder::new(app, "detail-popup", WebviewUrl::App("index.html".into()))
+                .title("Detail Popup")
+                .inner_size(480.0, 700.0) // 增大默认尺寸以完整显示内容
+                .position(500.0, 300.0)
+                .resizable(true) // 允许调整大小
+                .maximizable(false)
+                .minimizable(false)
+                .always_on_top(true)
+                .decorations(false) // 无边框
+                .transparent(true) // 透明背景
+                .visible(false) // 默认隐藏，通过右键点击显示
+                .skip_taskbar(true) // 不在任务栏显示
+                .shadow(false)
+                .visible_on_all_workspaces(true)
+                .focusable(true) // 可聚焦和交互
+                .initialization_script(r#"
+                    window.__WINDOW_TYPE__ = 'detail-popup';
+                    console.log('[Initialization] Window type set to:', window.__WINDOW_TYPE__);
+                "#)
+                .build()
+            {
+                Ok(_detail_popup) => {
+                    println!("[Setup] detail-popup window created successfully");
+                    
+                    #[cfg(target_os = "macos")]
+                    setup_macos_fullscreen_overlay(&_detail_popup);
+                    
+                    println!("[Setup] detail-popup window initialized (hidden by default)");
+                }
+                Err(e) => {
+                    println!("[Setup] Failed to create detail-popup window: {}", e);
+                }
             }
 
             // macOS: 主窗口也设置全屏覆盖
@@ -2064,26 +2358,29 @@ pub fn run() {
                         });
 
                     let main_win = sync_handle.get_webview_window("main");
-                    let overlay_win = sync_handle.get_webview_window("overlay");
+                    let yolo_monitor_win = sync_handle.get_webview_window("yolo-monitor");
+                    let detail_popup_win = sync_handle.get_webview_window("detail-popup");
 
                     if let Some(_game_win) = game_window {
                         // 游戏正在运行
                         if !was_game_running {
-                            // 游戏刚启动，显示窗口
+                            // 游戏刚启动，显示主窗口
                             if let Some(ref w) = main_win {
                                 let _ = w.show();
                                 let _ = w.set_always_on_top(true);
                             }
-                            if let Some(ref w) = overlay_win {
-                                let _ = w.show();
-                                let _ = w.set_always_on_top(true);
-                            }
+                            // YOLO Monitor 由用户设置控制显示
+                            // Detail Popup 由右键点击事件控制显示
                         }
                         was_game_running = true;
                     } else {
                         // 游戏没运行
                         if was_game_running {
-                            if let Some(ref w) = overlay_win {
+                            // 游戏关闭时隐藏两个窗口
+                            if let Some(ref w) = yolo_monitor_win {
+                                let _ = w.hide();
+                            }
+                            if let Some(ref w) = detail_popup_win {
                                 let _ = w.hide();
                             }
                             was_game_running = false;
@@ -2886,12 +3183,28 @@ pub fn run() {
                             state.yolo_hotkey.unwrap_or(81)
                         )
                     };
+                    
+                    // 检测热键冲突
+                    static mut CONFLICT_WARNING_SHOWN: bool = false;
+                    unsafe {
+                        if !CONFLICT_WARNING_SHOWN && (monster_hotkey == yolo_hotkey || card_hotkey == yolo_hotkey) {
+                            println!("[热键冲突警告] YOLO热键({})与其他热键冲突！", yolo_hotkey);
+                            println!("  怪物识别热键: {}, 卡牌识别热键: {}", monster_hotkey, card_hotkey);
+                            println!("  建议：在设置中修改热键避免冲突");
+                            log_to_file(&format!("热键冲突: monster={}, card={}, yolo={}", monster_hotkey, card_hotkey, yolo_hotkey));
+                            CONFLICT_WARNING_SHOWN = true;
+                        }
+                    }
 
-                    // 1. 检测怪物识别按键
-                    if is_key_pressed(monster_hotkey, &device_state, &mouse_state) {
+                    // 优先级：YOLO热键 > 怪物识别热键（避免冲突）
+                    let yolo_key_pressed = yolo_hotkey != 1 && yolo_hotkey != 2 && is_key_pressed(yolo_hotkey, &device_state, &mouse_state);
+                    
+                    // 1. 检测怪物识别按键（如果与YOLO热键冲突，跳过）
+                    if monster_hotkey != yolo_hotkey && is_key_pressed(monster_hotkey, &device_state, &mouse_state) {
                             if last_trigger.elapsed() > time::Duration::from_millis(500) {
                                 last_trigger = time::Instant::now();
-                                log_to_file("Monster Hotkey pressed, starting scan...");
+                                println!("[Monster Hotkey] Key {} pressed", monster_hotkey);
+                                log_to_file(&format!("Monster Hotkey {} pressed, starting scan...", monster_hotkey));
                                 
                                 // 尝试识别怪物
                                 match scan_and_identify_monster_at_mouse() {
@@ -2979,11 +3292,12 @@ pub fn run() {
                             }
                         }
 
-                    // 2. 检测卡牌识别按键
-                    if is_key_pressed(card_hotkey, &device_state, &mouse_state) {
+                    // 2. 检测卡牌识别按键（如果与YOLO热键冲突，跳过）
+                    if card_hotkey != yolo_hotkey && is_key_pressed(card_hotkey, &device_state, &mouse_state) {
                         if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
                             last_card_trigger = time::Instant::now();
-                            log_to_file("Card Hotkey pressed, triggering recognition...");
+                            println!("[Card Hotkey] Key {} pressed", card_hotkey);
+                            log_to_file(&format!("Card Hotkey {} pressed, triggering recognition...", card_hotkey));
                             let _ = handle_mouse.emit("hotkey-detect-card", ());
                         }
                     }
@@ -2997,12 +3311,16 @@ pub fn run() {
                         }
                     }
 
-                    // 4. 检测YOLO手动触发按键（排除左右键）
-                    if yolo_hotkey != 1 && yolo_hotkey != 2 && is_key_pressed(yolo_hotkey, &device_state, &mouse_state) {
+                    // 4. 检测YOLO手动触发按键（排除左右键）- 优先级最高
+                    if yolo_key_pressed {
                         if last_yolo_trigger.elapsed() > time::Duration::from_millis(500) {
                             last_yolo_trigger = time::Instant::now();
-                            log_to_file("YOLO Hotkey pressed");
-                            let _ = handle_mouse.emit("yolo_hotkey_pressed", ());
+                            println!("[YOLO Hotkey] Key {} pressed, emitting event", yolo_hotkey);
+                            log_to_file(&format!("YOLO Hotkey {} pressed", yolo_hotkey));
+                            match handle_mouse.emit("yolo_hotkey_pressed", ()) {
+                                Ok(_) => println!("[YOLO Hotkey] Event emitted successfully"),
+                                Err(e) => println!("[YOLO Hotkey] Failed to emit event: {}", e),
+                            }
                         }
                     }
 
@@ -3049,8 +3367,11 @@ pub fn run() {
             // clear_monster_cache,
             set_overlay_ignore_cursor,
             set_show_yolo_monitor,
-            update_overlay_detail_position,
-            restore_game_focus
+            restore_game_focus,
+            show_yolo_monitor_window,
+            show_detail_popup_at,
+            hide_detail_popup,
+            reset_detail_popup_position
         ])
         .run(tauri::generate_context!())
         .map_err(|e| {

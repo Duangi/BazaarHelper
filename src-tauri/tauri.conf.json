@@ -25,24 +25,6 @@
                                     "visible":  false,
                                     "dragDropEnabled":  true,
                                     "visibleOnAllWorkspaces":  true
-                                },
-                                {
-                                    "label":  "overlay",
-                                    "title":  "Bazaar Overlay",
-                                    "width":  1920,
-                                    "height":  1080,
-                                    "resizable":  false,
-                                    "maximizable":  false,
-                                    "minimizable":  false,
-                                    "alwaysOnTop":  true,
-                                    "decorations":  false,
-                                    "transparent":  true,
-                                    "backgroundColor":  "#00000000",
-                                    "visible":  false,
-                                    "skipTaskbar":  true,
-                                    "shadow":  false,
-                                    "incognito":  true,
-                                    "visibleOnAllWorkspaces":  true
                                 }
                             ],
                 "security":  {

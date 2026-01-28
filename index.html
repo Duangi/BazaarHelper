@@ -7,12 +7,13 @@
     <title>Tauri + React + Typescript</title>
   </head>
 
-  <body style="background-color: transparent; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden;">
-    <div id="root" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+  <body style="background-color: transparent; margin: 0; padding: 0; overflow: hidden;" oncontextmenu="return false;">
+    <div id="root" style="width: 100%; height: 100%;">
       <!-- Removed loading text to avoid overlay clutter -->
     </div>
     <style>
       @keyframes spin { to { transform: rotate(360deg); } }
+      body { user-select: none; -webkit-user-select: none; }
     </style>
     <script type="module" src="/src/main.tsx"></script>
   </body>
