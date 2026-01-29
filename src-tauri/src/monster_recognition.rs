@@ -33,6 +33,49 @@ pub struct YoloDetection {
     pub class_id: usize,
 }
 
+fn crop_focus(img: &DynamicImage, top_fraction: f32, center_fraction: f32, h_offset: f32, pad_px: i32, keep: &str) -> DynamicImage {
+    let (w, h) = img.dimensions();
+    
+    // compute top crop height
+    let top_h = (h as f32 * top_fraction).max(1.0) as u32;
+    
+    // compute centered width
+    let center_w = (w as f32 * center_fraction).max(1.0) as u32;
+    
+    // center x with offset
+    let center_x = (w as f32 / 2.0 + h_offset * w as f32) as i32;
+    
+    let mut left = center_x - center_w as i32 / 2;
+    let mut right = left + center_w as i32;
+    
+    // clamp
+    if left < 0 {
+        left = 0;
+        right = center_w as i32;
+    }
+    if right > w as i32 {
+        right = w as i32;
+        left = (w as i32 - center_w as i32).max(0);
+    }
+    
+    // apply padding
+    left = (left - pad_px).max(0);
+    right = (right + pad_px).min(w as i32);
+    
+    // final crop: top/bottom portion then horizontal slice
+    let (crop_y, crop_h) = if keep == "bottom" {
+        let y = (h as i32 - top_h as i32).max(0) as u32;
+        (y, top_h.min(h - y))
+    } else {
+        (0, top_h.min(h))
+    };
+    
+    let crop_x = left as u32;
+    let crop_w = (right as u32 - left as u32).min(w - crop_x);
+    
+    img.crop_imm(crop_x, crop_y, crop_w, crop_h)
+}
+
 static YOLO_SESSION: OnceLock<Mutex<Session>> = OnceLock::new();
 
 pub fn get_yolo_session(model_path: &PathBuf, #[allow(unused_variables)] use_gpu: bool) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
@@ -1100,7 +1143,7 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     println!("[Timer] 截图耗时: {:?}", start_capture.elapsed());
 
     let img = DynamicImage::ImageRgba8(screenshot);
-    let (width, height) = img.dimensions();
+    let (_width, _height) = img.dimensions();
 
     let full_cache = TEMPLATE_CACHE.get().ok_or("Templates not loaded")?;
     let cache: Vec<&TemplateCache> = if let Some(ref target_day) = day_filter {
@@ -1115,24 +1158,33 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
     println!("[OpenCV Recognition] 开始匹配，库中共有 {} 个目标怪兽", cache.len());
 
     let mut results = Vec::new();
-    let region_y = (height as f32 * 0.10) as u32;
-    let region_h = (height as f32 * 0.50) as u32;
-    let total_region_w = (width as f32 * 0.60) as u32;
-    let region_x_start = (width as f32 * 0.20) as u32;
-
-    let slot_w = total_region_w / 3;
-    let slot_h = region_h;
+    
+    // Apply the crop_focus sequence:
+    // 1) Keep top 50%
+    let step1 = crop_focus(&img, 0.5, 1.0, 0.0, 0, "top");
+    save_debug_image(&step1, "monster_step1_top50");
+    
+    // 2) From top 50%, keep bottom 70% (effectively 35% of original height)
+    let step2 = crop_focus(&step1, 0.7, 1.0, 0.0, 0, "bottom");
+    save_debug_image(&step2, "monster_step2_bottom70");
+    
+    // 3) Final horizontal crop to center 5/12 ≈ 41.67%
+    let final_crop = crop_focus(&step2, 1.0, 5.0/12.0, 0.0, 0, "top");
+    save_debug_image(&final_crop, "monster_final_crop");
+    
+    let (crop_width, crop_height) = final_crop.dimensions();
+    let slot_w = crop_width / 3;
+    let slot_h = crop_height;
 
     let start_match = Instant::now();
-    save_debug_image(&img, "monster_full_screenshot");
 
     for i in 0..3 {
         let start_slot = Instant::now();
-        let x = region_x_start + (i as u32 * slot_w);
-        let y = region_y;
-        if x + slot_w > width || y + slot_h > height { continue; }
+        let x = i as u32 * slot_w;
+        let y = 0;
+        if x + slot_w > crop_width || y + slot_h > crop_height { continue; }
 
-        let slice = img.crop_imm(x, y, slot_w, slot_h);
+        let slice = final_crop.crop_imm(x, y, slot_w, slot_h);
         save_debug_image(&slice, &format!("monster_slot_{}", i + 1));
         
         // 使用 OpenCV 提取场景特征

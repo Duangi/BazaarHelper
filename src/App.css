@@ -168,6 +168,10 @@ html, body, #root {
   border: none !important;
 }
 
+.overlay.is-resizing * {
+  transition: none !important;
+}
+
 .overlay {
   position: fixed; top: 0; right: 0;
   background: rgba(41, 37, 33, 0.85); /* 还原酒馆褐色背景 */
@@ -176,40 +180,6 @@ html, body, #root {
   width: 100% !important;
   overflow: hidden;
 }
-
-.resize-handle-width {
-  position: absolute;
-  left: 0;
-  top: 45px;
-  bottom: 0;
-  width: 12px;
-  cursor: ew-resize;
-  background: rgba(255, 205, 25, 0.01);
-  z-index: 1001;
-  -webkit-app-region: no-drag;
-  transition: background 0.2s;
-}
-.resize-handle-width:hover {
-  background: linear-gradient(to right, rgba(255, 205, 25, 0.3), transparent);
-}
-
-.resize-handle-height {
-  position: absolute;
-  left: 12px;
-  right: 0;
-  bottom: 0;
-  height: 12px;
-  cursor: ns-resize;
-  background: rgba(255, 205, 25, 0.01);
-  z-index: 1001;
-  -webkit-app-region: no-drag;
-  transition: background 0.2s;
-}
-.resize-handle-height:hover {
-  background: linear-gradient(to top, rgba(255, 205, 25, 0.3), transparent);
-}
-
-
 
 .scale-display {
   font-size: calc(11px * var(--font-scale, 1));
@@ -1378,6 +1348,28 @@ html, body, #root {
   height: 48px;
   border-radius: 6px;
   object-fit: contain;
+.resize-handle-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: ew-resize;
+  z-index: 9999;
+  /* keep it invisible but hit-testable */
+  background: transparent;
+}
+
+.resize-handle-br {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  z-index: 9999;
+  background: transparent;
+}
   background: rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
 }

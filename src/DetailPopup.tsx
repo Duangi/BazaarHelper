@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, Fragment } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getCurrentWindow, PhysicalSize } from "@tauri-apps/api/window";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import "./App.css";
@@ -100,8 +100,7 @@ export default function DetailPopup() {
     const [data, setData] = useState<{ type: DetailType; data: DetailData } | null>(null);
     const [scale, setScale] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
-    const [allTags, setAllTags] = useState<string[]>([]);
-    const [itemImageUrl, setItemImageUrl] = useState<string>("");
+    const [allTags] = useState<string[]>([]);
     const imgCache = useRef<Map<string, string>>(new Map());
     const containerRef = useRef<HTMLDivElement>(null);
     const MAX_CACHE_SIZE = 200;
@@ -247,125 +246,97 @@ export default function DetailPopup() {
         console.log("[DetailPopup] Component mounted, setting up listeners");
         
         // 监听容器点击事件，点击外部关闭
-        const handleContainerClick = (e: MouseEvent) => {
-            if (e.target === e.currentTarget) {
-                console.log("[DetailPopup] Clicked outside content, hiding");
-                invoke("hide_detail_popup");
-            }
-        };
+        // const handleContainerClick = (e: MouseEvent) => {
+        //     // 我们检查点击是否在内容区域外，或者是在我们的容器背景上
+        //     if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container')) {
+        //         console.log("[DetailPopup] Clicked outside content, hiding");
+        //         invoke("hide_detail_popup");
+        //     }
+        // };
         
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('click', handleContainerClick as any);
-            container.addEventListener('contextmenu', handleContainerClick as any);
-        }
-        
-        // 监听显示详情事件
-        const showUnlisten = listen<{ type: DetailType; data: DetailData }>(
-            "show-detail-popup",
-            async (event) => {
-                console.log("[DetailPopup] Received show-detail-popup event:", event.payload);
-                const { type, data } = event.payload;
-                
-                // 和 OverlayApp.tsx 一样，使用 uuid 或 name 来构建图片路径
-                console.log("[DetailPopup] Item uuid:", data.uuid, "name:", data.name);
-                let imageUrl = "";
-                if (data.uuid || data.name) {
-                    const imagePath = `images/${data.uuid || data.name}.webp`;
-                    console.log("[DetailPopup] Loading image from:", imagePath);
-                    imageUrl = await getImg(imagePath);
-                    console.log("[DetailPopup] Converted image URL:", imageUrl);
-                }
-                
-                const processedData = {
-                    ...data,
-                    displayImg: imageUrl || data.displayImg
-                };
-                
-                console.log("[DetailPopup] Final displayImg:", processedData.displayImg);
-                console.log("[DetailPopup] Setting data and starting show animation");
-                setData({ type, data: processedData });
-                setIsVisible(true);
-                
-                // 后端已经设置了窗口大小和位置，前端只需要执行动画
-                setScale(0);
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        setScale(1);
-                    });
-                });
-            }
-        );
+        // 使用一个稳定的监听器
+        let showUnlisten: (() => void) | null = null;
+        let hideUnlisten: (() => void) | null = null;
 
-        // 监听隐藏事件
-        const hideUnlisten = listen("hide-detail-popup", async () => {
-            console.log("[DetailPopup] Received hide-detail-popup event");
-            setScale(0);
-            
-            // 缩小窗口到 1x1
-            const currentWindow = getCurrentWindow();
-            try {
-                await currentWindow.setSize({ width: 1, height: 1, type: 'Physical' });
-                console.log("[DetailPopup] Window size set to 1x1");
-            } catch (e) {
-                console.error("[DetailPopup] Failed to resize window:", e);
-            }
-            
-            setTimeout(() => {
-                setIsVisible(false);
-                setData(null);
-            }, 300);
-        });
+        const setupListeners = async () => {
+            showUnlisten = await listen<{ type: DetailType; data: DetailData }>(
+                "show-detail-popup",
+                async (event) => {
+                    console.log("[DetailPopup] Received show-detail-popup event:", event.payload);
+                    const { type, data: itemData } = event.payload;
+                    
+                    // 和 OverlayApp.tsx 一样，使用 uuid 或 name 来构建图片路径
+                    console.log("[DetailPopup] Item uuid:", itemData.uuid, "name:", itemData.name);
+                    let imageUrl = "";
+                    if (itemData.uuid || itemData.name) {
+                        const imagePath = `images/${itemData.uuid || itemData.name}.webp`;
+                        imageUrl = await getImg(imagePath);
+                    }
+                    
+                    const processedData = {
+                        ...itemData,
+                        displayImg: imageUrl || itemData.displayImg
+                    };
+                    
+                    setData({ type, data: processedData });
+                    setIsVisible(true);
+                    
+                    // 确保先设置为0，触发一次渲染
+                    setScale(0);
+                    
+                    // 使用 requestAnimationFrame 确保下一帧动画生效
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            setScale(1);
+                        });
+                    });
+                }
+            );
+
+            hideUnlisten = await listen("hide-detail-popup", async () => {
+                console.log("[DetailPopup] Received hide-detail-popup event");
+                setScale(0);
+                
+                setTimeout(async () => {
+                    setIsVisible(false);
+                    setData(null);
+                    
+                    // 只有在完全隐藏后才缩小窗口，避免动画过程中由于窗口缩小导致的闪烁
+                    const currentWindow = getCurrentWindow();
+                    try {
+                        // 使用逻辑像素 1x1，或者至少 10x10 确保不会导致某些显卡驱动问题
+                        await currentWindow.setSize(new PhysicalSize(1, 1));
+                        console.log("[DetailPopup] Window size set to 1x1 after fade out");
+                    } catch (e) {
+                        console.error("[DetailPopup] Failed to resize window:", e);
+                    }
+                }, 300);
+            });
+        };
+
+        setupListeners();
 
         return () => {
             console.log("[DetailPopup] Component unmounting, cleaning up listeners");
-            if (container) {
-                container.removeEventListener('click', handleContainerClick as any);
-                container.removeEventListener('contextmenu', handleContainerClick as any);
-            }
-            showUnlisten.then(fn => fn());
-            hideUnlisten.then(fn => fn());
+            if (showUnlisten) showUnlisten();
+            if (hideUnlisten) hideUnlisten();
         };
-    }, [isVisible]);
+    }, []); // 去掉 isVisible 依赖，只在加载时注册一次
 
-    // 监听窗口大小变化，自动保存
-    useEffect(() => {
-        if (!isVisible) return;
-
-        const currentWindow = getCurrentWindow();
-        let resizeTimer: NodeJS.Timeout;
-
-        const handleResize = async () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(async () => {
-                try {
-                    const position = await currentWindow.outerPosition();
-                    const size = await currentWindow.outerSize();
-                    console.log("[DetailPopup] Window resized/moved, saving position and size:", position, size);
-                    // 位置和大小会在隐藏时保存，这里只是记录日志
-                } catch (e) {
-                    console.error("[DetailPopup] Failed to get window state:", e);
-                }
-            }, 500); // 防抖 500ms
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(resizeTimer);
-        };
-    }, [isVisible]);
-
+    // 无论是否可见，都保持组件挂载，通过 isVisible 控制渲染
+    // 这样 containerRef 始终是稳定的
     if (!isVisible || !data) {
-        // 返回一个极小的空 div，让窗口缩小
         return (
-            <div style={{
-                width: '1px',
-                height: '1px',
-                opacity: 0,
-                pointerEvents: 'none'
-            }} />
+            <div 
+                ref={containerRef}
+                style={{
+                    width: '1px',
+                    height: '1px',
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    overflow: 'hidden'
+                }} 
+            />
         );
     }
 
@@ -396,6 +367,19 @@ export default function DetailPopup() {
     return (
         <div 
             ref={containerRef}
+            onClick={(e) => {
+                // 点击背景关闭
+                if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container')) {
+                    invoke("hide_detail_popup");
+                }
+            }}
+            onContextMenu={(e) => {
+                e.preventDefault();
+                // 右键点击背景也能关闭
+                if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container')) {
+                    invoke("hide_detail_popup");
+                }
+            }}
             style={{
                 width: '100vw',
                 height: '100vh',
@@ -407,14 +391,9 @@ export default function DetailPopup() {
                 background: 'linear-gradient(135deg, rgba(20, 18, 15, 0.98) 0%, rgba(30, 25, 20, 0.98) 100%)',
                 border: '1px solid rgba(255, 205, 25, 0.3)',
                 borderRadius: '8px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 205, 25, 0.2)'
-            }}
-            onContextMenu={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            }}
-            onClick={(e) => {
-                e.stopPropagation();
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 205, 25, 0.2)',
+                opacity: scale,
+                transition: 'opacity 0.2s ease-out'
             }}
         >
             {/* 拖动条 */}
@@ -445,9 +424,8 @@ export default function DetailPopup() {
                 style={{
                     flex: 1,
                     overflow: 'auto',
-                    padding: '10px',
-                    opacity: scale,
-                    transition: 'opacity 0.3s ease-in-out'
+                    padding: '10px'
+                    // 移除内部的 opacity，改为由外层统一控制
                 }}
             >
                 <div className="item-card-container expanded">

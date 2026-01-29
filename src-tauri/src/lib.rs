@@ -63,6 +63,25 @@ const VK_RBUTTON: i32 = 2;    // 右键
 #[cfg(not(target_os = "windows"))]
 const VK_MENU: i32 = 18;      // Alt 键
 
+// 全局静态变量存储详细信息显示热键
+static DETAIL_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
+
+fn update_detail_hotkey_cache(val: Option<i32>) {
+    let cache = DETAIL_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() {
+        *writer = val;
+    }
+}
+
+fn get_cached_detail_hotkey() -> Option<i32> {
+    if let Some(cache) = DETAIL_HOTKEY_CACHE.get() {
+        if let Ok(reader) = cache.read() {
+            return *reader;
+        }
+    }
+    None
+}
+
 /// 跨平台按键检测
 /// key_code: Windows 虚拟键码
 /// device_state: device_query 状态
@@ -1449,12 +1468,8 @@ async fn show_detail_popup_at(app: tauri::AppHandle, x: i32, y: i32, data_type: 
         // 设置窗口大小
         let _ = window.set_size(tauri::PhysicalSize::new(final_width, final_height));
         
-        // 限制位置在屏幕范围内
-        let safe_x = final_x.max(0).min(3000);
-        let safe_y = final_y.max(0).min(2000);
-        
         // 设置窗口位置
-        match window.set_position(tauri::PhysicalPosition::new(safe_x, safe_y)) {
+        match window.set_position(tauri::PhysicalPosition::new(final_x, final_y)) {
             Ok(_) => println!("[Show Detail Popup] Position set successfully"),
             Err(e) => println!("[Show Detail Popup] Failed to set position: {}", e),
         }
@@ -2221,6 +2236,7 @@ fn set_detail_display_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.detail_display_hotkey = Some(hotkey);
     save_state(&state);
+    update_detail_hotkey_cache(Some(hotkey));
     println!("[Config] Detail display hotkey updated to: {}", hotkey);
 }
 
@@ -2305,6 +2321,31 @@ async fn emit_to_main(app: tauri::AppHandle, event: String, payload: serde_json:
     Ok(())
 }
 
+#[tauri::command]
+async fn set_window_geometry(window: tauri::WebviewWindow, x: i32, y: i32, width: i32, height: i32) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    if let Ok(hwnd) = window.hwnd() {
+        use windows::Win32::UI::WindowsAndMessaging::{SetWindowPos, SWP_NOZORDER, SWP_NOACTIVATE};
+        use windows::Win32::Foundation::HWND;
+        unsafe {
+            let _ = SetWindowPos(
+                HWND(hwnd.0 as _),
+                None,
+                x, y, width, height,
+                SWP_NOZORDER | SWP_NOACTIVATE
+            );
+        }
+        return Ok(());
+    }
+    
+    // Fallback for macOS/Linux or if HWND fails
+    window.set_size(tauri::LogicalSize::new(width as f64, height as f64))
+        .map_err(|e| e.to_string())?;
+    window.set_position(tauri::LogicalPosition::new(x as f64, y as f64))
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     set_panic_hook();
@@ -2351,6 +2392,10 @@ pub fn run() {
             monsters: Arc::new(RwLock::new(serde_json::Map::new())),
         })
         .setup(move |app| {
+            // 初始化热键缓存
+            let state = load_state();
+            update_detail_hotkey_cache(state.detail_display_hotkey);
+            
             let handle = app.handle().clone();
             log_system_info(&handle);
 
@@ -2390,6 +2435,7 @@ pub fn run() {
                 let device_state = DeviceState::new();
                 let mut last_left_click = false;
                 let mut last_right_click = false;
+                let mut last_trigger_active = false;
                 let mut heartbeat_counter = 0;
 
                 loop {
@@ -2449,8 +2495,16 @@ pub fn run() {
                         }
                     }
                     
-                    if right_click && !last_right_click {
-                        println!("[Global Right Click] Detected at ({}, {})", mx, my);
+                    // 检查是否按下设置的显示详情热键
+                    let hotkey_setup = get_cached_detail_hotkey();
+                    let trigger_active = if let Some(code) = hotkey_setup {
+                        is_key_pressed(code, &device_state, &mouse)
+                    } else {
+                        false
+                    };
+
+                    if trigger_active && !last_trigger_active {
+                        println!("[Global Trigger] Hotkey pressed at ({}, {})", mx, my);
                         
                         // 记录当前前台窗口（用于后续判断是否恢复焦点）
                         update_last_foreground_window();
@@ -2503,6 +2557,7 @@ pub fn run() {
                     }
                     last_left_click = left_click;
                     last_right_click = right_click;
+                    last_trigger_active = trigger_active;
 
                     std::thread::sleep(std::time::Duration::from_millis(50));
                 }
@@ -3675,6 +3730,7 @@ pub fn run() {
             open_calibration_window,
             close_calibration_window,
             start_template_loading,
+            set_window_geometry,
             get_item_info,
             search_items,
             crate::monster_recognition::check_opencv_load, 

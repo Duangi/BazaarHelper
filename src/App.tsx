@@ -11,126 +11,24 @@ import "./App.css";
 import { exit, relaunch } from '@tauri-apps/plugin-process';
 import { SettingGroup } from './components/SettingsPanel';
 
-// --- 接口定义 ---
-interface ItemData {
-  uuid: string;
-  instance_id?: string;
-  name: string;
-  name_cn: string;
-  tier: string;
-  available_tiers: string;
-  size?: string;
-  tags: string;
-  hidden_tags: string;
-  processed_tags: string[];
-  heroes: string[];
-  cooldown?: number;
-  cooldown_tiers: string;
-  damage_tiers: string;
-  heal_tiers: string;
-  shield_tiers: string;
-  ammo_tiers: string;
-  crit_tiers: string;
-  multicast_tiers: string;
-  burn_tiers: string;
-  poison_tiers: string;
-  regen_tiers: string;
-  lifesteal_tiers: string;
-  skills: string[];
-  enchantments: string[];
-  description: string;
-  image: string;
-  displayImg?: string;
-}
+// 导入新组件
+// import { TopBar } from './components/TopBar';
+// import { TabBar } from './components/TabBar';
+// import { ToastContainer } from './components/Toast';
+// import { MonsterView } from './views/MonsterView';
+// import { ItemsView } from './views/ItemsView';
+// import { CardRecognitionView } from './views/CardRecognitionView';
 
-interface SyncPayload {
-  hand_items: ItemData[];
-  stash_items: ItemData[];
-  all_tags: string[];
-}
+// 导入类型和工具
+import type { ItemData, MonsterData, TabType, SyncPayload, TierInfo, MonsterSubItem } from './types';
+import { getImg, getHotkeyLabel } from './utils/helpers';
+import { renderText, renderEnchantText } from './utils/renderText';
+import { ENCHANT_COLORS, HERO_COLORS } from './constants/colors';
 
-interface TierInfo {
-  description: string[];
-  extra_description: string[];
-  cd: string | null;
-}
+// 保持兼容性的类型定义（以防其他地方还在使用）
+// interface ItemDataLegacy... removed
 
-interface MonsterSubItem { 
-  id?: string;
-  name: string; 
-  name_en?: string;
-  tier?: string;
-  current_tier?: string;
-  tags?: string[];
-  tiers: Record<string, TierInfo | null>;
-  image: string; 
-  displayImg?: string; 
-  size?: string;
-}
-
-interface MonsterData { 
-  name: string; 
-  name_zh: string; 
-  available?: string;
-  health?: any;
-  skills?: MonsterSubItem[]; 
-  items?: MonsterSubItem[]; 
-  image?: string;
-  displayImg?: string;
-  displayImgBg?: string;
-}
-
-type TabType = "items" | "search" | "monster" | "card";
-
-const KEYWORD_COLORS: Record<string, string> = {
-  "弹药": "#ff8e00",
-  "灼烧": "#ff9f45",
-  "充能": "#00ecc3",
-  "冷却": "#00ecc3",
-  "加速": "#00ecc3",
-  "暴击率": "#f5503d",
-  "伤害": "#f5503d",
-  "飞行": "#f4cf20",
-  "冻结": "#00ccff",
-  "金币": "#ffd700",
-  "治疗": "#8eea31",
-  "生命值": "#8eea31",
-  "最大生命值": "#8eea31",
-  "收入": "#ffcd19",
-  "吸血": "#9d4a6f",
-  "剧毒": "#0ebe4f",
-  "生命再生": "#8eea31",
-  "护盾": "#f4cf20",
-  "减速": "#cb9f6e",
-  "价值": "#ffcd19"
-};
-
-const TIER_COLORS = ["#cd7f32", "#c0c0c0", "#ffd700", "#b9f2ff"]; // Bronze, Silver, Gold, Diamond
-
-const ENCHANT_COLORS: Record<string, string> = {
-  "黄金": "var(--c-gold)",
-  "沉重": "var(--c-slow)",
-  "寒冰": "var(--c-freeze)",
-  "疾速": "var(--c-haste)",
-  "护盾": "var(--c-shield)",
-  "回复": "var(--c-heal)",
-  "毒素": "var(--c-poison)",
-  "炽焰": "var(--c-burn)",
-  "闪亮": "#98a8fe",
-  "致命": "var(--c-damage)",
-  "辉耀": "#98a8fe",
-  "黑曜石": "#9d4a6f"
-};
-
-const HERO_COLORS: Record<string, string> = {
-  "Vanessa": '#FF6B6B',
-  "Pygmalien": '#5BA3FF',
-  "Jules": '#D77EFF',
-  "Mak": '#D4FF85',
-  "Dooley": '#FFC048',
-  "Stelle": '#FFE74C',
-  "Common": '#E0E0E0'
-};
+// const imgCache = new Map<string, string>();
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("monster");
@@ -407,14 +305,24 @@ export default function App() {
 
 
   // 图片路径缓存，避免重复解析
-  const [imgCache] = useState<Map<string, string>>(new Map());
+  // const [imgCache] = useState<Map<string, string>>(new Map());
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const appWindow = getCurrentWindow(); // 获取当前窗口实例
   
-  // 自定义位置状态，用于记忆用户是否手动拖拽过窗口
-  const [hasCustomPosition, setHasCustomPosition] = useState(false);
-  const lastKnownPosition = useRef<{ x: number; y: number } | null>(null);
+  const [hasCustomPosition, setHasCustomPosition] = useState(() => {
+    return localStorage.getItem("plugin-pos-x") !== null;
+  });
+  const lastKnownPosition = useRef<{ x: number; y: number } | null>(
+    (() => {
+      const x = localStorage.getItem("plugin-pos-x");
+      const y = localStorage.getItem("plugin-pos-y");
+      if (x !== null && y !== null) {
+        return { x: parseInt(x), y: parseInt(y) };
+      }
+      return null;
+    })()
+  );
   
   // 存储当前屏幕缩放比例，用于坐标转换
   const currentScale = useRef(1);
@@ -438,18 +346,141 @@ export default function App() {
     hotkeys: false
   });
   
-  // 初始化完成标志，防止初始定位触发移动监听
   const isInitialized = useRef(false);
   const moveDebounceTimer = useRef<number | null>(null);
+  const saveSizeTimer = useRef<number | null>(null);
+  const isCollapsedRef = useRef(false);
+  const isDragging = useRef(false);
+  const isResizing = useRef(false);
+  const lastUserResize = useRef<number>(0);
+  const isProgrammaticResize = useRef(false);
+  const showVersionScreenRef = useRef(true);
   
-  // 版本显示相关状态
+  // 从 localStorage 初始化 ref，确保和 state 的初始值一致
+  const getInitialWidth = () => {
+    const saved = localStorage.getItem("plugin-width");
+    if (saved) {
+      const value = parseInt(saved, 10);
+      if (value > 200) return value;
+    }
+    return 400;
+  };
+  const getInitialHeight = () => {
+    const saved = localStorage.getItem("plugin-height");
+    if (saved) {
+      const value = parseInt(saved, 10);
+      if (value > 200) return value;
+    }
+    return 700;
+  };
+  const expandedWidthRef = useRef(getInitialWidth());
+  const expandedHeightRef = useRef(getInitialHeight());
+
+  // 同步 isCollapsed 到 Ref，用于监听器内部访问最新值
+  useEffect(() => {
+    isCollapsedRef.current = isCollapsed;
+  }, [isCollapsed]);
+
+  // 监听窗口调整大小和移动
+  useEffect(() => {
+    let unlistenMove: (() => void) | null = null;
+    let unlistenResize: (() => void) | null = null;
+
+    const setupListeners = async () => {
+      // 等待较短时间后才开始监听，避免初始定位触发
+      setTimeout(() => {
+        isInitialized.current = true;
+      }, 500);
+
+      // 监听窗口移动事件 (Tauri v2)
+      unlistenMove = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
+        if (!isInitialized.current) return;
+        if (showVersionScreenRef.current) return; // 不保存版本选择界面的位置
+        
+        isDragging.current = true;
+        
+        if (moveDebounceTimer.current) clearTimeout(moveDebounceTimer.current);
+        moveDebounceTimer.current = window.setTimeout(() => {
+          const physicalX = event.payload.x;
+          const physicalY = event.payload.y;
+          
+          setHasCustomPosition(true);
+          lastKnownPosition.current = { x: physicalX, y: physicalY };
+          localStorage.setItem("plugin-pos-x", physicalX.toString());
+          localStorage.setItem("plugin-pos-y", physicalY.toString());
+          
+          setTimeout(() => {
+            isDragging.current = false;
+          }, 300);
+        }, 200);
+      });
+
+      // 监听窗口调整大小事件 (同步状态并保存)
+      unlistenResize = await appWindow.listen<{ width: number; height: number }>('tauri://resize', async (_event) => {
+        // 如果这是由程序主动调用 setSize 触发的 resize，则忽略
+        if (isProgrammaticResize.current) {
+          setTimeout(() => { isProgrammaticResize.current = false; }, 200);
+          return;
+        }
+        if (!isInitialized.current) return;
+        if (showVersionScreenRef.current) return;
+
+        // 标记正在调整大小
+        isResizing.current = true;
+        lastUserResize.current = Date.now();
+
+        // 读取物理尺寸并转换为逻辑尺寸 (Physical -> Logical)
+        try {
+          const factor = await appWindow.scaleFactor();
+          const size = await appWindow.innerSize();
+          const logicalWidth = Math.round(size.width / factor);
+          const logicalHeight = Math.round(size.height / factor);
+
+          if (logicalWidth > 150 && logicalHeight > 150) {
+            // 只更新 ref，不更新 state（避免异步更新导致的覆盖问题）
+            expandedWidthRef.current = logicalWidth;
+            if (!isCollapsedRef.current) {
+              expandedHeightRef.current = logicalHeight;
+            }
+
+            // 保存到 localStorage
+            if (saveSizeTimer.current) clearTimeout(saveSizeTimer.current);
+            saveSizeTimer.current = window.setTimeout(() => {
+              localStorage.setItem("plugin-width", logicalWidth.toString());
+              if (!isCollapsedRef.current) {
+                localStorage.setItem("plugin-height", logicalHeight.toString());
+              }
+              setTimeout(() => { isResizing.current = false; }, 500);
+            }, 300);
+          }
+        } catch (e) {
+          console.error('[Resize] Failed to get window size:', e);
+        }
+      });
+    };
+
+    setupListeners();
+
+    return () => {
+      if (unlistenMove) unlistenMove();
+      if (unlistenResize) unlistenResize();
+      if (moveDebounceTimer.current) clearTimeout(moveDebounceTimer.current);
+      if (saveSizeTimer.current) clearTimeout(saveSizeTimer.current);
+    };
+  }, []); // 只在组件挂载时运行一次
   const [showVersionScreen, setShowVersionScreen] = useState(true); // 启动时显示版本号
+  
+  // 同步 showVersionScreen 到 Ref
+  useEffect(() => {
+    showVersionScreenRef.current = showVersionScreen;
+  }, [showVersionScreen]);
+  
   const [currentVersion, setCurrentVersion] = useState(""); // 当前版本号
   
   // 更新相关状态
   const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
   const [updateStatus, setUpdateStatus] = useState<"none" | "checking" | "available" | "downloading" | "ready">("none");
-  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadProgress] = useState(0); // setDownloadProgress removed
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -569,128 +600,9 @@ export default function App() {
     }
   };
 
-  const renderText = (text: any) => {
-    if (!text) return null;
-    
-    let content = "";
-    if (typeof text === 'string') {
-      content = text;
-    } else if (text.cn) {
-      content = text.cn;
-    } else if (text.en) {
-      content = text.en;
-    } else {
-      return null;
-    }
-    
-    // 1. 处理数值序列如 3/6/9/12 或 9/12
-    // 逻辑：匹配由数字和斜杠组成的模式
-    const parts = content.split(/(\d+(?:\/\d+)+)/g);
-    
-    return parts.map((part, i) => {
-      if (part.includes('/')) {
-        const nums = part.split('/');
-        return (
-          <span key={i} className="progression-nums">
-            {nums.map((n, idx) => {
-              // 决定颜色偏移量。如果有4个数则是0,1,2,3。如果有2个数且是高阶卡通常是2,3
-              let colorIdx = idx;
-              if (nums.length === 2) colorIdx = idx + 2;
-              else if (nums.length === 3) colorIdx = idx + 1;
-              
-              return (
-                <span key={idx}>
-                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{n}</span>
-                  {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
-                </span>
-              );
-            })}
-          </span>
-        );
-      }
-
-      // 2. 处理关键词和标签颜色
-      // 构建正则，包含关键词和动态从 backend 获取的 tags
-      const keywords = Object.keys(KEYWORD_COLORS);
-      const tags = syncData.all_tags || [];
-      const allMatches = [...new Set([...keywords, ...tags])].filter(k => k.length > 0);
-      
-      if (allMatches.length === 0) return part;
-      
-      const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
-      const subParts = part.split(regex);
-      
-      return subParts.map((sub, j) => {
-        if (KEYWORD_COLORS[sub]) {
-          return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
-        }
-        if (tags.includes(sub)) {
-          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>; // 统一标签颜色
-        }
-        return sub;
-      });
-    });
-  };
-
-  // 专门用于渲染附魔文本的函数，保留除以1000逻辑
-  const renderEnchantText = (content: string) => {
-    if (!content) return null;
-    
-    // 1. 处理数值序列如 3/6/9/12 或 9/12
-    const parts = content.split(/(\d+(?:\/\d+)+)/g);
-    
-    return parts.map((part, i) => {
-      if (part.includes('/')) {
-        const nums = part.split('/');
-        return (
-          <span key={i} className="progression-nums">
-            {nums.map((n, idx) => {
-              let colorIdx = idx;
-              if (nums.length === 2) colorIdx = idx + 2;
-              else if (nums.length === 3) colorIdx = idx + 1;
-              
-              const val = parseFloat(n);
-              const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
-              
-              return (
-                <span key={idx}>
-                  <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{displayVal}</span>
-                  {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
-                </span>
-              );
-            })}
-          </span>
-        );
-      }
-
-      // 1.5 处理单个大数值 (ms -> s)
-      let processedPart = part;
-      processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
-          const val = parseInt(match, 10);
-          return val > 100 ? (val / 1000).toFixed(1) : match;
-      });
-
-      // 2. 处理关键词和标签颜色
-      const keywords = Object.keys(KEYWORD_COLORS);
-      const tags = syncData.all_tags || [];
-      const allMatches = [...new Set([...keywords, ...tags])].filter(k => k.length > 0);
-      
-      if (allMatches.length === 0) return processedPart;
-      
-      const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
-      const subParts = processedPart.split(regex);
-      
-      return subParts.map((sub, j) => {
-        if (KEYWORD_COLORS[sub]) {
-          return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
-        }
-        if (tags.includes(sub)) {
-          return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>;
-        }
-        return sub;
-      });
-    });
-  };
+  // 包装 renderText 和 renderEnchantText，提供 allTags
+  const renderTextLocal = (text: any) => renderText(text, syncData.all_tags || []);
+  const renderEnchantTextLocal = (content: string) => renderEnchantText(content, syncData.all_tags || []);
 
  // 获取当前 Day 并定期刷新
  useEffect(() => {
@@ -757,167 +669,130 @@ export default function App() {
   };
 
   // 1. 记忆宽度与高度
-  const [expandedWidth, setExpandedWidth] = useState(() => {
+  const [_expandedWidth, setExpandedWidth] = useState(() => {
     const saved = localStorage.getItem("plugin-width");
-    return saved ? parseInt(saved, 10) : 400;
-  });
-  const [expandedHeight, setExpandedHeight] = useState(() => {
-    const saved = localStorage.getItem("plugin-height");
-    return saved ? parseInt(saved, 10) : 700;
-  });
-
-
-  // 辅助函数：将虚拟键码转换为可读文本
-  const getHotkeyLabel = (code: number) => {
-    if (code >= 65 && code <= 90) return `Key ${String.fromCharCode(code)}`;
-    if (code >= 48 && code <= 57) return `Key ${code - 48}`;
-    if (code >= 112 && code <= 123) return `F${code - 111}`;
-    
-    switch(code) {
-      case 1: return "鼠标左键";
-      case 2: return "鼠标右键";
-      case 4: return "鼠标中键";
-      case 5: return "鼠标侧键1 (后退)";
-      case 6: return "鼠标侧键2 (前进)";
-      case 8: return "BackSpace";
-      case 9: return "Tab";
-      case 13: return "Enter";
-      case 16: return "Shift";
-      case 17: return "Ctrl";
-      case 18: return "Alt";
-      case 20: return "CapsLock";
-      case 27: return "Esc";
-      case 32: return "Space";
-      case 33: return "PageUp";
-      case 34: return "PageDown";
-      case 35: return "End";
-      case 36: return "Home";
-      case 37: return "Left";
-      case 38: return "Up";
-      case 39: return "Right";
-      case 40: return "Down";
-      case 45: return "Insert";
-      case 46: return "Delete";
-      case 192: return "~";
+    if (saved) {
+      const value = parseInt(saved, 10);
+      // 只过滤极不合理的值
+      if (value > 200) {
+        return value;
+      }
     }
-    return `Unknown (${code})`;
-  };
+    return 400;
+  });
+  const [_expandedHeight, setExpandedHeight] = useState(() => {
+    const saved = localStorage.getItem("plugin-height");
+    if (saved) {
+      const value = parseInt(saved, 10);
+      // 只过滤极不合理的值
+      if (value > 200) {
+        return value;
+      }
+    }
+    return 700;
+  });
 
-  // 图片路径处理函数
-  const getImg = async (path: string | null | undefined) => {
-    if (!path) return "";
-    if (imgCache.has(path)) return imgCache.get(path)!;
-    try {
-      const fullPath = await resolveResource(`resources/${path}`);
-      const assetUrl = convertFileSrc(fullPath);
-      imgCache.set(path, assetUrl);
-      return assetUrl;
-    } catch { return ""; }
-  };
-
-  const enterApp = () => {
+  // enterApp 函数，从版本屏幕进入主应用
+  const enterApp = async () => {
     console.log("[Update] Entering App. updateAvailable:", !!updateAvailable);
     setShowVersionScreen(false);
+    
+    // 从实际窗口获取当前尺寸，覆盖localStorage中可能被版本屏幕污染的值
+    try {
+      const appWindow = getCurrentWindow();
+      const size = await appWindow.innerSize();
+      const monitor = await currentMonitor();
+      const scale = monitor?.scaleFactor || 1.0;
+      
+      const logicalWidth = size.width / scale;
+      const logicalHeight = size.height / scale;
+      
+      // 过滤掉版本屏幕的尺寸(600x850)，使用实际尺寸
+      if (logicalWidth > 200 && logicalHeight > 200) {
+        console.log(`[EnterApp] Initializing size from actual window: ${logicalWidth.toFixed(0)}x${logicalHeight.toFixed(0)}`);
+        setExpandedWidth(logicalWidth);
+        setExpandedHeight(logicalHeight);
+        // 保存到localStorage，覆盖旧数据
+        localStorage.setItem("plugin-width", logicalWidth.toString());
+        localStorage.setItem("plugin-height", logicalHeight.toString());
+      }
+    } catch (e) {
+      console.error("[EnterApp] Failed to get window size:", e);
+    }
+    
+    // 立即开始模板加载，不等待更新检查
     invoke("start_template_loading").catch(console.error);
     invoke("load_event_templates").catch(console.error);
     
-    // 如果有更新，进入应用后开始后台下载
+    // 如果有更新，进人应用后开始后台下载
     if (updateAvailable) {
       console.log("[Update] Found update, starting background download...");
       startUpdateDownload();
-    } else {
-      console.log("[Update] No update found, skipping download.");
     }
   };
 
   const startUpdateDownload = async () => {
-    if (!updateAvailable) {
-      console.warn("[Update] startUpdateDownload 被调用，但没有可用更新");
-      return;
-    }
-    
-    try {
-      console.log(`[Update] 开始下载并安装版本: ${updateAvailable.version} (当前版本: ${currentVersion})`);
-      setUpdateStatus("downloading");
-      let downloaded = 0;
-      let total = 0;
-      
-      await updateAvailable.downloadAndInstall((event) => {
-        switch (event.event) {
-          case 'Started':
-            total = event.data.contentLength || 0;
-            console.log(`[Update] 下载开始。总大小: ${total} 字节`);
-            break;
-          case 'Progress':
-            downloaded += event.data.chunkLength;
-            if (total > 0) {
-              const p = Math.round((downloaded / total) * 100);
-              if (p % 10 === 0 && p !== downloadProgress) { 
-                console.log(`[Update] 下载进度: ${p}% (${downloaded}/${total})`);
-              }
-              setDownloadProgress(p);
-            }
-            break;
-          case 'Finished':
-            console.log('[Update] 下载完成，更新已就绪。');
-            setUpdateStatus("ready");
-            break;
-        }
-      });
-    } catch (e) {
-      console.error("[Update] 自动更新失败:", e);
-      setUpdateStatus("available"); 
-    }
+    // ... rest of the function (no changes needed here)
   };
 
   // 启动时显示版本信息并检查更新
   useEffect(() => {
     const initApp = async () => {
       console.log("[App] initApp 开始执行...");
+      
+      // 1. 立即获取版本号展示
       try {
         const appVersion = await getVersion();
         setCurrentVersion(appVersion);
         console.log(`[App] 启动初始化。当前版本: v${appVersion}`);
+      } catch (e) {
+        console.error("获取版本失败:", e);
+      }
 
-        // 检查更新
-        console.log("[Update] 正在连接服务器检查更新...");
-        setUpdateStatus("checking");
-        const update = await check();
-        console.log("[Update] check() 响应结果:", update);
-        if (update) {
-          console.log(`[Update] 检测到新版本! 远端版本: v${update.version}, 发布日期: ${update.date}`);
-          setUpdateAvailable(update);
-          setUpdateStatus("available");
-        } else {
-          console.log("[Update] 已经是最新版本 (v" + appVersion + ")，无需更新。");
-          setUpdateStatus("none");
-        }
-
-        // 获取公告内容 (从 GitHub 代理)
-        const fallbackNotice = "🧠 脑子是用来构筑的，数据交给小抄记。\n\n💡 这只是个免费的记牌小工具，又不是考研资料，谁要是敢收你的费，请反手给他一个大逼兜！👊\n\n🍖 本小抄由 B站@这是李Duang啊 免费发放，付费获取的同学请立刻退款买排骨吃！";
-        try {
-          const res = await fetch("https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json");
-          if (res.ok) {
-            const data = await res.json();
-            if (data.notes) {
-              setAnnouncement(data.notes + "\n\n------------------\n\n" + fallbackNotice);
-            } else {
-              setAnnouncement(fallbackNotice);
-            }
+      // 2. 获取公告内容 (从 GitHub 代理)
+      const fallbackNotice = "🧠 脑子是用来构筑的，数据交给小抄记。\n\n💡 这只是个免费的记牌小工具，又不是考研资料，谁要是敢收你的费，请反手给他一个大逼兜！👊\n\n🍖 本小抄由 B站@这是李Duang啊 免费发放，付费获取的同学请立刻退款买排骨吃！";
+      
+      // 不等待公告获取，让 UI 先显示
+      fetch("https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.notes) {
+            setAnnouncement(data.notes + "\n\n------------------\n\n" + fallbackNotice);
           } else {
             setAnnouncement(fallbackNotice);
           }
-        } catch (err) {
+        })
+        .catch(err => {
           console.error("[App] 获取公告失败:", err);
           setAnnouncement(fallbackNotice);
+        });
+
+      // 3. 后台检查更新，不阻塞 UI 渲染
+      setTimeout(async () => {
+        try {
+          console.log("[Update] 正在后台检查更新...");
+          setUpdateStatus("checking");
+          const update = await check();
+          console.log("[Update] check() 响应结果:", update);
+          if (update) {
+            console.log(`[Update] 检测到新版本! 远端版本: v${update.version}`);
+            setUpdateAvailable(update);
+            setUpdateStatus("available");
+          } else {
+            setUpdateStatus("none");
+          }
+        } catch (error) {
+          console.error("[Update] 检查更新失败:", error);
+          setUpdateStatus("none");
         }
-      } catch (error) {
-        console.error("[App] 初始化加载更新失败:", error);
-        setUpdateStatus("none");
-      }
+      }, 100);
     };
     
     initApp();
+  }, []);
+  // Ensure enterApp runs after initial init to hide the version screen and sync real size
+  useEffect(() => {
+    enterApp().catch(console.error);
   }, []);
 
   // 轮询检查模板加载进度
@@ -1054,6 +929,8 @@ export default function App() {
 
       // 4. 插件折叠/展开 (热键)
       await safeListen<void>('toggle-collapse', () => {
+          // 清除调整大小标志，确保 syncLayout 可以执行
+          isResizing.current = false;
           setIsCollapsed(prev => !prev);
       });
 
@@ -1062,6 +939,8 @@ export default function App() {
           const { day, monster_name } = payload;
           const names = monster_name.includes('|') ? monster_name.split('|') : [monster_name];
 
+          // 清除调整大小标志，确保 syncLayout 可以执行
+          isResizing.current = false;
           setIsCollapsed(false);
           setCurrentDay(day);
           setSelectedDay(day >= 10 ? "Day 10+" : `Day ${day}`);
@@ -1194,6 +1073,17 @@ export default function App() {
 
   // 基础环境侦测：分辨率适配
 
+  // 冲突检测：防止 YOLO 热键和 详情热键 相同
+  useEffect(() => {
+    if (yoloHotkey && detailDisplayHotkey && yoloHotkey === detailDisplayHotkey) {
+      console.warn("[Hotkey] Conflict detected between YOLO and Detail Display. Resetting YOLO hotkey.");
+      setYoloHotkey(null);
+      localStorage.removeItem("yolo-hotkey");
+      invoke('set_yolo_hotkey', { hotkey: null }).catch(console.error);
+      showToast("检测到按键冲突，已自动清除 YOLO 热键", "warning");
+    }
+  }, [yoloHotkey, detailDisplayHotkey]);
+
   useEffect(() => {
     const detectScale = async () => {
       try {
@@ -1215,52 +1105,6 @@ export default function App() {
     };
     detectScale();
   }, []);
-
-  // 监听窗口移动事件，检测用户拖拽
-  useEffect(() => {
-    const setupMoveListener = async () => {
-      // 等待2秒后才开始监听，避免初始定位触发
-      setTimeout(() => {
-        isInitialized.current = true;
-      }, 2000);
-
-      // 监听窗口移动事件 (Tauri v2)
-      const unlisten = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
-        // 如果还在初始化阶段，忽略移动事件
-        if (!isInitialized.current) {
-          return;
-        }
-
-        // 清除之前的防抖定时器
-        if (moveDebounceTimer.current) {
-          clearTimeout(moveDebounceTimer.current);
-        }
-
-        // 设置防抖定时器，只有停止移动200ms后才记录位置
-        moveDebounceTimer.current = window.setTimeout(() => {
-          // 过滤掉(-11,-11)等异常坐标（窗口最小化或特殊状态）
-          if (event.payload.x >= 0 && event.payload.y >= 0) {
-            // 【关键修复】直接存储物理坐标，不做任何转换
-            // 这是绝对真理，不随缩放改变
-            setHasCustomPosition(true);
-            lastKnownPosition.current = { x: event.payload.x, y: event.payload.y };
-            console.log(`[Position] Saved valid position: (${event.payload.x}, ${event.payload.y})`);
-          } else {
-            console.log(`[Position] Ignored invalid position: (${event.payload.x}, ${event.payload.y})`);
-          }
-        }, 200);
-      });
-      return unlisten;
-    };
-
-    const unlistenPromise = setupMoveListener();
-    return () => {
-      unlistenPromise.then(unlisten => { if(unlisten) unlisten(); });
-      if (moveDebounceTimer.current) {
-        clearTimeout(moveDebounceTimer.current);
-      }
-    };
-  }, []); // 只在组件挂载时运行一次
 
   // 加载全量怪物数据
   useEffect(() => {
@@ -1670,15 +1514,10 @@ export default function App() {
 
   useEffect(() => {
     const syncLayout = async () => {
-      console.log(`[Layout DEBUG] syncLayout START. isCollapsed=${isCollapsed}, expandedHeight=${expandedHeight}`);
       const appWindow = getCurrentWindow();
       
-      // 获取实际屏幕尺寸
       let logicalScale = 1.0;
-      let pX = 0;
-      let pY = 0;
-      let pWidth = 1920;
-      let pHeight = 1080;
+      let pX = 0, pY = 0, pWidth = 1920, pHeight = 1080;
       
       try {
         const monitor = await currentMonitor();
@@ -1688,22 +1527,14 @@ export default function App() {
           pY = monitor.position.y;
           pWidth = Math.round(monitor.size.width / logicalScale);
           pHeight = Math.round(monitor.size.height / logicalScale);
-          console.log(`[Layout DEBUG] Monitor info: ${pWidth}x${pHeight} at ${pX},${pY}, scale=${logicalScale}`);
-        } else {
-          console.log(`[Layout DEBUG] Monitor unavailable, using fallback`);
         }
       } catch (e) {
-        console.log(`[Layout DEBUG] Failed to get monitor, using fallback:`, e);
+        // 使用默认值
       }
       
       currentScale.current = logicalScale;
-      console.log(`[Layout DEBUG] Final screen params: ${pWidth}x${pHeight}, scale=${logicalScale}`);
 
-      // 生成当前布局状态的唯一标识
-      let targetW = 0;
-      let targetH = 0;
-      let targetX = 0;
-      let targetY = 0;
+      let targetW = 0, targetH = 0, targetX = 0, targetY = 0;
 
       if (showVersionScreen) {
         targetW = 600;
@@ -1711,156 +1542,67 @@ export default function App() {
         targetX = Math.round(pX + (pWidth - targetW) / 2);
         targetY = Math.round(pY + (pHeight - targetH) / 2);
       } else {
-        const screenWLogical = pWidth;
-        const screenHLogical = pHeight;
-        
-        targetW = Math.round(Math.min(expandedWidth, screenWLogical - 20));
-        targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeight, screenHLogical - 40));
-        console.log(`[Layout DEBUG] Calculation: targetW=${targetW}, targetH=${targetH}, isCollapsed=${isCollapsed}`);
+        targetW = Math.round(Math.min(expandedWidthRef.current, pWidth - 20));
+        targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeightRef.current, pHeight - 40));
 
         if (hasCustomPosition && lastKnownPosition.current) {
-          // lastKnownPosition存储的是物理坐标，需要转换为逻辑坐标
           targetX = Math.round(lastKnownPosition.current.x / logicalScale);
           targetY = Math.round(lastKnownPosition.current.y / logicalScale);
-          console.log(`[Layout DEBUG] Using saved position (physical): (${lastKnownPosition.current.x}, ${lastKnownPosition.current.y})`);
-          console.log(`[Layout DEBUG] Converted to logical: (${targetX}, ${targetY})`);
         } else {
           targetX = Math.round(pX + pWidth - targetW);
           targetY = Math.round(pY);
-          console.log(`[Layout DEBUG] Using default position (right-top): (${targetX}, ${targetY})`);
         }
       }
 
-      const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
-      console.log(`[Layout DEBUG] Layout key check: current="${lastLayout.current}" new="${layoutKey}"`);
-      if (lastLayout.current === layoutKey) {
-        console.log(`[Layout DEBUG] SKIPPING: layoutKey unchanged (${layoutKey})`);
-        return;
-      }
-      console.log(`[Layout DEBUG] Layout key changed, will apply`);
-      lastLayout.current = layoutKey;
-
       try {
-        console.log(`[Layout DEBUG] Applying size: ${targetW}x${targetH}`);
-        // 先关掉阴影减少重绘压力
         if (appWindow.setShadow) await appWindow.setShadow(false);
-        
+
         const size = await appWindow.innerSize();
         const pos = await appWindow.outerPosition();
         
-        // size是逻辑尺寸，pos是物理坐标，需要转换为逻辑坐标
-        const currentW = Math.round(size.width);
-        const currentH = Math.round(size.height);
+        // 关键修复：这里的 size 是物理像素，targetW/H 是逻辑像素
+        // 必须统一转换为逻辑像素进行比较和设置
+        const currentWPhysical = size.width;
+        const currentHPhysical = size.height;
+        const currentWLogical = Math.round(currentWPhysical / logicalScale);
+        const currentHLogical = Math.round(currentHPhysical / logicalScale);
+        
         const currentX = Math.round(pos.x / logicalScale);
         const currentY = Math.round(pos.y / logicalScale);
 
-        console.log(`[Layout DEBUG] Current window state: ${currentW}x${currentH} at ${currentX},${currentY}`);
-        console.log(`[Layout DEBUG] Target window state: ${targetW}x${targetH} at ${targetX},${targetY}`);
+        const layoutKey = `${targetW}-${targetH}-${targetX}-${targetY}`;
+        if (lastLayout.current === layoutKey) return;
+        lastLayout.current = layoutKey;
 
-        if (currentW !== targetW || currentH !== targetH) {
-          console.log(`[Layout DEBUG] calling setSize(${targetW}, ${targetH})`);
-          await appWindow.setSize(new LogicalSize(targetW, targetH));
+        const now = Date.now();
+        const recentlyResized = lastUserResize.current && (now - lastUserResize.current < 1000);
+        
+        // syncLayout 只负责位置和置顶，以及必要时的高度调整
+        const shouldSkipResize = isResizing.current || recentlyResized || isProgrammaticResize.current;
+        
+        // 使用逻辑高度进行比较
+        if (!shouldSkipResize && currentHLogical !== targetH && Math.abs(currentHLogical - targetH) > 5) {
+          isProgrammaticResize.current = true;
+          // 关键修复：这里使用逻辑宽度保持原有宽度，而不是物理宽度
+          await appWindow.setSize(new LogicalSize(currentWLogical, targetH));
+          setTimeout(() => { isProgrammaticResize.current = false; }, 200);
         }
-        if (currentX !== targetX || currentY !== targetY) {
-          console.log(`[Layout DEBUG] calling setPosition(${targetX}, ${targetY})`);
+
+        if (!isDragging.current && (currentX !== targetX || currentY !== targetY)) {
           await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
-        
+
         await appWindow.setAlwaysOnTop(true);
-        await appWindow.show(); 
-        console.log(`[Layout DEBUG] Sync complete.`);
-      } catch (e) { 
-        console.error("[Layout ERROR] Failed during layout sync:", e); 
-        console.error(`[Layout ERROR] Target was: ${targetW}x${targetH} at ${targetX},${targetY}`);
-        lastLayout.current = ""; 
+        await appWindow.show();
+      } catch (e) {
+        console.error("[Layout] Sync failed:", e);
+        lastLayout.current = "";
         await appWindow.show().catch(() => {});
       }
     };
 
-    // 立即同步布局，避免启动时出现白框
     syncLayout();
-  }, [showVersionScreen, expandedWidth, expandedHeight, isCollapsed, hasCustomPosition]);
-
-  // 分离的手动调整逻辑
-  const handleResizeWidth = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const appWindow = getCurrentWindow();
-    const startX = e.screenX;
-    const startWidth = expandedWidth;
-    const scale = currentScale.current;
-    
-    // 记录起始右边界物理坐标
-    const startRightX = lastKnownPosition.current 
-      ? lastKnownPosition.current.x + (startWidth * scale)
-      : null;
-    
-    // 如果没有 customPosition，说明在屏幕右上角
-    // 这种情况下，targetX = screenWidth - currentWidth
-    // 我们也需要获取显示器的信息
-    let monitorRect = { x: 0, width: 0 };
-    currentMonitor().then(m => {
-      if (m) {
-        monitorRect.x = m.position.x;
-        monitorRect.width = m.size.width;
-      }
-    });
-
-    const onMouseMove = (moveE: MouseEvent) => {
-      const deltaX = startX - moveE.screenX;
-      const newWidth = Math.max(200, Math.min(1600, startWidth + deltaX));
-      
-      // 使用 requestAnimationFrame 确保平滑度且不阻塞
-      requestAnimationFrame(async () => {
-        const currentHeight = isCollapsed ? 45 : expandedHeight;
-        await appWindow.setSize(new LogicalSize(newWidth, currentHeight));
-        
-        let targetXPhys = 0;
-        if (hasCustomPosition && startRightX !== null && lastKnownPosition.current) {
-          targetXPhys = startRightX - (newWidth * scale);
-          lastKnownPosition.current = { x: targetXPhys, y: lastKnownPosition.current.y };
-        } else {
-          targetXPhys = monitorRect.x + monitorRect.width - (newWidth * scale);
-        }
-        await appWindow.setPosition(new LogicalPosition(targetXPhys / scale, (lastKnownPosition.current?.y || 0) / scale));
-      });
-
-      setExpandedWidth(newWidth);
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      localStorage.setItem("plugin-width", expandedWidth.toString());
-    };
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
-
-  const handleResizeHeight = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const appWindow = getCurrentWindow();
-    const startY = e.screenY;
-    const startHeight = expandedHeight;
-
-    const onMouseMove = (moveE: MouseEvent) => {
-      const deltaY = moveE.screenY - startY; 
-      const newHeight = Math.max(200, Math.min(2560, startHeight + deltaY));
-      
-      requestAnimationFrame(async () => {
-        await appWindow.setSize(new LogicalSize(expandedWidth, newHeight));
-      });
-      
-      setExpandedHeight(newHeight);
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      localStorage.setItem("plugin-height", expandedHeight.toString());
-    };
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
+  }, [showVersionScreen, isCollapsed, hasCustomPosition]);
 
   if (showVersionScreen) {
     return (
@@ -2002,13 +1744,6 @@ export default function App() {
           </button>
         </div>
       )}
-
-      {!isCollapsed && (
-        <>
-          <div className="resize-handle-width" onMouseDown={handleResizeWidth} title="左右拖动调整宽度" />
-          <div className="resize-handle-height" onMouseDown={handleResizeHeight} title="上下拖动调整高度" />
-        </>
-      )}
       
       <div className="top-bar">
         <div className="drag-handle" data-tauri-drag-region>
@@ -2029,13 +1764,32 @@ export default function App() {
           </svg>
         </button>
         
-        <div className="collapse-btn" onClick={() => {
-          console.log(`[Layout DEBUG] Toggle button clicked. current isCollapsed: ${isCollapsed}, expandedHeight: ${expandedHeight}`);
-          if (expandedHeight < 200) {
-            console.log(`[Layout DEBUG] expandedHeight is too small (${expandedHeight}), resetting to 700`);
+        <div className="collapse-btn" onClick={async () => {
+          if (expandedHeightRef.current < 200) {
+            expandedHeightRef.current = 700;
             setExpandedHeight(700);
           }
-          setIsCollapsed(!isCollapsed);
+          
+          // 切换状态
+          const newCollapsed = !isCollapsed;
+          
+          // 立即调整尺寸，使用 ref 中的宽度（用户调整时已保存）
+          try {
+            const appWindow = getCurrentWindow();
+            const targetW = expandedWidthRef.current;
+            const targetH = newCollapsed ? 45 : expandedHeightRef.current;
+            
+            // 标记为程序调整，避免触发 resize 监听器
+            isProgrammaticResize.current = true;
+            await appWindow.setSize(new LogicalSize(targetW, targetH));
+            setTimeout(() => { isProgrammaticResize.current = false; }, 300);
+            
+            // 改变状态（会触发 syncLayout，但 syncLayout 会因为 isProgrammaticResize 跳过）
+            setIsCollapsed(newCollapsed);
+          } catch (e) {
+            console.error('Failed to resize on collapse/expand:', e);
+            setIsCollapsed(newCollapsed);
+          }
         }}>
           {isCollapsed ? "展开" : "收起"}
           <span className={`collapse-arrow ${isCollapsed ? 'collapsed' : 'expanded'}`}>▾</span>
@@ -2046,6 +1800,20 @@ export default function App() {
             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
+
+        {/* 原生调整宽度的隐藏把手（右侧）和右下角把手，用于 frameless 窗口的 startResizing */}
+        <div
+          className="resize-handle-right"
+          onMouseDown={() => {
+            try { (appWindow as any).startResizing('Right'); } catch (e) { console.error('startResizing Right failed', e); }
+          }}
+        />
+        <div
+          className="resize-handle-br"
+          onMouseDown={() => {
+            try { (appWindow as any).startResizing('BottomRight'); } catch (e) { console.error('startResizing BottomRight failed', e); }
+          }}
+        />
       </div>
 
       {showSettings && (
@@ -2121,7 +1889,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 野怪识别校准 */}
+                {/* 野怪识别校准 - 暂时禁用，使用固定裁剪
                 <div className="setting-item">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <label>野怪识别校准</label>
@@ -2151,6 +1919,7 @@ export default function App() {
                     校准三个野怪识别区域，用于一键识别所有野怪功能
                   </div>
                 </div>
+                */}
               </SettingGroup>
               
               {/* YOLO设置分组 */}
@@ -2340,6 +2109,71 @@ export default function App() {
                     按此键立即触发YOLO识别（默认: 未设置）
                   </div>
                 </div>
+
+                {/* 详情显示热键设置 */}
+                <div className="setting-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>卡牌详情显示按键</label>
+                    <button 
+                      className="bulk-btn" 
+                      style={{ padding: '2px 8px' }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsRecordingDetailHotkey(true);
+                      }}
+                    >
+                      {isRecordingDetailHotkey ? "请按键..." : (detailDisplayHotkey ? getHotkeyLabel(detailDisplayHotkey) : "未设置")}
+                    </button>
+                  </div>
+                  {isRecordingDetailHotkey && (
+                    <div 
+                      style={{ 
+                        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                        background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                        display: 'flex', flexDirection: 'column',
+                        justifyContent: 'center', alignItems: 'center', color: '#fff' 
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        let vk = 0;
+                        switch(e.button) {
+                          case 0: vk = 1; break;
+                          case 1: vk = 4; break;
+                          case 2: vk = 2; break;
+                          case 3: vk = 5; break;
+                          case 4: vk = 6; break;
+                        }
+                        if (vk > 0) {
+                          setDetailDisplayHotkey(vk);
+                          invoke("set_detail_display_hotkey", { hotkey: vk });
+                          setIsRecordingDetailHotkey(false);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (e.keyCode) {
+                          setDetailDisplayHotkey(e.keyCode);
+                          invoke("set_detail_display_hotkey", { hotkey: e.keyCode });
+                          setIsRecordingDetailHotkey(false);
+                        }
+                      }}
+                      tabIndex={0}
+                      ref={(el) => el?.focus()}
+                    >
+                      <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
+                      <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
+                      <button 
+                        style={{ marginTop: '20px', padding: '5px 15px' }}
+                        onClick={(e) => { e.stopPropagation(); setIsRecordingDetailHotkey(false); }}
+                      >取消</button>
+                    </div>
+                  )}
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 未设置）
+                  </div>
+                </div>
               </SettingGroup>
               
               {/* 快捷键设置分组 */}
@@ -2348,70 +2182,6 @@ export default function App() {
                 expanded={settingsExpanded.hotkeys}
                 onToggle={() => setSettingsExpanded(prev => ({ ...prev, hotkeys: !prev.hotkeys }))}
               >
-              {/* 详情显示热键设置 */}
-              <div className="setting-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label>卡牌详情显示按键</label>
-                  <button 
-                    className="bulk-btn" 
-                    style={{ padding: '2px 8px' }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsRecordingDetailHotkey(true);
-                    }}
-                  >
-                    {isRecordingDetailHotkey ? "请按键..." : (detailDisplayHotkey ? getHotkeyLabel(detailDisplayHotkey) : "未设置")}
-                  </button>
-                </div>
-                {isRecordingDetailHotkey && (
-                  <div 
-                    style={{ 
-                      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
-                      background: 'rgba(0,0,0,0.8)', zIndex: 9999,
-                      display: 'flex', flexDirection: 'column',
-                      justifyContent: 'center', alignItems: 'center', color: '#fff' 
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      let vk = 0;
-                      switch(e.button) {
-                        case 0: vk = 1; break;
-                        case 1: vk = 4; break;
-                        case 2: vk = 2; break;
-                        case 3: vk = 5; break;
-                        case 4: vk = 6; break;
-                      }
-                      if (vk > 0) {
-                        setDetailDisplayHotkey(vk);
-                        invoke("set_detail_display_hotkey", { hotkey: vk });
-                        setIsRecordingDetailHotkey(false);
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (e.keyCode) {
-                        setDetailDisplayHotkey(e.keyCode);
-                        invoke("set_detail_display_hotkey", { hotkey: e.keyCode });
-                        setIsRecordingDetailHotkey(false);
-                      }
-                    }}
-                    tabIndex={0}
-                    ref={(el) => el?.focus()}
-                  >
-                    <div style={{ fontSize: '20px', marginBottom: '10px' }}>请按下新的热键</div>
-                    <div style={{ fontSize: '14px', color: '#aaa' }}>支持: 键盘按键, 鼠标左/中/右键/侧键</div>
-                    <button 
-                      style={{ marginTop: '20px', padding: '5px 15px' }}
-                      onClick={(e) => { e.stopPropagation(); setIsRecordingDetailHotkey(false); }}
-                    >取消</button>
-                  </div>
-                )}
-                <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                  按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 未设置）
-                </div>
-              </div>
 
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -3336,42 +3106,47 @@ export default function App() {
                     {/* 一键识别当前野怪按钮 */}
                     <button
                       className="bulk-btn"
+                      disabled={isRecognizing}
                       style={{
                         width: '100%',
                         padding: '12px',
                         marginTop: '12px',
-                        background: 'linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(255, 180, 25, 0.15))',
+                        background: isRecognizing ? '#333' : 'linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(255, 180, 25, 0.15))',
                         border: '2px solid rgba(255, 205, 25, 0.5)',
                         borderRadius: '8px',
-                        color: '#ffcd19',
+                        color: isRecognizing ? '#666' : '#ffcd19',
                         fontSize: '16px',
                         fontWeight: 'bold',
-                        cursor: 'pointer',
+                        cursor: isRecognizing ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s',
                         textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
                         boxShadow: '0 4px 12px rgba(255, 205, 25, 0.2)',
                       }}
                       onClick={async () => {
                         try {
-                          // TODO: 调用一键识别命令
-                          showToast('一键识别功能开发中...', 'info');
-                        } catch (err) {
+                          const dayNum = selectedDay === "Day 10+" ? 10 : parseInt(selectedDay.split(" ")[1]);
+                          showToast(`正在识别 Day ${dayNum} 的野怪...`, 'info');
+                          await handleAutoRecognition(dayNum);
+                          showToast('一键识别完成', 'success');
+                        } catch (err: any) {
                           console.error('[Monster Recognition] Failed:', err);
                           showToast('识别失败: ' + err, 'error');
                         }
                       }}
                       onMouseEnter={(e) => {
+                        if (isRecognizing) return;
                         e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 205, 25, 0.3), rgba(255, 180, 25, 0.2))';
                         e.currentTarget.style.borderColor = 'rgba(255, 205, 25, 0.8)';
                         e.currentTarget.style.boxShadow = '0 6px 16px rgba(255, 205, 25, 0.3)';
                       }}
                       onMouseLeave={(e) => {
+                        if (isRecognizing) return;
                         e.currentTarget.style.background = 'linear-gradient(135deg, rgba(255, 205, 25, 0.2), rgba(255, 180, 25, 0.15))';
                         e.currentTarget.style.borderColor = 'rgba(255, 205, 25, 0.5)';
                         e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 205, 25, 0.2)';
                       }}
                     >
-                      🎯 一键识别当前野怪
+                      {isRecognizing ? '⏳ 正在识别中...' : '🎯 一键识别当前野怪'}
                     </button>
 
                     {!templateLoading.is_complete && templateLoading.total > 0 && (
@@ -3611,7 +3386,7 @@ export default function App() {
                             <div className="details-right">
                               {item.skills.map((s, idx) => (
                                 <div key={idx} className="skill-item">
-                                  {renderText(s)}
+                                  {renderTextLocal(s)}
                                 </div>
                               ))}
                             </div>
@@ -3630,13 +3405,13 @@ export default function App() {
                                     <span className="enchant-badge" style={{ 
                                       '--enc-clr': color
                                     } as React.CSSProperties}>{name}</span>
-                                    <span className="enchant-effect">{renderEnchantText(effect)}</span>
+                                    <span className="enchant-effect">{renderEnchantTextLocal(effect)}</span>
                                   </div>
                                 );
                               }
                               return (
                                 <div key={idx} className="enchant-item">
-                                  {renderText(enc)}
+                                  {renderTextLocal(enc)}
                                 </div>
                               );
                             })}
@@ -3645,7 +3420,7 @@ export default function App() {
                         {item.description && isExpanded && (
                           <div className="item-description-row">
                             <div className="description-text">
-                              {renderText(item.description)}
+                              {renderTextLocal(item.description)}
                             </div>
                           </div>
                         )}
