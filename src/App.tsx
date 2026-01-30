@@ -835,7 +835,7 @@ export default function App() {
       const fallbackNotice = "🧠 脑子是用来构筑的，数据交给小抄记。\n\n💡 这只是个免费的记牌小工具，又不是考研资料，谁要是敢收你的费，请反手给他一个大逼兜！👊\n\n🍖 本小抄由 B站@这是李Duang啊 免费发放，付费获取的同学请立刻退款买排骨吃！";
       
       // 不等待公告获取，让 UI 先显示
-      fetch("https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json")
+      fetch("https://gh.llkk.cc/https://raw.githubusercontent.com/Duangi/BazaarHelper/main/update.json?t=" + new Date().getTime())
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (data && data.notes) {
@@ -1728,12 +1728,20 @@ export default function App() {
 
           <div className="bulletin-actions">
             {updateStatus === "available" && (
-              <button className="update-now-btn" onClick={() => {
-                console.log("[Update] 用户在开始界面点击立即更新");
-                startUpdateDownload();
-              }}>
-                立即更新
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                <button className="update-now-btn" onClick={() => {
+                  console.log("[Update] 用户在开始界面点击立即更新");
+                  startUpdateDownload();
+                }}>
+                  立即更新
+                </button>
+                <button className="enter-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', opacity: 0.8 }} onClick={() => {
+                   console.log("[Update] 用户选择跳过更新");
+                   enterApp();
+                }}>
+                  直接进入插件
+                </button>
+              </div>
             )}
             {updateStatus === "downloading" && (
               <div style={{ width: '100%', textAlign: 'center' }}>
