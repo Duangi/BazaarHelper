@@ -2364,7 +2364,7 @@ export default function App() {
 
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label>怪物识别按键</label>
+                  <label>键盘智能识别按键</label>
                   <button 
                     className="bulk-btn" 
                     style={{ padding: '2px 8px' }}
