@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNi93QmQ1RFNYWUxkQjZ5WkNJVkdBcnRFQmd1YTFUYTAya3RoV0Y4alF2U1ZZM2pneUVKUUxrVllMOWFOSVAvL1ZrVFREV1BrTFZ5UnFNRVdlVXpVMHdzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzYwMTIwCWZpbGU6QmF6YWFySGVscGVyXzEuNC42X3g2NC1zZXR1cC5leGUKaTVoaWtkT1ZVejUvSHhRN1RwL2toYWZlNUpST3FZOG81dkNMamRJR1htajdEaEZIVVN0QkVqSEdhS3kxNFUxUitpQzBiQkkxUWlybTZrTlBhZDNZQXc9PQo=",
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjB2c3dNQ2JFZFVlaHBMcXlVZ0paaC8ydXM4STNXQ2tKY0lJWFBoWHNNbHMzR0FqamZLTFNPSTVMQ29yN1ZUa0hmTmlNYm9WRU96bzFMRWErMFdIY0FFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzYwNDAwCWZpbGU6QmF6YWFySGVscGVyXzEuNC42X3g2NC1zZXR1cC5leGUKeEFXT1NQaDVzcWpNc2hwd2p0SmNUYnhPam13RjJMakxsak54Wit3Ymt0cGhnbjIrbzVOb21lRzJSQ0dMQWt6RlIwOW9EY1UveHFYU1E2ZUtaUFZkQ0E9PQo=",
                                              "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.6/BazaarHelper_1.4.6_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-30T08:02:01Z",
+    "pub_date":  "2026-01-30T08:06:40Z",
     "version":  "1.4.6",
     "notes":  "🎉 v1.4.6 （怀旧版本？）更新来了：1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
 }
