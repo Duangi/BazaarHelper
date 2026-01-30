@@ -10,8 +10,8 @@ use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState}
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-// use regex::Regex;
-use std::io::{Read, Seek, SeekFrom, Write};
+use regex::Regex;
+use std::io::{Read, BufRead, BufReader, Seek, SeekFrom, Write};
 use std::fs::File;
 use std::{time, panic};
 // use tokio;
@@ -62,6 +62,18 @@ use tauri_nspanel::WebviewWindowExt as NSPanelExt;
 const VK_RBUTTON: i32 = 2;    // 右键
 #[cfg(not(target_os = "windows"))]
 const VK_MENU: i32 = 18;      // Alt 键
+
+// Global flag to indicate if card recognition is in progress (prevents hiding overlay)
+pub static IS_RECOGNIZING: AtomicBool = AtomicBool::new(false);
+// Store last recognition status to implement grace period
+pub static LAST_RECOG_TIME: OnceLock<RwLock<Option<std::time::Instant>>> = OnceLock::new();
+
+fn update_last_recog_time() {
+    let cache = LAST_RECOG_TIME.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() {
+        *writer = Some(std::time::Instant::now());
+    }
+}
 
 // 全局静态变量存储详细信息显示热键
 static DETAIL_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
@@ -1492,13 +1504,20 @@ async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
         let res_dir_clone = res_dir_async.clone();
         let cache_dir_clone = cache_dir_async.clone();
         
+        // Create clones for the new all-cards loader
+        let res_dir_clone2 = res_dir_async.clone();
+        let cache_dir_clone2 = cache_dir_async.clone();
+        
         let _ = monster_recognition::preload_templates_async(res_dir_async, cache_dir_async).await;
         
         // 加载事件特征模板
         let _ = monster_recognition::load_event_templates(app_async).await;
         
-        // 按size分类加载卡牙特征
+        // 按size分类加载卡牙特征 (用于精准的高效识别)
         let _ = monster_recognition::preload_card_templates_by_size_async(res_dir_clone, cache_dir_clone).await;
+        
+        // 加载所有卡牌模板 (用于通用的鼠标指向识别 - 900+ 张图片)
+        let _ = monster_recognition::preload_card_templates_async(res_dir_clone2, cache_dir_clone2).await;
     });
     
     // 验证items_db是否加载成功
@@ -2538,6 +2557,34 @@ async fn save_detail_popup_geometry(_app: tauri::AppHandle, x: i32, y: i32, widt
     Ok(())
 }
 
+#[tauri::command]
+async fn get_sync_state(state: State<'_, DbState>) -> Result<SyncPayload, String> {
+    let p_state = load_state();
+    let items_db = state.items.read().map_err(|e| e.to_string())?;
+    let skills_db = state.skills.read().map_err(|e| e.to_string())?;
+
+    let map_items = |ids: &HashSet<String>| -> Vec<ItemData> {
+        ids.iter()
+           .filter_map(|iid| {
+               let tid = p_state.inst_to_temp.get(iid)?;
+               let mut item = lookup_item(tid, &items_db, &skills_db)?;
+               item.instance_id = Some(iid.clone());
+               Some(item)
+           })
+           .collect()
+    };
+
+    let hand_items = map_items(&p_state.current_hand);
+    let stash_items = map_items(&p_state.current_stash);
+    let all_tags = items_db.unique_tags.clone();
+
+    Ok(SyncPayload {
+        hand_items,
+        stash_items,
+        all_tags,
+    })
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     set_panic_hook();
@@ -2736,7 +2783,23 @@ pub fn run() {
                         }
                     }
 
-                    let should_be_visible = game_active || app_active;
+                    let mut should_be_visible = game_active || app_active;
+                    
+                    // If card recognition is active, prevent hiding overlays even if focus is lost momentarily
+                    if crate::IS_RECOGNIZING.load(Ordering::Relaxed) {
+                        should_be_visible = true;
+                    } else {
+                        // Check grace period (1.0 second after recognition finishes)
+                        if let Some(lock) = crate::LAST_RECOG_TIME.get() {
+                            if let Ok(guard) = lock.read() {
+                                if let Some(time) = *guard {
+                                    if time.elapsed().as_secs_f32() < 1.0 {
+                                        should_be_visible = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     if should_be_visible != overlay_was_visible {
                         println!("[Focus Monitor] Visibility state changing: {} -> {} (Game: {}, App: {})", 
@@ -2769,6 +2832,346 @@ pub fn run() {
                 }
             });
 
+            // --- Log Monitor Thread ---
+            let db_state = app.state::<DbState>();
+            let thread_items_db = db_state.items.clone();
+            let thread_skills_db = db_state.skills.clone();
+            let log_handle = handle.clone();
+            
+            std::thread::spawn(move || {
+                let handle = log_handle;
+                let log_path = get_log_path();
+                let prev_path = get_prev_log_path(); // Add prev path handling
+                
+                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId\s*(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
+                let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
+                let re_tid = Regex::new(r"TemplateId: \[(?P<tid>[^\]]+)\]").unwrap();
+                let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
+                let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
+                
+                let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
+                let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
+                let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
+                let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
+
+                // Initialize state
+                let state_init = load_state();
+                let mut inst_to_temp = state_init.inst_to_temp;
+                let mut current_hand = state_init.current_hand;
+                let mut current_stash = state_init.current_stash;
+                let mut current_day = state_init.day;
+                
+                let mut in_pvp = false;
+                let mut is_sync = false;
+                let mut last_iid = String::new();
+                let mut cur_owner = String::new();
+
+                // --- Initial Sync: Replay Logs to catch up with current state ---
+                println!("[LogMonitor] Initializing state from logs...");
+                
+                // Clear state for fresh scan (we'll recover inst_to_temp from logs too)
+                // Note: Keep cached day if it's valid, effectively we trust logs more though.
+                current_hand.clear();
+                current_stash.clear();
+                // inst_to_temp.clear(); // Keep existing mapping as backup
+
+                let files_to_process = vec![prev_path, log_path.clone()];
+                for path in files_to_process {
+                    if !path.exists() { 
+                        println!("[LogMonitor] Skipping non-existent file: {:?}", path);
+                        continue; 
+                    }
+                    println!("[LogMonitor] Processing log file: {:?}", path);
+                    if let Ok(file) = File::open(&path) {
+                        let reader = BufReader::new(file);
+                        for line in reader.lines() {
+                            if let Ok(l) = line {
+                                let trimmed = l.trim();
+                                
+                                // Reset everything if we see a new run start
+                                if trimmed.contains("NetMessageRunInitialized") {
+                                    current_day = 1; in_pvp = false;
+                                    inst_to_temp.clear();
+                                    current_hand.clear();
+                                    current_stash.clear();
+                                    is_sync = false;
+                                }
+
+                                if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
+                                if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
+                                    current_day = current_day.saturating_add(1); in_pvp = false;
+                                }
+
+                                if let Some(cap) = re_purchase.captures(trimmed) {
+                                    let iid = cap["iid"].to_string();
+                                    inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
+                                    let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                                    if section.as_deref().unwrap_or("") == "" {
+                                        if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
+                                            if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
+                                            else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                                        }
+                                    }
+                                    if let Some(s) = section {
+                                        if s == "Player" || s == "Hand" { current_hand.insert(iid); }
+                                        else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); }
+                                    }
+                                }
+                                if let Some(cap) = re_moved_to.captures(trimmed) {
+                                    let iid = cap["iid"].to_string();
+                                    if cap["tgt"].contains("StorageSocket") {
+                                        current_stash.insert(iid.clone()); current_hand.remove(&iid);
+                                    } else if cap["tgt"].contains("Socket") {
+                                        current_hand.insert(iid.clone()); current_stash.remove(&iid);
+                                    }
+                                }
+                                if let Some(cap) = re_sold.captures(trimmed) {
+                                    let iid = cap["iid"].to_string(); 
+                                    current_hand.remove(&iid); current_stash.remove(&iid);
+                                }
+                                if let Some(cap) = re_removed.captures(trimmed) {
+                                    let iid = cap["iid"].to_string(); 
+                                    current_hand.remove(&iid); current_stash.remove(&iid);
+                                }
+                                if trimmed.contains("Cards Disposed:") {
+                                    for mat in re_item_id.find_iter(trimmed) {
+                                        let iid = mat.as_str().to_string(); 
+                                        current_hand.remove(&iid); current_stash.remove(&iid);
+                                    }
+                                }
+                                if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") { 
+                                    is_sync = true; 
+                                }
+                                if is_sync {
+                                    if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
+                                    else if let Some(cap) = re_tid.captures(trimmed) {
+                                        if !last_iid.is_empty() {
+                                            inst_to_temp.insert(last_iid.clone(), cap["tid"].to_string());
+                                        }
+                                    }
+                                    else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                                    else if let Some(cap) = re_section.captures(trimmed) {
+                                        if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
+                                            let sec_val = &cap["val"];
+                                            if sec_val == "Hand" || sec_val == "Player" { 
+                                                current_hand.insert(last_iid.clone()); 
+                                                current_stash.remove(&last_iid);
+                                            }
+                                            else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
+                                                current_stash.insert(last_iid.clone()); 
+                                                current_hand.remove(&last_iid);
+                                            }
+                                            else {
+                                                current_hand.remove(&last_iid); 
+                                                current_stash.remove(&last_iid);
+                                            }
+                                        }
+                                        last_iid.clear(); cur_owner.clear();
+                                    }
+                                    else if trimmed.contains("Finished processing") { is_sync = false; }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                save_state(&PersistentState {
+                    day: current_day,
+                    inst_to_temp: inst_to_temp.clone(),
+                    current_hand: current_hand.clone(),
+                    current_stash: current_stash.clone(),
+                    ..load_state()
+                });
+
+                // Initial UI Sync after loading/backfilling
+                let init_handle = handle.clone();
+                let init_items_db = thread_items_db.clone();
+                let init_skills_db = thread_skills_db.clone();
+                let init_hand = current_hand.clone();
+                let init_stash = current_stash.clone();
+                let init_map = inst_to_temp.clone();
+                let init_day = current_day;
+                
+                tauri::async_runtime::spawn(async move {
+                    tokio::time::sleep(tokio::time::Duration::from_millis(1500)).await;
+                    let _ = init_handle.emit("day-update", init_day);
+                    let items_db = init_items_db.read().unwrap();
+                    let skills_db = init_skills_db.read().unwrap();
+                    let map_items = |ids: &HashSet<String>| -> Vec<ItemData> {
+                        ids.iter()
+                           .filter_map(|iid| {
+                               let tid = init_map.get(iid)?;
+                               let mut item = lookup_item(tid, &items_db, &skills_db)?;
+                               item.instance_id = Some(iid.clone());
+                               Some(item)
+                           })
+                           .collect()
+                    };
+                    let hand_items = map_items(&init_hand);
+                    let stash_items = map_items(&init_stash);
+                    let all_tags = items_db.unique_tags.clone();
+                    let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
+                });
+
+                let mut last_size = 0u64;
+                if let Ok(meta) = std::fs::metadata(&log_path) {
+                    last_size = meta.len();
+                }
+
+                println!("[Log Monitor] Initialization complete. Starting main monitoring loop from size: {}", last_size);
+
+                loop {
+                    std::thread::sleep(std::time::Duration::from_millis(500));
+                    
+                    if let Ok(mut f) = File::open(&log_path) {
+                        if let Ok(meta) = f.metadata() {
+                            let len = meta.len();
+                            if len < last_size {
+                                last_size = 0;
+                                in_pvp = false;
+                                is_sync = false;
+                            }
+                            if len > last_size {
+                                if let Ok(_) = f.seek(SeekFrom::Start(last_size)) {
+                                    let mut buf = Vec::new();
+                                    if let Ok(_) = f.take(1_000_000).read_to_end(&mut buf) {
+                                        let new_content = String::from_utf8_lossy(&buf);
+                                        let mut changed = false;
+                                        let mut day_changed = false;
+
+                                        for line in new_content.lines() {
+                                            let trimmed = line.trim();
+                                            
+                                            if trimmed.contains("NetMessageRunInitialized") {
+                                                current_day = 1; in_pvp = false; day_changed = true;
+                                                inst_to_temp.clear(); current_hand.clear(); current_stash.clear();
+                                                changed = true;
+                                            }
+                                            
+                                            if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
+                                            if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
+                                                current_day = current_day.saturating_add(1);
+                                                in_pvp = false; day_changed = true;
+                                            }
+
+                                            if let Some(cap) = re_purchase.captures(trimmed) {
+                                                let iid = cap["iid"].to_string();
+                                                inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
+                                                
+                                                let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                                                let target = cap.name("tgt").map(|t| t.as_str());
+                                                
+                                                if section.as_deref().unwrap_or("") == "" {
+                                                    if let Some(tgt) = target {
+                                                        if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
+                                                        else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
+                                                    }
+                                                }
+                                                if let Some(s) = section {
+                                                    if s == "Player" || s == "Hand" { current_hand.insert(iid); changed = true; }
+                                                    else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); changed = true; }
+                                                }
+                                            }
+                                            
+                                            if let Some(cap) = re_moved_to.captures(trimmed) {
+                                                let iid = cap["iid"].to_string();
+                                                let tgt = &cap["tgt"];
+                                                if tgt.contains("StorageSocket") {
+                                                    current_stash.insert(iid.clone()); current_hand.remove(&iid); changed = true;
+                                                } else if tgt.contains("Socket") {
+                                                    current_hand.insert(iid.clone()); current_stash.remove(&iid); changed = true;
+                                                }
+                                            }
+
+                                            if let Some(cap) = re_sold.captures(trimmed) {
+                                                let iid = cap["iid"].to_string();
+                                                if current_hand.remove(&iid) || current_stash.remove(&iid) { changed = true; }
+                                            }
+                                            if let Some(cap) = re_removed.captures(trimmed) {
+                                                let iid = cap["iid"].to_string();
+                                                if current_hand.remove(&iid) || current_stash.remove(&iid) { changed = true; }
+                                            }
+                                            if trimmed.contains("Cards Disposed:") {
+                                                for mat in re_item_id.find_iter(trimmed) {
+                                                    let iid = mat.as_str().to_string();
+                                                    if current_hand.remove(&iid) || current_stash.remove(&iid) { changed = true; }
+                                                }
+                                            }
+
+                                            if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") || trimmed.contains("Successfully moved card to:") {
+                                                is_sync = true;
+                                            }
+                                            
+                                            if is_sync {
+                                                if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
+                                                else if let Some(cap) = re_tid.captures(trimmed) {
+                                                    if !last_iid.is_empty() {
+                                                        inst_to_temp.insert(last_iid.clone(), cap["tid"].to_string());
+                                                    }
+                                                }
+                                                else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
+                                                else if let Some(cap) = re_section.captures(trimmed) {
+                                                    if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
+                                                        let sec_val = &cap["val"];
+                                                        if sec_val == "Hand" || sec_val == "Player" { 
+                                                            current_hand.insert(last_iid.clone()); current_stash.remove(&last_iid);
+                                                        } else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
+                                                            current_stash.insert(last_iid.clone()); current_hand.remove(&last_iid);
+                                                        } else {
+                                                            current_hand.remove(&last_iid); current_stash.remove(&last_iid);
+                                                        }
+                                                        changed = true;
+                                                    }
+                                                    last_iid.clear(); cur_owner.clear();
+                                                }
+                                                else if trimmed.contains("Finished processing") { is_sync = false; changed = true; }
+                                            }
+                                        }
+
+                                        if changed || day_changed {
+                                            if day_changed {
+                                                let _ = handle.emit("day-update", current_day);
+                                            }
+                                            
+                                            if changed {
+                                                let items_db = thread_items_db.read().unwrap();
+                                                let skills_db = thread_skills_db.read().unwrap();
+                                                
+                                                let map_items = |ids: &HashSet<String>| -> Vec<ItemData> {
+                                                    ids.iter()
+                                                       .filter_map(|iid| {
+                                                           let tid = inst_to_temp.get(iid)?;
+                                                           let mut item = lookup_item(tid, &items_db, &skills_db)?;
+                                                           item.instance_id = Some(iid.clone());
+                                                           Some(item)
+                                                       })
+                                                       .collect()
+                                                };
+
+                                                let hand_items = map_items(&current_hand);
+                                                let stash_items = map_items(&current_stash);
+                                                let all_tags = items_db.unique_tags.clone();
+                                                
+                                                let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
+                                                
+                                                save_state(&PersistentState {
+                                                    day: current_day,
+                                                    inst_to_temp: inst_to_temp.clone(),
+                                                    current_hand: current_hand.clone(),
+                                                    current_stash: current_stash.clone(),
+                                                    ..load_state()
+                                                });
+                                            }
+                                        }
+                                        last_size = len;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
             // --- Helper: Start Mouse Monitor Thread (Global Click Detection Only) ---
             let handle_monitor = handle.clone();
             let _bounds_monitor = bounds_clone.clone();
@@ -2794,24 +3197,28 @@ pub fn run() {
                         w.is_visible().unwrap_or(false)
                     } else { false };
 
-                    if !is_game_window_active() && !detail_visible {
-                        // Reset state when game is not focused AND detail popup not open
+                    let game_active = is_game_window_active();
+                    
+                    // For mouse clicks and detail popup trigger, require game focus
+                    if !game_active && !detail_visible {
+                        // Reset mouse click state when game is not focused AND detail popup not open
                         last_left_click = false;
                         _last_right_click = false;
                         last_trigger_active = false;
-                        
-                        last_yolo_active = false;
-                        last_detection_active = false;
-                        last_card_active = false;
-                        last_collapse_active = false;
-                        continue;
+                        // Note: We do NOT reset recognition hotkey states here
+                        // to allow recognition even when not focused on game
                     }
-
+                    
+                    // Get mouse state for hotkey detection (always needed)
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
                     let left_click = mouse.button_pressed[1]; // Left Click
                     let right_click = mouse.button_pressed[3]; // Right Click
+                    
+                    // Process mouse clicks only when game is active or detail popup visible
+                    if game_active || detail_visible {
+                    // Mouse processing section - only when game is focused
 
                     // [Global Click Handler for Detail Popup]
                     // If popup is visible, any click (Left/Right) should hide it (unless clicking inside?)
@@ -2854,8 +3261,9 @@ pub fn run() {
                     // let left_click = mouse.button_pressed.get(0).copied().unwrap_or(false);
                     // if left_click ... (removed)
 
+                    } // End of mouse processing section (game_active || detail_visible)
 
-                    // --- Detail Popup Custom Hotkey (Close if open) ---
+                    // --- Detail Popup Custom Hotkey (always check) ---
                     let hotkey_setup = get_cached_detail_hotkey();
                     let trigger_active = if let Some(code) = hotkey_setup {
                         is_key_pressed(code, &device_state, &mouse)
@@ -2872,7 +3280,7 @@ pub fn run() {
                         }
                     }
 
-                    if trigger_active && !last_trigger_active {
+                    if trigger_active && !last_trigger_active && (game_active || detail_visible) {
                         println!("[Global Hotkey] Detail Popup Hotkey pressed at ({}, {})", mx, my);
                         update_last_foreground_window();
                         
@@ -2915,24 +3323,40 @@ pub fn run() {
                     }
 
                     // --- Monster Recognition Hotkey Logic ---
+                    // This section is kept for potential future use or cleanup.
+                    // The actual mouse-based monster recognition is now handled by the 'Monster Mouse Trigger' block below.
+                    // (Old logic removed)
+
+                    // --- Monster Recognition Hotkey Logic (Mouse Based) ---
+                    // Changed from screen-scan to mouse-hover recognition as per user request
                     let detection_active = if let Some(code) = get_cached_detection_hotkey() {
                         is_key_pressed(code, &device_state, &mouse)
                     } else { false };
-                    
+
                     if detection_active && !last_detection_active {
-                        println!("[Global Hotkey] Monster Recognition Trigger pressed at ({}, {})", mx, my);
+                        println!("[Global Hotkey] Monster Mouse Trigger pressed!");
+                         // Prevent hiding
+                        crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+                        crate::update_last_recog_time();
+
                         let h = handle_monitor.clone();
-                        let click_x = mx;
-                        let click_y = my;
-                        
-                        tauri::async_runtime::spawn(async move {
-                            match handle_overlay_right_click(h.clone(), click_x, click_y).await {
+                         tauri::async_runtime::spawn(async move {
+                            match crate::monster_recognition::recognize_monster_at_mouse().await {
                                 Ok(Some(result)) => {
-                                    println!("[Hotkey Monster] Found result: {:?}", result.get("type"));
-                                    let result_type = result.get("type").and_then(|v| v.as_str()).unwrap_or("unknown").to_string();
-                                    let data = result.get("data").cloned().unwrap_or(serde_json::json!({}));
-                                    if let Err(e) = show_detail_popup_at(h, click_x, click_y, result_type, data).await {
-                                        println!("[Hotkey Monster] Error showing popup: {}", e);
+                                    // Result format: "Day X|MonsterName"
+                                    if let Some((day_str, monster_name)) = result.split_once('|') {
+                                        // Extract day number from "Day X" or "Day 10+"
+                                        let day_num = if day_str.contains("10+") {
+                                            10
+                                        } else {
+                                            day_str.replace("Day ", "").trim().parse::<u32>().unwrap_or(1)
+                                        };
+                                        
+                                        println!("[Hotkey Monster] Matched: {} on Day {}", monster_name, day_num);
+                                        let _ = h.emit("auto-jump-to-monster", serde_json::json!({
+                                            "day": day_num,
+                                            "monster_name": monster_name
+                                        }));
                                     }
                                 }
                                 Ok(None) => println!("[Hotkey Monster] No object found at cursor"),
@@ -2948,6 +3372,11 @@ pub fn run() {
                     
                     if card_active && !last_card_active {
                         println!("[Global Hotkey] Card Recognition Trigger pressed!");
+                        
+                        // Immediately flag that recognition is expected to prevent overlay hiding
+                        crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+                        crate::update_last_recog_time(); // Also tick the timestamp just in case
+
                         let h = handle_monitor.clone();
                         tauri::async_runtime::spawn(async move {
                             println!("[Global Hotkey] Emitting 'hotkey-card'");
@@ -3023,6 +3452,8 @@ pub fn run() {
             get_detail_display_hotkey,
             set_detail_display_hotkey,
             get_yolo_stats,
+            get_sync_state,
+            crate::monster_recognition::recognize_card_at_mouse,
             invoke_yolo_scan,
             emit_to_main,
             save_window_geometry,

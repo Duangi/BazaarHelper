@@ -1,9 +1,9 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.4.8"  # <--- 版本号
+$NEW_VERSION = "1.5.0"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
-$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 紧急更新1.4.6的bug 1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 修复了一堆bug... 基本都是之前存在的功能。"
 
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"

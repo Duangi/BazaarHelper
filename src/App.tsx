@@ -16,8 +16,8 @@ import { SettingGroup } from './components/SettingsPanel';
 // import { TabBar } from './components/TabBar';
 // import { ToastContainer } from './components/Toast';
 // import { MonsterView } from './views/MonsterView';
-// import { ItemsView } from './views/ItemsView';
-// import { CardRecognitionView } from './views/CardRecognitionView';
+import { ItemsView } from './views/ItemsView';
+import { CardRecognitionView } from './views/CardRecognitionView';
 
 // 导入类型和工具
 import type { ItemData, MonsterData, TabType, SyncPayload, TierInfo, MonsterSubItem } from './types';
@@ -103,6 +103,51 @@ export default function App() {
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
   const [recognizedCards, setRecognizedCards] = useState<ItemData[]>([]); // 识别出的卡牌列表 (Top 3)
   const [isRecognizingCard, setIsRecognizingCard] = useState(false); // 是否正在识别卡牌
+  // Image Processing Helper
+  const processItems = async (items: ItemData[]) => {
+      return Promise.all(items.map(async (i) => ({ 
+        ...i, 
+        displayImg: await getImg(`images/${i.uuid || i.name}.webp`) 
+      })));
+  };
+
+  // Initial Sync from Backend - 等待模板加载完成后再同步
+  useEffect(() => {
+    // 只有当模板加载完成时才执行同步
+    if (!templateLoading.is_complete) {
+      return;
+    }
+
+    async function doInitialSync() {
+      try {
+        console.log("[App] Templates loaded, fetching initial sync state...");
+        const state: any = await invoke("get_sync_state");
+        console.log("[App] Initial state:", state);
+        if (state) {
+            if (state.day !== undefined) {
+                setCurrentDay(state.day);
+                setSelectedDay(state.day >= 10 ? "Day 10+" : `Day ${state.day}`);
+            }
+            
+            const [hand, stash] = await Promise.all([
+                processItems(state.hand_items || []),
+                processItems(state.stash_items || [])
+            ]);
+
+            setSyncData(prev => ({
+                ...prev,
+                hand_items: hand,
+                stash_items: stash,
+                all_tags: state.all_tags || []
+            }));
+        }
+      } catch (e) {
+        console.error("[App] Initial sync failed", e);
+      }
+    }
+    doInitialSync();
+  }, [templateLoading.is_complete]); // 依赖模板加载完成状态
+
   // Listen to backend hotkey events
   useEffect(() => {
     const unlistenMonster = listen("hotkey-monster", async () => {
@@ -124,17 +169,14 @@ export default function App() {
              }
         }
     });
-    
-    const unlistenCollapse = listen("hotkey-collapse", () => {
-        console.log("[App] Received hotkey-collapse");
-        setIsCollapsed(prev => !prev);
-    });
 
+    // Card recognition and collapse are handled by safeListen in useEffect below
+    // Removed duplicate listeners to avoid conflicts
+    
     return () => {
         unlistenMonster.then(f => f());
-        unlistenCollapse.then(f => f());
     };
-  }, [useGpuAcceleration, currentDay, isRecognizing]);
+  }, [useGpuAcceleration, currentDay, isRecognizing, isRecognizingCard]);
   const [searchQuery, setSearchQuery] = useState({
     keyword: "",
     item_type: "all", // "all", "item", "skill"
@@ -219,8 +261,31 @@ export default function App() {
     })();
   }, []);
 
+  // Load item sizes from items_db.json
+  const [itemSizes, setItemSizes] = useState<Record<string, string>>({});
+  useEffect(() => {
+    (async () => {
+      try {
+        const resPath = await resolveResource('resources/items_db.json');
+        const url = convertFileSrc(resPath);
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const map: Record<string, string> = {};
+        for (const entry of data) {
+           if (entry.id && entry.size) {
+               map[entry.id] = entry.size;
+           }
+        }
+        setItemSizes(map);
+      } catch (e) {
+          console.warn("Failed to load items_db for sizes", e);
+      }
+    })();
+  }, []);
+
   // Lazy Load State
-  const [visibleCount, setVisibleCount] = useState(50);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_visibleCount, setVisibleCount] = useState(50);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // Reset filtered items count when query changes
@@ -661,21 +726,72 @@ export default function App() {
   };
 
   const handleRecognizeCard = async (switchTab = false) => {
-    if (isRecognizingCard) return;
+    if (isRecognizingCard) {
+      console.log("[Card Recognition] Already recognizing, skipping...");
+      return;
+    }
+    
+    console.log("[Card Recognition] Starting recognition...");
     if (switchTab) setActiveTab("card");
     setIsRecognizingCard(true);
     setErrorMessage(null);
+    
     try {
-      const results = await invoke<any[] | null>("recognize_card_at_mouse");
-      if (results && results.length > 0) {
-        const fullInfos: ItemData[] = [];
-        for (const res of results) {
-          const itemInfo = await invoke<ItemData | null>("get_item_info", { id: res.id });
-          if (itemInfo) {
-            const imgUrl = await getImg(`images/${itemInfo.uuid || itemInfo.name}.webp`);
-            fullInfos.push({ ...itemInfo, displayImg: imgUrl });
+      const rawResults = await invoke<any>("recognize_card_at_mouse");
+      console.log("[Card Recognition] Raw backend result:", rawResults, typeof rawResults);
+      
+      // Backend returns JSON array or null
+      let results: any[] = [];
+      if (rawResults) {
+        if (Array.isArray(rawResults)) {
+          results = rawResults;
+        } else if (typeof rawResults === 'string') {
+          try { 
+            const parsed = JSON.parse(rawResults);
+            if (Array.isArray(parsed)) results = parsed;
+          } catch (e) { 
+            console.error("[Card Recognition] Failed to parse JSON:", e);
+            results = []; 
           }
         }
+      }
+      
+      console.log("[Card Recognition] Parsed results:", results);
+      
+      if (results && results.length > 0) {
+        const fullInfos: ItemData[] = [];
+        for (let i = 0; i < results.length; i++) {
+          const res = results[i];
+          console.log(`[Card Recognition] Processing result ${i}:`, res);
+          
+          if (!res || !res.id) {
+            console.warn(`[Card Recognition] Skipping invalid result at index ${i}`);
+            continue;
+          }
+          
+          try {
+            const itemInfo = await invoke<ItemData | null>("get_item_info", { id: res.id });
+            if (itemInfo) {
+              const imgUrl = await getImg(`images/${itemInfo.uuid || itemInfo.name}.webp`);
+              // Mark first as "Match", rest as "Maybe"
+              const matchLabel = i === 0 ? "✓ Match" : "? Maybe";
+              fullInfos.push({ 
+                ...itemInfo, 
+                displayImg: imgUrl,
+                matchLabel,
+                matchConfidence: res.confidence,
+                matchCount: res.match_count
+              });
+              console.log(`[Card Recognition] Added item ${i}:`, itemInfo.name_cn || itemInfo.name);
+            } else {
+              console.warn(`[Card Recognition] No item info found for id: ${res.id}`);
+            }
+          } catch (err) {
+            console.error(`[Card Recognition] Error fetching item ${res.id}:`, err);
+          }
+        }
+        
+        console.log(`[Card Recognition] Total items loaded: ${fullInfos.length}`);
         
         if (fullInfos.length > 0) {
           setRecognizedCards(fullInfos);
@@ -685,8 +801,9 @@ export default function App() {
             fullInfos.forEach(info => next.add(info.uuid));
             return next;
           });
-          showToast(`识别成功: 找到 ${fullInfos.length} 个匹配项`, 'success');
+          showToast(`识别成功: 找到 ${fullInfos.length} 个匹配项 (第1个为最佳匹配)`, 'success');
         } else {
+          console.warn("[Card Recognition] No valid items found in database");
           setErrorMessage("识别到了卡牌，但没能在数据库中找到对应信息");
         }
       } else {
@@ -792,6 +909,225 @@ export default function App() {
     }
     return 700;
   });
+
+  const renderUnifiedItemCard = (item: ItemData, isPinned: boolean, onPin: (e: React.MouseEvent) => void) => {
+    const uniqueKey = item.instance_id || item.uuid;
+    const expansionKey = item.instance_id || item.uuid;
+    
+    // 从 state 中获取展开状态
+    const isExpanded = expandedItems.has(expansionKey);
+    const isRecognized = activeTab === "card";
+    // 简单判断是否Top match (假设 recognizedCards[0] 是最佳匹配)
+    const isTopMatch = recognizedCards.length > 0 && (item === recognizedCards[0] || item.uuid === recognizedCards[0].uuid);
+    
+    const tierClass = item.tier.split(' / ')[0].toLowerCase();
+    const tierNameZh = {
+      'bronze': '青铜+',
+      'silver': '白银+',
+      'gold': '黄金+',
+      'diamond': '钻石+',
+      'legendary': '传说'
+    }[tierClass] || tierClass;
+
+    let heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+    if (heroZh === "Common") heroZh = "通用";
+    
+    const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
+
+    return (
+      <div key={uniqueKey} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(expansionKey)}>
+        <div className={`item-card tier-${tierClass}`}>
+          <div className="card-left">
+            <div className={`image-box size-${sizeClass}`}>
+              <img src={item.displayImg} alt={item.name} />
+            </div>
+          </div>
+
+          <div className="card-center">
+            <div className="name-line">
+              <span className="name-cn">{item.name_cn}</span>
+              {isRecognized && (
+                <span className="id-badge" style={{ 
+                  marginLeft: '4px',
+                  backgroundColor: isTopMatch ? '#238636' : '#8b949e' 
+                }}>
+                  {isTopMatch ? "MATCH" : "MAYBE"}
+                </span>
+              )}
+              <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
+            </div>
+            <div className="tags-line">
+              {item.processed_tags.slice(0, 3).map(t => (
+                <span key={t} className="tag-badge">{t}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="card-right">
+            <div className="top-right-group">
+              {(() => {
+                let rawHero = 'Common';
+                if (Array.isArray(item.heroes) && item.heroes.length > 0) {
+                  rawHero = item.heroes[0];
+                } else if (typeof item.heroes === 'string' && item.heroes) {
+                  rawHero = item.heroes;
+                }
+                
+                const heroKey = rawHero.split(' / ')[0];
+                const heroColor = HERO_COLORS[heroKey] || undefined;
+                const heroAvatarMap: Record<string, string> = {
+                  'Pygmalien': '/images/heroes/pygmalien.webp',
+                  'Jules': '/images/heroes/jules.webp',
+                  'Vanessa': '/images/heroes/vanessa.webp',
+                  'Mak': '/images/heroes/mak.webp',
+                  'Dooley': '/images/heroes/dooley.webp',
+                  'Stelle': '/images/heroes/stelle.webp',
+                  'P': '/images/heroes/pygmalien.webp',
+                  'J': '/images/heroes/jules.webp',
+                  'V': '/images/heroes/vanessa.webp',
+                  'M': '/images/heroes/mak.webp',
+                  'D': '/images/heroes/dooley.webp',
+                  'S': '/images/heroes/stelle.webp'
+                };
+
+                const avatar = heroAvatarMap[heroKey] || (heroKey.length === 1 && heroAvatarMap[heroKey.toUpperCase()]);
+                
+                const HeroIcon = () => (
+                    <div className="toggle-btn hero-btn" style={{ 
+                        width: 32, height: 32, minWidth: 32, minHeight: 32, 
+                        padding: 0, marginRight: 0, cursor: 'default',
+                        border: avatar ? 'none' : undefined 
+                    }} title={heroZh}>
+                        {avatar ? 
+                            <img src={avatar} alt={heroZh} style={{width: 28, height: 28, borderRadius: '50%'}} /> : 
+                            <span style={{color: heroColor}}>{heroZh}</span>
+                        }
+                    </div>
+                );
+
+                if (activeTab === 'search') return <HeroIcon />;
+                return (
+                  <>
+                    <HeroIcon />
+                    <div 
+                      className={`pin-btn ${isPinned ? 'active' : ''}`}
+                      onClick={onPin}
+                    >
+                      {isPinned ? "📌" : "📍"}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+            <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
+          </div>
+        </div>
+
+      {isExpanded && (
+        <div className={`item-details-v2 ${isPinned ? 'progression-active' : ''}`}>
+          {(() => {
+              try {
+                  const cdTiersRaw = (item as any).cooldown_tiers;
+                  const availTiersRaw = (item as any).available_tiers;
+                  
+                  const hasProgression = cdTiersRaw && typeof cdTiersRaw === 'string' && cdTiersRaw.includes('/');
+                  
+                  if (hasProgression) {
+                    const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
+                      const ms = parseFloat(v);
+                      if (isNaN(ms)) return "0.0";
+                      return (ms > 100 ? ms / 1000 : ms).toFixed(1);
+                    });
+                    const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
+                    const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
+                    
+                    return (
+                      <div className="details-left">
+                        <div className="sub-item-cd-progression" style={{ 
+                          position: 'static', 
+                          background: 'rgba(0,0,0,0.2)', 
+                          border: '1px solid rgba(255,255,255,0.05)', 
+                          padding: '4px',
+                          borderRadius: '4px',
+                          minWidth: '50px'
+                        }}>
+                          {cdVals.map((v: string, i: number) => {
+                            let tierName = 'gold';
+                            if (availTiers[i]) {
+                              tierName = availTiers[i];
+                            } else {
+                              if (cdVals.length === 2) tierName = i === 0 ? 'gold' : 'diamond';
+                              else tierName = tierSequence[i] || 'gold';
+                            }
+                            return (
+                              <React.Fragment key={i}>
+                                <div className={`cd-step val-${tierName}`} style={{ fontSize: '16px' }}>{v}</div>
+                                {i < cdVals.length - 1 && <div className="cd-arrow" style={{ transform: 'none', margin: '0' }}>↓</div>}
+                              </React.Fragment>
+                            );
+                          })}
+                          <div className="cd-unit">秒</div>
+                        </div>
+                      </div>
+                    );
+                  }
+              } catch (e) {
+                console.error("Error rendering CD progression:", e);
+              }
+              
+              return item.cooldown !== undefined && item.cooldown > 0 && (
+                <div className="details-left">
+                  <div className="cd-display">
+                    <div className="cd-value">{(item.cooldown > 100 ? item.cooldown / 1000 : item.cooldown).toFixed(1)}</div>
+                    <div className="cd-unit">秒</div>
+                  </div>
+                </div>
+              );
+          })()}
+          <div className="details-right">
+            {item.skills.map((s, idx) => (
+              <div key={idx} className="skill-item">
+                {renderTextLocal(s)}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {item.enchantments.length > 0 && isExpanded && (
+        <div className="item-enchantments-row">
+          {item.enchantments.map((enc, idx) => {
+            const parts = enc.split('|');
+            if (parts.length > 1) {
+              const name = parts[0];
+              const effect = parts[1];
+              const color = ENCHANT_COLORS[name] || '#ffcd19';
+              return (
+                <div key={idx} className="enchant-item">
+                  <span className="enchant-badge" style={{ 
+                    '--enc-clr': color
+                  } as React.CSSProperties}>{name}</span>
+                  <span className="enchant-effect">{renderEnchantTextLocal(effect)}</span>
+                </div>
+              );
+            }
+            return (
+              <div key={idx} className="enchant-item">
+                {renderTextLocal(enc)}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {item.description && isExpanded && (
+        <div className="item-description-row">
+          <div className="description-text">
+            {renderTextLocal(item.description)}
+          </div>
+        </div>
+      )}
+    </div>
+    );
+  };
 
   // enterApp 函数，从版本屏幕进入主应用
   const enterApp = async () => {
@@ -966,13 +1302,6 @@ export default function App() {
 
       // 1. 物品同步 (sync-items) —— 修复重点
       await safeListen<SyncPayload>("sync-items", async (payload) => {
-        // 图片处理逻辑
-        const processItems = (items: ItemData[]) => 
-          Promise.all(items.map(async (i) => ({ 
-            ...i, 
-            displayImg: await getImg(`images/${i.uuid || i.name}.webp`) 
-          })));
-
         const [hand, stash] = await Promise.all([
           processItems(payload.hand_items || []),
           processItems(payload.stash_items || [])
@@ -1000,48 +1329,13 @@ export default function App() {
       });
 
       // 3. 卡牌识别触发 (热键)
-      await safeListen<void>('hotkey-detect-card', () => {
+      await safeListen<void>('hotkey-card', () => {
         console.log("收到卡牌识别触发事件");
         handleRecognizeCard(true);
       });
 
-      // 保留原有的手动触发事件（用于手动按钮触发）
-      await safeListen<void>('trigger_yolo_scan', async () => {
-        console.log("[Frontend] Received manual trigger_yolo_scan event from backend");
-        // 手动触发事件，不受自动扫描设置影响
-        const useGpu = localStorage.getItem("use-gpu-acceleration");
-        const useGpuBool = useGpu === "true";
-        console.log("[Frontend] GPU加速设置:", useGpu, "-> useGpu =", useGpuBool);
-        try {
-          if ((window as any).__yolo_running) {
-            console.log("[Frontend] YOLO scan already running, skipping duplicate call");
-            return;
-          }
-          (window as any).__yolo_running = true;
-          console.log("[Frontend] Invoking trigger_yolo_scan with useGpu=", useGpuBool);
-          const count = await invoke<number>("trigger_yolo_scan", { useGpu: useGpuBool });
-          console.log(`[Frontend] YOLO扫描完成，检测到 ${count} 个目标`);
-
-          // 获取统计信息并通知Overlay更新
-          try {
-            const stats = await invoke('get_yolo_stats');
-            await emit('yolo-stats-updated', stats);
-            console.log("[Frontend] YOLO统计信息已更新并发送给Overlay");
-          } catch (statsErr) {
-            console.error("[Frontend] 获取YOLO统计失败:", statsErr);
-          }
-        } catch (err) {
-          console.error("[Frontend] YOLO扫描失败:", err);
-          setErrorMessage(`YOLO识别失败: ${err}`);
-          setTimeout(() => setErrorMessage(null), 5000);
-        } finally {
-          (window as any).__yolo_running = false;
-        }
-      });
-
       // 4. 插件折叠/展开 (热键)
-      await safeListen<void>('toggle-collapse', () => {
-          // 清除调整大小标志，确保 syncLayout 可以执行
+      await safeListen<void>('hotkey-collapse', () => {
           isResizing.current = false;
           setIsCollapsed(prev => !prev);
       });
@@ -1465,7 +1759,8 @@ export default function App() {
     };
 
     if (!finalData) {
-      const sizeClassFallback = (item.size || 'Medium').split(' / ')[0].toLowerCase();
+      const dbSize = (item.id && itemSizes[item.id]) ? itemSizes[item.id] : item.size;
+      const sizeClassFallback = (dbSize || 'Medium').split(' / ')[0].toLowerCase();
       return (
         <div className="sub-item-card tier-unknown">
            <div className="sub-item-header">
@@ -1486,7 +1781,10 @@ export default function App() {
       legendary: "#FF4500",
     };
     const borderColor = borderColorMap[currentTier] || borderColorMap.bronze;
-    const sizeClass = (item.size || 'Medium').split(' / ')[0].toLowerCase();
+    
+    // Look up size from DB first, then fallback to item.size
+    const dbSize = (item.id && itemSizes[item.id]) ? itemSizes[item.id] : item.size;
+    const sizeClass = (dbSize || 'Medium').split(' / ')[0].toLowerCase();
 
     return (
       <div 
@@ -2364,7 +2662,7 @@ export default function App() {
 
               <div className="setting-item">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label>键盘智能识别按键</label>
+                  <label>怪物识别按键</label>
                   <button 
                     className="bulk-btn" 
                     style={{ padding: '2px 8px' }}
@@ -3389,266 +3687,39 @@ export default function App() {
                 </div>
               </>
             ) : (
-                <>
-                  <div className="card-list">
-                    {(() => {
-                        let source: ItemData[] = [];
-                        if (activeTab === "card") source = recognizedCards;
-                        else if (activeTab === "items") source = getSortedItems([...syncData.hand_items, ...syncData.stash_items]);
-                        else if (activeTab === "search") source = searchResults;
+              <>
+                {activeTab === 'card' && (
+                   <CardRecognitionView 
+                      recognizedCards={recognizedCards}
+                      isRecognizing={isRecognizingCard}
+                      expandedItems={expandedItems}
+                      onToggleExpand={toggleExpand}
+                      onRecognize={() => handleRecognizeCard(false)}
+                      renderItemCard={renderUnifiedItemCard}
+                   />
+                )}
+                
+                {activeTab === 'items' && (
+                   <ItemsView 
+                      handItems={syncData.hand_items}
+                      stashItems={syncData.stash_items}
+                      pinnedItems={pinnedItems}
+                      expandedItems={expandedItems}
+                      onTogglePin={togglePin}
+                      onToggleExpand={toggleExpand}
+                      renderItemCard={renderUnifiedItemCard}
+                      getSortedItems={getSortedItems}
+                   />
+                )}
 
-                        // Filter empty entries (no Chinese name or no skills)
-                        const filtered = source.filter(item => {
-                             if (!item.name_cn || item.name_cn.trim() === "") return false;
-                             
-                             // For Items tab, we want to show everything the user has, even if data is incomplete.
-                             // For Search tab, we should filter incomplete data.
-                             if (activeTab === "search") {
-                                 // Show items that have EITHER skills OR enchantments (not require both)
-                                 const hasSkills = item.skills && item.skills.length > 0;
-                                 const hasEnchantments = item.enchantments && item.enchantments.length > 0;
-                                 if (!hasSkills && !hasEnchantments) {
-                                     return false;
-                                 }
-                             }
-                             return true;
-                        });
-
-                        const displayList = filtered.slice(0, visibleCount);
-
-                        return displayList.map((item, idx) => {
-                      // Use instance_id if available (Hand/Stash), fallback to uuid (Card/YOLO)
-                      const uniqueKey = item.instance_id || item.uuid + (activeTab === "card" ? `-${idx}` : "");
-                      const expansionKey = item.instance_id || item.uuid;
-                      
-                      const isExpanded = expandedItems.has(expansionKey);
-                      const isRecognized = activeTab === "card";
-                      const isTopMatch = idx === 0;
-                      const tierClass = item.tier.split(' / ')[0].toLowerCase();
-                      const tierNameZh = {
-                        'bronze': '青铜+',
-                        'silver': '白银+',
-                        'gold': '黄金+',
-                        'diamond': '钻石+',
-                        'legendary': '传说'
-                      }[tierClass] || tierClass;
-
-                      let heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
-                      if (heroZh === "Common") heroZh = "通用";
-                      
-                      const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
-
-                      return (
-                        <div key={uniqueKey} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(expansionKey)}>
-                          <div className={`item-card tier-${tierClass}`}>
-                            <div className="card-left">
-                              <div className={`image-box size-${sizeClass}`}>
-                                <img src={item.displayImg} alt={item.name} />
-                              </div>
-                            </div>
-
-                            <div className="card-center">
-                              <div className="name-line">
-                                <span className="name-cn">{item.name_cn}</span>
-                                {isRecognized && (
-                                  <span className="id-badge" style={{ 
-                                    marginLeft: '4px',
-                                    backgroundColor: isTopMatch ? '#238636' : '#8b949e' 
-                                  }}>
-                                    {isTopMatch ? "MATCH" : "MAYBE"}
-                                  </span>
-                                )}
-                                <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
-                              </div>
-                              <div className="tags-line">
-                                {item.processed_tags.slice(0, 3).map(t => (
-                                  <span key={t} className="tag-badge">{t}</span>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="card-right">
-                              <div className="top-right-group">
-                                {(() => {
-                                  // 修复：正确处理 heroes 字段可能是字符串或数组的情况
-                                  let rawHero = 'Common';
-                                  if (Array.isArray(item.heroes) && item.heroes.length > 0) {
-                                    rawHero = item.heroes[0];
-                                  } else if (typeof item.heroes === 'string' && item.heroes) {
-                                    rawHero = item.heroes;
-                                  }
-                                  
-                                  const heroKey = rawHero.split(' / ')[0];
-                                  const heroColor = HERO_COLORS[heroKey] || undefined;
-                                  const heroAvatarMap: Record<string, string> = {
-                                    'Pygmalien': '/images/heroes/pygmalien.webp',
-                                    'Jules': '/images/heroes/jules.webp',
-                                    'Vanessa': '/images/heroes/vanessa.webp',
-                                    'Mak': '/images/heroes/mak.webp',
-                                    'Dooley': '/images/heroes/dooley.webp',
-                                    'Stelle': '/images/heroes/stelle.webp',
-                                    // 兼容缩写
-                                    'P': '/images/heroes/pygmalien.webp',
-                                    'J': '/images/heroes/jules.webp',
-                                    'V': '/images/heroes/vanessa.webp',
-                                    'M': '/images/heroes/mak.webp',
-                                    'D': '/images/heroes/dooley.webp',
-                                    'S': '/images/heroes/stelle.webp'
-                                  };
-
-                                  const avatar = heroAvatarMap[heroKey] || (heroKey.length === 1 && heroAvatarMap[heroKey.toUpperCase()]);
-                                  
-                                  const HeroIcon = () => (
-                                      <div className="toggle-btn hero-btn" style={{ 
-                                          width: 32, height: 32, minWidth: 32, minHeight: 32, 
-                                          padding: 0, marginRight: 0, cursor: 'default',
-                                          border: avatar ? 'none' : undefined 
-                                      }} title={heroZh}>
-                                          {avatar ? 
-                                              <img src={avatar} alt={heroZh} style={{width: 28, height: 28, borderRadius: '50%'}} /> : 
-                                              <span style={{color: heroColor}}>{heroZh}</span>
-                                          }
-                                      </div>
-                                  );
-
-                                  if (activeTab === 'search') {
-                                    return <HeroIcon />;
-                                  }
-                                  return (
-                                    <>
-                                      <HeroIcon />
-                                      <div 
-                                        className={`pin-btn ${pinnedItems.has(expansionKey) ? 'active' : ''}`}
-                                        onClick={(e) => togglePin(expansionKey, e)}
-                                      >
-                                        {pinnedItems.has(expansionKey) ? "📌" : "📍"}
-                                      </div>
-                                    </>
-                                  );
-                                })()}
-                              </div>
-                              <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
-                            </div>
-                          </div>
-
-                        {isExpanded && (
-                          <div className={`item-details-v2 ${pinnedItems.has(expansionKey) ? 'progression-active' : ''}`}>
-                            {(() => {
-                                try {
-                                    // 强制从原始数据读取，防止类型系统干扰
-                                    const cdTiersRaw = (item as any).cooldown_tiers;
-                                    const availTiersRaw = (item as any).available_tiers;
-                                    
-                                    const hasProgression = cdTiersRaw && typeof cdTiersRaw === 'string' && cdTiersRaw.includes('/');
-                                    
-                                    if (hasProgression) {
-                                      const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
-                                        const ms = parseFloat(v);
-                                        if (isNaN(ms)) return "0.0";
-                                        return (ms > 100 ? ms / 1000 : ms).toFixed(1);
-                                      });
-                                      const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
-                                      const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
-                                      
-                                      return (
-                                        <div className="details-left">
-                                          <div className="sub-item-cd-progression" style={{ 
-                                            position: 'static', 
-                                            background: 'rgba(0,0,0,0.2)', 
-                                            border: '1px solid rgba(255,255,255,0.05)', 
-                                            padding: '4px',
-                                            borderRadius: '4px',
-                                            minWidth: '50px'
-                                          }}>
-                                            {cdVals.map((v: string, i: number) => {
-                                              let tierName = 'gold';
-                                              if (availTiers[i]) {
-                                                tierName = availTiers[i];
-                                              } else {
-                                                if (cdVals.length === 2) tierName = i === 0 ? 'gold' : 'diamond';
-                                                else tierName = tierSequence[i] || 'gold';
-                                              }
-
-                                              return (
-                                                <Fragment key={i}>
-                                                  <div className={`cd-step val-${tierName}`} style={{ fontSize: '16px' }}>{v}</div>
-                                                  {i < cdVals.length - 1 && <div className="cd-arrow" style={{ transform: 'none', margin: '0' }}>↓</div>}
-                                                </Fragment>
-                                              );
-                                            })}
-                                            <div className="cd-unit">秒</div>
-                                          </div>
-                                        </div>
-                                      );
-                                    }
-                                } catch (e) {
-                                  console.error("Error rendering CD progression:", e);
-                                }
-                                
-                                return item.cooldown !== undefined && item.cooldown > 0 && (
-                                  <div className="details-left">
-                                    <div className="cd-display">
-                                      <div className="cd-value">{(item.cooldown > 100 ? item.cooldown / 1000 : item.cooldown).toFixed(1)}</div>
-                                      <div className="cd-unit">秒</div>
-                                    </div>
-                                  </div>
-                                );
-                            })()}
-                            <div className="details-right">
-                              {item.skills.map((s, idx) => (
-                                <div key={idx} className="skill-item">
-                                  {renderTextLocal(s)}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        {item.enchantments.length > 0 && isExpanded && (
-                          <div className="item-enchantments-row">
-                            {item.enchantments.map((enc, idx) => {
-                              const parts = enc.split('|');
-                              if (parts.length > 1) {
-                                const name = parts[0];
-                                const effect = parts[1];
-                                const color = ENCHANT_COLORS[name] || '#ffcd19';
-                                return (
-                                  <div key={idx} className="enchant-item">
-                                    <span className="enchant-badge" style={{ 
-                                      '--enc-clr': color
-                                    } as React.CSSProperties}>{name}</span>
-                                    <span className="enchant-effect">{renderEnchantTextLocal(effect)}</span>
-                                  </div>
-                                );
-                              }
-                              return (
-                                <div key={idx} className="enchant-item">
-                                  {renderTextLocal(enc)}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                        {item.description && isExpanded && (
-                          <div className="item-description-row">
-                            <div className="description-text">
-                              {renderTextLocal(item.description)}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  });
-                })()}
-                  {activeTab === "card" && recognizedCards.length === 0 && !isRecognizingCard && (
-                    <div className="empty-tip">按下 Alt 键 识别鼠标指向的卡牌</div>
-                  )}
-                  {activeTab === "card" && isRecognizingCard && (
-                    <div className="empty-tip">🔍 正在识别中...</div>
-                  )}
-                  {activeTab === "items" && (syncData.hand_items.length + syncData.stash_items.length) === 0 && (
-                    <div className="empty-tip">当前暂无数据，请在游戏中操作相应卡牌</div>
-                  )}
-                </div>
+                {activeTab === 'search' && (
+                    <div className="card-list">
+                       {searchResults.map((item, _idx) => 
+                         renderUnifiedItemCard(item, pinnedItems.has(item.instance_id||item.uuid), (e) => togglePin(item.instance_id||item.uuid, e))
+                       )}
+                       {searchResults.length === 0 && <div className="empty-tip">未找到结果</div>}
+                    </div>
+                )}
               </>
             )}
           </div>

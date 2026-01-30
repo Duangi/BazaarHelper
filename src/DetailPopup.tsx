@@ -506,19 +506,19 @@ export default function DetailPopup() {
             try {
                 const win = getCurrentWindow();
                 const pos = await win.outerPosition();
-                const size = await win.outerSize();
+                // Use innerSize for saving to avoid "growing window" issue on Windows
+                // because setSize sets the inner size, but outerSize includes invisible borders.
+                const size = await win.innerSize();
                 await invoke('save_detail_popup_geometry', {
                     x: pos.x, y: pos.y, width: size.width, height: size.height
                 });
             } catch (e) { console.error(e); }
         }, 500);
 
-        // Check if we can listen to these events
-        // Note: In Tauri v2, standard events like 'tauri://resize' might be different
-        // But let's try the standard ones.
+        // Use official helper methods for events
         const win = getCurrentWindow();
-        unlistenResize = win.listen('tauri://resize', saveGeometry);
-        unlistenMove = win.listen('tauri://move', saveGeometry);
+        unlistenResize = win.onResized(saveGeometry);
+        unlistenMove = win.onMoved(saveGeometry);
 
         return () => {
             window.removeEventListener('mouseup', handleMouseUp);
@@ -570,39 +570,6 @@ export default function DetailPopup() {
                 console.warn('[DetailPopup] Failed to load skills_db.json', e);
             }
         })();
-    }, []);
-
-    // Window geometry persistence logic
-    useEffect(() => {
-        const window = getCurrentWindow();
-        
-        const saveGeometry = async () => {
-             try {
-                const pos = await window.outerPosition();
-                const size = await window.outerSize();
-                console.log("[DetailPopup] Saving geometry:", pos, size);
-                await invoke('save_detail_popup_geometry', {
-                    x: pos.x,
-                    y: pos.y,
-                    width: size.width,
-                    height: size.height
-                });
-             } catch (e) {
-                 console.error("[DetailPopup] Failed to save geometry:", e);
-             }
-        };
-
-        const onMoved = debounce(() => saveGeometry(), 2000);
-        const onResized = debounce(() => saveGeometry(), 2000);
-
-        const unlistenMove = window.onMoved(onMoved);
-        // Note: onResized event might be cleaner in v2
-        const unlistenResize = window.onResized(onResized);
-
-        return () => {
-            unlistenMove.then(f => f());
-            unlistenResize.then(f => f());
-        };
     }, []);
 
     const getImg = async (path: string | null | undefined) => {

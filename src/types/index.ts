@@ -29,6 +29,10 @@ export interface ItemData {
   image: string;
   displayImg?: string;
   displayHeroImg?: string;
+  // Card Recognition specific fields
+  matchLabel?: string; // "✓ Match" or "? Maybe"
+  matchConfidence?: number;
+  matchCount?: number;
 }
 
 export interface SyncPayload {

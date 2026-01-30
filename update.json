@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjNNb2lXK0ZWS201QUhOMzhGVW9CRXRHMzVxbEhORjFCRW51MURkU3hNMXdDZng5ZGNUQWVDeU04elg4S2RCK2hDcDVIQWZPZklxRExCTWVadUxpakEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzcxMTcxCWZpbGU6QmF6YWFySGVscGVyXzEuNC44X3g2NC1zZXR1cC5leGUKbkVNT3JHTWZhZ2hiOFBBQXM2Tjh2a3BkOTlVbzV2K0UreDF0cnNWaXNWOTZOaFViT0N4RVNzSU1NRG0rYjhncHVHQ2VNak9OWVNZOGg4N2xIclczQUE9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.8/BazaarHelper_1.4.8_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjA0NnQ2VjlSbFpXeEZwV2lQMEtidFlkdlBGeVNVVW05anFyOG8zcUEvZzZWVzAzN1QyVTM2R2MvSUp3NTJaV3R0Uk4xUlZpUzFSS0hpcWRDMnBweUFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzgzNjI5CWZpbGU6QmF6YWFySGVscGVyXzEuNS4wX3g2NC1zZXR1cC5leGUKa2hkYm11SndDMy8wNWhPa254NklOR25tWUZMNGc5Uzlwbnc2RmxkZW4ydnFQaDVFVGVPTEljRDBobVZLK2FxMmNyWlg0M01OcGtSV245OEhQQkZZRGc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.5.0/BazaarHelper_1.5.0_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-30T11:06:11Z",
-    "version":  "1.4.8",
-    "notes":  "🎉 v1.4.8 紧急更新1.4.6的bug 1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
+    "pub_date":  "2026-01-30T14:33:50Z",
+    "version":  "1.5.0",
+    "notes":  "🎉 v1.5.0 修复了一堆bug... 基本都是之前存在的功能。"
 }

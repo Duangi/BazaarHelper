@@ -1403,6 +1403,18 @@ pub async fn preload_card_templates_async(resources_dir: PathBuf, cache_dir: Pat
 
 #[tauri::command]
 pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, String> {
+    // Set recognition flag to prevent focus monitor from hiding overlays during screenshot/processing
+    use std::sync::atomic::Ordering;
+    struct RecognitionGuard;
+    impl Drop for RecognitionGuard { 
+        fn drop(&mut self) { 
+            crate::IS_RECOGNIZING.store(false, Ordering::Relaxed);
+            crate::update_last_recog_time(); // Add grace period
+        } 
+    }
+    crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+    let _guard = RecognitionGuard;
+
     use xcap::{Window, Monitor};
     use enigo::{Enigo, Mouse, Settings};
 
@@ -2115,5 +2127,102 @@ pub fn match_card_by_size(scene_desc: &Mat, size: &str) -> Result<Option<serde_j
                  matches_found.len(), size, matches_found[0]["name"], matches_found[0]["confidence"]);
         return Ok(Some(serde_json::json!(matches_found)));
     }
+    Ok(None)
+}
+
+#[tauri::command]
+pub async fn recognize_monster_at_mouse() -> Result<Option<String>, String> {
+    // 1. 设置识别标志 (防止窗口隐藏)
+    use std::sync::atomic::Ordering;
+    struct RecognitionGuard;
+    impl Drop for RecognitionGuard { 
+        fn drop(&mut self) { 
+            crate::IS_RECOGNIZING.store(false, Ordering::Relaxed);
+            crate::update_last_recog_time(); 
+        } 
+    }
+    crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+    let _guard = RecognitionGuard;
+
+    use xcap::{Window, Monitor};
+    use enigo::{Enigo, Mouse, Settings};
+
+    // 2. 获取鼠标位置
+    let enigo = Enigo::new(&Settings::default()).map_err(|e| format!("{:?}", e))?;
+    let (mouse_x, mouse_y) = enigo.location().map_err(|e| format!("{:?}", e))?;
+
+    // 3. 截屏 (围绕鼠标)
+    let windows = Window::all().map_err(|e| e.to_string())?;
+    let bazaar_window = windows.into_iter().find(|w| {
+        let title = w.title().to_lowercase();
+        let name = w.app_name().to_lowercase();
+        title.contains("the bazaar") || name.contains("the bazaar")
+    });
+    
+    let (screenshot, win_x, win_y) = if let Some(w) = bazaar_window {
+         (w.capture_image().map_err(|e| e.to_string())?, w.x(), w.y())
+    } else {
+         let monitors = Monitor::all().map_err(|e| e.to_string())?;
+         let m = monitors.into_iter().find(|m| {
+             let mx = m.x(); let my = m.y(); let mw = m.width(); let mh = m.height();
+             mouse_x >= mx && mouse_x < mx + mw as i32 && mouse_y >= my && mouse_y < my + mh as i32
+         }).ok_or("Mouse off screen")?;
+         (m.capture_image().map_err(|e| e.to_string())?, m.x(), m.y())
+    };
+
+    let img = DynamicImage::ImageRgba8(screenshot);
+    let (img_w, img_h) = img.dimensions();
+    
+    // 裁剪参数: 怪物卡牌通常比物品卡大，或者主要是上半部分
+    // 使用 600x600 (增大识别范围)
+    let crop_size = 600;
+    let half = crop_size / 2;
+    let rel_x = mouse_x - win_x;
+    let rel_y = mouse_y - win_y;
+    
+    let cx = (rel_x - half).max(0) as u32;
+    let cy = (rel_y - half).max(0) as u32;
+    let cw = if cx + crop_size as u32 > img_w { img_w.saturating_sub(cx) } else { crop_size as u32 };
+    let ch = if cy + crop_size as u32 > img_h { img_h.saturating_sub(cy) } else { crop_size as u32 };
+    
+    if cw < 50 || ch < 50 { return Err("Crop too small".into()); }
+    
+    let cropped = img.crop_imm(cx, cy, cw, ch);
+    save_debug_image(&cropped, "monster_mouse_crop");
+    
+    // 4. 提取特征
+    let scene_desc = extract_features_from_dynamic_image(&cropped, 800).map_err(|e| e.to_string())?;
+    if scene_desc.empty() { return Ok(None); }
+    
+    // 5. 比对 TEMPLATE_CACHE (怪兽库)
+    let cache = TEMPLATE_CACHE.get().ok_or("Monster templates not loaded")?;
+    
+    let mut results: Vec<(&TemplateCache, usize, f32)> = Vec::new(); // (Template, Matches, Confidence)
+
+    for template in cache {
+        if template.descriptors.is_empty() { continue; }
+        use opencv::core::CV_8U;
+        // Rebuild Mat
+        let mut t_desc = unsafe { Mat::new_rows_cols(template.descriptor_rows, template.descriptor_cols, CV_8U).unwrap() };
+        unsafe { std::ptr::copy_nonoverlapping(template.descriptors.as_ptr(), t_desc.data_mut() as *mut u8, template.descriptors.len()); }
+        
+        if let Ok(matches) = match_orb_descriptors(&scene_desc, &t_desc) {
+             let min_kp = (template.descriptor_rows as f32).min(scene_desc.rows() as f32);
+             let conf = if min_kp > 0.0 { matches as f32 / min_kp } else { 0.0 };
+             if matches > 15 && conf > 0.15 {
+                 results.push((template, matches, conf));
+             }
+        }
+    }
+    
+    results.sort_by(|a, b| b.1.cmp(&a.1));
+    
+    if let Some((best, matches, conf)) = results.first() {
+        println!("[Monster Mouse Recog] Matched {} (Day: {}, Matches: {}, Conf: {:.2})", best.name, best.day, matches, conf);
+        // Returns format: "Day|MonsterName" for frontend parsing
+        let result = format!("{}|{}", best.day, best.name);
+        return Ok(Some(result));
+    }
+
     Ok(None)
 }
