@@ -1,7 +1,7 @@
 {
     "$schema":  "https://schema.tauri.app/config/2",
     "productName":  "BazaarHelper",
-    "version":  "1.4.6",
+    "version":  "1.4.7",
     "identifier":  "com.duang.BazaarHelper",
     "build":  {
                   "beforeDevCommand":  "npm run dev",
@@ -46,7 +46,7 @@
                                     "title":  "Detail Popup",
                                     "width":  480,
                                     "height":  700,
-                                    "resizable":  false,
+                                    "resizable":  true,
                                     "alwaysOnTop":  true,
                                     "decorations":  false,
                                     "transparent":  true,

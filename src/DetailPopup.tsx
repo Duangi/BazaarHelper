@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { getCurrentWindow, PhysicalSize, PhysicalPosition } from "@tauri-apps/api/window";
+import { getCurrentWindow, PhysicalSize, PhysicalPosition } from "@tauri-apps/api/window"; 
+// Note: ResizeDirection will be used as a string if not exported as Enum, 
+// checking if it is exported. If TypeScript fails, I'll switch to strings or cast.
+// Actually, let's look at how to import it. It should be in window.
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import "./App.css";
@@ -393,12 +396,15 @@ export default function DetailPopup() {
     const [itemsDb, setItemsDb] = useState<Map<string, ItemData>>(new Map());
     const [isDragging, setIsDragging] = useState(false);
     const isDraggingRef = useRef(false);
-    const [isResizing, setIsResizing] = useState(false);
-    const isResizingRef = useRef(false);
     const resizeStartRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
     const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
     const skillsArtMapRef = useRef<Record<string, string>>({}); // Add Ref to access state in listeners
     const imgCache = useRef<Map<string, string>>(new Map());
+    const hideTimeoutRef = useRef<any>(null);
+    const [contentScale, setContentScale] = useState(1.0);
+    const [resizeMode, setResizeMode] = useState<string | null>(null);
+    const resizeModeRef = useRef<string | null>(null);
+    const wasResizingRef = useRef(false);
     
     // Load items database
     useEffect(() => {
@@ -438,7 +444,7 @@ export default function DetailPopup() {
     // Update ref when state changes
     useEffect(() => { skillsArtMapRef.current = skillsArtMap; }, [skillsArtMap]);
     useEffect(() => { isDraggingRef.current = isDragging; }, [isDragging]);
-    useEffect(() => { isResizingRef.current = isResizing; }, [isResizing]);
+    useEffect(() => { resizeModeRef.current = resizeMode; }, [resizeMode]);
     
     // Restore window geometry on mount
     useEffect(() => {
@@ -456,7 +462,7 @@ export default function DetailPopup() {
         })();
     }, []);
     
-    // 全局监听鼠标事件，确保拖动结束时重置状态
+    // 全局监听鼠标事件
     useEffect(() => {
         const handleMouseUp = () => {
             if (isDraggingRef.current) {
@@ -465,40 +471,60 @@ export default function DetailPopup() {
                     isDraggingRef.current = false;
                 }, 150);
             }
-            if (isResizingRef.current) {
-                setTimeout(() => {
-                    setIsResizing(false);
-                    isResizingRef.current = false;
-                }, 150);
+            if (resizeModeRef.current === 'zoom') {
+                document.body.style.cursor = '';
+                setResizeMode(null);
+                resizeModeRef.current = null;
+            } else if (resizeModeRef.current) { 
+                // Cleanup other resize modes if any sticky state remains
+                document.body.style.cursor = '';
+                setResizeMode(null);
+                resizeModeRef.current = null;
             }
         };
+
         const handleMouseMove = async (e: MouseEvent) => {
-            if (isResizingRef.current) {
-                const deltaX = e.clientX - resizeStartRef.current.x;
+            if (resizeModeRef.current === 'zoom') {
+                document.body.style.cursor = 'nwse-resize';
+                // Use y-axis movement to control zoom
                 const deltaY = e.clientY - resizeStartRef.current.y;
-                const newWidth = Math.max(400, resizeStartRef.current.width + deltaX);
-                const newHeight = Math.max(500, resizeStartRef.current.height + deltaY);
-                try {
-                    const win = getCurrentWindow();
-                    await win.setSize(new PhysicalSize(newWidth, newHeight));
-                    const pos = await win.outerPosition();
-                    const size = await win.outerSize();
-                    await invoke('save_detail_popup_geometry', {
-                        x: pos.x,
-                        y: pos.y,
-                        width: size.width,
-                        height: size.height
-                    });
-                } catch (err) {
-                    console.error('Resize error:', err);
-                }
+                // Reuse 'width' in resizeStartRef as starting scale
+                const startScale = resizeStartRef.current.width;
+                const sensitivity = 0.005;
+                const newScale = Math.max(0.5, Math.min(3.0, startScale + deltaY * sensitivity));
+                setContentScale(newScale);
             }
         };
         window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('mousemove', handleMouseMove);
+
+        // Listen for native resize/move to save geometry
+        let unlistenResize: Promise<() => void> | null = null;
+        let unlistenMove: Promise<() => void> | null = null;
+
+        const saveGeometry = debounce(async () => {
+            try {
+                const win = getCurrentWindow();
+                const pos = await win.outerPosition();
+                const size = await win.outerSize();
+                await invoke('save_detail_popup_geometry', {
+                    x: pos.x, y: pos.y, width: size.width, height: size.height
+                });
+            } catch (e) { console.error(e); }
+        }, 500);
+
+        // Check if we can listen to these events
+        // Note: In Tauri v2, standard events like 'tauri://resize' might be different
+        // But let's try the standard ones.
+        const win = getCurrentWindow();
+        unlistenResize = win.listen('tauri://resize', saveGeometry);
+        unlistenMove = win.listen('tauri://move', saveGeometry);
+
         return () => {
             window.removeEventListener('mouseup', handleMouseUp);
             window.removeEventListener('mousemove', handleMouseMove);
+            if (unlistenResize) unlistenResize.then(f => f());
+            if (unlistenMove) unlistenMove.then(f => f());
         };
     }, []);
     
@@ -737,6 +763,14 @@ export default function DetailPopup() {
                 "show-detail-popup",
                 async (event) => {
                     console.log("[DetailPopup] Received show-detail-popup event:", event.payload);
+                    
+                    // Cancel pending hide
+                    if (hideTimeoutRef.current) {
+                        clearTimeout(hideTimeoutRef.current);
+                        hideTimeoutRef.current = null;
+                        console.log("[DetailPopup] Cancelled pending hide due to new show event");
+                    }
+
                     const { type, data: rawData } = event.payload;
                     
                     let processedData: any = { ...rawData };
@@ -919,9 +953,14 @@ export default function DetailPopup() {
 
             hideUnlisten = await listen("hide-detail-popup", async () => {
                 console.log("[DetailPopup] Received hide-detail-popup event");
+                
+                if (hideTimeoutRef.current) {
+                    clearTimeout(hideTimeoutRef.current);
+                }
+
                 setScale(0);
                 
-                setTimeout(async () => {
+                hideTimeoutRef.current = setTimeout(async () => {
                     setIsVisible(false);
                     setData(null);
                     
@@ -1785,7 +1824,7 @@ export default function DetailPopup() {
             ref={containerRef}
             onClick={(e) => {
                 // 点击背景关闭（但拖动/调整大小时不关闭）
-                if (!isDraggingRef.current && !isResizingRef.current && 
+                if (!isDraggingRef.current && !resizeModeRef.current && !wasResizingRef.current &&
                     (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container'))) {
                     invoke("hide_detail_popup");
                 }
@@ -1793,7 +1832,7 @@ export default function DetailPopup() {
             onContextMenu={(e) => {
                 e.preventDefault();
                 // 右键点击背景也能关闭
-                if (!isDraggingRef.current && !isResizingRef.current && 
+                if (!isDraggingRef.current && !resizeModeRef.current && !wasResizingRef.current &&
                     (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container'))) {
                     invoke("hide_detail_popup");
                 }
@@ -1841,6 +1880,8 @@ export default function DetailPopup() {
             >
                 ⋮⋮⋮
             </div>
+
+            {/* Old Resize Handles for Window Size - Removed */}
             
             {/* 内容区域 */}
             <div
@@ -1849,43 +1890,91 @@ export default function DetailPopup() {
                     flex: 1,
                     overflow: 'auto',
                     padding: '10px'
-                    // 移除内部的 opacity，改为由外层统一控制
                 }}
             >
+             <div style={{ zoom: contentScale, transformOrigin: 'top left' }}>
                 {data.type === 'item' && renderItemContent(data.data as ItemData)}
                 {data.type === 'monster' && renderMonsterContent(data.data as MonsterData)}
                 {data.type === 'event' && renderEventContent(data.data as EventData)}
+             </div>
             </div>
+
+            {/* Manual Resize Handles using JS Logic */}
+            {/* Edges */}
+            {/* Native Resize Handles - Fixed zIndex and propagation */}
+            <div 
+                title="Resize Top" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('North' as any); }} 
+                style={{ position: 'absolute', top: 0, left: 15, right: 15, height: '10px', cursor: 'n-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
+            />
+            <div 
+                title="Resize Bottom" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('South' as any); }} 
+                style={{ position: 'absolute', bottom: 0, left: 15, right: 30, height: '10px', cursor: 's-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
+            />
+            <div 
+                title="Resize Left" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('West' as any); }} 
+                style={{ position: 'absolute', top: 15, bottom: 15, left: 0, width: '10px', cursor: 'w-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
+            />
+            <div 
+                title="Resize Right" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('East' as any); }} 
+                style={{ position: 'absolute', top: 15, bottom: 30, right: 0, width: '10px', cursor: 'e-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
+            />
             
-            {/* 自定义右下角调整大小手柄 */}
+            {/* Corners */}
+            <div 
+                title="Resize TopLeft" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('NorthWest' as any); }} 
+                style={{ position: 'absolute', top: 0, left: 0, width: '15px', height: '15px', cursor: 'nwse-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
+            />
+            <div 
+                title="Resize TopRight" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('NorthEast' as any); }} 
+                style={{ position: 'absolute', top: 0, right: 0, width: '15px', height: '15px', cursor: 'nesw-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
+            />
+            <div 
+                title="Resize BottomLeft" 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('SouthWest' as any); }} 
+                style={{ position: 'absolute', bottom: 0, left: 0, width: '15px', height: '15px', cursor: 'nesw-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
+            />
+            
+            {/* Zoom Handle (Bottom Right) */}
             <div
-                onMouseDown={async (e) => {
+                onMouseDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setIsResizing(true);
-                    isResizingRef.current = true;
-                    const win = getCurrentWindow();
-                    const size = await win.outerSize();
+                    setResizeMode('zoom');
+                    resizeModeRef.current = 'zoom';
                     resizeStartRef.current = {
                         x: e.clientX,
                         y: e.clientY,
-                        width: size.width,
-                        height: size.height
+                        width: contentScale, // Use width to store start scale
+                        height: 0
                     };
                 }}
                 onClick={(e) => e.stopPropagation()}
+                title="Drag up/down to Zoom"
                 style={{
                     position: 'absolute',
                     bottom: 0,
                     right: 0,
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'nwse-resize',
-                    background: 'linear-gradient(135deg, transparent 0%, transparent 40%, rgba(255, 205, 25, 0.3) 100%)',
+                    width: '24px',
+                    height: '24px',
+                    cursor: 'nwse-resize', 
+                    background: 'linear-gradient(135deg, transparent 0%, transparent 40%, #ffcc00 100%)',
                     borderRadius: '0 0 8px 0',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                    paddingRight: '3px',
+                    paddingBottom: '3px'
                 }}
-            />
+            >
+                <div style={{ transform: 'rotate(-45deg)', fontSize: '10px' }}>🔍</div>
+            </div>
         </div>
     );
 }

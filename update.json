@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjB2c3dNQ2JFZFVlaHBMcXlVZ0paaC8ydXM4STNXQ2tKY0lJWFBoWHNNbHMzR0FqamZLTFNPSTVMQ29yN1ZUa0hmTmlNYm9WRU96bzFMRWErMFdIY0FFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzYwNDAwCWZpbGU6QmF6YWFySGVscGVyXzEuNC42X3g2NC1zZXR1cC5leGUKeEFXT1NQaDVzcWpNc2hwd2p0SmNUYnhPam13RjJMakxsak54Wit3Ymt0cGhnbjIrbzVOb21lRzJSQ0dMQWt6RlIwOW9EY1UveHFYU1E2ZUtaUFZkQ0E9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.6/BazaarHelper_1.4.6_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjhzQ3lyb09CM3dCNmJlVk5KVHk2WkxydEFKbDNkVEtCSENzcHhialV6T1Vzck9hVEdLSHdqdGhBdVFRQlRMcDNUMUw5S1dVZ1EwNkFWUHQ4SlJFdVFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzcwMTI5CWZpbGU6QmF6YWFySGVscGVyXzEuNC43X3g2NC1zZXR1cC5leGUKdGxuK1dnbDBTTnV2SllyQllwSHdxSzEvaVpVSldHNDFjSzN5WnZKaGpZbGZDaDZyMUJBTnVnZjZwc1VNaFFMRVR2QVFiLzVyemNpS2VXQ1FZc3NFQnc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.7/BazaarHelper_1.4.7_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-30T08:06:40Z",
-    "version":  "1.4.6",
-    "notes":  "🎉 v1.4.6 （怀旧版本？）更新来了：1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
+    "pub_date":  "2026-01-30T10:48:49Z",
+    "version":  "1.4.7",
+    "notes":  "🎉 v1.4.7 紧急更新1.4.6的bug 1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
 }

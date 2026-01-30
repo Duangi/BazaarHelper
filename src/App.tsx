@@ -581,7 +581,7 @@ export default function App() {
   // 更新相关状态
   const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
   const [updateStatus, setUpdateStatus] = useState<"none" | "checking" | "available" | "downloading" | "ready">("none");
-  const [downloadProgress] = useState(0); // setDownloadProgress removed
+  const [downloadProgress, setDownloadProgress] = useState(0); 
   const [isInstalling, setIsInstalling] = useState(false); // 正在安装状态
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -806,15 +806,49 @@ export default function App() {
     invoke("start_template_loading").catch(console.error);
     invoke("load_event_templates").catch(console.error);
     
-    // 如果有更新，进人应用后开始后台下载
+    // 如果有更新，仅仅进入，不强制下载
     if (updateAvailable) {
-      console.log("[Update] Found update, starting background download...");
-      startUpdateDownload();
+      console.log("[Update] Found update, but entering app without auto-download (Manual Trigger Mode).");
+      // startUpdateDownload(); // Keep manual
     }
   };
 
   const startUpdateDownload = async () => {
-    // ... rest of the function (no changes needed here)
+    if (!updateAvailable) return;
+    try {
+        console.log("[Update] Starting download...");
+        setUpdateStatus("downloading");
+        setDownloadProgress(0);
+
+        let contentLength = 0;
+        let downloaded = 0;
+
+        await updateAvailable.downloadAndInstall((event) => {
+            switch (event.event) {
+                case 'Started':
+                    contentLength = event.data.contentLength || 0;
+                    console.log(`[Update] Download started, total bytes: ${contentLength}`);
+                    setDownloadProgress(0);
+                    break;
+                case 'Progress':
+                    downloaded += event.data.chunkLength; 
+                    if (contentLength > 0) {
+                        const progress = Math.min(100, Math.round((downloaded / contentLength) * 100));
+                        setDownloadProgress(progress);
+                    }
+                    break;
+                case 'Finished':
+                    console.log("[Update] Download finished");
+                    setUpdateStatus("ready");
+                    setDownloadProgress(100);
+                    break;
+            }
+        });
+    } catch (e) {
+        console.error("[Update] Download failed:", e);
+        setUpdateStatus("available"); // Revert
+        setErrorMessage(`更新下载失败: ${e}`);
+    }
   };
 
   // 启动时显示版本信息并检查更新
@@ -1218,7 +1252,7 @@ export default function App() {
     let unlisten: (() => void) | null = null;
     const setup = async () => {
       try {
-        const l = await appWindow.listen('monsters-db-ready', async (event: any) => {
+        unlisten = await listen('monsters-db-ready', async (event: any) => {
           try {
             console.log('[Event] monsters-db-ready payload:', event.payload);
             const res: Record<string, MonsterData> = await invoke('get_all_monsters');
@@ -1227,8 +1261,6 @@ export default function App() {
             console.error('Failed to reload monsters after monsters-db-ready:', e);
           }
         });
-        // `l` is the unlisten function returned by `appWindow.listen`
-        unlisten = l;
       } catch (e) {
         console.warn('Failed to listen for monsters-db-ready:', e);
       }
@@ -1854,11 +1886,38 @@ export default function App() {
           </svg>
         </div>
 
-        <button className="settings-btn" onClick={() => setShowSettings(!showSettings)} title="设置">
+        <button className="settings-btn" onClick={() => setShowSettings(!showSettings)} title="设置" style={{ position: 'relative' }}>
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
+          {/* 更新提示红点 */}
+          {(updateStatus === 'available' || updateStatus === 'ready') && (
+            <div style={{
+              position: 'absolute',
+              top: '4px',
+              right: '4px',
+              width: '8px',
+              height: '8px',
+              backgroundColor: '#ff4d4f',
+              borderRadius: '50%',
+              border: '1px solid #28231e'
+            }} />
+          )}
+          {/* 下载中提示 */}
+          {updateStatus === 'downloading' && (
+            <div style={{
+              position: 'absolute',
+              top: '4px',
+              right: '4px',
+              width: '8px',
+              height: '8px',
+              backgroundColor: '#58a6ff',
+              borderRadius: '50%',
+              border: '1px solid #28231e',
+              animation: 'pulse 1s infinite'
+            }} />
+          )}
         </button>
         
         <div className="collapse-btn" onClick={async () => {
@@ -1912,6 +1971,29 @@ export default function App() {
           }}
         />
       </div>
+
+      {/* 顶部下载进度条 - 在进入插件后也能看到更新进度 */}
+      {updateStatus === 'downloading' && (
+        <div style={{
+          width: '100%',
+          height: '2px',
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          position: 'relative',
+          overflow: 'hidden',
+          zIndex: 100
+        }}>
+          <div style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            height: '100%',
+            width: `${downloadProgress}%`,
+            backgroundColor: '#58a6ff',
+            boxShadow: '0 0 4px #58a6ff',
+            transition: 'width 0.3s ease'
+          }} />
+        </div>
+      )}
 
       {showSettings && (
         <div className="settings-panel-overlay" onClick={() => setShowSettings(false)}>
