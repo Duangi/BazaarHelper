@@ -28,6 +28,7 @@ export interface ItemData {
   description: string;
   image: string;
   displayImg?: string;
+  displayHeroImg?: string;
 }
 
 export interface SyncPayload {

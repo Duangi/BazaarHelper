@@ -10,16 +10,16 @@ use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState}
 use serde::{Serialize, Deserialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-use regex::Regex;
-use std::io::{Read, BufRead, BufReader, Seek, SeekFrom, Write};
+// use regex::Regex;
+use std::io::{Read, Seek, SeekFrom, Write};
 use std::fs::File;
-use std::{thread, time, panic};
-use tokio;
+use std::{time, panic};
+// use tokio;
 use chrono::Local;
 
 // Windows 特定导入
 #[cfg(target_os = "windows")]
-use windows::Win32::UI::Input::KeyboardAndMouse::{GetAsyncKeyState, VK_RBUTTON, VK_MENU};
+use windows::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::{
     GetWindowLongW, SetWindowLongW, SetWindowPos,
@@ -65,21 +65,54 @@ const VK_MENU: i32 = 18;      // Alt 键
 
 // 全局静态变量存储详细信息显示热键
 static DETAIL_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
+static DETECTION_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
+static CARD_DETECTION_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
+static TOGGLE_COLLAPSE_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
+static YOLO_HOTKEY_CACHE: OnceLock<RwLock<Option<i32>>> = OnceLock::new();
 
 fn update_detail_hotkey_cache(val: Option<i32>) {
     let cache = DETAIL_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
-    if let Ok(mut writer) = cache.write() {
-        *writer = val;
-    }
+    if let Ok(mut writer) = cache.write() { *writer = val; }
+}
+
+fn update_detection_hotkey_cache(val: Option<i32>) {
+    let cache = DETECTION_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() { *writer = val; }
+}
+
+fn update_card_detection_hotkey_cache(val: Option<i32>) {
+    let cache = CARD_DETECTION_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() { *writer = val; }
+}
+
+fn update_toggle_collapse_hotkey_cache(val: Option<i32>) {
+    let cache = TOGGLE_COLLAPSE_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() { *writer = val; }
+}
+
+fn update_yolo_hotkey_cache(val: Option<i32>) {
+    let cache = YOLO_HOTKEY_CACHE.get_or_init(|| RwLock::new(None));
+    if let Ok(mut writer) = cache.write() { *writer = val; }
 }
 
 fn get_cached_detail_hotkey() -> Option<i32> {
-    if let Some(cache) = DETAIL_HOTKEY_CACHE.get() {
-        if let Ok(reader) = cache.read() {
-            return *reader;
-        }
-    }
-    None
+    DETAIL_HOTKEY_CACHE.get().and_then(|c| c.read().ok()).and_then(|r| *r)
+}
+
+fn get_cached_detection_hotkey() -> Option<i32> {
+    DETECTION_HOTKEY_CACHE.get().and_then(|c| c.read().ok()).and_then(|r| *r)
+}
+
+fn get_cached_card_detection_hotkey() -> Option<i32> {
+    CARD_DETECTION_HOTKEY_CACHE.get().and_then(|c| c.read().ok()).and_then(|r| *r)
+}
+
+fn get_cached_toggle_collapse_hotkey() -> Option<i32> {
+    TOGGLE_COLLAPSE_HOTKEY_CACHE.get().and_then(|c| c.read().ok()).and_then(|r| *r)
+}
+
+fn get_cached_yolo_hotkey() -> Option<i32> {
+    YOLO_HOTKEY_CACHE.get().and_then(|c| c.read().ok()).and_then(|r| *r)
 }
 
 /// 跨平台按键检测
@@ -134,20 +167,7 @@ fn is_key_pressed(key_code: i32, _device_state: &DeviceState, _mouse_state: &Mou
     }
 }
 
-// 获取默认热键值（跨平台）
-fn default_monster_hotkey() -> i32 {
-    #[cfg(target_os = "windows")]
-    { VK_RBUTTON.0 as i32 }
-    #[cfg(not(target_os = "windows"))]
-    { VK_RBUTTON }
-}
 
-fn default_card_hotkey() -> i32 {
-    #[cfg(target_os = "windows")]
-    { VK_MENU.0 as i32 }
-    #[cfg(not(target_os = "windows"))]
-    { VK_MENU }
-}
 
 // ============== Windows 特定窗口样式函数 ==============
 #[cfg(target_os = "windows")]
@@ -250,12 +270,13 @@ fn apply_main_window_style(window: &tauri::WebviewWindow) {
                 WS_MINIMIZEBOX.0 |
                 WS_MAXIMIZEBOX.0
             );
-            new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_THICKFRAME.0;
+            new_style |= WS_POPUP.0 | WS_THICKFRAME.0;
             SetWindowLongW(handle, GWL_STYLE, new_style as i32);
 
             let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;
-            let mut new_ex_style = current_ex_style & !(WS_EX_APPWINDOW.0);
-            new_ex_style |= WS_EX_TOOLWINDOW.0 | WS_EX_LAYERED.0;
+            // 确保主窗口显示在任务栏：移除 TOOLWINDOW，添加 APPWINDOW
+            let mut new_ex_style = current_ex_style & !(WS_EX_TOOLWINDOW.0);
+            new_ex_style |= WS_EX_APPWINDOW.0 | WS_EX_LAYERED.0;
             SetWindowLongW(handle, GWL_EXSTYLE, new_ex_style as i32);
 
             let _ = SetWindowPos(
@@ -372,7 +393,7 @@ fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
     }
 }
 
-use crate::monster_recognition::{scan_and_identify_monster_at_mouse, YoloDetection};
+use crate::monster_recognition::YoloDetection;
 
 pub mod monster_recognition;
 
@@ -640,16 +661,50 @@ async fn handle_overlay_right_click(app: tauri::AppHandle, x: i32, y: i32) -> Re
 
         if det.class_id == 2 || det.class_id == 6 {
             // Item (2) or Skill (6) -> Card Recognition
-            let match_result = monster_recognition::match_card_descriptors(&scene_desc)?;
-            if let Some(cards) = match_result {
-                let card_list = cards.as_array().unwrap();
-                if !card_list.is_empty() {
-                    let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
-                    let db_state = app.state::<DbState>();
-                    if let Some(info) = get_item_info_internal(&db_state, card_id).await {
-                        return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
-                    }
-                }
+            // 根据宽高比判断卡牌size类型
+            let card_width = (det.x2 - det.x1) as f32;
+            let card_height = (det.y2 - det.y1) as f32;
+            let aspect_ratio = card_width / card_height;
+            
+            // 判断卡牌尺寸类型
+            // 中型：宽高比接近1:1 (0.85 - 1.15 范围内)
+            // 大型：宽明显大于高 (aspect_ratio > 1.15)
+            // 小型：高明显大于宽 (aspect_ratio < 0.85)
+            let card_size = if aspect_ratio >= 0.85 && aspect_ratio <= 1.15 {
+                "Medium"
+            } else if aspect_ratio > 1.15 {
+                "Large"
+            } else {
+                "Small"
+            };
+            
+            println!("[YOLO Click] Card dimensions: {}x{}, aspect_ratio: {:.2}, detected size: {}", 
+                     card_width, card_height, aspect_ratio, card_size);
+            
+            // 使用按size分类的匹配函数
+            let match_result = monster_recognition::match_card_by_size(&scene_desc, card_size);
+            match match_result {
+                Ok(Some(cards)) => {
+                     let card_list = cards.as_array().unwrap();
+                     if !card_list.is_empty() {
+                         let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
+                         println!("[YOLO Click] Card matched: {}", card_id);
+                         let db_state = app.state::<DbState>();
+                         if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
+                             return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+                         } else {
+                             println!("[YOLO Click] Card info not found in DB for id: {}", card_id);
+                             println!("[YOLO Click] Checking if DB is loaded...");
+                             let items_db = db_state.items.read().unwrap();
+                             println!("[YOLO Click] DB has {} items, id_map has {} entries", 
+                                      items_db.list.len(), items_db.id_map.len());
+                         }
+                     } else {
+                         println!("[YOLO Click] Card match returned empty list");
+                     }
+                },
+                Ok(None) => println!("[YOLO Click] No card descriptors matched in {} category", card_size),
+                Err(e) => println!("[YOLO Click] Card matching error: {}", e),
             }
         } else if det.class_id == 1 {
             // Event (1) -> Check for Monster Icon (3) overlap
@@ -842,6 +897,15 @@ pub struct PersistentState {
     pub detail_popup_height: Option<u32>,
     #[serde(default)]
     pub monster_calibration: Option<MonsterCalibration>,
+    // Main Window Geometry Persistence
+    #[serde(default)]
+    pub main_window_x: Option<i32>,
+    #[serde(default)]
+    pub main_window_y: Option<i32>,
+    #[serde(default)]
+    pub main_window_width: Option<u32>,
+    #[serde(default)]
+    pub main_window_height: Option<u32>,
 }
 
 // 跨平台虚拟键常量
@@ -866,6 +930,10 @@ impl Default for PersistentState {
             detail_popup_width: None,
             detail_popup_height: None,
             monster_calibration: None,
+            main_window_x: None,
+            main_window_y: None,
+            main_window_width: None,
+            main_window_height: None,
         }
     }
 }
@@ -920,6 +988,7 @@ pub struct RawItem {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ItemData {
+    #[serde(alias = "id")]
     pub uuid: String,
     pub name: String,
     pub name_cn: String,
@@ -929,7 +998,7 @@ pub struct ItemData {
     pub hidden_tags: String,
     pub size: Option<String>,
     pub processed_tags: Vec<String>,
-    pub heroes: Vec<String>,
+    pub heroes: Option<String>,
     pub cooldown: Option<f32>,
     pub cooldown_tiers: String,
     pub damage_tiers: String,
@@ -964,13 +1033,6 @@ impl From<RawItem> for ItemData {
     fn from(raw: RawItem) -> Self {
         let name_en = raw.name_en.clone().unwrap_or_else(|| "Unknown".to_string());
         let name_cn = raw.name_cn.clone().unwrap_or_else(|| name_en.clone());
-
-        let h_str = raw.heroes.clone().unwrap_or_default();
-        let heroes = if h_str.is_empty() {
-            vec!["Common".to_string()]
-        } else {
-            h_str.split('|').map(|s| s.trim().to_string()).collect()
-        };
 
         let processed_tags = raw.tags.as_deref().unwrap_or_default()
             .split('|')
@@ -1045,7 +1107,7 @@ impl From<RawItem> for ItemData {
             hidden_tags,
             size: raw.size,
             processed_tags,
-            heroes,
+            heroes: raw.heroes,
             cooldown: raw.cooldown,
             cooldown_tiers: raw.cooldown_tiers.unwrap_or_default(),
             damage_tiers: raw.damage_tiers.unwrap_or_default(),
@@ -1161,6 +1223,7 @@ pub struct DbState {
     pub monsters: Arc<RwLock<serde_json::Map<String, serde_json::Value>>>,
 }
 
+#[allow(dead_code)]
 fn construct_monster_sub_item(item_data: Option<ItemData>, fallback_name_cn: &str, fallback_name_en: &str, current_tier: &str, override_size: Option<&str>) -> serde_json::Value {
     let mut desc = Vec::new();
     let mut name_cn = fallback_name_cn.to_string();
@@ -1347,8 +1410,8 @@ fn get_log_path() -> PathBuf {
 }
 
 #[tauri::command]
-#[allow(dead_code)]
 async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
+    println!("=============== [start_template_loading] CALLED ===============");
     let resources_path = app.path().resource_dir().map_err(|e| {
         let err = format!("Failed to get resource dir in template loading: {}", e);
         log_to_file(&err);
@@ -1361,13 +1424,133 @@ async fn start_template_loading(app: tauri::AppHandle) -> Result<(), String> {
         err
     })?.to_path_buf();
     
-    // 异步加载
+    // 加载items_db.json到DbState
+    let items_db_path = res_dir.join("items_db.json");
+    println!("[ItemDB] Attempting to load from: {:?}", items_db_path);
+    if items_db_path.exists() {
+        match std::fs::read_to_string(&items_db_path) {
+            Ok(json_str) => {
+                println!("[ItemDB] File read successfully, length: {} bytes", json_str.len());
+                match serde_json::from_str::<Vec<RawItem>>(&json_str) {
+                    Ok(raw_items_list) => {
+                        println!("[ItemDB] Parsed {} raw items from JSON", raw_items_list.len());
+                        let items_list: Vec<ItemData> = raw_items_list.into_iter()
+                            .map(ItemData::from)
+                            .collect();
+                        println!("[ItemDB] Converted to {} ItemData entries", items_list.len());
+                        
+                        let db_state = app.state::<DbState>();
+                        let mut items_db = db_state.items.write().unwrap();
+                        
+                        // 按照size分类统计
+                        let mut small_count = 0;
+                        let mut medium_count = 0;
+                        let mut large_count = 0;
+                        
+                        items_db.list = items_list.clone();
+                        items_db.id_map.clear();
+                        for (idx, item) in items_list.iter().enumerate() {
+                            items_db.id_map.insert(item.uuid.clone(), idx);
+                            
+                            // 统计size分类
+                            if let Some(size) = &item.size {
+                                if size.contains("Small") || size.contains("小型") {
+                                    small_count += 1;
+                                } else if size.contains("Medium") || size.contains("中型") {
+                                    medium_count += 1;
+                                } else if size.contains("Large") || size.contains("大型") {
+                                    large_count += 1;
+                                }
+                            }
+                        }
+                        
+                        println!("[ItemDB] Loaded {} items: Small={}, Medium={}, Large={}", 
+                                 items_db.list.len(), small_count, medium_count, large_count);
+                        println!("[ItemDB] id_map has {} entries", items_db.id_map.len());
+                    }
+                    Err(e) => {
+                        println!("[ItemDB] Failed to parse items_db.json: {}", e);
+                        log_to_file(&format!("ItemDB parse error: {}", e));
+                    }
+                }
+            }
+            Err(e) => {
+                println!("[ItemDB] Failed to read items_db.json: {}", e);
+                log_to_file(&format!("ItemDB read error: {}", e));
+            }
+        }
+    } else {
+        println!("[ItemDB] items_db.json not found at: {:?}", items_db_path);
+        log_to_file(&format!("ItemDB not found: {:?}", items_db_path));
+    }
+    
+    // 异步加载特征模板（现在按size分类加载）
+    let res_dir_async = res_dir.clone();
+    let cache_dir_async = cache_dir.clone();
+    let app_async = app.clone();
     tauri::async_runtime::spawn(async move {
-        let res_dir_clone = res_dir.clone();
-        let cache_dir_clone = cache_dir.clone();
-        let _ = monster_recognition::preload_templates_async(res_dir, cache_dir).await;
-        let _ = monster_recognition::preload_card_templates_async(res_dir_clone, cache_dir_clone).await;
+        let res_dir_clone = res_dir_async.clone();
+        let cache_dir_clone = cache_dir_async.clone();
+        
+        let _ = monster_recognition::preload_templates_async(res_dir_async, cache_dir_async).await;
+        
+        // 加载事件特征模板
+        let _ = monster_recognition::load_event_templates(app_async).await;
+        
+        // 按size分类加载卡牙特征
+        let _ = monster_recognition::preload_card_templates_by_size_async(res_dir_clone, cache_dir_clone).await;
     });
+    
+    // 验证items_db是否加载成功
+    {
+        let db_state = app.state::<DbState>();
+        let items_db = db_state.items.read().unwrap();
+        println!("[ItemDB] Verification: {} items loaded, {} in id_map", items_db.list.len(), items_db.id_map.len());
+    }
+
+    // Load skills_db.json
+    let skills_db_path = res_dir.join("skills_db.json");
+    if skills_db_path.exists() {
+        match std::fs::read_to_string(&skills_db_path) {
+            Ok(json_str) => {
+                match serde_json::from_str::<Vec<RawItem>>(&json_str) {
+                    Ok(raw_list) => {
+                        let list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
+                        let db_state = app.state::<DbState>();
+                        let mut skills_db = db_state.skills.write().unwrap();
+                        
+                        skills_db.list = list.clone();
+                        skills_db.id_map.clear();
+                        for (idx, item) in list.iter().enumerate() {
+                            skills_db.id_map.insert(item.uuid.clone(), idx);
+                        }
+                        println!("[SkillDB] Loaded {} skills", skills_db.list.len());
+                    },
+                    Err(e) => println!("[SkillDB] Parse error: {}", e),
+                }
+            },
+           Err(e) => println!("[SkillDB] Read error: {}", e),
+        }
+    }
+
+    // Load monsters_db.json
+    let monsters_db_path = res_dir.join("monsters_db.json");
+    if monsters_db_path.exists() {
+        match std::fs::read_to_string(&monsters_db_path) {
+            Ok(json_str) => {
+                match serde_json::from_str::<serde_json::Map<String, serde_json::Value>>(&json_str) {
+                     Ok(map) => {
+                         let db_state = app.state::<DbState>();
+                         let mut monsters_db = db_state.monsters.write().unwrap();
+                         *monsters_db = map;
+                         println!("[MonsterDB] Loaded {} monsters", monsters_db.len());
+                     },
+                     Err(e) => println!("[MonsterDB] Parse error: {}", e),
+                }
+            },
+            Err(e) => println!("[MonsterDB] Read error: {}", e),
+        }
+    }
     
     Ok(())
 }
@@ -1410,6 +1593,8 @@ async fn show_yolo_monitor_window(app: tauri::AppHandle, show: bool) -> Result<(
     if let Some(window) = app.get_webview_window("yolo-monitor") {
         if show {
             let _ = window.show();
+            // 确保显示时应用无焦点样式
+            apply_no_activate_style(&window);
         } else {
             let _ = window.hide();
         }
@@ -1488,12 +1673,14 @@ async fn show_detail_popup_at(app: tauri::AppHandle, x: i32, y: i32, data_type: 
                 if let Ok(visible) = window.is_visible() {
                     println!("[Show Detail Popup] Visibility after show: {}", visible);
                 }
+                // 应用无焦点样式，防止抢夺游戏焦点
+                apply_no_activate_style(&window);
             },
             Err(e) => println!("[Show Detail Popup] Failed to show window: {}", e),
         }
         
-        // 尝试设置焦点
-        let _ = window.set_focus();
+        // 移除 set_focus，因为它会导致游戏失去焦点
+        // let _ = window.set_focus();
         
         // 发送数据给前端 - 直接向 detail-popup 窗口发射事件
         let payload = serde_json::json!({
@@ -1565,6 +1752,41 @@ async fn reset_detail_popup_position(app: tauri::AppHandle) -> Result<(), String
     Ok(())
 }
 
+#[tauri::command]
+fn save_window_geometry(window_label: String, x: Option<i32>, y: Option<i32>, width: Option<u32>, height: Option<u32>) {
+    if window_label == "main" {
+        println!("[Geometry] Saving main window: x={:?}, y={:?}, w={:?}, h={:?}", x, y, width, height);
+        let mut state = load_state();
+        let mut changed = false;
+        
+        if let Some(val) = x { state.main_window_x = Some(val); changed = true; }
+        if let Some(val) = y { state.main_window_y = Some(val); changed = true; }
+        if let Some(val) = width { state.main_window_width = Some(val); changed = true; }
+        if let Some(val) = height { state.main_window_height = Some(val); changed = true; }
+        
+        if changed {
+            save_state(&state);
+            println!("[Geometry] State saved to disk.");
+        }
+    }
+}
+
+#[tauri::command]
+fn get_window_geometry(window_label: String) -> serde_json::Value {
+    if window_label == "main" {
+        let state = load_state();
+        println!("[Geometry] Loading saved position: x={:?}, y={:?}, w={:?}, h={:?}", 
+                 state.main_window_x, state.main_window_y, state.main_window_width, state.main_window_height);
+        return serde_json::json!({
+            "x": state.main_window_x,
+            "y": state.main_window_y,
+            "width": state.main_window_width,
+            "height": state.main_window_height
+        });
+    }
+    serde_json::json!({})
+}
+
 // 存储最后一个前台窗口的信息
 static LAST_FOREGROUND_WINDOW: std::sync::RwLock<Option<String>> = std::sync::RwLock::new(None);
 
@@ -1595,6 +1817,21 @@ fn is_game_window_active() -> bool {
     }
 }
 
+// 辅助函数：应用 WS_EX_NOACTIVATE 样式，防止窗口获取焦点
+fn apply_no_activate_style(window: &tauri::WebviewWindow) {
+    #[cfg(target_os = "windows")]
+    if let Ok(hwnd) = window.hwnd() {
+        unsafe {
+            use windows::Win32::Foundation::HWND as HWND_TYPE;
+            let hwnd_val = HWND_TYPE(hwnd.0 as _);
+            let style = GetWindowLongW(hwnd_val, GWL_EXSTYLE);
+            // WS_EX_NOACTIVATE: 防止窗口被激活（获取焦点）
+            // WS_EX_TOOLWINDOW: 不在任务栏显示
+            SetWindowLongW(hwnd_val, GWL_EXSTYLE, style | WS_EX_NOACTIVATE.0 as i32 | WS_EX_TOOLWINDOW.0 as i32);
+        }
+    }
+}
+
 // 更新最后一个前台窗口
 fn update_last_foreground_window() {
     #[cfg(target_os = "windows")]
@@ -1620,61 +1857,10 @@ fn update_last_foreground_window() {
 
 #[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
-    #[cfg(target_os = "windows")]
-    {
-        use windows::Win32::UI::WindowsAndMessaging::{FindWindowW, SetForegroundWindow, ShowWindow, SW_SHOW, GetForegroundWindow, GetWindowTextW};
-        use windows::core::PCWSTR;
-
-        // 检查最后一个前台窗口是否是游戏
-        let should_restore = {
-            let last = LAST_FOREGROUND_WINDOW.read().ok();
-            match last.as_ref().and_then(|l| l.as_ref()) {
-                Some(title) => {
-                    let is_game = title.to_lowercase().contains("the bazaar") || title.to_lowercase().contains("thebazaar");
-                    println!("[Focus] Last foreground was '{}', is_game: {}", title, is_game);
-                    is_game
-                }
-                None => {
-                    println!("[Focus] No last foreground window recorded, checking current");
-                    // 如果没有记录，检查当前前台窗口
-                    unsafe {
-                        let current_hwnd = GetForegroundWindow();
-                        if !current_hwnd.is_invalid() {
-                            let mut title: [u16; 512] = [0; 512];
-                            let len = GetWindowTextW(current_hwnd, &mut title);
-                            if len > 0 {
-                                let window_title = String::from_utf16_lossy(&title[..len as usize]);
-                                let is_game = window_title.to_lowercase().contains("the bazaar") || window_title.to_lowercase().contains("thebazaar");
-                                println!("[Focus] Current foreground is '{}', is_game: {}", window_title, is_game);
-                                is_game
-                            } else {
-                                false
-                            }
-                        } else {
-                            false
-                        }
-                    }
-                }
-            }
-        };
-
-        if !should_restore {
-            println!("[Focus] Not restoring game focus - user was not in game");
-            return Ok(());
-        }
-
-        println!("[Focus] Restoring game focus");
-        let window_name: Vec<u16> = "The Bazaar\0".encode_utf16().collect();
-        unsafe {
-            if let Ok(hwnd) = FindWindowW(PCWSTR::null(), PCWSTR(window_name.as_ptr())) {
-                if !hwnd.is_invalid() {
-                    // 先 ShowWindow 确保不是最小化
-                    let _ = ShowWindow(hwnd, SW_SHOW);
-                    let _ = SetForegroundWindow(hwnd);
-                }
-            }
-        }
-    }
+    // This function is disabled because it was causing unintended focus-stealing behavior.
+    // By not restoring focus automatically, we give the user full control over their
+    // window focus, addressing the reported issue.
+    println!("[Focus] `restore_game_focus` called, but is intentionally disabled to prevent focus stealing.");
     Ok(())
 }
 
@@ -1702,6 +1888,7 @@ fn get_show_yolo_monitor() -> Result<bool, String> {
     Ok(state.show_yolo_monitor)
 }
 
+#[allow(dead_code)]
 fn get_prev_log_path() -> PathBuf {
     let mut p = get_log_path();
     p.set_file_name("Player-prev.log");
@@ -1728,6 +1915,7 @@ fn load_state() -> PersistentState {
     PersistentState::default()
 }
 
+#[allow(dead_code)]
 fn lookup_item(tid: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<ItemData> {
     if let Some(&index) = items_db.id_map.get(tid) {
         return items_db.list.get(index).cloned();
@@ -1738,6 +1926,7 @@ fn lookup_item(tid: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<Item
     None
 }
 
+#[allow(dead_code)]
 fn lookup_item_by_name(name_cn: &str, items_db: &ItemDb, skills_db: &SkillDb) -> Option<ItemData> {
     // 先在物品库中查找完整名字
     for item in &items_db.list {
@@ -2048,6 +2237,7 @@ fn set_detection_hotkey(hotkey: i32) {
     state.detection_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] Detection hotkey updated to: {}", hotkey);
+    update_detection_hotkey_cache(Some(hotkey));
 }
 
 #[tauri::command]
@@ -2056,6 +2246,7 @@ fn set_card_detection_hotkey(hotkey: i32) {
     state.card_detection_hotkey = Some(hotkey);
     save_state(&state);
     println!("[Config] Card detection hotkey updated to: {}", hotkey);
+    update_card_detection_hotkey_cache(Some(hotkey));
 }
 
 #[tauri::command]
@@ -2063,6 +2254,7 @@ fn set_toggle_collapse_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.toggle_collapse_hotkey = Some(hotkey);
     save_state(&state);
+    update_toggle_collapse_hotkey_cache(Some(hotkey));
     println!("[Config] Toggle collapse hotkey updated to: {}", hotkey);
 }
 
@@ -2076,6 +2268,7 @@ fn set_yolo_hotkey(hotkey: i32) {
     let mut state = load_state();
     state.yolo_hotkey = Some(hotkey);
     save_state(&state);
+    update_yolo_hotkey_cache(Some(hotkey));
     println!("[Config] YOLO hotkey updated to: {}", hotkey);
 }
 
@@ -2087,6 +2280,12 @@ fn reset_all_hotkeys() {
     state.toggle_collapse_hotkey = None;
     state.yolo_hotkey = None;
     state.detail_display_hotkey = None;
+    
+    update_detection_hotkey_cache(None);
+    update_card_detection_hotkey_cache(None);
+    update_toggle_collapse_hotkey_cache(None);
+    update_yolo_hotkey_cache(None);
+    update_detail_hotkey_cache(None);
     save_state(&state);
     println!("[Config] All hotkeys reset to None (disabled)");
 }
@@ -2321,28 +2520,21 @@ async fn emit_to_main(app: tauri::AppHandle, event: String, payload: serde_json:
     Ok(())
 }
 
+
+
 #[tauri::command]
-async fn set_window_geometry(window: tauri::WebviewWindow, x: i32, y: i32, width: i32, height: i32) -> Result<(), String> {
-    #[cfg(target_os = "windows")]
-    if let Ok(hwnd) = window.hwnd() {
-        use windows::Win32::UI::WindowsAndMessaging::{SetWindowPos, SWP_NOZORDER, SWP_NOACTIVATE};
-        use windows::Win32::Foundation::HWND;
-        unsafe {
-            let _ = SetWindowPos(
-                HWND(hwnd.0 as _),
-                None,
-                x, y, width, height,
-                SWP_NOZORDER | SWP_NOACTIVATE
-            );
-        }
-        return Ok(());
-    }
+async fn save_detail_popup_geometry(_app: tauri::AppHandle, x: i32, y: i32, width: u32, height: u32) -> Result<(), String> {
+    let mut state = load_state();
     
-    // Fallback for macOS/Linux or if HWND fails
-    window.set_size(tauri::LogicalSize::new(width as f64, height as f64))
-        .map_err(|e| e.to_string())?;
-    window.set_position(tauri::LogicalPosition::new(x as f64, y as f64))
-        .map_err(|e| e.to_string())?;
+    // Only save if dimensions are reasonable
+    if width > 100 && height > 100 {
+        state.detail_popup_x = Some(x);
+        state.detail_popup_y = Some(y);
+        state.detail_popup_width = Some(width);
+        state.detail_popup_height = Some(height);
+        save_state(&state);
+        println!("[Geometry] Saved Detail Popup: x={}, y={}, w={}, h={}", x, y, width, height);
+    }
     Ok(())
 }
 
@@ -2395,9 +2587,65 @@ pub fn run() {
             // 初始化热键缓存
             let state = load_state();
             update_detail_hotkey_cache(state.detail_display_hotkey);
+            update_detection_hotkey_cache(state.detection_hotkey);
+            update_card_detection_hotkey_cache(state.card_detection_hotkey);
+            update_toggle_collapse_hotkey_cache(state.toggle_collapse_hotkey);
+            update_yolo_hotkey_cache(state.yolo_hotkey);
             
             let handle = app.handle().clone();
             log_system_info(&handle);
+
+            // System Tray Setup
+            {
+                use tauri::Manager; // For get_webview_window
+                use tauri::menu::{Menu, MenuItem};
+                use tauri::tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
+                
+                let quit_i = MenuItem::with_id(app, "quit", "Exit BazaarHelper", true, None::<&str>)?;
+                let show_i = MenuItem::with_id(app, "show", "Show Main Window", true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
+
+                let icon = app.default_window_icon().cloned().expect("No default icon found");
+
+                let _tray = TrayIconBuilder::new()
+                    .icon(icon) 
+                    .tooltip("BazaarHelper")
+                    .menu(&menu)
+                    .show_menu_on_left_click(false)
+                    .on_menu_event(|app, event| {
+                        match event.id.as_ref() {
+                            "quit" => {
+                                app.exit(0);
+                            }
+                            "show" => {
+                                if let Some(window) = app.get_webview_window("main") {
+                                    let _ = window.show();
+                                    let _ = window.set_focus();
+                                }
+                            }
+                            _ => {}
+                        }
+                    })
+                    .on_tray_icon_event(|tray, event| {
+                        if let TrayIconEvent::Click {
+                            button: MouseButton::Left,
+                            button_state: MouseButtonState::Up,
+                            ..
+                        } = event {
+                            let app = tray.app_handle();
+                             if let Some(window) = app.get_webview_window("main") {
+                                // Toggle visibility logic
+                                if window.is_visible().unwrap_or(false) {
+                                    let _ = window.hide();
+                                } else {
+                                    let _ = window.show();
+                                    let _ = window.set_focus();
+                                }
+                             }
+                        }
+                    })
+                    .build(app)?;
+            }
 
             // macOS: 设置为 Accessory 模式（隐藏 dock 图标）
             // 这对于让窗口显示在全屏应用上方是必要的
@@ -2409,23 +2657,117 @@ pub fn run() {
 
             // --- Helper: Hide from Alt-Tab (ToolWindow Style) & Remove White Bar ---
             if let Some(window) = app.get_webview_window("main") {
+                // Initial Geometry Restore (Backend Side)
+                // let state = load_state();
+                // println!("[Geometry] Restoring main window: x={:?}, y={:?}, w={:?}, h={:?}", state.main_window_x, state.main_window_y, state.main_window_width, state.main_window_height);
+
+                // if let (Some(x), Some(y)) = (state.main_window_x, state.main_window_y) {
+                //     let _ = window.set_position(tauri::PhysicalPosition::new(x, y));
+                // }
+                // if let (Some(w), Some(h)) = (state.main_window_width, state.main_window_height) {
+                //     // Only restore size if valid
+                //      if w > 100 && h > 100 {
+                //         let _ = window.set_size(tauri::PhysicalSize::new(w, h));
+                //     }
+                // }
+
                 // 使用温和的样式处理，保留调整大小能力
                 apply_main_window_style(&window);
                 
                 // Aggressively remove menu for this window
                 let _ = window.remove_menu();
 
-                // Windows: 设置工具窗口样式
+                // 延迟刷新窗口外观，确保样式完全应用（避免白边）
                 #[cfg(target_os = "windows")]
-                if let Ok(hwnd) = window.hwnd() {
-                    unsafe {
-                        use windows::Win32::Foundation::HWND as HWND_TYPE;
-                        let hwnd_val = HWND_TYPE(hwnd.0 as _);
-                        let style = GetWindowLongW(hwnd_val, GWL_EXSTYLE);
-                        SetWindowLongW(hwnd_val, GWL_EXSTYLE, (style | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32);
-                    }
+                {
+                    let window_clone = window.clone();
+                    std::thread::spawn(move || {
+                        std::thread::sleep(std::time::Duration::from_millis(50));
+                        if let Ok(hwnd) = window_clone.hwnd() {
+                            unsafe {
+                                use windows::Win32::Foundation::HWND as HWND_TYPE;
+
+                                let hwnd_val = HWND_TYPE(hwnd.0 as _);
+                                // let _ = ShowWindow(hwnd_val, SW_HIDE);
+                                // let _ = ShowWindow(hwnd_val, SW_SHOW);
+                                let _ = SetWindowPos(
+                                    hwnd_val,
+                                    None,
+                                    0, 0, 0, 0,
+                                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
+                                );
+                            }
+                        }
+                    });
                 }
             }
+
+            // --- Game Focus Monitor Thread ---
+            let handle_focus = handle.clone();
+            std::thread::spawn(move || {
+                let mut overlay_was_visible = false;
+
+                loop {
+                    std::thread::sleep(std::time::Duration::from_millis(500));
+                    
+                    let game_active = is_game_window_active();
+                    let mut app_active = false;
+                    
+                    // Check if any of our windows allow focus and are active (like DetailPopup if interacting)
+                    #[cfg(target_os = "windows")]
+                    if !game_active {
+                        unsafe {
+                            use windows::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
+                            // use windows::Win32::Foundation::HWND as HWND_TYPE; 
+                            let fg_hwnd = GetForegroundWindow().0;
+                            
+                            // Check 'main', 'yolo-monitor', 'detail-popup'
+                            let check_windows = ["main", "yolo-monitor", "detail-popup", "monster-calibration"];
+                            for label in check_windows {
+                                if let Some(win) = handle_focus.get_webview_window(label) {
+                                    if let Ok(hwnd) = win.hwnd() {
+                                        if hwnd.0 as isize == fg_hwnd as isize {
+                                            app_active = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    let should_be_visible = game_active || app_active;
+
+                    if should_be_visible != overlay_was_visible {
+                        println!("[Focus Monitor] Visibility state changing: {} -> {} (Game: {}, App: {})", 
+                                 overlay_was_visible, should_be_visible, game_active, app_active);
+                        
+                        if !should_be_visible {
+                             // Lost focus to OTHER app -> Hide overlays
+                            if let Some(window) = handle_focus.get_webview_window("yolo-monitor") {
+                                let _ = window.hide();
+                            }
+                            if let Some(window) = handle_focus.get_webview_window("detail-popup") {
+                                if window.is_visible().unwrap_or(false) {
+                                     let _ = window.hide();
+                                }
+                            }
+                        } else {
+                            // Gained focus (Game or App) -> Restore Yolo Monitor (if enabled)
+                             let state = load_state();
+                             if state.show_yolo_monitor {
+                                if let Some(window) = handle_focus.get_webview_window("yolo-monitor") {
+                                    let _ = window.show();
+                                    // 确保显示时应用样式
+                                    apply_no_activate_style(&window);
+                                }
+                            }
+                            // Note: We don't auto-restore DetailPopup, it opens on demand
+                        }
+                        overlay_was_visible = should_be_visible;
+                    }
+                }
+            });
 
             // --- Helper: Start Mouse Monitor Thread (Global Click Detection Only) ---
             let handle_monitor = handle.clone();
@@ -2434,68 +2776,106 @@ pub fn run() {
             std::thread::spawn(move || {
                 let device_state = DeviceState::new();
                 let mut last_left_click = false;
-                let mut last_right_click = false;
+                let mut _last_right_click = false;
                 let mut last_trigger_active = false;
-                let mut heartbeat_counter = 0;
+                
+                let mut last_yolo_active = false;
+                let mut last_detection_active = false;
+                let mut last_card_active = false;
+                let mut last_collapse_active = false;
 
                 loop {
+                    // Short sleep to avoid pegging CPU
+                    std::thread::sleep(time::Duration::from_millis(50));
+
+                    // Only process clicks if the game window is active OR app window is active
+                    // But for "Click Outside to Hide", we mostly care if Detail Popup is visible
+                    let detail_visible = if let Some(w) = handle_monitor.get_webview_window("detail-popup") {
+                        w.is_visible().unwrap_or(false)
+                    } else { false };
+
+                    if !is_game_window_active() && !detail_visible {
+                        // Reset state when game is not focused AND detail popup not open
+                        last_left_click = false;
+                        _last_right_click = false;
+                        last_trigger_active = false;
+                        
+                        last_yolo_active = false;
+                        last_detection_active = false;
+                        last_card_active = false;
+                        last_collapse_active = false;
+                        continue;
+                    }
+
                     let mouse: MouseState = device_state.get_mouse();
                     let mx = mouse.coords.0;
                     let my = mouse.coords.1;
+                    let left_click = mouse.button_pressed[1]; // Left Click
+                    let right_click = mouse.button_pressed[3]; // Right Click
 
-                    // 每100次循环（约5秒）打印一次心跳
-                    heartbeat_counter += 1;
-                    if heartbeat_counter >= 100 {
-                        println!("[Mouse Monitor] Heartbeat - thread alive, mouse at ({}, {}), buttons: {:?}", mx, my, mouse.button_pressed);
-                        heartbeat_counter = 0;
+                    // [Global Click Handler for Detail Popup]
+                    // If popup is visible, any click (Left/Right) should hide it (unless clicking inside?)
+                    // User request: "popup弹出来之后，点击鼠标右键左键... 需要能够把这个popup隐藏起来"
+                    if detail_visible && (left_click || right_click) {
+                        // Debounce slightly to allow the click that OPENED it to finish
+                        // Check if click is outside detail-popup
+                        if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
+                             if let (Ok(pos), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
+                                 let px = pos.x;
+                                 let py = pos.y;
+                                 let pw = size.width as i32;
+                                 let ph = size.height as i32;
+                                 
+                                 // Check collision
+                                 let inside = mx >= px && mx <= px + pw && my >= py && my <= py + ph;
+                                 
+                                 // Only hide if clicked OUTSIDE (or user wants any click to hide?)
+                                 // "点击鼠标右键左键... 需要能够把这个popup隐藏起来"
+                                 // Usually implies "Dismissal". 
+                                 // If I click INSIDE, I probably want to interact (copy text etc).
+                                 // So I'll implement: Click OUTSIDE hides it.
+                                 // Warning: If user clicks GAME, that is OUTSIDE.
+                                 if !inside {
+                                     // Double check previous state to trigger on "press" or "release"?
+                                     // Trigger on PRESS (when `left_click` IS true)
+                                     if (left_click && !last_left_click) || (right_click && !_last_right_click) {
+                                        println!("[Mouse Monitor] Click detected outside detail-popup at ({}, {}), hiding.", mx, my);
+                                        let _ = popup_window.emit("hide-detail-popup", ());
+                                        // Also likely want to pass the click through to game if it's transparent, 
+                                        // but device_query doesn't consume events, so it passes naturally.
+                                     }
+                                 }
+                             }
+                        }
                     }
 
-                    // 跨平台检测鼠标点击
-                    let left_click = mouse.button_pressed[0]; // 左键是索引 0
-                    let right_click = mouse.button_pressed[2]; // 右键是索引 2
+                    // --- Click Outside to Hide Logic ---
+                    let left_click = mouse.button_pressed.get(0).copied().unwrap_or(false);
                     
-                    // 调试：检测左键点击
                     if left_click && !last_left_click {
-                        println!("[Mouse Monitor] Left click detected at ({}, {})", mx, my);
-                    }
-                    
-                    // 检测左键或右键点击时，如果 detail-popup 可见且点击在窗口外，则隐藏
-                    if (left_click && !last_left_click) || (right_click && !last_right_click) {
                         let handle_check = handle_monitor.clone();
                         let check_x = mx;
                         let check_y = my;
                         
-                        // 检查 detail-popup 窗口
+                        // Check if click is outside detail-popup
                         if let Some(popup_window) = handle_check.get_webview_window("detail-popup") {
-                            if let Ok(is_visible) = popup_window.is_visible() {
-                                if is_visible {
-                                    // 获取窗口位置和大小
-                                    if let (Ok(position), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
-                                        let x1 = position.x;
-                                        let y1 = position.y;
-                                        let x2 = x1 + size.width as i32;
-                                        let y2 = y1 + size.height as i32;
-                                        
-                                        // 检查点击是否在窗口外部
-                                        let outside = check_x < x1 || check_x > x2 || check_y < y1 || check_y > y2;
-                                        
-                                        if outside {
-                                            println!("[Mouse Monitor] Click outside detail-popup at ({}, {}), hiding popup", check_x, check_y);
-                                            let handle_hide = handle_check.clone();
-                                            std::thread::spawn(move || {
-                                                let runtime = tokio::runtime::Runtime::new().unwrap();
-                                                runtime.block_on(async move {
-                                                    let _ = hide_detail_popup(handle_hide).await;
-                                                });
-                                            });
-                                        }
+                            if popup_window.is_visible().unwrap_or(false) {
+                                if let (Ok(pos), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
+                                    let outside = check_x < pos.x || check_x > (pos.x + size.width as i32) ||
+                                                  check_y < pos.y || check_y > (pos.y + size.height as i32);
+                                    if outside {
+                                        println!("[Mouse Monitor] Left click outside detail-popup at ({}, {}), hiding.", check_x, check_y);
+                                        let handle_hide = handle_check.clone();
+                                        tauri::async_runtime::spawn(async move {
+                                            let _ = hide_detail_popup(handle_hide).await;
+                                        });
                                     }
                                 }
                             }
                         }
                     }
-                    
-                    // 检查是否按下设置的显示详情热键
+
+                    // --- Detail Popup Custom Hotkey (Close if open) ---
                     let hotkey_setup = get_cached_detail_hotkey();
                     let trigger_active = if let Some(code) = hotkey_setup {
                         is_key_pressed(code, &device_state, &mouse)
@@ -2503,1261 +2883,172 @@ pub fn run() {
                         false
                     };
 
+                    // Implement "Click or Hotkey hides popup"
+                    // If popup is visible and hotkey is pressed -> Hide it
+                    if detail_visible && trigger_active && !last_trigger_active {
+                        if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
+                             println!("[Hotkey Monitor] Custom hotkey pressed while popup open - hiding.");
+                             let _ = popup_window.emit("hide-detail-popup", ());
+                        }
+                    }
+
                     if trigger_active && !last_trigger_active {
-                        println!("[Global Trigger] Hotkey pressed at ({}, {})", mx, my);
-                        
-                        // 记录当前前台窗口（用于后续判断是否恢复焦点）
+                        println!("[Global Hotkey] Detail Popup Hotkey pressed at ({}, {})", mx, my);
                         update_last_foreground_window();
                         
-                        // 在新线程中处理（因为需要异步调用）
                         let handle_clone = handle_monitor.clone();
                         let click_x = mx;
                         let click_y = my;
                         
-                        std::thread::spawn(move || {
-                            let runtime = tokio::runtime::Runtime::new().unwrap();
-                            runtime.block_on(async move {
-                                match handle_overlay_right_click(handle_clone.clone(), click_x, click_y).await {
-                                    Ok(Some(result)) => {
-                                        println!("[Right Click] Found result: {:?}", result.get("type"));
-                                        
-                                        // 显示详情弹出窗口
-                                        let result_type = result.get("type")
-                                            .and_then(|v| v.as_str())
-                                            .unwrap_or("unknown")
-                                            .to_string();
-                                        
-                                        let data = result.get("data").cloned().unwrap_or(serde_json::json!({}));
-                                        
-                                        // 计算窗口位置（让窗口居中在点击位置）
-                                        let window_x = click_x - 200;
-                                        let window_y = click_y - 300;
-                                        
-                                        if let Err(e) = show_detail_popup_at(
-                                            handle_clone.clone(),
-                                            window_x,
-                                            window_y,
-                                            result_type,
-                                            data
-                                        ).await {
-                                            println!("[Right Click] Failed to show popup: {}", e);
-                                        }
-                                    }
-                                    Ok(None) => {
-                                        println!("[Right Click] No result, hiding popup");
-                                        // 点击空白处，隐藏详情
-                                        let _ = hide_detail_popup(handle_clone).await;
-                                    }
-                                    Err(e) => {
-                                        println!("[Right Click] Error: {}", e);
+                        tauri::async_runtime::spawn(async move {
+                            match handle_overlay_right_click(handle_clone.clone(), click_x, click_y).await {
+                                Ok(Some(result)) => {
+                                    println!("[Right Click] Found result: {:?}", result.get("type"));
+                                    
+                                    let result_type = result.get("type").and_then(|v| v.as_str()).unwrap_or("unknown").to_string();
+                                    let data = result.get("data").cloned().unwrap_or(serde_json::json!({}));
+                                    
+                                    if let Err(e) = show_detail_popup_at(handle_clone, click_x, click_y, result_type, data).await {
+                                        println!("[Right Click] Error showing detail popup: {}", e);
                                     }
                                 }
-                            });
+                                Ok(None) => { /* No object found, do nothing */ }
+                                Err(e) => {
+                                    println!("[Right Click] Error handling click: {}", e);
+                                }
+                            }
                         });
                     }
-                    last_left_click = left_click;
-                    last_right_click = right_click;
+
+                    // --- YOLO Hotkey Logic ---
+                    let yolo_active = if let Some(code) = get_cached_yolo_hotkey() {
+                        is_key_pressed(code, &device_state, &mouse)
+                    } else { false };
+                    
+                    if yolo_active && !last_yolo_active {
+                        println!("[Global Hotkey] YOLO Trigger pressed!");
+                        let h = handle_monitor.clone();
+                        tauri::async_runtime::spawn(async move {
+                            println!("[Global Hotkey] Emitting 'yolo_hotkey_pressed'");
+                            let _ = h.emit("yolo_hotkey_pressed", ());
+                        });
+                    }
+
+                    // --- Monster Recognition Hotkey Logic ---
+                    let detection_active = if let Some(code) = get_cached_detection_hotkey() {
+                        is_key_pressed(code, &device_state, &mouse)
+                    } else { false };
+                    
+                    if detection_active && !last_detection_active {
+                        println!("[Global Hotkey] Monster Recognition Trigger pressed at ({}, {})", mx, my);
+                        let h = handle_monitor.clone();
+                        let click_x = mx;
+                        let click_y = my;
+                        
+                        tauri::async_runtime::spawn(async move {
+                            match handle_overlay_right_click(h.clone(), click_x, click_y).await {
+                                Ok(Some(result)) => {
+                                    println!("[Hotkey Monster] Found result: {:?}", result.get("type"));
+                                    let result_type = result.get("type").and_then(|v| v.as_str()).unwrap_or("unknown").to_string();
+                                    let data = result.get("data").cloned().unwrap_or(serde_json::json!({}));
+                                    if let Err(e) = show_detail_popup_at(h, click_x, click_y, result_type, data).await {
+                                        println!("[Hotkey Monster] Error showing popup: {}", e);
+                                    }
+                                }
+                                Ok(None) => println!("[Hotkey Monster] No object found at cursor"),
+                                Err(e) => println!("[Hotkey Monster] Error: {}", e),
+                            }
+                        });
+                    }
+
+                    // --- Card Recognition Hotkey Logic ---
+                    let card_active = if let Some(code) = get_cached_card_detection_hotkey() {
+                        is_key_pressed(code, &device_state, &mouse)
+                    } else { false };
+                    
+                    if card_active && !last_card_active {
+                        println!("[Global Hotkey] Card Recognition Trigger pressed!");
+                        let h = handle_monitor.clone();
+                        tauri::async_runtime::spawn(async move {
+                            println!("[Global Hotkey] Emitting 'hotkey-card'");
+                             let _ = h.emit("hotkey-card", ());
+                        });
+                    }
+                    
+                    // --- Toggle Collapse Hotkey Logic ---
+                    let collapse_active = if let Some(code) = get_cached_toggle_collapse_hotkey() {
+                        is_key_pressed(code, &device_state, &mouse)
+                    } else { false };
+                    
+                    if collapse_active && !last_collapse_active {
+                        println!("[Global Hotkey] Collapse/Expand Trigger pressed!");
+                        let h = handle_monitor.clone();
+                        tauri::async_runtime::spawn(async move {
+                             println!("[Global Hotkey] Emitting 'hotkey-collapse'");
+                             let _ = h.emit("hotkey-collapse", ());
+                        });
+                    }
+
                     last_trigger_active = trigger_active;
-
-                    std::thread::sleep(std::time::Duration::from_millis(50));
-                }
-            });
-            
-            // ============== Windows 特定窗口初始化 ==============
-            #[cfg(target_os = "windows")]
-            {
-                use tauri::Manager;
-                if let Some(window) = app.get_webview_window("main") {
-                    if let Ok(hwnd) = window.hwnd() {
-                        use windows::Win32::Foundation::HWND;
-                        unsafe {
-                            let handle = HWND(hwnd.0 as _);
-                            let ex_style = GetWindowLongW(handle, GWL_EXSTYLE);
-                            let new_style = (ex_style | WS_EX_NOACTIVATE.0 as i32 | WS_EX_TOOLWINDOW.0 as i32) & !WS_EX_APPWINDOW.0 as i32;
-                            SetWindowLongW(handle, GWL_EXSTYLE, new_style);
-                        }
-                    }
-                }
-            }
-
-            // ============== macOS 托盘图标（点击激活窗口到当前空间） ==============
-            #[cfg(target_os = "macos")]
-            {
-                let tray_handle = app.handle().clone();
-                let quit_item = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
-                let menu = Menu::with_items(app, &[&quit_item])?;
-
-                let _tray = TrayIconBuilder::new()
-                    .icon(app.default_window_icon().unwrap().clone())
-                    .menu(&menu)
-                    .on_menu_event(move |app: &tauri::AppHandle, event| {
-                        if event.id.as_ref() == "quit" {
-                            app.exit(0);
-                        }
-                    })
-                    .on_tray_icon_event(move |_tray, event| {
-                        if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
-                            // 点击托盘图标时，显示主窗口
-                            if let Some(main_win) = tray_handle.get_webview_window("main") {
-                                let _ = main_win.show();
-                                let _ = main_win.set_focus();
-                            }
-                        }
-                    })
-                    .build(app)?;
-            }
-
-            // ============== 跨平台新窗口初始化 ==============
-            // 动态创建窗口而不是从配置文件加载
-            use tauri::WebviewWindowBuilder;
-            use tauri::WebviewUrl;
-            
-            // 创建 yolo-monitor 窗口
-            println!("[Setup] Creating yolo-monitor window...");
-            match WebviewWindowBuilder::new(app, "yolo-monitor", WebviewUrl::App("index.html".into()))
-                .title("YOLO Monitor")
-                .inner_size(300.0, 200.0)
-                .position(20.0, 20.0)
-                .resizable(true) // 允许调整大小
-                .maximizable(false)
-                .minimizable(false)
-                .always_on_top(true)
-                .decorations(false) // 无边框
-                .transparent(true) // 透明背景
-                .visible(false) // 默认隐藏，通过命令显示
-                .skip_taskbar(true) // 不在任务栏显示
-                .shadow(false)
-                .visible_on_all_workspaces(true)
-                .focusable(true) // 可聚焦和交互
-                .initialization_script(r#"
-                    window.__WINDOW_TYPE__ = 'yolo-monitor';
-                    console.log('[Initialization] Window type set to:', window.__WINDOW_TYPE__);
-                "#)
-                .build()
-            {
-                Ok(yolo_monitor) => {
-                    println!("[Setup] yolo-monitor window created successfully");
+                    last_left_click = left_click;
+                    _last_right_click = mouse.button_pressed.get(2).copied().unwrap_or(false);
                     
-                    #[cfg(target_os = "macos")]
-                    setup_macos_fullscreen_overlay(&yolo_monitor);
-                    
-                    // 根据保存的设置决定是否显示
-                    let state = load_state();
-                    if state.show_yolo_monitor {
-                        let _ = yolo_monitor.show();
-                        println!("[Setup] yolo-monitor window initialized and shown (from saved state)");
-                    } else {
-                        println!("[Setup] yolo-monitor window initialized (hidden by default)");
-                    }
-                }
-                Err(e) => {
-                    println!("[Setup] Failed to create yolo-monitor window: {}", e);
-                }
-            }
-            
-            // 创建 detail-popup 窗口
-            println!("[Setup] Creating detail-popup window...");
-            match WebviewWindowBuilder::new(app, "detail-popup", WebviewUrl::App("index.html".into()))
-                .title("Detail Popup")
-                .inner_size(480.0, 700.0) // 增大默认尺寸以完整显示内容
-                .position(500.0, 300.0)
-                .resizable(true) // 允许调整大小
-                .maximizable(false)
-                .minimizable(false)
-                .always_on_top(true)
-                .decorations(false) // 无边框
-                .transparent(true) // 透明背景
-                .visible(false) // 默认隐藏，通过右键点击显示
-                .skip_taskbar(true) // 不在任务栏显示
-                .shadow(false)
-                .visible_on_all_workspaces(true)
-                .focusable(true) // 可聚焦和交互
-                .initialization_script(r#"
-                    window.__WINDOW_TYPE__ = 'detail-popup';
-                    console.log('[Initialization] Window type set to:', window.__WINDOW_TYPE__);
-                "#)
-                .build()
-            {
-                Ok(_detail_popup) => {
-                    println!("[Setup] detail-popup window created successfully");
-                    
-                    #[cfg(target_os = "macos")]
-                    setup_macos_fullscreen_overlay(&_detail_popup);
-                    
-                    println!("[Setup] detail-popup window initialized (hidden by default)");
-                }
-                Err(e) => {
-                    println!("[Setup] Failed to create detail-popup window: {}", e);
-                }
-            }
-
-            // macOS: 主窗口也设置全屏覆盖
-            #[cfg(target_os = "macos")]
-            if let Some(main_win) = app.get_webview_window("main") {
-                setup_macos_fullscreen_overlay(&main_win);
-            }
-
-            let handle = app.handle().clone();
-            let resources_path = match app.path().resource_dir() {
-                Ok(p) => p,
-                Err(e) => {
-                    log_to_file(&format!("CRITICAL ERROR: Failed to get resource_dir: {}", e));
-                    PathBuf::new()
-                }
-            };
-            log_to_file(&format!("Resolved Resources Path: {:?}", resources_path));
-
-            let db_state = app.state::<DbState>();
-
-            // ============== 窗口同步线程（跨平台） ==============
-            let sync_handle = app.handle().clone();
-            std::thread::spawn(move || {
-                let mut was_game_running = true;
-
-                loop {
-                    std::thread::sleep(std::time::Duration::from_millis(500));
-
-                    // 使用 xcap 跨平台查找游戏窗口
-                    let game_window = xcap::Window::all()
-                        .ok()
-                        .and_then(|windows| {
-                            windows.into_iter().find(|w| w.title().contains("The Bazaar"))
-                        });
-
-                    let main_win = sync_handle.get_webview_window("main");
-                    let yolo_monitor_win = sync_handle.get_webview_window("yolo-monitor");
-                    let detail_popup_win = sync_handle.get_webview_window("detail-popup");
-
-                    if let Some(_game_win) = game_window {
-                        // 游戏正在运行
-                        if !was_game_running {
-                            // 游戏刚启动，显示主窗口
-                            if let Some(ref w) = main_win {
-                                let _ = w.show();
-                                let _ = w.set_always_on_top(true);
-                            }
-                            // YOLO Monitor 由用户设置控制显示
-                            // Detail Popup 由右键点击事件控制显示
-                        }
-                        was_game_running = true;
-                    } else {
-                        // 游戏没运行
-                        if was_game_running {
-                            // 游戏关闭时隐藏两个窗口
-                            if let Some(ref w) = yolo_monitor_win {
-                                let _ = w.hide();
-                            }
-                            if let Some(ref w) = detail_popup_win {
-                                let _ = w.hide();
-                            }
-                            was_game_running = false;
-                        }
-                    }
+                    last_yolo_active = yolo_active;
+                    last_detection_active = detection_active;
+                    last_card_active = card_active;
+                    last_collapse_active = collapse_active;
                 }
             });
 
-            // 1. Load Items DB
-            let items_possible_paths = [
-                resources_path.join("resources").join("items_db.json"),
-                resources_path.join("items_db.json"),
-            ];
-            log_to_file("Attempting to load Items DB...");
-            for path in &items_possible_paths {
-                log_to_file(&format!("Checking path: {:?}", path));
-                if path.exists() {
-                     match std::fs::read_to_string(path) {
-                        Ok(json) => {
-                            match serde_json::from_str::<Vec<RawItem>>(&json) {
-                                Ok(raw_list) => {
-                                    let items_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                                    let mut id_map = HashMap::new();
-                                    let mut tag_set = std::collections::HashSet::new();
-                                    for (index, item) in items_list.iter().enumerate() {
-                                        id_map.insert(item.uuid.clone(), index);
-                                        for tag in &item.processed_tags { tag_set.insert(tag.clone()); }
-                                    }
-                                    let mut unique_tags: Vec<String> = tag_set.into_iter().collect();
-                                    unique_tags.sort();
-                                    let count = items_list.len();
-                                    let mut db = db_state.items.write().unwrap();
-                                    db.list = items_list;
-                                    db.id_map = id_map;
-                                    db.unique_tags = unique_tags;
-                                    log_to_file(&format!("[Init] Successfully loaded {} items from {:?}", count, path));
-                                    break;
-                                },
-                                Err(e) => log_to_file(&format!("Error parsing items_db.json: {}", e)),
-                            }
-                        },
-                        Err(e) => log_to_file(&format!("Error reading items_db.json: {}", e)),
-                    }
-                } else {
-                    log_to_file("Path does not exist.");
-                }
-            }
-
-            // 2. Load Skills DB
-            let skills_possible_paths = [
-                resources_path.join("resources").join("skills_db.json"),
-                resources_path.join("skills_db.json"),
-            ];
-            log_to_file("Attempting to load Skills DB...");
-            for path in &skills_possible_paths {
-                log_to_file(&format!("Checking path: {:?}", path));
-                if path.exists() {
-                    match std::fs::read_to_string(path) {
-                        Ok(json) => {
-                            match serde_json::from_str::<Vec<RawItem>>(&json) {
-                                Ok(raw_list) => {
-                                    let skills_list: Vec<ItemData> = raw_list.into_iter().map(ItemData::from).collect();
-                                    let mut id_map = HashMap::new();
-                                    for (index, item) in skills_list.iter().enumerate() { id_map.insert(item.uuid.clone(), index); }
-                                    let count = skills_list.len();
-                                    let mut db = db_state.skills.write().unwrap();
-                                    db.list = skills_list;
-                                    db.id_map = id_map;
-                                    log_to_file(&format!("[Init] Successfully loaded {} skills from {:?}", count, path));
-                                    break;
-                                },
-                                Err(e) => log_to_file(&format!("Error parsing skills_db.json: {}", e)),
-                            }
-                        },
-                        Err(e) => log_to_file(&format!("Error reading skills_db.json: {}", e)),
-                    }
-                } else {
-                    log_to_file("Path does not exist.");
-                }
-            }
-
-            // 3. Load Monster Image Map
-            let mut monster_img_map_path = resources_path.join("resources").join("images_monster_map.json");
-            if !monster_img_map_path.exists() {
-                monster_img_map_path = resources_path.join("images_monster_map.json");
-            }
-            log_to_file(&format!("Attempting to load Monster Image Map from {:?}", monster_img_map_path));
-            let mut monster_img_lookup = HashMap::new();
-            if let Ok(json) = std::fs::read_to_string(&monster_img_map_path) {
-                if let Ok(serde_json::Value::Object(map)) = serde_json::from_str::<serde_json::Value>(&json) {
-                    for (name, info) in map {
-                        if let Some(out) = info.get("out").and_then(|v| v.as_str()) {
-                            monster_img_lookup.insert(name, out.replace("\\", "/"));
-                        }
-                    }
-                }
-            }
-
-            // 4. Load & Merge Monsters (Export First, then DB)
-            // 尝试多种路径方式以兼容dev和release模式
-            let mut monsters_export_path = resources_path.join("resources").join("monsters_export.json");
-            let mut monsters_db_path = resources_path.join("resources").join("monsters_db.json");
-            
-            // 如果第一种路径不存在，尝试直接从resources_path查找
-            if !monsters_export_path.exists() {
-                monsters_export_path = resources_path.join("monsters_export.json");
-            }
-            if !monsters_db_path.exists() {
-                monsters_db_path = resources_path.join("monsters_db.json");
-            }
-            
-            // 调试日志：检查路径
-            log_to_file(&format!("Resources base path: {:?}", resources_path));
-            log_to_file(&format!("Monsters export path: {:?}", monsters_export_path));
-            log_to_file(&format!("Monsters db path: {:?}", monsters_db_path));
-            log_to_file(&format!("Monsters export exists: {}", monsters_export_path.exists()));
-            log_to_file(&format!("Monsters db exists: {}", monsters_db_path.exists()));
-            
-            let mut final_monsters = serde_json::Map::new();
-            let mut export_by_day: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
-            
-            // Move locks outside to be used by both Export and Fallback
-            let items_db = db_state.items.read().unwrap();
-            let skills_db = db_state.skills.read().unwrap();
-
-            if monsters_export_path.exists() {
-                if let Ok(json) = std::fs::read_to_string(&monsters_export_path) {
-                    if let Ok(serde_json::Value::Array(exports)) = serde_json::from_str::<serde_json::Value>(&json) {
-                        for m_val in exports {
-                            if let Some(m_obj) = m_val.as_object() {
-                                let level = m_obj.get("level").and_then(|v| v.as_u64()).unwrap_or(0);
-                                let day_label = if level >= 10 { "Day 10+".to_string() } else { format!("Day {}", level) };
-                                let name_zh = m_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
-                                let name_en = m_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
-                                
-                                let mut m_entry = serde_json::Map::new();
-                                m_entry.insert("name".to_string(), serde_json::Value::String(name_en.to_string()));
-                                m_entry.insert("name_zh".to_string(), serde_json::Value::String(name_zh.to_string()));
-                                m_entry.insert("available".to_string(), serde_json::Value::String(day_label.clone()));
-                                m_entry.insert("health".to_string(), m_obj.get("max_health").cloned().unwrap_or(0.into()));
-                                
-                                // 使用角色图路径（中文名.webp）
-                                let img = format!("images_monster_char/{}.webp", name_zh);
-                                m_entry.insert("image".to_string(), serde_json::Value::String(img));
-
-                                // Loadout Items
-                                let mut items_list = Vec::new();
-                                if let Some(loadout) = m_obj.get("loadout_items").and_then(|v| v.as_array()) {
-                                    for it_val in loadout {
-                                        if let Some(it_obj) = it_val.as_object() {
-                                            let id = it_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                            let tier_raw = it_obj.get("tier").and_then(|v| v.as_str()).unwrap_or("Bronze");
-                                            let tier = tier_raw.split(" / ").next().unwrap_or(tier_raw);
-                                            let it_name_cn = it_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
-                                            let it_name_en = it_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
-                                            let it_size = it_obj.get("size").and_then(|v| v.as_str());
-                                            
-                                            let item_data = lookup_item(id, &items_db, &skills_db);
-                                            items_list.push(construct_monster_sub_item(item_data, it_name_cn, it_name_en, tier, it_size));
-                                        }
-                                    }
-                                }
-                                m_entry.insert("items".to_string(), serde_json::Value::Array(items_list));
-
-                                // Loadout Skills
-                                let mut skills_list = Vec::new();
-                                if let Some(loadout) = m_obj.get("loadout_skills").and_then(|v| v.as_array()) {
-                                    for sk_val in loadout {
-                                        if let Some(sk_obj) = sk_val.as_object() {
-                                            let id = sk_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                            let tier_raw = sk_obj.get("tier").and_then(|v| v.as_str()).unwrap_or("Bronze");
-                                            let tier = tier_raw.split(" / ").next().unwrap_or(tier_raw);
-                                            let sk_name_cn = sk_obj.get("name_cn").and_then(|v| v.as_str()).unwrap_or("未知");
-                                            let sk_name_en = sk_obj.get("name_en").and_then(|v| v.as_str()).unwrap_or("Unknown");
-                                            let sk_size = sk_obj.get("size").and_then(|v| v.as_str());
-                                            
-                                            let skill_data = lookup_item(id, &items_db, &skills_db);
-                                            skills_list.push(construct_monster_sub_item(skill_data, sk_name_cn, sk_name_en, tier, sk_size));
-                                        }
-                                    }
-                                }
-                                m_entry.insert("skills".to_string(), serde_json::Value::Array(skills_list));
-
-                                export_by_day.entry(day_label).or_default().push(serde_json::Value::Object(m_entry));
-                            }
-                        }
-                    }
-                }
-            }
-
-            let mut db_by_day: HashMap<String, Vec<(String, serde_json::Value)>> = HashMap::new();
-            if monsters_db_path.exists() {
-                if let Ok(json) = std::fs::read_to_string(&monsters_db_path) {
-                    if let Ok(serde_json::Value::Object(monsters)) = serde_json::from_str::<serde_json::Value>(&json) {
-                        for (name, data) in monsters {
-                            let day = data.get("available").and_then(|v| v.as_str()).unwrap_or("").to_string();
-                            if !day.is_empty() { db_by_day.entry(day).or_default().push((name, data)); }
-                        }
-                    }
-                }
-            }
-
-            // Consolidate: Prioritize monsters_db, then supplement with monsters_export
-            for i in 0..21 {
-                let day_label = if i >= 10 { "Day 10+".to_string() } else { format!("Day {}", i) };
-                
-                // First check if Day exists in monsters_db
-                if let Some(db_monsters) = db_by_day.get(&day_label) {
-                    for (name, m) in db_monsters {
-                        let mut enriched_m = m.clone();
-                        if let Some(m_obj) = enriched_m.as_object_mut() {
-                            // 强制设置图片路径（使用角色图），增加陷阱类前缀回退逻辑
-                            let mut img_name = name.clone();
-                            let img_path = resources_path.join("resources").join(format!("images_monster_char/{}.webp", img_name));
-                            if !img_path.exists() {
-                                // 1. 尝试去除 _Day 序列后缀 (如 快乐杰克南瓜_Day8 -> 快乐杰克南瓜)
-                                if let Some(idx) = img_name.find("_Day") {
-                                    let base = &img_name[0..idx];
-                                    if resources_path.join("resources").join(format!("images_monster_char/{}.webp", base)).exists() {
-                                        img_name = base.to_string();
-                                    }
-                                }
-                                
-                                // 2. 尝试剥离陷阱类前缀 (如 毒素 吹箭枪陷阱 -> 吹箭枪陷阱)
-                                if !resources_path.join("resources").join(format!("images_monster_char/{}.webp", img_name)).exists() {
-                                    if let Some(space_pos) = img_name.rfind(' ') {
-                                        let base_name = &img_name[space_pos + 1..];
-                                        let base_path = resources_path.join("resources").join(format!("images_monster_char/{}.webp", base_name));
-                                        if base_path.exists() {
-                                            img_name = base_name.to_string();
-                                        }
-                                    }
-                                }
-                            }
-                            let img_rel = format!("images_monster_char/{}.webp", img_name);
-                            m_obj.insert("image".to_string(), serde_json::Value::String(img_rel));
-                            
-                            // Enrich items
-                            if let Some(items) = m_obj.get_mut("items").and_then(|v| v.as_array_mut()) {
-                                for item_val in items {
-                                    if let Some(item_obj) = item_val.as_object_mut() {
-                                        let id = item_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                        let name_cn = item_obj.get("name").and_then(|v| v.as_str()).unwrap_or("");
-                                        
-                                        // 如果 id 为空，尝试通过中文名查找
-                                        let found = if id.is_empty() && !name_cn.is_empty() {
-                                            lookup_item_by_name(name_cn, &items_db, &skills_db)
-                                        } else {
-                                            lookup_item(id, &items_db, &skills_db)
-                                        };
-                                        
-                                        if let Some(found_item) = found {
-                                            // 更新 id
-                                            if id.is_empty() {
-                                                item_obj.insert("id".to_string(), serde_json::Value::String(found_item.uuid.clone()));
-                                            }
-                                            // 注入升级数据
-                                            item_obj.insert("cooldown_tiers".to_string(), serde_json::Value::String(found_item.cooldown_tiers.clone()));
-                                            item_obj.insert("available_tiers".to_string(), serde_json::Value::String(found_item.available_tiers.clone()));
-                                            item_obj.insert("damage_tiers".to_string(), serde_json::Value::String(found_item.damage_tiers.clone()));
-                                            item_obj.insert("heal_tiers".to_string(), serde_json::Value::String(found_item.heal_tiers.clone()));
-                                            item_obj.insert("shield_tiers".to_string(), serde_json::Value::String(found_item.shield_tiers.clone()));
-
-                                            // 强制使用 id.webp 格式作为图片路径
-                                            let webp_img = format!("images/{}.webp", found_item.uuid);
-                                            item_obj.insert("image".to_string(), serde_json::Value::String(webp_img));
-                                            
-                                            // 更新 size
-                                            if let Some(s) = found_item.size {
-                                                let norm = s.split(" / ").next().unwrap_or(&s).to_string();
-                                                item_obj.insert("size".to_string(), serde_json::Value::String(norm));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            // Enrich skills
-                            if let Some(skills) = m_obj.get_mut("skills").and_then(|v| v.as_array_mut()) {
-                                for skill_val in skills {
-                                    if let Some(skill_obj) = skill_val.as_object_mut() {
-                                        let id = skill_obj.get("id").and_then(|v| v.as_str()).unwrap_or("");
-                                        let name_cn = skill_obj.get("name").and_then(|v| v.as_str()).unwrap_or("");
-                                        
-                                        // 如果 id 为空，尝试通过中文名查找
-                                        let found = if id.is_empty() && !name_cn.is_empty() {
-                                            lookup_item_by_name(name_cn, &items_db, &skills_db)
-                                        } else {
-                                            lookup_item(id, &items_db, &skills_db)
-                                        };
-                                        
-                                        if let Some(found_skill) = found {
-                                            // 更新 id
-                                            if id.is_empty() {
-                                                skill_obj.insert("id".to_string(), serde_json::Value::String(found_skill.uuid.clone()));
-                                            }
-                                            // 注入升级数据
-                                            skill_obj.insert("cooldown_tiers".to_string(), serde_json::Value::String(found_skill.cooldown_tiers.clone()));
-                                            skill_obj.insert("available_tiers".to_string(), serde_json::Value::String(found_skill.available_tiers.clone()));
-                                            skill_obj.insert("damage_tiers".to_string(), serde_json::Value::String(found_skill.damage_tiers.clone()));
-                                            skill_obj.insert("heal_tiers".to_string(), serde_json::Value::String(found_skill.heal_tiers.clone()));
-                                            skill_obj.insert("shield_tiers".to_string(), serde_json::Value::String(found_skill.shield_tiers.clone()));
-
-                                            // 强制使用 id.webp 格式作为图片路径
-                                            let webp_img = format!("images/{}.webp", found_skill.uuid);
-                                            skill_obj.insert("image".to_string(), serde_json::Value::String(webp_img));
-                                            
-                                            // 更新 size
-                                            if let Some(s) = found_skill.size {
-                                                let norm = s.split(" / ").next().unwrap_or(&s).to_string();
-                                                skill_obj.insert("size".to_string(), serde_json::Value::String(norm));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        final_monsters.insert(name.clone(), enriched_m);
-                    }
-                } 
-                // Then supplement with Export if Day doesn't exist in DB (or if you want to merge, but user said "switch back")
-                else if let Some(exports) = export_by_day.get(&day_label) {
-                    for m in exports {
-                        if let Some(name_zh) = m.get("name_zh").and_then(|v| v.as_str()) {
-                            final_monsters.insert(name_zh.to_string(), m.clone());
-                        }
-                    }
-                }
-            }
-            let monster_count = final_monsters.len();
-            *db_state.monsters.write().unwrap() = final_monsters.clone();
-            log_to_file(&format!("Monsters DB populated with {} entries", monster_count));
-            
-            // 调试：输出前几个怪物名称，并通知前端数据库已准备好
-            if monster_count > 0 {
-                let sample_names: Vec<String> = final_monsters.keys().take(5).cloned().collect();
-                log_to_file(&format!("Sample loaded monsters: {:?}", sample_names));
-                // Emit an event so the frontend knows the monsters DB is ready
-                let _ = handle.emit("monsters-db-ready", serde_json::json!({
-                    "total": monster_count,
-                    "sample": sample_names,
-                }));
-            } else {
-                log_to_file("Warning: No monsters were loaded!");
-            }
-
-            println!("[Init] Successfully consolidated {} monsters (Export prioritized by day)", monster_count);
-
-            // Log Monitor Thread
-            let thread_items_db = db_state.items.clone();
-            let thread_skills_db = db_state.skills.clone();
-            let log_handle = handle.clone();
-            
-            thread::spawn(move || {
-                let handle = log_handle;
-                let log_path = get_log_path();
-                let prev_path = get_prev_log_path();
-                
-                let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId\s*(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
-                let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
-                let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
-                let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
-
-                let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
-                let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
-                let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
-                let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
-                
-                // Initialize state from cache
-                let _cache_path = get_cache_path();
-                let _has_cache = _cache_path.exists();
-                let state_init = load_state();
-                
-                let mut inst_to_temp = state_init.inst_to_temp;
-                let mut current_hand = state_init.current_hand;
-                let mut current_stash = state_init.current_stash;
-                let mut current_day = state_init.day;
-                
-                let mut last_file_size = if log_path.exists() {
-                    std::fs::metadata(&log_path).map(|m| m.len()).unwrap_or(0)
-                } else {
-                    0
-                };
-                
-                let mut last_iid = String::new();
-                let mut cur_owner = String::new();
-                let mut in_pvp = false;
-                let mut is_sync = false;
-
-                // --- Initial Sync: Replay Logs to catch up with current state ---
-                println!("[LogMonitor] Initializing state from logs...");
-                
-                // Clear state for fresh scan (we'll recover inst_to_temp from logs too)
-                current_hand.clear();
-                current_stash.clear();
-                // inst_to_temp.clear(); // We keep cache as fallback, but logs will overwrite
-
-                let files_to_process = vec![prev_path, log_path.clone()];
-                for path in files_to_process {
-                    if !path.exists() { 
-                        println!("[LogMonitor] Skipping non-existent file: {:?}", path);
-                        continue; 
-                    }
-                    println!("[LogMonitor] Processing log file: {:?}", path);
-                    if let Ok(file) = File::open(&path) {
-                        let reader = BufReader::new(file);
-                        for line in reader.lines() {
-                            if let Ok(l) = line {
-                                let trimmed = l.trim();
-                                
-                                // Reset everything if we see a new run start
-                                if trimmed.contains("NetMessageRunInitialized") {
-                                    current_day = 1; in_pvp = false;
-                                    inst_to_temp.clear();
-                                    current_hand.clear();
-                                    current_stash.clear();
-                                    is_sync = false;
-                                }
-
-                                if trimmed.contains("to [PVPCombatState]") { in_pvp = true; }
-                                if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
-                                    current_day = current_day.saturating_add(1); in_pvp = false;
-                                }
-
-                                if let Some(cap) = re_purchase.captures(trimmed) {
-                                    let iid = cap["iid"].to_string();
-                                    inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
-                                    let mut section = cap.name("sec").map(|s| s.as_str().to_string());
-                                    if section.as_deref().unwrap_or("") == "" {
-                                        if let Some(tgt) = cap.name("tgt").map(|t| t.as_str()) {
-                                            if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
-                                            else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
-                                        }
-                                    }
-                                    if let Some(s) = section {
-                                        if s == "Player" || s == "Hand" { current_hand.insert(iid); }
-                                        else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { current_stash.insert(iid); }
-                                    }
-                                }
-                                if let Some(cap) = re_moved_to.captures(trimmed) {
-                                    let iid = cap["iid"].to_string();
-                                    if cap["tgt"].contains("StorageSocket") {
-                                        current_stash.insert(iid.clone()); current_hand.remove(&iid);
-                                    } else if cap["tgt"].contains("Socket") {
-                                        current_hand.insert(iid.clone()); current_stash.remove(&iid);
-                                    }
-                                }
-                                if let Some(cap) = re_sold.captures(trimmed) {
-                                    let iid = cap["iid"].to_string(); 
-                                    current_hand.remove(&iid); current_stash.remove(&iid);
-                                }
-                                if let Some(cap) = re_removed.captures(trimmed) {
-                                    let iid = cap["iid"].to_string(); 
-                                    current_hand.remove(&iid); current_stash.remove(&iid);
-                                }
-                                if trimmed.contains("Cards Disposed:") {
-                                    for mat in re_item_id.find_iter(trimmed) {
-                                        let iid = mat.as_str().to_string(); 
-                                        current_hand.remove(&iid); current_stash.remove(&iid);
-                                    }
-                                }
-                                if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") { 
-                                    is_sync = true; 
-                                }
-                                if is_sync {
-                                    if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
-                                    else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
-                                    else if let Some(cap) = re_section.captures(trimmed) {
-                                        if !last_iid.is_empty() && &cur_owner == "Player" && last_iid.starts_with("itm_") {
-                                            let sec_val = &cap["val"];
-                                            if sec_val == "Hand" || sec_val == "Player" { 
-                                                current_hand.insert(last_iid.clone()); 
-                                                current_stash.remove(&last_iid);
-                                            }
-                                            else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
-                                                current_stash.insert(last_iid.clone()); 
-                                                current_hand.remove(&last_iid);
-                                            }
-                                            else {
-                                                current_hand.remove(&last_iid); 
-                                                current_stash.remove(&last_iid);
-                                            }
-                                        }
-                                        last_iid.clear(); cur_owner.clear();
-                                    }
-                                    else if trimmed.contains("Finished processing") { is_sync = false; }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                save_state(&PersistentState {
-                    day: current_day,
-                    inst_to_temp: inst_to_temp.clone(),
-                    current_hand: current_hand.clone(),
-                    current_stash: current_stash.clone(),
-                    ..load_state()
-                });
-
-                // Initial UI Sync after loading/backfilling
-                let init_handle = handle.clone();
-                let init_items_db = thread_items_db.clone();
-                let init_skills_db = thread_skills_db.clone();
-                let init_hand = current_hand.clone();
-                let init_stash = current_stash.clone();
-                let init_map = inst_to_temp.clone();
-                let init_day = current_day;
-                
-                tauri::async_runtime::spawn(async move {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(1500)).await;
-                    let _ = init_handle.emit("day-update", init_day);
-                    let items_db = init_items_db.read().unwrap();
-                    let skills_db = init_skills_db.read().unwrap();
-                    let hand_items = init_hand.iter()
-                        .filter_map(|iid| init_map.get(iid))
-                        .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
-                        .collect();
-                    let stash_items = init_stash.iter()
-                        .filter_map(|iid| init_map.get(iid))
-                        .filter_map(|tid| lookup_item(tid, &items_db, &skills_db))
-                        .collect();
-                    let all_tags = items_db.unique_tags.clone();
-                    let _ = init_handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
-                });
-
-                println!("[LogMonitor] Initialization complete. Starting main monitoring loop...");
-                // Debug: Log the path being monitored at startup
-                log_to_file(&format!("[LogMonitor] Monitoring log file: {:?}", log_path));
-                println!("[LogMonitor] Monitoring log file: {:?}", log_path);
-                log_to_file(&format!("[LogMonitor] Starting monitor loop, initial size: {}", last_file_size));
-                
-                loop {
-                    if !log_path.exists() { 
-                        log_to_file(&format!("[LogMonitor] Log file not found: {:?}", log_path));
-                        thread::sleep(time::Duration::from_secs(2)); 
-                        continue; 
-                    }
-                    let current_file_size = match std::fs::metadata(&log_path) {
-                        Ok(meta) => meta.len(),
-                        Err(e) => {
-                            log_to_file(&format!("Error reading log metadata: {}. Retrying...", e));
-                            thread::sleep(time::Duration::from_secs(1));
-                            continue;
-                        }
-                    };
-                    
-                    // Debug: Log size changes
-                    if current_file_size != last_file_size {
-                        log_to_file(&format!("[LogMonitor] File size changed: {} -> {}", last_file_size, current_file_size));
-                    }
-                    
-                    if current_file_size < last_file_size {
-                        println!("[LogMonitor] Log truncated, resetting state...");
-                        inst_to_temp.clear();
-                        current_hand.clear();
-                        current_stash.clear();
-                        current_day = 1;
-                        is_sync = false;
-                        last_file_size = 0;
-                        save_state(&PersistentState { 
-                            day: current_day, 
-                            inst_to_temp: inst_to_temp.clone(), 
-                            current_hand: current_hand.clone(), 
-                            current_stash: current_stash.clone(),
-                            ..load_state()
-                        });
-                    }
-                    
-                    if current_file_size > last_file_size {
-                        // Prevent spamming triggers if we are catching up on a large log chunk (>5000 bytes)
-                        let is_bulk_read = (current_file_size - last_file_size) > 5000;
-                        if is_bulk_read {
-                            log_to_file(&format!("[LogMonitor] Bulk read detected: {} bytes, will skip YOLO triggers for this batch", current_file_size - last_file_size));
-                        }
-                        
-                        let mut f = match File::open(&log_path) {
-                            Ok(file) => file,
-                            Err(e) => {
-                                log_to_file(&format!("Failed to open log file for reading: {}", e));
-                                thread::sleep(time::Duration::from_secs(1));
-                                continue;
-                            }
-                        };
-                        let _ = f.seek(SeekFrom::Start(last_file_size));
-                        let reader = BufReader::new(f);
-                        
-                        let mut changed = false;
-                        let mut day_changed = false;
-                        for line in reader.lines() {
-                            let l = if let Ok(l) = line { l } else { continue };
-                            let trimmed = l.trim();
-
-                            // Day Detection Logic
-                            if trimmed.contains("NetMessageRunInitialized") {
-                                current_day = 1; in_pvp = false; day_changed = true;
-                                inst_to_temp.clear();
-                                current_hand.clear();
-                                current_stash.clear();
-                                changed = true;
-                            }
-                            
-                            // Tracks PVP state
-                            if trimmed.contains("to [PVPCombatState]") { 
-                                in_pvp = true; 
-                            }
-                            
-                            // Day increment: The most reliable trigger is the transition back to Map (ChoiceState) after a PVP fight.
-                            if in_pvp && trimmed.contains("State changed") && (trimmed.contains("to [ChoiceState]") || trimmed.contains("to [LevelUpState]")) {
-                                current_day = current_day.saturating_add(1);
-                                in_pvp = false;
-                                day_changed = true;
-                                println!("[DayMonitor] Day increased to {} after PVP completion", current_day);
-                            }
-
-                            /* 
-                            // YOLO Trigger on ANY State changed (controlled by enable-yolo-auto setting)
-                            // Debug: Log every state change line and check conditions
-                            if trimmed.contains("State changed") {
-                                println!("[Debug] Found 'State changed' line: {}", trimmed);
-                                println!("[Debug] is_bulk_read: {}", is_bulk_read);
-                                println!("[Debug] contains 'State changed from [': {}", trimmed.contains("State changed from ["));
-                                println!("[Debug] contains '] to [': {}", trimmed.contains("] to ["));
-                            }
-                            
-                            if !is_bulk_read && trimmed.contains("State changed from [") && trimmed.contains("] to [") {
-                                println!("[State Change Detected] Emitting YOLO trigger for: {}", trimmed);
-                                log_to_file(&format!("[State Change Detected] {}", trimmed));
-                                log_to_file("[Backend] Emitting trigger_yolo_scan event to frontend");
-                                // Emit event to frontend, which will check enable-yolo-auto setting
-                                match handle.emit("trigger_yolo_scan", ()) {
-                                    Ok(_) => {
-                                        println!("[Backend] trigger_yolo_scan event emitted successfully");
-                                        log_to_file("[Backend] trigger_yolo_scan event emitted successfully");
-                                    },
-                                    Err(e) => {
-                                        println!("[Backend] Failed to emit trigger_yolo_scan: {}", e);
-                                        log_to_file(&format!("[Backend] Failed to emit trigger_yolo_scan: {}", e));
-                                    },
-                                }
-                            }
-                            */
-
-                            if let Some(cap) = re_purchase.captures(trimmed) {
-                                let iid = cap["iid"].to_string();
-                                inst_to_temp.insert(iid.clone(), cap["tid"].to_string());
-                                
-                                let mut section = cap.name("sec").map(|s| s.as_str().to_string());
-                                let target = cap.name("tgt").map(|t| t.as_str());
-
-                                // Fallback: Derive section from Target if Section is missing or ambiguous
-                                if section.as_deref().unwrap_or("") == "" {
-                                    if let Some(tgt) = target {
-                                        if tgt.contains("PlayerStorageSocket") { section = Some("Stash".to_string()); }
-                                        else if tgt.contains("PlayerSocket") { section = Some("Player".to_string()); }
-                                    }
-                                }
-
-                                if let Some(s) = section {
-                                    if s == "Player" || s == "Hand" { 
-                                        current_hand.insert(iid); changed = true; 
-                                    }
-                                    else if s == "Stash" || s == "Storage" || s == "PlayerStorage" { 
-                                        current_stash.insert(iid); changed = true; 
-                                    }
-                                }
-                            }
-
-                            if let Some(cap) = re_moved_to.captures(trimmed) {
-                                let iid = cap["iid"].to_string();
-                                let tgt = &cap["tgt"];
-                                if tgt.contains("StorageSocket") {
-                                    current_stash.insert(iid.clone());
-                                    current_hand.remove(&iid);
-                                    changed = true;
-                                } else if tgt.contains("Socket") { // General Socket_X
-                                    current_hand.insert(iid.clone());
-                                    current_stash.remove(&iid);
-                                    changed = true;
-                                }
-                            }
-
-                            if let Some(cap) = re_sold.captures(trimmed) {
-                                let iid = cap["iid"].to_string();
-                                if current_hand.remove(&iid) || current_stash.remove(&iid) {
-                                    changed = true;
-                                }
-                            }
-
-                            if let Some(cap) = re_removed.captures(trimmed) {
-                                let iid = cap["iid"].to_string();
-                                if current_hand.remove(&iid) || current_stash.remove(&iid) {
-                                    changed = true;
-                                }
-                            }
-
-                            if trimmed.contains("Cards Disposed:") {
-                                for mat in re_item_id.find_iter(trimmed) {
-                                    let iid = mat.as_str().to_string();
-                                    if current_hand.remove(&iid) || current_stash.remove(&iid) {
-                                        changed = true;
-                                    }
-                                }
-                            }
-
-                            if trimmed.contains("Cards Spawned:") || trimmed.contains("Cards Dealt:") || trimmed.contains("NetMessageGameStateSync") {
-                                is_sync = true;
-                            } else if trimmed.contains("Successfully moved card to:") {
-                                is_sync = true;
-                            }
-
-                            if is_sync {
-                                if let Some(cap) = re_id.captures(trimmed) { last_iid = cap["id"].to_string(); }
-                                else if let Some(cap) = re_owner.captures(trimmed) { cur_owner = cap["val"].to_string(); }
-                                else if let Some(cap) = re_section.captures(trimmed) {
-                                    if !last_iid.is_empty() && &cur_owner == "Player" {
-                                        if last_iid.starts_with("itm_") {
-                                            let sec_val = &cap["val"];
-                                            if sec_val == "Hand" || sec_val == "Player" { 
-                                                current_hand.insert(last_iid.clone());
-                                                current_stash.remove(&last_iid);
-                                            }
-                                            else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" { 
-                                                current_stash.insert(last_iid.clone());
-                                                current_hand.remove(&last_iid);
-                                            }
-                                            else {
-                                                current_hand.remove(&last_iid);
-                                                current_stash.remove(&last_iid);
-                                            }
-                                            changed = true;
-                                        }
-                                    }
-                                    // Reset for next block
-                                    last_iid.clear();
-                                    cur_owner.clear();
-                                }
-                                else if trimmed.contains("Finished processing") {
-                                    is_sync = false;
-                                    changed = true;
-                                }
-                            }
-                        }
-
-                        if changed || day_changed {
-                            if day_changed {
-                                let _ = handle.emit("day-update", current_day);
-                            }
-                            let items_db = thread_items_db.read().unwrap();
-                            let skills_db = thread_skills_db.read().unwrap();
-                            
-                            let map_items = |ids: &HashSet<String>| -> Vec<ItemData> {
-                                ids.iter()
-                                   .filter_map(|iid| {
-                                       let tid = inst_to_temp.get(iid)?;
-                                       let mut item = lookup_item(tid, &items_db, &skills_db)?;
-                                       item.instance_id = Some(iid.clone());
-                                       Some(item)
-                                   })
-                                   .collect()
-                            };
-
-                            let hand_items = map_items(&current_hand);
-                            let stash_items = map_items(&current_stash);
-                            
-                            let all_tags = items_db.unique_tags.clone();
-                            let _ = handle.emit("sync-items", SyncPayload { hand_items, stash_items, all_tags });
-                            
-                            save_state(&PersistentState {
-                                day: current_day,
-                                inst_to_temp: inst_to_temp.clone(),
-                                current_hand: current_hand.clone(),
-                                current_stash: current_stash.clone(),
-                                ..load_state()
-                            });
-                        }
-                        last_file_size = current_file_size;
-                    }
-                    thread::sleep(time::Duration::from_millis(500));
-                }
-            });
-
-            // 启动鼠标监听线程 (识别怪物与卡牌) - 跨平台实现
-            let handle_mouse = handle.clone();
-            std::thread::spawn(move || {
-                let device_state = DeviceState::new();
-                let mut last_trigger = time::Instant::now();
-                let mut last_card_trigger = time::Instant::now();
-                let mut last_toggle_trigger = time::Instant::now();
-                let mut last_yolo_trigger = time::Instant::now();
-                loop {
-                    let mouse_state = device_state.get_mouse();
-
-                    // 检查游戏窗口是否活跃，如果不活跃则跳过所有热键检测
-                    if !is_game_window_active() {
-                        thread::sleep(time::Duration::from_millis(100));
-                        continue;
-                    }
-                    
-                    // 读取配置的按键
-                    let (monster_hotkey, card_hotkey, toggle_hotkey, yolo_hotkey) = {
-                        let state = load_state();
-                        (
-                            state.detection_hotkey.unwrap_or(default_monster_hotkey()),
-                            state.card_detection_hotkey.unwrap_or(default_card_hotkey()),
-                            state.toggle_collapse_hotkey.unwrap_or(192),
-                            state.yolo_hotkey.unwrap_or(81)
-                        )
-                    };
-                    
-                    // 检测热键冲突
-                    static mut CONFLICT_WARNING_SHOWN: bool = false;
-                    unsafe {
-                        if !CONFLICT_WARNING_SHOWN && (monster_hotkey == yolo_hotkey || card_hotkey == yolo_hotkey) {
-                            println!("[热键冲突警告] YOLO热键({})与其他热键冲突！", yolo_hotkey);
-                            println!("  怪物识别热键: {}, 卡牌识别热键: {}", monster_hotkey, card_hotkey);
-                            println!("  建议：在设置中修改热键避免冲突");
-                            log_to_file(&format!("热键冲突: monster={}, card={}, yolo={}", monster_hotkey, card_hotkey, yolo_hotkey));
-                            CONFLICT_WARNING_SHOWN = true;
-                        }
-                    }
-
-                    // 优先级：YOLO热键 > 怪物识别热键（避免冲突）
-                    let yolo_key_pressed = yolo_hotkey != 1 && yolo_hotkey != 2 && is_key_pressed(yolo_hotkey, &device_state, &mouse_state);
-                    
-                    // 1. 检测怪物识别按键（如果与YOLO热键冲突，跳过）
-                    if monster_hotkey != yolo_hotkey && is_key_pressed(monster_hotkey, &device_state, &mouse_state) {
-                            if last_trigger.elapsed() > time::Duration::from_millis(500) {
-                                last_trigger = time::Instant::now();
-                                println!("[Monster Hotkey] Key {} pressed", monster_hotkey);
-                                log_to_file(&format!("Monster Hotkey {} pressed, starting scan...", monster_hotkey));
-                                
-                                // 尝试识别怪物
-                                match scan_and_identify_monster_at_mouse() {
-                                    Ok(Some(monster_name)) => {
-                                        log_to_file(&format!("Success! Valid monster found: {}", monster_name));
-                                        
-                                        // 关键修复：处理陷阱类并列名称
-                                        let lookup_name = if monster_name.contains('|') {
-                                            monster_name.split('|').next().unwrap_or(&monster_name).to_string()
-                                        } else {
-                                            monster_name.clone()
-                                        };
-
-                                        if let Some(db_state) = handle_mouse.try_state::<DbState>() {
-                                            if let Ok(monsters) = db_state.monsters.read() {
-                                                // 首先尝试通过 Key 获取 Entry，如果不行，尝试遍历匹配 name_zh
-                                                let entry_opt = monsters.get(&lookup_name)
-                                                    .or_else(|| {
-                                                        monsters.values().find(|v| {
-                                                            v.get("name_zh").and_then(|nz| nz.as_str()) == Some(&lookup_name)
-                                                        })
-                                                    });
-
-                                                if let Some(entry) = entry_opt {
-                                                    let target_name_zh = entry.get("name_zh").and_then(|v| v.as_str()).unwrap_or(&monster_name);
-                                                    let mut candidate_days: Vec<u32> = Vec::new();
-                                                    
-                                                    // 寻找所有具有相同中文名的怪物条目（解决同名不同天数问题）
-                                                    for (_, v) in monsters.iter() {
-                                                        if let Some(n_zh) = v.get("name_zh").and_then(|val| val.as_str()) {
-                                                            if n_zh == target_name_zh {
-                                                                if let Some(d_str) = v.get("available").and_then(|val| val.as_str()) {
-                                                                    if d_str.starts_with("Day ") {
-                                                                        let num_part = d_str[4..].trim_end_matches('+');
-                                                                        if let Ok(d_num) = num_part.parse::<u32>() {
-                                                                            candidate_days.push(d_num);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                    
-                                                    if !candidate_days.is_empty() {
-                                                        candidate_days.sort();
-                                                        candidate_days.dedup();
-
-                                                        let current_day = load_state().day;
-                                                        let target_day = if candidate_days.contains(&current_day) {
-                                                            current_day
-                                                        } else {
-                                                            *candidate_days.iter().min_by_key(|&&d| (d as i32 - current_day as i32).abs()).unwrap()
-                                                        };
-
-                                                        match handle_mouse.emit("auto-jump-to-monster", serde_json::json!({
-                                                            "day": target_day,
-                                                            "monster_name": monster_name // 使用包含 | 的原始名称
-                                                        })) {
-                                                            Ok(_) => {},
-                                                            Err(e) => println!("Failed to emit auto-jump-to-monster: {}", e),
-                                                        }
-                                                        
-                                                        let mut state = load_state();
-                                                        state.day = target_day;
-                                                        save_state(&state);
-                                                        
-                                                        println!("自动跳转到 Day {} (识别: {}, 候选天数: {:?})", target_day, lookup_name, candidate_days);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    Ok(None) => {
-                                        // Scan successful but no monster found
-                                        log_to_file("Scan complete, no monster matched.");
-                                    }
-                                    Err(e) => {
-                                        let err_msg = format!("Monster Scan Failed: {}", e);
-                                        println!("[Error] {}", err_msg);
-                                        log_to_file(&format!("Error: {}", err_msg));
-                                        // Emit error to frontend for toast
-                                        let _ = handle_mouse.emit("scan-error", e);
-                                    }
-                                }
-                            }
-                        }
-
-                    // 2. 检测卡牌识别按键（如果与YOLO热键冲突，跳过）
-                    if card_hotkey != yolo_hotkey && is_key_pressed(card_hotkey, &device_state, &mouse_state) {
-                        if last_card_trigger.elapsed() > time::Duration::from_millis(500) {
-                            last_card_trigger = time::Instant::now();
-                            println!("[Card Hotkey] Key {} pressed", card_hotkey);
-                            log_to_file(&format!("Card Hotkey {} pressed, triggering recognition...", card_hotkey));
-                            let _ = handle_mouse.emit("hotkey-detect-card", ());
-                        }
-                    }
-
-                    // 3. 检测折叠/展开按键
-                    if is_key_pressed(toggle_hotkey, &device_state, &mouse_state) {
-                        if last_toggle_trigger.elapsed() > time::Duration::from_millis(500) {
-                            last_toggle_trigger = time::Instant::now();
-                            log_to_file("Toggle Hotkey pressed");
-                            let _ = handle_mouse.emit("toggle-collapse", ());
-                        }
-                    }
-
-                    // 4. 检测YOLO手动触发按键（排除左右键）- 优先级最高
-                    if yolo_key_pressed {
-                        if last_yolo_trigger.elapsed() > time::Duration::from_millis(500) {
-                            last_yolo_trigger = time::Instant::now();
-                            println!("[YOLO Hotkey] Key {} pressed, emitting event", yolo_hotkey);
-                            log_to_file(&format!("YOLO Hotkey {} pressed", yolo_hotkey));
-                            match handle_mouse.emit("yolo_hotkey_pressed", ()) {
-                                Ok(_) => println!("[YOLO Hotkey] Event emitted successfully"),
-                                Err(e) => println!("[YOLO Hotkey] Failed to emit event: {}", e),
-                            }
-                        }
-                    }
-
-                    thread::sleep(time::Duration::from_millis(100));
-                }
-            });
-
-            log_to_file("Setup complete. Initializing main loop...");
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            update_overlay_bounds,
+            abort_yolo_scan,
+            set_show_yolo_monitor,
+            trigger_yolo_scan,
+            handle_overlay_right_click,
+            get_item_info,
+            set_overlay_ignore_cursor,
+            show_yolo_monitor_window,
+            show_detail_popup_at,
+            hide_detail_popup,
+            reset_detail_popup_position,
+            restore_game_focus,
+            get_show_yolo_monitor,
+            start_template_loading,
+            search_items,
             get_all_monsters,
             debug_monsters_db,
-            debug_resource_paths,
             clear_yolo_cache,
+            debug_resource_paths,
             recognize_monsters_from_screenshot,
             get_template_loading_progress,
             get_current_day,
             update_day,
             get_detection_hotkey,
-            set_detection_hotkey,
             get_card_detection_hotkey,
-            set_card_detection_hotkey,
             get_toggle_collapse_hotkey,
+            set_detection_hotkey,
+            set_card_detection_hotkey,
             set_toggle_collapse_hotkey,
             get_yolo_hotkey,
             set_yolo_hotkey,
             reset_all_hotkeys,
-            get_detail_display_hotkey,
-            set_detail_display_hotkey,
             save_monster_calibration,
             load_monster_calibration,
             get_game_window_info,
             open_calibration_window,
             close_calibration_window,
-            start_template_loading,
-            set_window_geometry,
-            get_item_info,
-            search_items,
-            crate::monster_recognition::check_opencv_load, 
-            crate::monster_recognition::recognize_card_at_mouse,
-            crate::monster_recognition::load_event_templates,
-            crate::monster_recognition::recognize_event_at_mouse,
-            trigger_yolo_scan,
-            abort_yolo_scan,
-            invoke_yolo_scan,
-            handle_overlay_right_click,
-            update_overlay_bounds,
-            emit_to_main,
+            get_detail_display_hotkey,
+            set_detail_display_hotkey,
             get_yolo_stats,
-            get_show_yolo_monitor,
-            // clear_monster_cache,
-            set_overlay_ignore_cursor,
-            set_show_yolo_monitor,
-            restore_game_focus,
-            show_yolo_monitor_window,
-            show_detail_popup_at,
-            hide_detail_popup,
-            reset_detail_popup_position
+            invoke_yolo_scan,
+            emit_to_main,
+            save_window_geometry,
+            save_detail_popup_geometry,
+            get_window_geometry
         ])
         .run(tauri::generate_context!())
-        .map_err(|e| {
-            log_to_file(&format!("FATAL: Error while running tauri application: {}", e));
-            e
-        })
         .expect("error while running tauri application");
 }

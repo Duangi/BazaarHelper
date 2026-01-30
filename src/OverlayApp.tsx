@@ -39,6 +39,9 @@ interface ItemData {
     description: string;
     image: string;
     displayImg?: string;
+    id?: string;
+    name_en?: string;
+    starting_tier?: string;
 }
 
 interface TierInfo {
@@ -54,7 +57,7 @@ interface MonsterSubItem {
     tier?: string;
     current_tier?: string;
     starting_tier?: string;
-    tags?: string[];
+    tags?: string[] | string;
     tiers: Record<string, TierInfo | null>;
     image: string;
     damage?: number;
@@ -67,6 +70,7 @@ interface MonsterSubItem {
     ammo?: number;
     multicast?: number;
     displayImg?: string;
+    cardFrameImg?: string;
     size?: string;
     damage_tiers?: string;
     heal_tiers?: string;
@@ -246,6 +250,34 @@ export default function OverlayApp() {
     const yoloResultRef = useRef(yoloResult);
     const imgCache = useRef<Map<string, string>>(new Map());
     const MAX_CACHE_SIZE = 200; // 限制缓存最大200张图片
+
+    // Load items database for merging monster item details
+    const [itemsDb, setItemsDb] = useState<Map<string, ItemData>>(new Map());
+    const itemsDbRef = useRef<Map<string, ItemData>>(new Map());
+    
+    useEffect(() => {
+        itemsDbRef.current = itemsDb;
+    }, [itemsDb]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const path = await resolveResource('resources/items_db.json');
+                const response = await fetch(convertFileSrc(path));
+                const items: ItemData[] = await response.json();
+                const map = new Map<string, ItemData>();
+                items.forEach(item => {
+                    if (item.id) map.set(item.id, item);
+                    if (item.name_cn) map.set(item.name_cn, item);
+                    if (item.name_en) map.set(item.name_en, item);
+                });
+                setItemsDb(map);
+                console.log('[Overlay] Loaded items_db:', map.size, 'items');
+            } catch (e) {
+                console.error('[Overlay] Failed to load items_db:', e);
+            }
+        })();
+    }, []);
 
     // 移除了拖动功能，使用设置中的位置控制
     const [isResizing, setIsResizing] = useState(false);
@@ -568,10 +600,58 @@ export default function OverlayApp() {
                 } catch (e) { imgPath = `images/${s.id || s.name}.webp`; }
                 return { ...s, displayImg: await getImg(imgPath) };
             })) : [],
-            items: m.items ? await Promise.all(m.items.map(async i => ({ 
-                ...i, 
-                displayImg: await getImg(`images/${i.id || i.name}.webp`) 
-            }))) : []
+            items: m.items ? await Promise.all(m.items.map(async i => {
+                const id = i.id || i.name;
+                // Merge detailed info from items_db if available
+                let fullItemInfo = null;
+                if (id) {
+                    fullItemInfo = itemsDbRef.current.get(id);
+                    // Try case-insensitive lookup if direct match fails
+                    if (!fullItemInfo) {
+                        const lowerId = id.toLowerCase();
+                        for (const [key, val] of itemsDbRef.current.entries()) {
+                            if (key.toLowerCase() === lowerId) {
+                                fullItemInfo = val;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // If not found by ID, try name
+                if (!fullItemInfo && i.name) {
+                    fullItemInfo = itemsDbRef.current.get(i.name);
+                }
+                
+                // Merge: prefer item info from DB, but keep existing runtime info if needed. 
+                const merged = fullItemInfo ? 
+                    { ...fullItemInfo, ...i, skills: fullItemInfo.skills || i.skills || [] } : i;
+
+                // Determine Tier & Color Logic
+                // Priority: current_tier > tier (from DB) > bronze
+                let currentTier = (merged.current_tier || merged.tier || 'bronze').toLowerCase();
+                // Handle complex tier strings like "Gold / 黄金" -> "gold"
+                currentTier = currentTier.split(' / ')[0].trim().toLowerCase();
+                
+                // Determine Size
+                const sizeStr = (merged.size || 'Medium / 中型').split(' / ')[0].toLowerCase().trim();
+                
+                // Calculate Card Frame Path
+                const cardFramePath = getCardFramePath(currentTier, sizeStr);
+                const cardFrameImg = await getImg(cardFramePath);
+                
+                // Debug log
+                // console.log(`[MonsterItem] ${merged.name}: tier=${currentTier}, size=${sizeStr} -> frame=${cardFramePath} (${cardFrameImg ? 'OK' : 'FAIL'})`);
+
+                return { 
+                    ...merged, 
+                    displayImg: await getImg(`images/${merged.id || merged.name}.webp`),
+                    cardFrameImg,
+                    // Ensure merged has correct tier/size for rendering usage
+                    current_tier: currentTier,
+                    size: sizeStr
+                };
+            })) : []
         };
     };
 
@@ -1543,10 +1623,7 @@ export default function OverlayApp() {
                                                                                 overflow: 'hidden',
                                                                                 zIndex: 0
                                                                             }}>
-                                                                                {/* 卡牌背景框 */}
-                                                                                <CardBackground framePath={cardFramePath} getImg={getImg} />
-                                                                                
-                                                                                {/* 物品图片 */}
+                                                                                {/* 物品图片 (底层) */}
                                                                                 {it.displayImg && (
                                                                                     <img 
                                                                                         src={it.displayImg} 
@@ -1561,10 +1638,29 @@ export default function OverlayApp() {
                                                                                             pointerEvents: 'none',
                                                                                             zIndex: 1,
                                                                                             borderRadius: '4px',
-                                                                                            transform: 'translateZ(0)',
-                                                                                            backfaceVisibility: 'hidden'
                                                                                         }} 
                                                                                     />
+                                                                                )}
+
+                                                                                {/* 卡牌边框 (顶层) */}
+                                                                                {it.cardFrameImg ? (
+                                                                                     <img 
+                                                                                        src={it.cardFrameImg}
+                                                                                        alt="Frame"
+                                                                                        style={{
+                                                                                            position: 'absolute',
+                                                                                            top: 0,
+                                                                                            left: 0,
+                                                                                            width: '100%',
+                                                                                            height: '100%',
+                                                                                            zIndex: 2,
+                                                                                            pointerEvents: 'none'
+                                                                                        }}
+                                                                                     />
+                                                                                ) : (
+                                                                                    <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
+                                                                                         <CardBackground framePath={cardFramePath} getImg={getImg} />
+                                                                                    </div>
                                                                                 )}
                                                                             </div>
                                                                             
@@ -1847,7 +1943,35 @@ export default function OverlayApp() {
                                                                                 {/* 1. 优先显示skills字段（物品自带的skill列表） */}
                                                                                 {hoveredMonsterItem.skills && hoveredMonsterItem.skills.length > 0 && hoveredMonsterItem.skills.map((skill, i) => (
                                                                                     <div key={i} style={{ fontSize: '13px', color: '#ddd', marginBottom: '6px', lineHeight: '1.4' }}>
-                                                                                        {formatDescription(skill.cn || skill.en)}
+                                                                                        {(() => {
+                                                                                            const text = skill.cn || skill.en;
+                                                                                            // Calculate usage of tier
+                                                                                            const isExpanded = expandedMonsterItem === hoveredMonsterItem;
+                                                                                            
+                                                                                            if (isExpanded) {
+                                                                                                // Clicked state: Show full info
+                                                                                                return formatDescription(text);
+                                                                                            } else {
+                                                                                                // Hover state: Show only current tier info
+                                                                                                const tierMap: {[key: string]: number} = { 'bronze': 0, 'silver': 1, 'gold': 2, 'diamond': 3, 'legendary': 4 };
+                                                                                                let startTierIndex = 0;
+                                                                                                if (hoveredMonsterItem.starting_tier) {
+                                                                                                    const startLower = hoveredMonsterItem.starting_tier.toLowerCase();
+                                                                                                    if (startLower.includes('silver')) startTierIndex = 1;
+                                                                                                    else if (startLower.includes('gold')) startTierIndex = 2;
+                                                                                                    else if (startLower.includes('diamond')) startTierIndex = 3;
+                                                                                                    else if (startLower.includes('legendary')) startTierIndex = 4;
+                                                                                                }
+                                                                                                const targetTierIndex = tierMap[currentTier] ?? 0;
+                                                                                                const relativeIndex = Math.max(0, targetTierIndex - startTierIndex);
+                                                                                                
+                                                                                                const processed = text.replace(/(\d+(?:\/\d+)+)/g, (match) => {
+                                                                                                    const nums = match.split('/');
+                                                                                                    return nums[Math.min(relativeIndex, nums.length - 1)];
+                                                                                                });
+                                                                                                return formatDescription(processed);
+                                                                                            }
+                                                                                        })()}
                                                                                     </div>
                                                                                 ))}
                                                                                 

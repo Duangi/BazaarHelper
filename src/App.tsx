@@ -94,7 +94,7 @@ export default function App() {
   }
   const [toasts, setToasts] = useState<Toast[]>([]);
   
-  const [yoloHotkey, setYoloHotkey] = useState(() => {
+  const [yoloHotkey, setYoloHotkey] = useState<number | null>(() => {
     const saved = localStorage.getItem("yolo-hotkey");
     return saved ? parseInt(saved) : 0; // 默认未设置
   });
@@ -103,10 +103,38 @@ export default function App() {
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set()); // 野怪点击展开
   const [recognizedCards, setRecognizedCards] = useState<ItemData[]>([]); // 识别出的卡牌列表 (Top 3)
   const [isRecognizingCard, setIsRecognizingCard] = useState(false); // 是否正在识别卡牌
-  const [lastItemSize, setLastItemSize] = useState(""); // 记住物品模式下的尺寸选择
-  const [isInputFocused, setIsInputFocused] = useState(false); // 标记输入框是否获取了焦点
+  // Listen to backend hotkey events
+  useEffect(() => {
+    const unlistenMonster = listen("hotkey-monster", async () => {
+        console.log("[App] Received hotkey-monster");
+        if (!isRecognizing) {
+             setIsRecognizing(true);
+             try {
+                 setActiveTab("monster");
+                 
+                 const res = await invoke("recognize_monsters_from_screenshot", { day: currentDay });
+                 console.log("Recognition result:", res);
+                 if (Array.isArray(res)) {
+                      setManualMonsters(res as MonsterData[]);
+                 }
+             } catch (e) {
+                 console.error("Recognition failed", e);
+             } finally {
+                 setIsRecognizing(false);
+             }
+        }
+    });
+    
+    const unlistenCollapse = listen("hotkey-collapse", () => {
+        console.log("[App] Received hotkey-collapse");
+        setIsCollapsed(prev => !prev);
+    });
 
-  // Search State
+    return () => {
+        unlistenMonster.then(f => f());
+        unlistenCollapse.then(f => f());
+    };
+  }, [useGpuAcceleration, currentDay, isRecognizing]);
   const [searchQuery, setSearchQuery] = useState({
     keyword: "",
     item_type: "all", // "all", "item", "skill"
@@ -122,6 +150,8 @@ export default function App() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedHiddenTags, setSelectedHiddenTags] = useState<string[]>([]);
   const [matchMode, setMatchMode] = useState<'all' | 'any'>('all'); // 'all' = 匹配所有, 'any' = 匹配任一
+  const [isInputFocused, setIsInputFocused] = useState(false); // 跟踪输入框焦点状态
+  const [lastItemSize, setLastItemSize] = useState(''); // 记住切换到技能前的尺寸选择
   const [searchFilterHeight, setSearchFilterHeight] = useState(300);
   const [isResizingFilter, setIsResizingFilter] = useState(false);
   const [resizeStartY, setResizeStartY] = useState(0);
@@ -310,19 +340,72 @@ export default function App() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const appWindow = getCurrentWindow(); // 获取当前窗口实例
   
-  const [hasCustomPosition, setHasCustomPosition] = useState(() => {
-    return localStorage.getItem("plugin-pos-x") !== null;
-  });
-  const lastKnownPosition = useRef<{ x: number; y: number } | null>(
-    (() => {
-      const x = localStorage.getItem("plugin-pos-x");
-      const y = localStorage.getItem("plugin-pos-y");
-      if (x !== null && y !== null) {
-        return { x: parseInt(x), y: parseInt(y) };
+  const [hasCustomPosition, setHasCustomPosition] = useState(false);
+  const lastKnownPosition = useRef<{ x: number; y: number } | null>(null);
+  const isLoadingGeometry = useRef(true); // 防止初始化时覆盖后端位置
+  const [isGeometryLoaded, setIsGeometryLoaded] = useState(false); // 触发 effect
+  
+  // 从后端加载保存的窗口位置
+  useEffect(() => {
+    const loadSavedPosition = async () => {
+      try {
+        const geometry = await invoke<{x?: number, y?: number, width?: number, height?: number}>('get_window_geometry', { windowLabel: 'main' });
+        console.log('[Frontend] Loaded geometry from backend:', geometry);
+        
+        // 获取当前屏幕缩放比例，用于物理转逻辑
+        let scale = 1.0;
+        try {
+          const monitor = await currentMonitor();
+          if (monitor) scale = monitor.scaleFactor;
+        } catch (e) {
+             console.warn("Failed to get monitor scale", e);
+        }
+        currentScale.current = scale;
+        
+        if (geometry.x !== undefined && geometry.y !== undefined) {
+          lastKnownPosition.current = { x: geometry.x, y: geometry.y };
+          setHasCustomPosition(true);
+          console.log('[Frontend] Using saved position:', geometry.x, geometry.y);
+        } else {
+          // 没有保存的位置，尝试从localStorage读取（兼容旧版本）
+          const x = localStorage.getItem("plugin-pos-x");
+          const y = localStorage.getItem("plugin-pos-y");
+          if (x !== null && y !== null) {
+            lastKnownPosition.current = { x: parseInt(x), y: parseInt(y) };
+            setHasCustomPosition(true);
+            console.log('[Frontend] Using localStorage position:', x, y);
+          }
+        }
+        
+        // 恢复保存的大小 (Physical -> Logical)
+        if (geometry.width && geometry.height && geometry.width > 200 && geometry.height > 200) {
+             const logicalW = Math.round(geometry.width / scale);
+             const logicalH = Math.round(geometry.height / scale);
+             console.log(`[Frontend] Using saved size (Physical -> Logical): ${geometry.width}x${geometry.height} -> ${logicalW}x${logicalH}`);
+             
+             expandedWidthRef.current = logicalW;
+             expandedHeightRef.current = logicalH;
+             setExpandedWidth(logicalW);
+             setExpandedHeight(logicalH);
+             
+             // Sync localStorage
+             localStorage.setItem("plugin-width", logicalW.toString());
+             localStorage.setItem("plugin-height", logicalH.toString());
+        }
+      } catch (e) {
+        console.error('[Frontend] Failed to load saved geometry:', e);
+      } finally {
+        // 加载完成，允许syncLayout工作
+        setTimeout(() => {
+          isLoadingGeometry.current = false;
+          setIsGeometryLoaded(true);
+          console.log('[Frontend] Geometry loading complete, syncLayout enabled');
+        }, 1000);
       }
-      return null;
-    })()
-  );
+    };
+    
+    loadSavedPosition();
+  }, []);
   
   // 存储当前屏幕缩放比例，用于坐标转换
   const currentScale = useRef(1);
@@ -404,6 +487,15 @@ export default function App() {
           const physicalX = event.payload.x;
           const physicalY = event.payload.y;
           
+          console.log('[Frontend] Saving position after move:', physicalX, physicalY);
+          
+          // Save to backend state (persistent)
+          invoke('save_window_geometry', {
+             windowLabel: 'main',
+             x: physicalX,
+             y: physicalY
+          }).catch(console.error);
+
           setHasCustomPosition(true);
           lastKnownPosition.current = { x: physicalX, y: physicalY };
           localStorage.setItem("plugin-pos-x", physicalX.toString());
@@ -412,7 +504,7 @@ export default function App() {
           setTimeout(() => {
             isDragging.current = false;
           }, 300);
-        }, 200);
+        }, 2000);
       });
 
       // 监听窗口调整大小事件 (同步状态并保存)
@@ -446,12 +538,21 @@ export default function App() {
             // 保存到 localStorage
             if (saveSizeTimer.current) clearTimeout(saveSizeTimer.current);
             saveSizeTimer.current = window.setTimeout(() => {
+              console.log('[Frontend] Saving size after resize:', size.width, size.height);
+              
+              // Save to backend state (persistent)
+              invoke('save_window_geometry', {
+                 windowLabel: 'main',
+                 width: Math.round(size.width), // save physical size
+                 height: Math.round(size.height)
+              }).catch(console.error);
+
               localStorage.setItem("plugin-width", logicalWidth.toString());
               if (!isCollapsedRef.current) {
                 localStorage.setItem("plugin-height", logicalHeight.toString());
               }
               setTimeout(() => { isResizing.current = false; }, 500);
-            }, 300);
+            }, 2000);
           }
         } catch (e) {
           console.error('[Resize] Failed to get window size:', e);
@@ -697,28 +798,9 @@ export default function App() {
     console.log("[Update] Entering App. updateAvailable:", !!updateAvailable);
     setShowVersionScreen(false);
     
-    // 从实际窗口获取当前尺寸，覆盖localStorage中可能被版本屏幕污染的值
-    try {
-      const appWindow = getCurrentWindow();
-      const size = await appWindow.innerSize();
-      const monitor = await currentMonitor();
-      const scale = monitor?.scaleFactor || 1.0;
-      
-      const logicalWidth = size.width / scale;
-      const logicalHeight = size.height / scale;
-      
-      // 过滤掉版本屏幕的尺寸(600x850)，使用实际尺寸
-      if (logicalWidth > 200 && logicalHeight > 200) {
-        console.log(`[EnterApp] Initializing size from actual window: ${logicalWidth.toFixed(0)}x${logicalHeight.toFixed(0)}`);
-        setExpandedWidth(logicalWidth);
-        setExpandedHeight(logicalHeight);
-        // 保存到localStorage，覆盖旧数据
-        localStorage.setItem("plugin-width", logicalWidth.toString());
-        localStorage.setItem("plugin-height", logicalHeight.toString());
-      }
-    } catch (e) {
-      console.error("[EnterApp] Failed to get window size:", e);
-    }
+    // 移除从当前窗口获取尺寸的逻辑，因为当前窗口是版本界面(600x850)
+    // 我们希望进入Plugin时使用的是之前保存的 localStorage 中的尺寸
+    // 或者 defaults (getInitialWidth/Height)
     
     // 立即开始模板加载，不等待更新检查
     invoke("start_template_loading").catch(console.error);
@@ -789,10 +871,6 @@ export default function App() {
     };
     
     initApp();
-  }, []);
-  // Ensure enterApp runs after initial init to hide the version screen and sync real size
-  useEffect(() => {
-    enterApp().catch(console.error);
   }, []);
 
   // 轮询检查模板加载进度
@@ -1513,6 +1591,12 @@ export default function App() {
   const lastLayout = useRef<string>("");
 
   useEffect(() => {
+    // 如果还在加载几何信息，不执行syncLayout，防止覆盖后端恢复的位置
+    if (isLoadingGeometry.current) {
+      console.log('[Layout] Skipping syncLayout - still loading geometry from backend');
+      return;
+    }
+    
     const syncLayout = async () => {
       const appWindow = getCurrentWindow();
       
@@ -1577,18 +1661,23 @@ export default function App() {
         const now = Date.now();
         const recentlyResized = lastUserResize.current && (now - lastUserResize.current < 1000);
         
-        // syncLayout 只负责位置和置顶，以及必要时的高度调整
+        // syncLayout 只负责位置和置顶，以及必要时的尺寸调整
         const shouldSkipResize = isResizing.current || recentlyResized || isProgrammaticResize.current;
         
-        // 使用逻辑高度进行比较
-        if (!shouldSkipResize && currentHLogical !== targetH && Math.abs(currentHLogical - targetH) > 5) {
+        const widthDiff = Math.abs(currentWLogical - targetW);
+        const heightDiff = Math.abs(currentHLogical - targetH);
+
+        // 检查宽度和高度是否需要调整
+        if (!shouldSkipResize && (widthDiff > 5 || heightDiff > 5)) {
           isProgrammaticResize.current = true;
-          // 关键修复：这里使用逻辑宽度保持原有宽度，而不是物理宽度
-          await appWindow.setSize(new LogicalSize(currentWLogical, targetH));
+          console.log(`[Layout] Resizing: ${currentWLogical}x${currentHLogical} -> ${targetW}x${targetH}`);
+          // 关键修复：这里强制设定为 targetW 和 targetH
+          await appWindow.setSize(new LogicalSize(targetW, targetH));
           setTimeout(() => { isProgrammaticResize.current = false; }, 200);
         }
 
-        if (!isDragging.current && (currentX !== targetX || currentY !== targetY)) {
+        if (!isDragging.current && (Math.abs(currentX - targetX) > 2 || Math.abs(currentY - targetY) > 2)) {
+          console.log(`[Layout] Moving: ${currentX},${currentY} -> ${targetX},${targetY}`);
           await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
 
@@ -1602,7 +1691,7 @@ export default function App() {
     };
 
     syncLayout();
-  }, [showVersionScreen, isCollapsed, hasCustomPosition]);
+  }, [showVersionScreen, isCollapsed, hasCustomPosition, isGeometryLoaded]);
 
   if (showVersionScreen) {
     return (
@@ -2827,9 +2916,9 @@ export default function App() {
                            // Toggle off: set to 'all', 恢复尺寸
                            setSearchQuery({...searchQuery, item_type: 'all', size: opt.val === 'skill' ? lastItemSize : searchQuery.size});
                          } else if (opt.val === 'skill') {
-                           // 切换到技能：记住当前尺寸，设置为medium
+                           // 切换到技能：记住当前尺寸，设置为medium -> 改为"" (不筛选尺寸)
                            setLastItemSize(searchQuery.size);
-                           setSearchQuery({...searchQuery, item_type: opt.val, size: 'medium'});
+                           setSearchQuery({...searchQuery, item_type: opt.val, size: ""});
                          } else {
                            // 切换到物品：恢复之前的尺寸选择
                            const restoredSize = searchQuery.item_type === 'skill' ? lastItemSize : searchQuery.size;
@@ -3253,7 +3342,10 @@ export default function App() {
                         'diamond': '钻石+',
                         'legendary': '传说'
                       }[tierClass] || tierClass;
-                      const heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+
+                      let heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
+                      if (heroZh === "Common") heroZh = "通用";
+                      
                       const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
 
                       return (
@@ -3288,7 +3380,14 @@ export default function App() {
                             <div className="card-right">
                               <div className="top-right-group">
                                 {(() => {
-                                  const rawHero = item.heroes && item.heroes[0] ? item.heroes[0] : 'Common';
+                                  // 修复：正确处理 heroes 字段可能是字符串或数组的情况
+                                  let rawHero = 'Common';
+                                  if (Array.isArray(item.heroes) && item.heroes.length > 0) {
+                                    rawHero = item.heroes[0];
+                                  } else if (typeof item.heroes === 'string' && item.heroes) {
+                                    rawHero = item.heroes;
+                                  }
+                                  
                                   const heroKey = rawHero.split(' / ')[0];
                                   const heroColor = HERO_COLORS[heroKey] || undefined;
                                   const heroAvatarMap: Record<string, string> = {
@@ -3297,15 +3396,37 @@ export default function App() {
                                     'Vanessa': '/images/heroes/vanessa.webp',
                                     'Mak': '/images/heroes/mak.webp',
                                     'Dooley': '/images/heroes/dooley.webp',
-                                    'Stelle': '/images/heroes/stelle.webp'
+                                    'Stelle': '/images/heroes/stelle.webp',
+                                    // 兼容缩写
+                                    'P': '/images/heroes/pygmalien.webp',
+                                    'J': '/images/heroes/jules.webp',
+                                    'V': '/images/heroes/vanessa.webp',
+                                    'M': '/images/heroes/mak.webp',
+                                    'D': '/images/heroes/dooley.webp',
+                                    'S': '/images/heroes/stelle.webp'
                                   };
-                                  const avatar = heroAvatarMap[heroKey];
+
+                                  const avatar = heroAvatarMap[heroKey] || (heroKey.length === 1 && heroAvatarMap[heroKey.toUpperCase()]);
+                                  
+                                  const HeroIcon = () => (
+                                      <div className="toggle-btn hero-btn" style={{ 
+                                          width: 32, height: 32, minWidth: 32, minHeight: 32, 
+                                          padding: 0, marginRight: 0, cursor: 'default',
+                                          border: avatar ? 'none' : undefined 
+                                      }} title={heroZh}>
+                                          {avatar ? 
+                                              <img src={avatar} alt={heroZh} style={{width: 28, height: 28, borderRadius: '50%'}} /> : 
+                                              <span style={{color: heroColor}}>{heroZh}</span>
+                                          }
+                                      </div>
+                                  );
+
                                   if (activeTab === 'search') {
-                                    return avatar ? <img src={avatar} alt={heroZh} className="hero-avatar-badge" title={heroZh} /> : <span className="hero-badge" style={{marginRight: 0, color: heroColor}}>{heroZh}</span>;
+                                    return <HeroIcon />;
                                   }
                                   return (
                                     <>
-                                      {avatar ? <img src={avatar} alt={heroZh} className="hero-avatar-badge" title={heroZh} /> : <span className="hero-badge" style={{ color: heroColor }}>{heroZh}</span>}
+                                      <HeroIcon />
                                       <div 
                                         className={`pin-btn ${pinnedItems.has(expansionKey) ? 'active' : ''}`}
                                         onClick={(e) => togglePin(expansionKey, e)}
