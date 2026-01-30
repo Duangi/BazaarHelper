@@ -2850,30 +2850,10 @@ pub fn run() {
                     }
 
                     // --- Click Outside to Hide Logic ---
-                    let left_click = mouse.button_pressed.get(0).copied().unwrap_or(false);
-                    
-                    if left_click && !last_left_click {
-                        let handle_check = handle_monitor.clone();
-                        let check_x = mx;
-                        let check_y = my;
-                        
-                        // Check if click is outside detail-popup
-                        if let Some(popup_window) = handle_check.get_webview_window("detail-popup") {
-                            if popup_window.is_visible().unwrap_or(false) {
-                                if let (Ok(pos), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
-                                    let outside = check_x < pos.x || check_x > (pos.x + size.width as i32) ||
-                                                  check_y < pos.y || check_y > (pos.y + size.height as i32);
-                                    if outside {
-                                        println!("[Mouse Monitor] Left click outside detail-popup at ({}, {}), hiding.", check_x, check_y);
-                                        let handle_hide = handle_check.clone();
-                                        tauri::async_runtime::spawn(async move {
-                                            let _ = hide_detail_popup(handle_hide).await;
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // RE MOVED duplicate logic - merged into Global Click Handler above
+                    // let left_click = mouse.button_pressed.get(0).copied().unwrap_or(false);
+                    // if left_click ... (removed)
+
 
                     // --- Detail Popup Custom Hotkey (Close if open) ---
                     let hotkey_setup = get_cached_detail_hotkey();
@@ -2991,7 +2971,7 @@ pub fn run() {
 
                     last_trigger_active = trigger_active;
                     last_left_click = left_click;
-                    _last_right_click = mouse.button_pressed.get(2).copied().unwrap_or(false);
+                    _last_right_click = right_click;
                     
                     last_yolo_active = yolo_active;
                     last_detection_active = detection_active;

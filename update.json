@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNnpEVEZxZVBaL1pncDRXbDhLVldnRHNJdVVwRGZrZzVEUm0za2t2R1Z2N1lNdjVWTHB2ZkFhME9oVWtlMlFnTGRpYmlQNHliQ0YvUWYzRno3cjZ5V1FjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzQ4NzA0CWZpbGU6QmF6YWFySGVscGVyXzEuNC4xX3g2NC1zZXR1cC5leGUKZ2Z4QWdHM2MvQVB5NXMwbDg2UTI3L0MrWWtzQk42UkZXc1pZZG5Ib3dsREpxRUdIbCtxZjV1eTZObW40a09pSXh1cGltMGJiN0xRbDU3cTZvVjVyQXc9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.1/BazaarHelper_1.4.1_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjE1c0c3bXdQc3J0cWVPZmFmZm1hNWJqdE9SaTA4NlJlVGFJeVlNZXphcmNtNUl6bzRTaHlLL2k5bm8xL2oyTUd1QXZqdExlRjNGdmx1am45NklBNHdzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzU4NDA5CWZpbGU6QmF6YWFySGVscGVyXzEuNC40X3g2NC1zZXR1cC5leGUKaXlnZWVFYUg2TFg1WnlPVW01b1BReXN0bG9EVlh3TmxYMlgwblFPQUZTODk0TEVSM0pXS2JHQjBmYXVJVGU0cXFUVGk3V1dqaXlsNVNGRW1iVy9xRFE9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.4.4/BazaarHelper_1.4.4_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-30T04:51:44Z",
-    "version":  "1.4.1",
-    "notes":  "🎉 v1.4.1 更新来了：1.支持右键识别改键 默认还是右键 需要手动修改 2.更改百科搜索的样式为黑灰色系"
+    "pub_date":  "2026-01-30T07:33:29Z",
+    "version":  "1.4.4",
+    "notes":  "🎉 v1.4.4 （怀旧版本？）更新来了：1.首页自动更新增加进度条 2.从这个版本开始支持不更新，一直使用旧版本。 3.新增快捷键的重置。 4.之前的可交互详情框回来了。 5.一键识别所有野怪的功能回归"
 }
