@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjA0NnQ2VjlSbFpXeEZwV2lQMEtidFlkdlBGeVNVVW05anFyOG8zcUEvZzZWVzAzN1QyVTM2R2MvSUp3NTJaV3R0Uk4xUlZpUzFSS0hpcWRDMnBweUFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY5NzgzNjI5CWZpbGU6QmF6YWFySGVscGVyXzEuNS4wX3g2NC1zZXR1cC5leGUKa2hkYm11SndDMy8wNWhPa254NklOR25tWUZMNGc5Uzlwbnc2RmxkZW4ydnFQaDVFVGVPTEljRDBobVZLK2FxMmNyWlg0M01OcGtSV245OEhQQkZZRGc9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.5.0/BazaarHelper_1.5.0_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjhuTkRIZTFIdXZqZW1ZT3hSaHNyalNUSFZCWTgzRnNFUEE0VkY1cHl2TnI1ekM0eElzdlk0a2VYUEVBVlRvVXd1aHIzem1ZanVPY2svbzJRQjB5UGdJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcwNDU3NzI1CWZpbGU6QmF6YWFySGVscGVyXzEuNS4yX3g2NC1zZXR1cC5leGUKRnV1eTlablI2R2FpMXkxSE1aTG5WRktON09WRGd1NFEwelhQbVhFVVBpVzVxcWM5eUM0RWFWOUx0UDBJWlhTUitQM0VtbUtNejJwdjE3ZWpzVTV5REE9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.5.2/BazaarHelper_1.5.2_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-01-30T14:33:50Z",
-    "version":  "1.5.0",
-    "notes":  "🎉 v1.5.0 修复了一堆bug... 基本都是之前存在的功能。"
+    "pub_date":  "2026-02-07T09:48:45Z",
+    "version":  "1.5.2",
+    "notes":  "🎉 v1.5.2 更新了一些野怪数据..和新物品数据。新功能暂时还没做出来。先凑合用一下吧"
 }

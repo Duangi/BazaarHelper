@@ -50,14 +50,17 @@ export interface TierInfo {
 export interface MonsterSubItem {
   id?: string;
   name: string;
+  name_cn?: string;
   name_en?: string;
   tier?: string;
   current_tier?: string;
+  starting_tier?: string;
   tags?: string[];
   tiers: Record<string, TierInfo | null>;
   image: string;
   displayImg?: string;
   size?: string;
+  skills?: Array<{en: string, cn: string} | string>;  // 支持 SkillText 或纯字符串
 }
 
 export interface MonsterData {

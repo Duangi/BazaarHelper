@@ -10,6 +10,21 @@ interface SkillText {
     cn: string;
 }
 
+interface SkillDbData {
+    id: string;
+    name_en: string;
+    name_cn: string;
+    description_en: string;
+    description_cn: string;
+    size?: string;
+    starting_tier?: string;
+    available_tiers?: string;
+    heroes?: string;
+    tags?: string;
+    hidden_tags?: string;
+    descriptions: SkillText[];
+}
+
 interface ItemData {
     uuid: string;
     instance_id?: string;
@@ -35,6 +50,7 @@ interface ItemData {
     regen_tiers: string;
     lifesteal_tiers: string;
     skills: SkillText[];
+    skills_passive?: SkillText[];
     enchantments: string[];
     description: string;
     image: string;
@@ -42,6 +58,8 @@ interface ItemData {
     id?: string;
     name_en?: string;
     starting_tier?: string;
+    current_tier?: string;
+    tiers?: Record<string, TierInfo | null>;
 }
 
 interface TierInfo {
@@ -53,6 +71,7 @@ interface TierInfo {
 interface MonsterSubItem {
     id?: string;
     name: string;
+    name_cn?: string;
     name_en?: string;
     tier?: string;
     current_tier?: string;
@@ -254,10 +273,16 @@ export default function OverlayApp() {
     // Load items database for merging monster item details
     const [itemsDb, setItemsDb] = useState<Map<string, ItemData>>(new Map());
     const itemsDbRef = useRef<Map<string, ItemData>>(new Map());
+    const [skillsDb, setSkillsDb] = useState<Map<string, SkillDbData>>(new Map());
+    const skillsDbRef = useRef<Map<string, SkillDbData>>(new Map());
     
     useEffect(() => {
         itemsDbRef.current = itemsDb;
     }, [itemsDb]);
+    
+    useEffect(() => {
+        skillsDbRef.current = skillsDb;
+    }, [skillsDb]);
 
     useEffect(() => {
         (async () => {
@@ -275,6 +300,27 @@ export default function OverlayApp() {
                 console.log('[Overlay] Loaded items_db:', map.size, 'items');
             } catch (e) {
                 console.error('[Overlay] Failed to load items_db:', e);
+            }
+        })();
+    }, []);
+    
+    // Load skills database
+    useEffect(() => {
+        (async () => {
+            try {
+                const path = await resolveResource('resources/skills_db.json');
+                const response = await fetch(convertFileSrc(path));
+                const skills: SkillDbData[] = await response.json();
+                const map = new Map<string, SkillDbData>();
+                skills.forEach(skill => {
+                    if (skill.id) map.set(skill.id, skill);
+                    if (skill.name_cn) map.set(skill.name_cn, skill);
+                    if (skill.name_en) map.set(skill.name_en, skill);
+                });
+                setSkillsDb(map);
+                console.log('[Overlay] Loaded skills_db:', map.size, 'skills');
+            } catch (e) {
+                console.error('[Overlay] Failed to load skills_db:', e);
             }
         })();
     }, []);
@@ -588,17 +634,39 @@ export default function OverlayApp() {
             displayImgBg,
             skills: m.skills ? await Promise.all(m.skills.map(async s => {
                 let imgPath = '';
+                const id = s.id || s.name;
+                
+                // 从 skills_db 获取完整技能信息
+                const fullSkillInfo = id ? skillsDbRef.current.get(id) : null;
+                
+                // 合并技能信息，将 descriptions 字段映射到 skills
+                let mergedSkill = s;
+                if (fullSkillInfo) {
+                    mergedSkill = {
+                        ...s,
+                        // 使用 skills_db 中的 descriptions 作为 skills 字段
+                        skills: fullSkillInfo.descriptions || s.skills || [],
+                        name: fullSkillInfo.name_cn || s.name,
+                        name_cn: fullSkillInfo.name_cn,
+                        name_en: fullSkillInfo.name_en,
+                        size: fullSkillInfo.size || s.size,
+                        starting_tier: fullSkillInfo.starting_tier || s.starting_tier
+                    };
+                }
+                
+                // 获取技能图标
                 try {
-                    const art = s.id ? skillsArtMap[s.id] : undefined;
+                    const art = id ? skillsArtMap[id] : undefined;
                     if (art) {
                         const base = art.split('/').pop() || art;
                         const nameNoExt = base.replace(/\.[^/.]+$/, '');
                         imgPath = `images/skill/${nameNoExt}.webp`;
                     } else {
-                        imgPath = `images/${s.id || s.name}.webp`;
+                        imgPath = `images/${id || s.name}.webp`;
                     }
-                } catch (e) { imgPath = `images/${s.id || s.name}.webp`; }
-                return { ...s, displayImg: await getImg(imgPath) };
+                } catch (e) { imgPath = `images/${id || s.name}.webp`; }
+                
+                return { ...mergedSkill, displayImg: await getImg(imgPath) };
             })) : [],
             items: m.items ? await Promise.all(m.items.map(async i => {
                 const id = i.id || i.name;
@@ -625,7 +693,18 @@ export default function OverlayApp() {
                 
                 // Merge: prefer item info from DB, but keep existing runtime info if needed. 
                 const merged = fullItemInfo ? 
-                    { ...fullItemInfo, ...i, skills: fullItemInfo.skills || i.skills || [] } : i;
+                    { 
+                        ...i,  // 先用 monsters_db 的基础信息
+                        ...fullItemInfo, // 覆盖为 items_db 的完整信息
+                        // 但保留 monsters_db 中的运行时字段
+                        current_tier: i.current_tier || fullItemInfo.current_tier,
+                        tier: i.tier || fullItemInfo.tier,
+                        // 确保 skills 来自 items_db，合并 skills 和 skills_passive
+                        skills: [
+                            ...(fullItemInfo.skills || []),
+                            ...(fullItemInfo.skills_passive || [])
+                        ]
+                    } : i;
 
                 // Determine Tier & Color Logic
                 // Priority: current_tier > tier (from DB) > bronze

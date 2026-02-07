@@ -96,6 +96,29 @@
     ]
   },
   {
+    "id": "6ef03e95-f3af-47d8-871f-e8c1e043a195",
+    "name_en": "Medic's Shield",
+    "name_cn": "",
+    "description_en": "Your rightmost item has +10/20/30 Shield if it is a Shield item and +10/20/30 Heal if it is a Heal item.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎",
+    "tags": "",
+    "hidden_tags": "HealRef / 治疗引用 | ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_MedicsShield.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your rightmost item has +10/20/30 Shield if it is a Shield item and +10/20/30 Heal if it is a Heal item.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "b6334c78-623c-4662-8642-8e05555d873a",
     "name_en": "Quick Freeze",
     "name_cn": "急速冻结",
@@ -168,8 +191,8 @@
     "id": "d6251362-7c11-4a7e-9d6d-97f445f2f828",
     "name_en": "Burn Containment",
     "name_cn": "灼烧遏制",
-    "description_en": "The first 5/10 times you Burn each fight, Charge a Shield item 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发灼烧时，为一件护盾物品充能1秒。",
+    "description_en": "The first 4/8 times you Burn each fight, Charge a Shield item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发灼烧时，为一件护盾物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -182,8 +205,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Burn each fight, Charge a Shield item 1 second(s).",
-        "cn": "每场战斗前5/10次触发灼烧时，为一件护盾物品充能1秒。"
+        "en": "The first 4/8 times you Burn each fight, Charge a Shield item 1 second(s).",
+        "cn": "每场战斗前4/8次触发灼烧时，为一件护盾物品充能1秒。"
       }
     ]
   },
@@ -230,6 +253,29 @@
       {
         "en": "Your leftmost item has +8/16/24/32% Crit Chance.",
         "cn": "最左侧物品的暴击率+8/16/24/32%。"
+      }
+    ]
+  },
+  {
+    "id": "e10188fc-6b44-49b8-afbb-6c9d41b9b85f",
+    "name_en": "Surrounded by Joy",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, adjacent items gain 15 Joy for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯",
+    "tags": "",
+    "hidden_tags": "JoyRef / 快乐引用",
+    "art_key": "Icon_Skill_Placeholder.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, adjacent items gain 15 Joy for the fight.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -372,6 +418,52 @@
     ]
   },
   {
+    "id": "2d9ee50a-e31b-4b43-b667-ca93ed1e248f",
+    "name_en": "Quicken Weapons",
+    "name_cn": "",
+    "description_en": "The Cooldowns of your Weapons with Cooldown greater than 10 seconds are reduced by 1000/2000 second(s).",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_QuickDraw.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The Cooldowns of your Weapons with Cooldown greater than 10 seconds are reduced by 1000/2000 second(s).",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "ee6059b6-f960-4ede-a65d-ad97cf4393b7",
+    "name_en": "Small item Specialist",
+    "name_cn": "",
+    "description_en": "Your items have +5/10/15% Crit Chance if you have 4 or more Small items.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_SmallSpecialist.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items have +5/10/15% Crit Chance if you have 4 or more Small items.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "8c16e6c8-2f44-4335-b31e-5b2268bf790e",
     "name_en": "Finesse Shield",
     "name_cn": "敏捷护盾",
@@ -460,6 +552,29 @@
       {
         "en": "You have +75/175/275 Max Health for each Non-Weapon item you have. [75/175/275]",
         "cn": "每拥有一件非武器物品，就+75/175/275最大生命值。[75/175/275]"
+      }
+    ]
+  },
+  {
+    "id": "cf56751a-0973-486f-aec4-c8b21227b648",
+    "name_en": "Middle of the Pack",
+    "name_cn": "",
+    "description_en": "Your Medium items' Cooldowns are reduced by 5/10%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_MiddleOfThePack.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Medium items' Cooldowns are reduced by 5/10%.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -648,6 +763,75 @@
     ]
   },
   {
+    "id": "c6619a2a-642e-4d2b-9008-2ad9ecb9c5cc",
+    "name_en": "Virulent Toxins",
+    "name_cn": "",
+    "description_en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+    "description_cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "Icon_Skill_MAK_ToxicRegeneration",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+        "cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "c08396cd-ffc6-4b3f-86f8-18c053bee76f",
+    "name_en": "Swole",
+    "name_cn": "",
+    "description_en": "You have +Max Health equal to 1/2 times the Damage of your Weapons. [1/2]",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "Health / 生命值 | DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_Swole.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +Max Health equal to 1/2 times the Damage of your Weapons. [1/2]",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "2c637e34-ea4d-4532-9118-fddd9e637342",
+    "name_en": "Improvised Heal",
+    "name_cn": "",
+    "description_en": "When you Crit, your Heal items gain +10/20/30 Heal for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎",
+    "tags": "",
+    "hidden_tags": "HealRef / 治疗引用 | CritRef / 暴击引用",
+    "art_key": "Icon_Skill_ImprovisedHealing.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Crit, your Heal items gain +10/20/30 Heal for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "1e8293e9-c60f-464a-9d44-21e766978edc",
     "name_en": "Improvised Burn",
     "name_cn": "临时灼烧",
@@ -656,7 +840,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_ImprovisedBurn.png",
@@ -997,6 +1181,29 @@
     ]
   },
   {
+    "id": "f9b262a7-73fc-43b0-ad69-da351e927829",
+    "name_en": "First Degree Burns",
+    "name_cn": "",
+    "description_en": "Your Small Burn items have +1/2/3/4 Burn.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用",
+    "art_key": "Icon_Skill_FirstDegreeBurn.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Small Burn items have +1/2/3/4 Burn.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "f6a49c4a-7ee7-4aa7-8162-392eee2d3835",
     "name_en": "First Flames",
     "name_cn": "初焰",
@@ -1303,8 +1510,8 @@
     "id": "eea71cd9-2688-4c4d-99e7-6eee44cf47a2",
     "name_en": "Panic",
     "name_cn": "恐慌",
-    "description_en": "The first time you fall below 50% Health each fight, Reload {ability.0.targets} item(s) and Charge {ability.1.targets} Ammo items 1 second.",
-    "description_cn": "每场战斗己方生命值首次降至50%时，装填{ability.0.targets}件物品，并为{ability.1.targets}件弹药物品充能1秒。",
+    "description_en": "The first time you fall below 50% Health each fight, Reload  item(s) and Charge  Ammo items 1 second.",
+    "description_cn": "每场战斗己方生命值首次降至50%时，装填件物品，并为件弹药物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -1317,8 +1524,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you fall below 50% Health each fight, Reload {ability.0.targets} item(s) and Charge {ability.1.targets} Ammo items 1 second.",
-        "cn": "每场战斗己方生命值首次降至50%时，装填{ability.0.targets}件物品，并为{ability.1.targets}件弹药物品充能1秒。"
+        "en": "The first time you fall below 50% Health each fight, Reload  item(s) and Charge  Ammo items 1 second.",
+        "cn": "每场战斗己方生命值首次降至50%时，装填件物品，并为件弹药物品充能1秒。"
       }
     ]
   },
@@ -1461,6 +1668,52 @@
     ]
   },
   {
+    "id": "279ca038-9f02-45ea-a946-7bd05be37d57",
+    "name_en": "Defender",
+    "name_cn": "",
+    "description_en": "You have +50/150/300/500 Health and your Shield items' Cooldowns are reduced by 1/2/3/4%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用 | Cooldown / 冷却 | Health / 生命值",
+    "art_key": "Icon_Skills_Defender.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +50/150/300/500 Health and your Shield items' Cooldowns are reduced by 1/2/3/4%.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "7919e8b0-d749-4c13-892e-bc794c8cf06e",
+    "name_en": "Heat Shield",
+    "name_cn": "",
+    "description_en": "When you Burn with an item, Shield equal to 0 times that item's Burn.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用 | Shield / 护盾",
+    "art_key": "Icon_Skill_HeatShield.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Burn with an item, Shield equal to 0 times that item's Burn.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "f790df42-e8e6-4329-aaeb-8a757c02c326",
     "name_en": "Vital Renewal",
     "name_cn": "生命复苏",
@@ -1576,6 +1829,29 @@
     ]
   },
   {
+    "id": "afe451fd-7726-4ed6-9ad9-48d917a12012",
+    "name_en": "Specialist",
+    "name_cn": "",
+    "description_en": "If you have exactly a Weapon, your Shield items have +10/20/30 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_Specialist.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "If you have exactly a Weapon, your Shield items have +10/20/30 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "6550ba8c-8d90-41f8-82c8-a0af040458ce",
     "name_en": "Depth Charge",
     "name_cn": "深渊冲刺",
@@ -1606,8 +1882,8 @@
     "id": "edb9b01b-b4ce-4a77-848e-0a49b8a23c16",
     "name_en": "Potent Potables",
     "name_cn": "强效药液",
-    "description_en": "Your Poison items have +1/2/3 Poison for each Potion you have. [1/2/3] | Your Burn items have +1/2/3 Burn for each Potion you have. [{aura.1}]",
-    "description_cn": "每拥有一瓶药水，剧毒物品+1/2/3剧毒。[1/2/3] | 每拥有一瓶药水，灼烧物品就+1/2/3灼烧。[{aura.1}]",
+    "description_en": "Your Poison items have +1/2/3 Poison for each Potion you have. [1/2/3] | Your Burn items have +1/2/3 Burn for each Potion you have.",
+    "description_cn": "每拥有一瓶药水，剧毒物品+1/2/3剧毒。[1/2/3] | 每拥有一瓶药水，灼烧物品就+1/2/3灼烧。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -1624,8 +1900,8 @@
         "cn": "每拥有一瓶药水，剧毒物品+1/2/3剧毒。[1/2/3]"
       },
       {
-        "en": "Your Burn items have +1/2/3 Burn for each Potion you have. [{aura.1}]",
-        "cn": "每拥有一瓶药水，灼烧物品就+1/2/3灼烧。[{aura.1}]"
+        "en": "Your Burn items have +1/2/3 Burn for each Potion you have.",
+        "cn": "每拥有一瓶药水，灼烧物品就+1/2/3灼烧。"
       }
     ]
   },
@@ -1680,7 +1956,7 @@
     "name_en": "Regenerative",
     "name_cn": "元气恢复",
     "description_en": "You have +10/20/30 Regen.",
-    "description_cn": "++10/20/30生命再生量。",
+    "description_cn": "+10/20/30生命再生量。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -1694,7 +1970,7 @@
     "descriptions": [
       {
         "en": "You have +10/20/30 Regen.",
-        "cn": "++10/20/30生命再生量。"
+        "cn": "+10/20/30生命再生量。"
       }
     ]
   },
@@ -1837,6 +2113,52 @@
     ]
   },
   {
+    "id": "5e193004-5e5f-4166-96a0-9a51a3ef8443",
+    "name_en": "Flanking Shield",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, adjacent Shield items gain 15/30/50 Shield for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_FlankingShield.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, adjacent Shield items gain 15/30/50 Shield for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "52492df1-d2da-4784-ad59-2afb05802684",
+    "name_en": "Balanced Workout",
+    "name_cn": "",
+    "description_en": "You have +50/150/300/500 Max Health for each Medium item you have. [50/150/300/500]",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Health / 生命值",
+    "art_key": "Icon_Skill_BalanceWorkout.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +50/150/300/500 Max Health for each Medium item you have. [50/150/300/500]",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "e41f6a66-9257-45c3-b249-9f9ef0f93f3e",
     "name_en": "Venomous Blade",
     "name_cn": "毒刃",
@@ -1891,7 +2213,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Mak / 马克",
+    "heroes": "Mak / 马克 | Jules / 朱尔斯",
     "tags": "",
     "hidden_tags": "Regen / 再生",
     "art_key": "Icon_Skill_EmergencyDraught.png",
@@ -1978,8 +2300,8 @@
     "id": "ae686d2c-fce1-401a-8c65-f34fedcce740",
     "name_en": "Line Cook",
     "name_cn": "炉头厨师",
-    "description_en": "The first time you use a Tool each fight, Charge {ability.0.targets} Food for 1 second.",
-    "description_cn": "每场战斗首次使用工具时，为{ability.0.targets}件食物充能1秒。",
+    "description_en": "The first time you use a Tool each fight, Charge  Food for 1 second.",
+    "description_cn": "每场战斗首次使用工具时，为件食物充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -1992,8 +2314,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use a Tool each fight, Charge {ability.0.targets} Food for 1 second.",
-        "cn": "每场战斗首次使用工具时，为{ability.0.targets}件食物充能1秒。"
+        "en": "The first time you use a Tool each fight, Charge  Food for 1 second.",
+        "cn": "每场战斗首次使用工具时，为件食物充能1秒。"
       }
     ]
   },
@@ -2047,8 +2369,8 @@
     "id": "571b3909-e04c-454f-86ae-61cc46ea3066",
     "name_en": "Calming Heals",
     "name_cn": "抚慰疗愈",
-    "description_en": "The first 5/10 times you Slow each fight, Charge a Heal or Regen item 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发减速时，为一件治疗或生命再生物品充能1秒。",
+    "description_en": "The first 4/8 times you Slow each fight, Charge a Heal or Regen item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发减速时，为一件治疗或生命再生物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -2061,8 +2383,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Slow each fight, Charge a Heal or Regen item 1 second(s).",
-        "cn": "每场战斗前5/10次触发减速时，为一件治疗或生命再生物品充能1秒。"
+        "en": "The first 4/8 times you Slow each fight, Charge a Heal or Regen item 1 second(s).",
+        "cn": "每场战斗前4/8次触发减速时，为一件治疗或生命再生物品充能1秒。"
       }
     ]
   },
@@ -2162,8 +2484,8 @@
     "id": "de35c728-b2e6-4cf8-82a2-2a1a41d782fe",
     "name_en": "Scramble Fighters",
     "name_cn": "紧急起飞",
-    "description_en": "The first time you use an item each fight, {ability.0.targets} item(s) start Flying. | Your Flying Weapons have +20/30/40 Damage.",
-    "description_cn": "每场战斗首次使用物品时，{ability.0.targets}件物品开始飞行。 | 飞行武器+20/30/40伤害。",
+    "description_en": "The first time you use an item each fight,  item(s) start Flying. | Your Flying Weapons have +20/30/40 Damage.",
+    "description_cn": "每场战斗首次使用物品时，件物品开始飞行。 | 飞行武器+20/30/40伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -2176,8 +2498,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, {ability.0.targets} item(s) start Flying.",
-        "cn": "每场战斗首次使用物品时，{ability.0.targets}件物品开始飞行。"
+        "en": "The first time you use an item each fight,  item(s) start Flying.",
+        "cn": "每场战斗首次使用物品时，件物品开始飞行。"
       },
       {
         "en": "Your Flying Weapons have +20/30/40 Damage.",
@@ -2210,24 +2532,24 @@
   },
   {
     "id": "1798b189-818a-456d-b7c5-efddf8da15c2",
-    "name_en": "Advanced Synthetics",
-    "name_cn": "高分子复合材料",
-    "description_en": "When you Level Up, upgrade a lower tier item.",
-    "description_cn": "等级提升时，升级一件低级别物品。",
+    "name_en": "Repair Mechanic",
+    "name_cn": "修复技师",
+    "description_en": "The first 1/2 times one of your items is destroyed each fight, repair it.",
+    "description_cn": "每场战斗中，己方物品前1/2次被摧毁时将其修复。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Stelle / 斯黛拉 | Dooley / 杜利 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Vanessa / 凡妮莎",
     "tags": "",
-    "hidden_tags": "Level",
-    "art_key": "Icon_Skill_DOO_AdvancedSynthetics.png",
+    "hidden_tags": "",
+    "art_key": "Icon_Skill_STE_MasterMechanic",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Level Up, upgrade a lower tier item.",
-        "cn": "等级提升时，升级一件低级别物品。"
+        "en": "The first 1/2 times one of your items is destroyed each fight, repair it.",
+        "cn": "每场战斗中，己方物品前1/2次被摧毁时将其修复。"
       }
     ]
   },
@@ -2327,8 +2649,8 @@
     "id": "18cd63c6-6235-45f5-b4e9-74f19fcf9edc",
     "name_en": "Tool Fight",
     "name_cn": "工具斗法",
-    "description_en": "The first time your enemy uses an item each fight, {ability.0.targets} of your Tools starts Flying.",
-    "description_cn": "每场战斗中敌人首次使用物品时，令{ability.0.targets}件己方工具开始飞行。",
+    "description_en": "The first time your enemy uses an item each fight,  of your Tools starts Flying.",
+    "description_cn": "每场战斗中敌人首次使用物品时，令件己方工具开始飞行。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -2341,8 +2663,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time your enemy uses an item each fight, {ability.0.targets} of your Tools starts Flying.",
-        "cn": "每场战斗中敌人首次使用物品时，令{ability.0.targets}件己方工具开始飞行。"
+        "en": "The first time your enemy uses an item each fight,  of your Tools starts Flying.",
+        "cn": "每场战斗中敌人首次使用物品时，令件己方工具开始飞行。"
       }
     ]
   },
@@ -2366,6 +2688,75 @@
       {
         "en": "The first time you fall below half Health in a fight, use your Friends.",
         "cn": "每场战斗己方生命值首次降至一半时，自动使用伙伴。"
+      }
+    ]
+  },
+  {
+    "id": "e21930e9-942f-435a-9384-a17042a87e18",
+    "name_en": "Delayed Burn",
+    "name_cn": "",
+    "description_en": "Your Slowest Burn item has +5 Burn.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用",
+    "art_key": "Icon_Skill_Placeholder.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Slowest Burn item has +5 Burn.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "8c9cdd4e-d494-42d9-918a-bf994fdecf3e",
+    "name_en": "Small Gains",
+    "name_cn": "",
+    "description_en": "You have +25/75/150/250 Max Health for each Small item you have. [25/75/150/250]",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Health / 生命值",
+    "art_key": "Icon_Skill_SmallGains.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +25/75/150/250 Max Health for each Small item you have. [25/75/150/250]",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "07fbd5ab-c52a-42d8-801d-8992c44714de",
+    "name_en": "Standardized Toxins",
+    "name_cn": "",
+    "description_en": "Your Medium Poison items have +2/4/6/8 Poison.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_StandadizedPoison.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Medium Poison items have +2/4/6/8 Poison.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -2603,8 +2994,8 @@
     "id": "08b801ea-e721-42a9-82e3-56ff3892c49c",
     "name_en": "Deadly Waters",
     "name_cn": "致命水域",
-    "description_en": "Your Aquatic Weapons deal +20/30/40/50 Damage.",
-    "description_cn": "水系武器造成+20/30/40/50伤害。",
+    "description_en": "Your Aquatic Weapons deal +20/25/30/35 Damage.",
+    "description_cn": "水系武器造成+20/25/30/35伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -2617,8 +3008,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Aquatic Weapons deal +20/30/40/50 Damage.",
-        "cn": "水系武器造成+20/30/40/50伤害。"
+        "en": "Your Aquatic Weapons deal +20/25/30/35 Damage.",
+        "cn": "水系武器造成+20/25/30/35伤害。"
       }
     ]
   },
@@ -2669,6 +3060,29 @@
     ]
   },
   {
+    "id": "fe8e65e6-69c7-4e1e-b92f-b23af65cb819",
+    "name_en": "Quick Protection",
+    "name_cn": "",
+    "description_en": "Your fastest Shield item has +4/12/24/40 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_RapidProtection.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your fastest Shield item has +4/12/24/40 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "570a7c19-0dab-459f-b545-6ade12a69312",
     "name_en": "Toxic Friendship",
     "name_cn": "恶毒友谊",
@@ -2703,7 +3117,7 @@
     "heroes": "Vanessa / 凡妮莎",
     "tags": "Weapon / 武器",
     "hidden_tags": "AmmoRef / 弹药引用 | DamageRef / 伤害引用",
-    "art_key": "Icon_Skill_VAN_FrontlineLogistics",
+    "art_key": "Icon_Skill_FrontlineLogistics",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
@@ -2861,7 +3275,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利",
+    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎",
     "tags": "Friend / 伙伴 | Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_DOO_BeautifulFriendship.png",
@@ -3010,6 +3424,29 @@
       {
         "en": "Your Weapons have +1/2/3 Damage for each ammo on your items. [1/2/3]",
         "cn": "物品每拥有一发弹药，己方武器就+1/2/3伤害。[1/2/3]"
+      }
+    ]
+  },
+  {
+    "id": "5ce84084-380c-4d9d-94ab-cfbfaa1d0bc2",
+    "name_en": "Energy Transference",
+    "name_cn": "能量转移",
+    "description_en": "The first time one of your items is Destroyed each fight, Charge all your items 3/5 seconds",
+    "description_cn": "每场战斗中，己方物品首次被摧毁时，为己方所有物品充能3/5秒",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Charge / 充能",
+    "art_key": "Icon_Skill_MON_TheVessel",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time one of your items is Destroyed each fight, Charge all your items 3/5 seconds",
+        "cn": "每场战斗中，己方物品首次被摧毁时，为己方所有物品充能3/5秒"
       }
     ]
   },
@@ -3229,7 +3666,7 @@
     "name_en": "Void Render",
     "name_cn": "空蚀裂解器",
     "description_en": "When you destroy an item, your items gain +100/200 Damage and +10/20 Burn for the fight.",
-    "description_cn": "摧毁物品时，己方物品伤害提高+100/200、灼烧提高+10/20（限本场战斗）。",
+    "description_cn": "当你在战斗中摧毁一件物品时，己方物品伤害提高+100/200、灼烧提高+10/20（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -3243,7 +3680,30 @@
     "descriptions": [
       {
         "en": "When you destroy an item, your items gain +100/200 Damage and +10/20 Burn for the fight.",
-        "cn": "摧毁物品时，己方物品伤害提高+100/200、灼烧提高+10/20（限本场战斗）。"
+        "cn": "当你在战斗中摧毁一件物品时，己方物品伤害提高+100/200、灼烧提高+10/20（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "1eebbbc3-595a-485c-be96-0755c9c7c2a5",
+    "name_en": "Toxic Spores",
+    "name_cn": "",
+    "description_en": "Your Small Poison items have +1/2/3/4 Poison.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_ToxicSpores.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Small Poison items have +1/2/3/4 Poison.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -3441,7 +3901,7 @@
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎",
-    "tags": "",
+    "tags": "Friend / 伙伴",
     "hidden_tags": "Burn / 灼烧",
     "art_key": "Icon_Skill_DOO_WarmHugs.png",
     "card_pack_id": "",
@@ -3524,6 +3984,47 @@
     ]
   },
   {
+    "id": "f1078e92-7092-4674-a279-b8d9962e7752",
+    "name_en": "Speed",
+    "name_cn": "",
+    "description_en": "Your items' Cooldowns are reduced by 2/3/4/5%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_Speed.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items' Cooldowns are reduced by 2/3/4/5%.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "1034cd09-ce16-44ad-9a73-ba86a592c9d2",
+    "name_en": "Keen Edge",
+    "name_cn": "",
+    "description_en": "",
+    "description_cn": "",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Vanessa / 凡妮莎",
+    "tags": "",
+    "hidden_tags": "",
+    "art_key": "Icon_Skill_VAN_KeenEdge",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": []
+  },
+  {
     "id": "6216741f-f7fe-4de0-82c0-3733263378f1",
     "name_en": "Critical Protector",
     "name_cn": "暴击防护者",
@@ -3555,7 +4056,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Stelle / 斯黛拉 | Dooley / 杜利",
     "tags": "Vehicle / 载具",
     "hidden_tags": "Haste / 加速 | SlowRef / 减速引用",
     "art_key": "Icon_Skill_Outmaneuver.png",
@@ -3593,6 +4094,29 @@
     ]
   },
   {
+    "id": "c4c70f57-c51e-4bc4-848c-0f0e7fbddd28",
+    "name_en": "Small Weaponry",
+    "name_cn": "",
+    "description_en": "Your Small Weapons deal +3/9/18/30 Damage.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_SmallWeaponry.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Small Weapons deal +3/9/18/30 Damage.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "7f097b31-c29e-4082-a835-6d6457c2d536",
     "name_en": "Start-Up Sequence",
     "name_cn": "起步流程",
@@ -3619,8 +4143,8 @@
     "id": "3728b5fe-43aa-4f77-b7a8-b20c3b359295",
     "name_en": "Creeping Toxins",
     "name_cn": "蜗行毒素",
-    "description_en": "The first 5/10 times you Slow each fight, Charge a Poison item 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发减速时，为一件剧毒物品充能1秒。",
+    "description_en": "The first 4/8 times you Slow each fight, Charge a Poison item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发减速时，为一件剧毒物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -3633,8 +4157,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Slow each fight, Charge a Poison item 1 second(s).",
-        "cn": "每场战斗前5/10次触发减速时，为一件剧毒物品充能1秒。"
+        "en": "The first 4/8 times you Slow each fight, Charge a Poison item 1 second(s).",
+        "cn": "每场战斗前4/8次触发减速时，为一件剧毒物品充能1秒。"
       }
     ]
   },
@@ -3665,8 +4189,8 @@
     "id": "94ea865d-07ca-4e54-a1cb-8cca3945c3c6",
     "name_en": "Street Food",
     "name_cn": "街头美食",
-    "description_en": "The first time you use an item each fight, Haste {ability.0.targets} Food item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次使用物品时，加速{ability.0.targets}件食物2秒。",
+    "description_en": "The first time you use an item each fight, Haste  Food item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次使用物品时，加速件食物2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -3679,8 +4203,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, Haste {ability.0.targets} Food item(s) for 2 second(s).",
-        "cn": "每场战斗首次使用物品时，加速{ability.0.targets}件食物2秒。"
+        "en": "The first time you use an item each fight, Haste  Food item(s) for 2 second(s).",
+        "cn": "每场战斗首次使用物品时，加速件食物2秒。"
       }
     ]
   },
@@ -3750,6 +4274,29 @@
       {
         "en": "One of your slots becomes a Stove (The item here is Heated)",
         "cn": "一个己方栏位变为炉灶（此栏位中的物品获得高温效果）"
+      }
+    ]
+  },
+  {
+    "id": "aa59ff52-e4de-4728-bf9c-3ac8411ecbd8",
+    "name_en": "Large Poisons",
+    "name_cn": "",
+    "description_en": "Your Large Poison items have +4/8/12/16 Poison.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_LargePoison.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Large Poison items have +4/8/12/16 Poison.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -3873,11 +4420,57 @@
     ]
   },
   {
+    "id": "7e32e9be-23d1-4d3f-a103-0a0db10bc4f4",
+    "name_en": "Cauterize",
+    "name_cn": "",
+    "description_en": "When you are Burned, gain 2/4/8 Regen for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "tags": "",
+    "hidden_tags": "Regen / 再生 | BurnRef / 灼烧引用",
+    "art_key": "Icon_Skill_Cauterize.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you are Burned, gain 2/4/8 Regen for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "c442e2c4-0e93-4efb-b6d0-909cee428c95",
+    "name_en": "Concentrated Venom",
+    "name_cn": "",
+    "description_en": "Your highest Poison item has +2/4/6/8 Poison.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_ConcentratedVenom.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your highest Poison item has +2/4/6/8 Poison.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "8f33e0aa-7912-4c77-9a10-609e5ce0f4e7",
     "name_en": "Leverage Momentum",
     "name_cn": "顺势而动",
-    "description_en": "When an item is destroyed, {ability.0.targets} of your item(s) start Flying.",
-    "description_cn": "有物品被摧毁时，令{ability.0.targets}件己方物品开始飞行。",
+    "description_en": "When an item is destroyed,  of your item(s) start Flying.",
+    "description_cn": "有物品被摧毁时，令件己方物品开始飞行。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -3890,8 +4483,35 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When an item is destroyed, {ability.0.targets} of your item(s) start Flying.",
-        "cn": "有物品被摧毁时，令{ability.0.targets}件己方物品开始飞行。"
+        "en": "When an item is destroyed,  of your item(s) start Flying.",
+        "cn": "有物品被摧毁时，令件己方物品开始飞行。"
+      }
+    ]
+  },
+  {
+    "id": "87d058f2-828f-4737-a61e-3c9320bfd4a5",
+    "name_en": "Warrior",
+    "name_cn": "",
+    "description_en": "Your Weapons deal +1/3/6/10 Damage. | You have +50/150/300/500 Max Health.",
+    "description_cn": "武器造成+1/3/6/10伤害。 | [未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用 | Health / 生命值",
+    "art_key": "Icon_Skill_Warrior.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Weapons deal +1/3/6/10 Damage.",
+        "cn": "武器造成+1/3/6/10伤害。"
+      },
+      {
+        "en": "You have +50/150/300/500 Max Health.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -3950,7 +4570,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Vanessa / 凡妮莎",
     "tags": "",
     "hidden_tags": "",
     "art_key": "Icon_Skill_DesperateFreeze.png",
@@ -3969,7 +4589,7 @@
     "name_en": "Secret Ingredient",
     "name_cn": "秘密食材",
     "description_en": "If you have exactly 1 Food, when you use it, give your Weapons +10/20 Damage for the fight.",
-    "description_cn": "如果只有1件食物，则使用该食物时，武器在本场战斗中的伤害+10/20。",
+    "description_cn": "如果你只有1件食物，则使用该食物时，你的所有武器在本场战斗中的伤害+10/20。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -3983,7 +4603,7 @@
     "descriptions": [
       {
         "en": "If you have exactly 1 Food, when you use it, give your Weapons +10/20 Damage for the fight.",
-        "cn": "如果只有1件食物，则使用该食物时，武器在本场战斗中的伤害+10/20。"
+        "cn": "如果你只有1件食物，则使用该食物时，你的所有武器在本场战斗中的伤害+10/20。"
       }
     ]
   },
@@ -4314,11 +4934,34 @@
     ]
   },
   {
+    "id": "f2782115-1920-4bf2-9306-32697bcfee15",
+    "name_en": "Critical Captain",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, your items gain +4/8/12/16% Crit Chance for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_CriticalCaptain.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, your items gain +4/8/12/16% Crit Chance for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "d56a6e90-f664-4791-8b78-5c8bd3f45f80",
     "name_en": "Sick Burn",
     "name_cn": "毒性灼烧",
-    "description_en": "The first 5/10 times you Poison each fight, Charge a Burn item 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发剧毒时，为一件灼烧物品充能1秒。",
+    "description_en": "The first 4/8 times you Poison each fight, Charge a Burn item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发剧毒时，为一件灼烧物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -4331,8 +4974,54 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Poison each fight, Charge a Burn item 1 second(s).",
-        "cn": "每场战斗前5/10次触发剧毒时，为一件灼烧物品充能1秒。"
+        "en": "The first 4/8 times you Poison each fight, Charge a Burn item 1 second(s).",
+        "cn": "每场战斗前4/8次触发剧毒时，为一件灼烧物品充能1秒。"
+      }
+    ]
+  },
+  {
+    "id": "549bc8cf-3d6b-48b8-ae61-2ce416c2daeb",
+    "name_en": "Concentrated Firepower",
+    "name_cn": "",
+    "description_en": "Your highest Damage Weapon deals +5/15/30/50 Damage.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_ConcentratedFirepower.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your highest Damage Weapon deals +5/15/30/50 Damage.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "7931571a-3d32-41e8-bf7b-ca6b4d1b7a3d",
+    "name_en": "Burning Shield",
+    "name_cn": "",
+    "description_en": "The first time you fall below half Health each fight, Shield equal to 2/3/4 times the Burn on your enemy. [0]",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Dooley / 杜利 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用 | Shield / 护盾",
+    "art_key": "Icon_Skill_BurningShield.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you fall below half Health each fight, Shield equal to 2/3/4 times the Burn on your enemy. [0]",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -4475,6 +5164,29 @@
     ]
   },
   {
+    "id": "fb4a4bf9-581c-4e36-aed7-b77ec7e515bb",
+    "name_en": "Wild Strength",
+    "name_cn": "",
+    "description_en": "You have +5% Crit Chance.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_MON_PackLoyalty_02",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +5% Crit Chance.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "a9b441e1-5824-4855-9359-2ab4643d9ff5",
     "name_en": "Toxic Shield",
     "name_cn": "毒性护盾",
@@ -4590,6 +5302,29 @@
     ]
   },
   {
+    "id": "4589a64c-fdc8-4334-a2c7-05a3a8b2c5da",
+    "name_en": "Rapid Thaw",
+    "name_cn": "",
+    "description_en": "When your items are Frozen, reduce the duration by 2000/3000/4000 second(s).",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Mak / 马克 | Stelle / 斯黛拉 | Dooley / 杜利 | Jules / 朱尔斯",
+    "tags": "",
+    "hidden_tags": "FreezeRef / 冻结引用",
+    "art_key": "Icon_Skill_RapidReconstruction.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When your items are Frozen, reduce the duration by 2000/3000/4000 second(s).",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "05ea3ce6-0626-45c5-af36-a7711200d431",
     "name_en": "Initial Chill",
     "name_cn": "寒霜初降",
@@ -4636,6 +5371,52 @@
     ]
   },
   {
+    "id": "4c03126d-f0d6-44f4-8269-5133fb221c4f",
+    "name_en": "Toxic Regeneration",
+    "name_cn": "",
+    "description_en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+    "description_cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "Icon_Skill_MAK_ToxicRegeneration",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+        "cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "af42d725-dc55-4f6f-9de6-b7a4c7f7013e",
+    "name_en": "Heavy Drinker",
+    "name_cn": "",
+    "description_en": "When you use a Potion, increase the Damage of your Weapons by 1 and gain 1/2 Regen for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "Potion / 药水 | Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用 | Regen / 再生",
+    "art_key": "Icon_Skill_Placeholder.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you use a Potion, increase the Damage of your Weapons by 1 and gain 1/2 Regen for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "9a8aedfe-6b97-4db9-8676-c774292637ee",
     "name_en": "Titanium Casing",
     "name_cn": "钛制外壳",
@@ -4678,6 +5459,29 @@
       {
         "en": "Your rightmost Weapon has +20/30/40/50 Damage.",
         "cn": "最右侧的武器+20/30/40/50伤害。"
+      }
+    ]
+  },
+  {
+    "id": "91339db7-21bb-47df-bca7-20b86555d7b1",
+    "name_en": "Retro-Tech",
+    "name_cn": "复古科技",
+    "description_en": "Your leftmost Weapon has +10/20 Damage for each Tech item you have and its Cooldown reduced by +2/3% for each non-Tech item you have.",
+    "description_cn": "己方最左侧的武器，你拥有的每件科技物品使其+10/20伤害、每件非科技物品使其冷却时间缩短2/3%。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skills_MON_WhatsThis",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your leftmost Weapon has +10/20 Damage for each Tech item you have and its Cooldown reduced by +2/3% for each non-Tech item you have.",
+        "cn": "己方最左侧的武器，你拥有的每件科技物品使其+10/20伤害、每件非科技物品使其冷却时间缩短2/3%。"
       }
     ]
   },
@@ -4823,8 +5627,8 @@
     "id": "6a2b0ffc-bb7b-4ad3-a20c-8b46f9684a12",
     "name_en": "Quick Ignition",
     "name_cn": "急速引燃",
-    "description_en": "The first time you use an item each fight, Haste {ability.0.targets} Burn item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次使用物品时，加速{ability.0.targets}件灼烧物品2秒。",
+    "description_en": "The first time you use an item each fight, Haste  Burn item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次使用物品时，加速件灼烧物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -4837,8 +5641,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, Haste {ability.0.targets} Burn item(s) for 2 second(s).",
-        "cn": "每场战斗首次使用物品时，加速{ability.0.targets}件灼烧物品2秒。"
+        "en": "The first time you use an item each fight, Haste  Burn item(s) for 2 second(s).",
+        "cn": "每场战斗首次使用物品时，加速件灼烧物品2秒。"
       }
     ]
   },
@@ -5077,6 +5881,75 @@
     ]
   },
   {
+    "id": "254017cc-e3b9-486e-9276-850867ceba6b",
+    "name_en": "Standardized Defenses",
+    "name_cn": "",
+    "description_en": "Your Medium Shield items have +6/18/36/60 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Stelle / 斯黛拉 | Dooley / 杜利 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_StandardizedDefences.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Medium Shield items have +6/18/36/60 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "f39c1881-f42f-4338-961f-8de0c725fadf",
+    "name_en": "Buckle Up!",
+    "name_cn": "",
+    "description_en": "Your Vehicles' Cooldowns are reduced by 5/10%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Stelle / 斯黛拉",
+    "tags": "Vehicle / 载具",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_STE_BuckleUp",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Vehicles' Cooldowns are reduced by 5/10%.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "3865bde8-45b8-49d6-8945-0453c24251a9",
+    "name_en": "Sharpshooter",
+    "name_cn": "",
+    "description_en": "Your Ammo items have +3/6/9/12% Crit Chance.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "AmmoRef / 弹药引用 | Crit / 暴击",
+    "art_key": "Icon_Skill_Sharpshooter.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Ammo items have +3/6/9/12% Crit Chance.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "cac848c8-dc77-4277-ba9f-df282b9f36ef",
     "name_en": "Herbal Supplements",
     "name_cn": "草药补剂",
@@ -5119,6 +5992,29 @@
       {
         "en": "When you use a Large item, Haste your other items for 1/2 second(s).",
         "cn": "使用大型物品时，加速己方其他物品1/2秒。"
+      }
+    ]
+  },
+  {
+    "id": "786299fc-450a-4a81-9838-d468143cf514",
+    "name_en": "On the Prowl",
+    "name_cn": "",
+    "description_en": "When you win a fight, gain 1 strength.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_MON_TurnOutYourPockets_03.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you win a fight, gain 1 strength.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -5200,7 +6096,7 @@
     "name_en": "Inexorable",
     "name_cn": "势不可挡",
     "description_en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/4/6% Crit Chance bonus.",
-    "description_cn": "己方物品++2%暴击率。开始战斗时，这一暴击率加成再提高+2/4/6%。",
+    "description_cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/4/6%。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -5214,7 +6110,7 @@
     "descriptions": [
       {
         "en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/4/6% Crit Chance bonus.",
-        "cn": "己方物品++2%暴击率。开始战斗时，这一暴击率加成再提高+2/4/6%。"
+        "cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/4/6%。"
       }
     ]
   },
@@ -5268,8 +6164,8 @@
     "id": "9ff2cb3f-99dd-425b-b44f-14a1d0271f56",
     "name_en": "Stop That!",
     "name_cn": "让我缓缓！",
-    "description_en": "The first time you fall below half Health each fight, Slow {ability.0.targets} items for 2 second(s).",
-    "description_cn": "每场战斗己方生命值首次降至一半时，减速{ability.0.targets}件物品2秒。",
+    "description_en": "The first time you fall below half Health each fight, Slow  items for 2 second(s).",
+    "description_cn": "每场战斗己方生命值首次降至一半时，减速件物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -5282,8 +6178,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you fall below half Health each fight, Slow {ability.0.targets} items for 2 second(s).",
-        "cn": "每场战斗己方生命值首次降至一半时，减速{ability.0.targets}件物品2秒。"
+        "en": "The first time you fall below half Health each fight, Slow  items for 2 second(s).",
+        "cn": "每场战斗己方生命值首次降至一半时，减速件物品2秒。"
       }
     ]
   },
@@ -5343,7 +6239,7 @@
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Dooley / 杜利",
-    "tags": "Dinosaur / 恐龙",
+    "tags": "Relic / 神器",
     "hidden_tags": "",
     "art_key": "Icon_Skill_DOO_PackInfiltrator",
     "card_pack_id": "",
@@ -5383,8 +6279,8 @@
     "id": "d08258b5-be49-410e-a650-4dfa01b35662",
     "name_en": "Invigorating Cold",
     "name_cn": "提神寒气",
-    "description_en": "The first time you Freeze each fight, Haste {ability.0.targets} item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次触发冻结时，加速{ability.0.targets}件物品2秒。",
+    "description_en": "The first time you Freeze each fight, Haste  item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次触发冻结时，加速件物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -5397,8 +6293,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you Freeze each fight, Haste {ability.0.targets} item(s) for 2 second(s).",
-        "cn": "每场战斗首次触发冻结时，加速{ability.0.targets}件物品2秒。"
+        "en": "The first time you Freeze each fight, Haste  item(s) for 2 second(s).",
+        "cn": "每场战斗首次触发冻结时，加速件物品2秒。"
       }
     ]
   },
@@ -5610,6 +6506,52 @@
     ]
   },
   {
+    "id": "583ea575-9e9c-4d56-a9a4-da41b943301d",
+    "name_en": "Hungry Blades",
+    "name_cn": "",
+    "description_en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+    "description_cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "Icon_Skill_MAK_HungryBlades",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+        "cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "ad3927b0-0fdb-41ab-ab12-8264e43ac213",
+    "name_en": "Nimble",
+    "name_cn": "",
+    "description_en": "Your items' Cooldowns are reduced by 0% for each Tool you have.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "tags": "Tool / 工具",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_Nimble.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items' Cooldowns are reduced by 0% for each Tool you have.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "b6936741-8ec9-42f1-a6ec-d76061141f7d",
     "name_en": "Vital Reserve",
     "name_cn": "生命储备",
@@ -5659,8 +6601,8 @@
     "id": "42ca6153-fe5b-44b4-a043-f14870659472",
     "name_en": "Oceanic Rush",
     "name_cn": "海洋冲锋",
-    "description_en": "The first time you use an item each fight, Haste {ability.0.targets} Aquatic item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次使用物品时，加速{ability.0.targets}件水系物品2秒。",
+    "description_en": "The first time you use an item each fight, Haste  Aquatic item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次使用物品时，加速件水系物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -5673,8 +6615,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, Haste {ability.0.targets} Aquatic item(s) for 2 second(s).",
-        "cn": "每场战斗首次使用物品时，加速{ability.0.targets}件水系物品2秒。"
+        "en": "The first time you use an item each fight, Haste  Aquatic item(s) for 2 second(s).",
+        "cn": "每场战斗首次使用物品时，加速件水系物品2秒。"
       }
     ]
   },
@@ -5682,8 +6624,8 @@
     "id": "5780e3ce-316c-4871-bfb8-45261b686fc2",
     "name_en": "Captain's Charge",
     "name_cn": "船长的号令",
-    "description_en": "The first time you use a Large item each fight, Haste {ability.0.targets} items for 3 second(s).",
-    "description_cn": "每场战斗首次使用大型物品时，加速{ability.0.targets}件物品3秒。",
+    "description_en": "The first time you use a Large item each fight, Haste  items for 3 second(s).",
+    "description_cn": "每场战斗首次使用大型物品时，加速件物品3秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -5696,8 +6638,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use a Large item each fight, Haste {ability.0.targets} items for 3 second(s).",
-        "cn": "每场战斗首次使用大型物品时，加速{ability.0.targets}件物品3秒。"
+        "en": "The first time you use a Large item each fight, Haste  items for 3 second(s).",
+        "cn": "每场战斗首次使用大型物品时，加速件物品3秒。"
       }
     ]
   },
@@ -5728,22 +6670,45 @@
     "id": "1e63e9bd-603a-4965-a6e8-4e180377c0ff",
     "name_en": "Temporal Strike",
     "name_cn": "时空打击",
-    "description_en": "The first 5/10 times you Slow each fight, Charge a Weapon 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发减速时，为一件武器充能1秒。",
+    "description_en": "The first 4/8 times you Slow each fight, Charge a Weapon 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发减速时，为一件武器充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
     "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利",
     "tags": "Weapon / 武器",
-    "hidden_tags": "SlowRef / 减速引用",
+    "hidden_tags": "SlowRef / 减速引用 | Charge / 充能",
     "art_key": "Icon_Skill_TemporalStrike.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Slow each fight, Charge a Weapon 1 second(s).",
-        "cn": "每场战斗前5/10次触发减速时，为一件武器充能1秒。"
+        "en": "The first 4/8 times you Slow each fight, Charge a Weapon 1 second(s).",
+        "cn": "每场战斗前4/8次触发减速时，为一件武器充能1秒。"
+      }
+    ]
+  },
+  {
+    "id": "17b06564-f267-4fea-9549-f953fa872673",
+    "name_en": "Steady Defender",
+    "name_cn": "",
+    "description_en": "Your Slowest Shield item has +6/18/36/60 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_SteadyDefender.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Slowest Shield item has +6/18/36/60 Shield.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -5772,24 +6737,24 @@
   },
   {
     "id": "663ca415-c46a-46d1-8f63-c04080fb6a30",
-    "name_en": "Master Mechanic",
-    "name_cn": "机械大师",
-    "description_en": "When you Level Up, upgrade a lower tier item.",
-    "description_cn": "等级提升时，升级一件低级别物品。",
+    "name_en": "Advanced Synthetics",
+    "name_cn": "高分子复合材料",
+    "description_en": "When you buy this or Level Up, upgrade a lower tier item.",
+    "description_cn": "购买此物品或升级时，升级一件低阶物品。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉",
     "tags": "",
     "hidden_tags": "Level",
-    "art_key": "Icon_Skill_STE_MasterMechanic",
+    "art_key": "Icon_Skill_DOO_AdvancedSynthetics.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Level Up, upgrade a lower tier item.",
-        "cn": "等级提升时，升级一件低级别物品。"
+        "en": "When you buy this or Level Up, upgrade a lower tier item.",
+        "cn": "购买此物品或升级时，升级一件低阶物品。"
       }
     ]
   },
@@ -5935,8 +6900,8 @@
     "id": "a557b352-cc6d-45f8-aa3c-d070997cd8cc",
     "name_en": "Gold Garnish",
     "name_cn": "黄金点缀",
-    "description_en": "You Food have +Crit Chance equal to half your Gold. [{aura.0}]",
-    "description_cn": "食物 + 暴击率，增幅等于金币数量的一半。[{aura.0}]",
+    "description_en": "You Food have +Crit Chance equal to half your Gold.",
+    "description_cn": "食物 + 暴击率，增幅等于金币数量的一半。",
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
@@ -5949,8 +6914,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "You Food have +Crit Chance equal to half your Gold. [{aura.0}]",
-        "cn": "食物 + 暴击率，增幅等于金币数量的一半。[{aura.0}]"
+        "en": "You Food have +Crit Chance equal to half your Gold.",
+        "cn": "食物 + 暴击率，增幅等于金币数量的一半。"
       }
     ]
   },
@@ -6027,8 +6992,8 @@
     "id": "2d0e4193-304d-4cf8-8232-6386abdf7230",
     "name_en": "Quick Study",
     "name_cn": "快速学习",
-    "description_en": "The first time you use an item each fight, Haste {ability.0.targets} Relic item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次使用物品时，加速{ability.0.targets}件遗物2秒。",
+    "description_en": "The first time you use an item each fight, Haste  Relic item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次使用物品时，加速件遗物2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -6041,8 +7006,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, Haste {ability.0.targets} Relic item(s) for 2 second(s).",
-        "cn": "每场战斗首次使用物品时，加速{ability.0.targets}件遗物2秒。"
+        "en": "The first time you use an item each fight, Haste  Relic item(s) for 2 second(s).",
+        "cn": "每场战斗首次使用物品时，加速件遗物2秒。"
       }
     ]
   },
@@ -6050,8 +7015,8 @@
     "id": "3c42764f-2a89-4fa2-b901-ca2ec127c411",
     "name_en": "Prosperity",
     "name_cn": "繁荣昌盛",
-    "description_en": "Your Shield items have +Shield equal to the value of your items. [{aura.0}]",
-    "description_cn": "护盾物品 + 护盾值，增幅等于己方物品的价值。[{aura.0}]",
+    "description_en": "Your Shield items have +Shield equal to the value of your items.",
+    "description_cn": "护盾物品 + 护盾值，增幅等于己方物品的价值。",
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
@@ -6064,8 +7029,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Shield items have +Shield equal to the value of your items. [{aura.0}]",
-        "cn": "护盾物品 + 护盾值，增幅等于己方物品的价值。[{aura.0}]"
+        "en": "Your Shield items have +Shield equal to the value of your items.",
+        "cn": "护盾物品 + 护盾值，增幅等于己方物品的价值。"
       }
     ]
   },
@@ -6158,6 +7123,52 @@
       {
         "en": "At the start of each fight, a Potion gains +1 Multicast for the fight.",
         "cn": "每场战斗开始时，一件药水+1多重触发（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "62368886-ce2f-4503-9d34-c8bb8b3829a3",
+    "name_en": "Large Item Specialist",
+    "name_cn": "",
+    "description_en": "Your items have +5/10/15% Crit Chance if you have a Large item.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_LargeItemSpecialist.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items have +5/10/15% Crit Chance if you have a Large item.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "1ab0b3dc-5c68-4bb8-8614-c7adf1d9b192",
+    "name_en": "Balanced Specialist",
+    "name_cn": "",
+    "description_en": "Your items have +5/10/15% Crit Chance if you have 2 or more Medium items.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_BalanceSpecialist.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items have +5/10/15% Crit Chance if you have 2 or more Medium items.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -6461,6 +7472,29 @@
     ]
   },
   {
+    "id": "8370ff26-ceb7-4342-a0ae-bd306fa80780",
+    "name_en": "Sword and Board",
+    "name_cn": "",
+    "description_en": "Your leftmost item has +10/20/30 Damage if is a Weapon and +10/20/30 Shield if it is a Shield item.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用 | ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_SwordandBoard.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your leftmost item has +10/20/30 Damage if is a Weapon and +10/20/30 Shield if it is a Shield item.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "3d9279b1-dbf8-4193-8989-8d2b022533af",
     "name_en": "Streamline Weapon",
     "name_cn": "精简武器",
@@ -6530,6 +7564,52 @@
     ]
   },
   {
+    "id": "f7ae1ab0-16dc-46af-9a77-b23b7f33104f",
+    "name_en": "Backup Defenses",
+    "name_cn": "",
+    "description_en": "The first time you fall below half Health each fight, Shield equal to 20/30% of your Max Health. [0]",
+    "description_cn": "每场战斗己方生命值首次降至一半时，获得护盾，等量于最大生命值的20/30%。[0]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "tags": "",
+    "hidden_tags": "Shield / 护盾 | HealthRef / 生命值引用",
+    "art_key": "Icon_Skill_BackupDefenses.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you fall below half Health each fight, Shield equal to 20/30% of your Max Health. [0]",
+        "cn": "每场战斗己方生命值首次降至一半时，获得护盾，等量于最大生命值的20/30%。[0]"
+      }
+    ]
+  },
+  {
+    "id": "d08bdeb9-ef08-48be-9df7-0edd9fcff6cf",
+    "name_en": "Stout Fire",
+    "name_cn": "",
+    "description_en": "When you gain Burn, gain 3/6/9 Regen and your Weapons gain +3/6/9 Damage for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Regen / 再生 | DamageRef / 伤害引用 | BurnRef / 灼烧引用",
+    "art_key": "Icon_Skill_StoutFire.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you gain Burn, gain 3/6/9 Regen and your Weapons gain +3/6/9 Damage for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "158c1575-71c6-406c-82c9-f4435d9b37ca",
     "name_en": "Emergency Shield",
     "name_cn": "应急护盾",
@@ -6553,11 +7633,34 @@
     ]
   },
   {
+    "id": "8c36b532-0eb5-49f8-9128-a50b17ef3eed",
+    "name_en": "Flanking Toxins",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, adjacent Poison items gain 4/6/8 Poison for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_FlankingToxins.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, adjacent Poison items gain 4/6/8 Poison for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "7518cb66-252b-4b9c-9d4d-269aaad8daf3",
     "name_en": "Hot Air",
     "name_cn": "热空气",
-    "description_en": "The first time you Burn each fight, {ability.0.targets} of your items starts Flying.",
-    "description_cn": "每场战斗首次触发灼烧时，{ability.0.targets}件己方物品开始飞行。",
+    "description_en": "The first time you Burn each fight,  of your items starts Flying.",
+    "description_cn": "每场战斗首次触发灼烧时，件己方物品开始飞行。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -6570,8 +7673,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you Burn each fight, {ability.0.targets} of your items starts Flying.",
-        "cn": "每场战斗首次触发灼烧时，{ability.0.targets}件己方物品开始飞行。"
+        "en": "The first time you Burn each fight,  of your items starts Flying.",
+        "cn": "每场战斗首次触发灼烧时，件己方物品开始飞行。"
       }
     ]
   },
@@ -6829,6 +7932,29 @@
     ]
   },
   {
+    "id": "883043eb-5a5f-4fa2-9cae-185f51019b11",
+    "name_en": "Microfiber",
+    "name_cn": "",
+    "description_en": "Your Small Shield items have +3/9/18/30 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Stelle / 斯黛拉 | Dooley / 杜利 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_Microfiber.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Small Shield items have +3/9/18/30 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "ffceb0c7-7913-4339-8013-f1bcc67cca9c",
     "name_en": "Firestarter",
     "name_cn": "引火者",
@@ -6947,8 +8073,8 @@
     "id": "42c33f6c-a233-4ad1-8f04-b1cadac3a15f",
     "name_en": "Toxin Injector",
     "name_cn": "毒素注射器",
-    "description_en": "The first time you use an item each fight, Haste {ability.0.targets} Poison item(s) for 2 second(s).",
-    "description_cn": "每场战斗首次使用物品时，加速{ability.0.targets}件剧毒物品2秒。",
+    "description_en": "The first time you use an item each fight, Haste  Poison item(s) for 2 second(s).",
+    "description_cn": "每场战斗首次使用物品时，加速件剧毒物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -6961,8 +8087,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, Haste {ability.0.targets} Poison item(s) for 2 second(s).",
-        "cn": "每场战斗首次使用物品时，加速{ability.0.targets}件剧毒物品2秒。"
+        "en": "The first time you use an item each fight, Haste  Poison item(s) for 2 second(s).",
+        "cn": "每场战斗首次使用物品时，加速件剧毒物品2秒。"
       }
     ]
   },
@@ -7032,6 +8158,29 @@
       {
         "en": "The first 3/6 times you Crit each fight, Reload another item.",
         "cn": "每场战斗前3/6次暴击时，为另一件物品装填弹药。"
+      }
+    ]
+  },
+  {
+    "id": "5b393f5e-2c86-40c6-b210-1a215c1ccd51",
+    "name_en": "High Impact",
+    "name_cn": "",
+    "description_en": "At the start of each fight, a Weapon gains 25% Damage for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_MON_HighImpact.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "At the start of each fight, a Weapon gains 25% Damage for the fight.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -7151,6 +8300,29 @@
     ]
   },
   {
+    "id": "5ff845f5-6cb5-40b8-957f-8a6ae47c3962",
+    "name_en": "Red Envelope",
+    "name_cn": "",
+    "description_en": "When you buy this, gain 10 Gold.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Gold / 金币",
+    "art_key": "Icon_Skill_RedEnvelope.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you buy this, gain 10 Gold.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "cdf1d8f2-851b-43a8-bc8b-6d3ce2d4bca9",
     "name_en": "Tall Buildings",
     "name_cn": "高楼大厦",
@@ -7193,6 +8365,52 @@
       {
         "en": "The first time an enemy falls below half Health each fight, Burn 10/15/20/25.",
         "cn": "每场战斗敌方生命值首次降至一半时，造成10/15/20/25灼烧。"
+      }
+    ]
+  },
+  {
+    "id": "9a913c7c-f3f4-4d53-9d14-853822c2f71e",
+    "name_en": "Ancient Weapons",
+    "name_cn": "",
+    "description_en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+    "description_cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "Icon_Skill_MAK_AncientWeapons",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+        "cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "94b80fbf-4d21-4439-beb2-e1bdf56cea03",
+    "name_en": "Flanking Shots",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, adjacent Weapons gain 15/30/50 Damage for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_FlankingShots.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, adjacent Weapons gain 15/30/50 Damage for the fight.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -7338,8 +8556,8 @@
     "id": "549263e2-4ab4-4fe8-a552-e94486b3e91b",
     "name_en": "Invigorating Blade",
     "name_cn": "振能刃",
-    "description_en": "The first 5/10 times you use a Weapon each fight, Charge a Heal item 1 second(s).",
-    "description_cn": "每场战斗前5/10次使用武器时，为一件治疗物品充能1秒。",
+    "description_en": "The first 4/8 times you use a Weapon each fight, Charge a Heal item 1 second(s).",
+    "description_cn": "每场战斗前4/8次使用武器时，为一件治疗物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -7352,8 +8570,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you use a Weapon each fight, Charge a Heal item 1 second(s).",
-        "cn": "每场战斗前5/10次使用武器时，为一件治疗物品充能1秒。"
+        "en": "The first 4/8 times you use a Weapon each fight, Charge a Heal item 1 second(s).",
+        "cn": "每场战斗前4/8次使用武器时，为一件治疗物品充能1秒。"
       }
     ]
   },
@@ -7367,7 +8585,7 @@
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
-    "tags": "Tool / 工具",
+    "tags": "Food / 食物",
     "hidden_tags": "Charge / 充能",
     "art_key": "Icon_Skill_JUL_Morning Rush",
     "card_pack_id": "",
@@ -7377,6 +8595,52 @@
       {
         "en": "The first 5/10 times you use a Food each fight, Haste an item for 1 second(s).",
         "cn": "每场战斗前5/10次使用食物时，加速一件物品1秒。"
+      }
+    ]
+  },
+  {
+    "id": "b607f75b-e245-4e4a-809e-899fcdd1e6e5",
+    "name_en": "Closing Speed",
+    "name_cn": "",
+    "description_en": "Your rightmost item' Cooldown is reduced by 4/6/8/10%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_ClosingSpeed.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your rightmost item' Cooldown is reduced by 4/6/8/10%.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "915b9236-6d91-47f6-ad06-ec00c8ce7018",
+    "name_en": "Pole Position",
+    "name_cn": "",
+    "description_en": "Your leftmost item's Cooldown is reduced by 4/6/8/10%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_PolePosition.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your leftmost item's Cooldown is reduced by 4/6/8/10%.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -7453,11 +8717,11 @@
     "id": "76ae19fd-2783-4c21-919a-cdce66bb8948",
     "name_en": "Workin' Hard",
     "name_cn": "勤奋工作",
-    "description_en": "The first 4/8/12 times you Haste each fight, Charge a Tool 1 second.",
-    "description_cn": "每场战斗前4/8/12次触发加速时，为一件工具充能1秒。",
+    "description_en": "The first 4/8 times you Haste each fight, Charge a Tool 1 second.",
+    "description_cn": "每场战斗前4/8次触发加速时，为一件工具充能1秒。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
     "tags": "Tool / 工具",
     "hidden_tags": "Haste / 加速",
@@ -7467,8 +8731,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 4/8/12 times you Haste each fight, Charge a Tool 1 second.",
-        "cn": "每场战斗前4/8/12次触发加速时，为一件工具充能1秒。"
+        "en": "The first 4/8 times you Haste each fight, Charge a Tool 1 second.",
+        "cn": "每场战斗前4/8次触发加速时，为一件工具充能1秒。"
       }
     ]
   },
@@ -7568,8 +8832,8 @@
     "id": "e2bed270-5a6c-46ae-ab7e-a0d34f6da903",
     "name_en": "Commercial Zoning",
     "name_cn": "商业区划",
-    "description_en": "When you use a Property, deal Damage equal to 1/2 times your Gold. [{aura.1}]",
-    "description_cn": "使用地产时，造成伤害，等量于金币数量的1/2倍。[{aura.1}]",
+    "description_en": "When you use a Property, deal Damage equal to 1/2 times your Gold.",
+    "description_cn": "使用地产时，造成伤害，等量于金币数量的1/2倍。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -7582,8 +8846,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use a Property, deal Damage equal to 1/2 times your Gold. [{aura.1}]",
-        "cn": "使用地产时，造成伤害，等量于金币数量的1/2倍。[{aura.1}]"
+        "en": "When you use a Property, deal Damage equal to 1/2 times your Gold.",
+        "cn": "使用地产时，造成伤害，等量于金币数量的1/2倍。"
       }
     ]
   },
@@ -7634,6 +8898,29 @@
     ]
   },
   {
+    "id": "015bc348-773e-4009-87ff-231452431bba",
+    "name_en": "Heavy Weaponry",
+    "name_cn": "",
+    "description_en": "Your Large Weapons deal +12/36/72/120 Damage.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_HeavyWeaponry.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Large Weapons deal +12/36/72/120 Damage.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "d5b180a2-9dfa-43e3-bfb9-3e15dac0398e",
     "name_en": "Rush",
     "name_cn": "疾速",
@@ -7653,6 +8940,29 @@
       {
         "en": "The first time you use an item, Haste a Weapon 3/4/5/6 seconds.",
         "cn": "每场战斗首次使用物品时，加速一件武器3/4/5/6秒。"
+      }
+    ]
+  },
+  {
+    "id": "8089e76c-1565-457b-9cd5-fc38f60bd185",
+    "name_en": "Immunocompromised",
+    "name_cn": "",
+    "description_en": "Your Poison items have + Poison While your enemy has less than 20 Poison.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "Potion / 药水",
+    "hidden_tags": "PoisonRef / 剧毒引用 | HealthRef / 生命值引用",
+    "art_key": "Icon_Skill_Placeholder.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Poison items have + Poison While your enemy has less than 20 Poison.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -7749,6 +9059,29 @@
     ]
   },
   {
+    "id": "2a8dc6f4-d77a-4231-8329-5c02e51a5230",
+    "name_en": "It's All Connected",
+    "name_cn": "万物互联",
+    "description_en": "Your items have their cooldown reduced by 2/3% for each of the following types you have: Tech, Friend, Apparel, Tool, Weapon.",
+    "description_cn": "你拥有以下类型每有一种，己方物品冷却时间缩短2/3%：科技、伙伴、服饰、工具、武器。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "Apparel / 服饰 | Weapon / 武器 | Tool / 工具 | Tech / 科技 | Friend / 伙伴",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skills_MON_TheyAreComing",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your items have their cooldown reduced by 2/3% for each of the following types you have: Tech, Friend, Apparel, Tool, Weapon.",
+        "cn": "你拥有以下类型每有一种，己方物品冷却时间缩短2/3%：科技、伙伴、服饰、工具、武器。"
+      }
+    ]
+  },
+  {
     "id": "ed7379d4-38ee-48b0-9ef0-61ed3c57ec22",
     "name_en": "Extreme Comfort",
     "name_cn": "极度舒适",
@@ -7768,6 +9101,29 @@
       {
         "en": "When you Heal or gain Regen, your Shield items gain 3/6/9 Shield for the fight.",
         "cn": "获得治疗或提高生命再生时，己方护盾物品的护盾提高3/6/9（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "11a262fe-e1e7-4656-a07c-f6a3a1249352",
+    "name_en": "Second Degree Burns",
+    "name_cn": "",
+    "description_en": "Your Medium Burn items have +2/4/6/8 Burn.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用",
+    "art_key": "Icon_Skill_SecondDegreeBurns.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Medium Burn items have +2/4/6/8 Burn.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -7798,8 +9154,8 @@
     "id": "9b8912ec-1219-4cdf-acd5-cf9b73438280",
     "name_en": "Net Launcher",
     "name_cn": "捕网发射器",
-    "description_en": "The first time you use a Large item each fight, Slow {ability.0.targets} item(s) for 3 second(s).",
-    "description_cn": "每场战斗首次使用大型物品时，减速{ability.0.targets}件物品3秒。",
+    "description_en": "The first time you use a Large item each fight, Slow  item(s) for 3 second(s).",
+    "description_cn": "每场战斗首次使用大型物品时，减速件物品3秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -7812,8 +9168,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use a Large item each fight, Slow {ability.0.targets} item(s) for 3 second(s).",
-        "cn": "每场战斗首次使用大型物品时，减速{ability.0.targets}件物品3秒。"
+        "en": "The first time you use a Large item each fight, Slow  item(s) for 3 second(s).",
+        "cn": "每场战斗首次使用大型物品时，减速件物品3秒。"
       }
     ]
   },
@@ -7933,6 +9289,29 @@
     ]
   },
   {
+    "id": "35cd34d4-80f5-48bd-95ed-5bb7fde3d21c",
+    "name_en": "Flanking Aid",
+    "name_cn": "",
+    "description_en": "The first time you use a Large item each fight, adjacent items gain +15/20/25 Heal for the fight.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "HealRef / 治疗引用",
+    "art_key": "Icon_Skill_FlankingAid.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you use a Large item each fight, adjacent items gain +15/20/25 Heal for the fight.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "04168bfd-eac1-40ff-ad34-bc10cb92e636",
     "name_en": "Initial Dose",
     "name_cn": "最初一剂",
@@ -8002,6 +9381,29 @@
     ]
   },
   {
+    "id": "e78b1599-ca80-47b0-b386-04ae403994d5",
+    "name_en": "Virulent Research",
+    "name_cn": "",
+    "description_en": "Your Poison items have +1 Poison",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Poison items have +1 Poison",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "0e790e41-203a-4b07-8a06-352a2070588d",
     "name_en": "War Chef",
     "name_cn": "战地厨师",
@@ -8021,6 +9423,29 @@
       {
         "en": "Your Weapons have +10/20/30 damage for each Food item you have.",
         "cn": "每拥有一件食物物品，己方武器就+10/20/30伤害。"
+      }
+    ]
+  },
+  {
+    "id": "2a2ef40a-38d6-4441-ad43-76fc01f31eb4",
+    "name_en": "Precision Diver",
+    "name_cn": "",
+    "description_en": "Your Aquatic items have +8/10/12% Crit Chance.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎",
+    "tags": "Aquatic / 水生",
+    "hidden_tags": "Crit / 暴击",
+    "art_key": "Icon_Skill_PrecisionDiver.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Aquatic items have +8/10/12% Crit Chance.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -8094,6 +9519,102 @@
     ]
   },
   {
+    "id": "d8bb20e5-4c72-409b-893a-686a8fc43006",
+    "name_en": "Aggressive Mutations",
+    "name_cn": "",
+    "description_en": "",
+    "description_cn": "",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Damage / 伤害",
+    "art_key": "Icon_Skill_Placeholder.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "",
+        "cn": ""
+      },
+      {
+        "en": "",
+        "cn": ""
+      }
+    ]
+  },
+  {
+    "id": "b8f04ea6-ecdd-46a0-9ae6-397a090d294b",
+    "name_en": "Corrosive Toxins",
+    "name_cn": "",
+    "description_en": "When you Poison, enemy Weapons lose 2/4 Damage.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_RapidInfection.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Poison, enemy Weapons lose 2/4 Damage.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "2aca51d6-c6c8-43d5-98d0-88741d996378",
+    "name_en": "Catalytic Converter",
+    "name_cn": "",
+    "description_en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+    "description_cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Mak / 马克",
+    "tags": "",
+    "hidden_tags": "Poison / 剧毒",
+    "art_key": "Icon_Skill_MAK_CatalyticConverter",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first 4/8/12 times you use a Relic each fight, Poison 5.",
+        "cn": "每场战斗前4/8/12次使用遗物时，造成5剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "63c3c74e-8a01-44cf-a629-2b12aa842264",
+    "name_en": "Quick Fix",
+    "name_cn": "",
+    "description_en": "The Cooldowns of your non-Weapon items with Cooldowns greater than 10 seconds are reduced by 1000/2000 second(s).",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却",
+    "art_key": "Icon_Skill_QuickFix.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The Cooldowns of your non-Weapon items with Cooldowns greater than 10 seconds are reduced by 1000/2000 second(s).",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "d09d1ff8-a49b-485b-b1e3-ea50c4af5781",
     "name_en": "Immolating Spark",
     "name_cn": "灼焰火花",
@@ -8113,6 +9634,29 @@
       {
         "en": "Your leftmost Burn item has +2/4/6/8 Burn.",
         "cn": "最左侧的灼烧物品+2/4/6/8灼烧。"
+      }
+    ]
+  },
+  {
+    "id": "ad417c8e-fe6f-4b98-879b-447c8aafc37f",
+    "name_en": "Thieves Guild Discount",
+    "name_cn": "",
+    "description_en": "When you visit a Merchant, a Small item is free.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "",
+    "art_key": "Icon_Skill_MON_BarrelOfThieves_03.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you visit a Merchant, a Small item is free.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -8232,6 +9776,29 @@
     ]
   },
   {
+    "id": "b7c2ce67-0da5-4360-9eda-b328817affe6",
+    "name_en": "Heavy Shielding",
+    "name_cn": "",
+    "description_en": "Your Large Shield items have +12/36/72/120 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Stelle / 斯黛拉 | Dooley / 杜利 | Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_HeavyShielding.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Large Shield items have +12/36/72/120 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "f219c4c6-bb56-499a-894d-5dc689e22cb4",
     "name_en": "Bloodthirst",
     "name_cn": "嗜血",
@@ -8255,11 +9822,34 @@
     ]
   },
   {
+    "id": "530f34ea-250a-476c-ac4e-417b37841c8a",
+    "name_en": "Concentrated Defense",
+    "name_cn": "",
+    "description_en": "Your highest Shield item has +5/15/30/50 Shield.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用",
+    "art_key": "Icon_Skill_ConcentratedDefense.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your highest Shield item has +5/15/30/50 Shield.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "4160a158-6809-410d-9b7a-21a27fb12f93",
     "name_en": "Haunting Flight",
     "name_cn": "鬼魅飘飞",
-    "description_en": "The first time you use an item each fight, {ability.0.targets} Small item(s) start Flying.",
-    "description_cn": "每场战斗首次使用物品时，{ability.0.targets}件小型物品开始飞行。",
+    "description_en": "The first time you use an item each fight,  Small item(s) start Flying.",
+    "description_cn": "每场战斗首次使用物品时，件小型物品开始飞行。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -8272,8 +9862,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you use an item each fight, {ability.0.targets} Small item(s) start Flying.",
-        "cn": "每场战斗首次使用物品时，{ability.0.targets}件小型物品开始飞行。"
+        "en": "The first time you use an item each fight,  Small item(s) start Flying.",
+        "cn": "每场战斗首次使用物品时，件小型物品开始飞行。"
       }
     ]
   },
@@ -8327,8 +9917,8 @@
     "id": "cd6ac6ef-dafb-4001-a338-52e791bec4c3",
     "name_en": "Slow Burn",
     "name_cn": "慢性灼烧",
-    "description_en": "The first 5/10 times you Slow each fight, Charge a Burn item 1 second(s).",
-    "description_cn": "每场战斗前5/10次触发减速时，为一件灼烧物品充能1秒。",
+    "description_en": "The first 4/8 times you Slow each fight, Charge a Burn item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发减速时，为一件灼烧物品充能1秒。",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -8341,8 +9931,31 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 5/10 times you Slow each fight, Charge a Burn item 1 second(s).",
-        "cn": "每场战斗前5/10次触发减速时，为一件灼烧物品充能1秒。"
+        "en": "The first 4/8 times you Slow each fight, Charge a Burn item 1 second(s).",
+        "cn": "每场战斗前4/8次触发减速时，为一件灼烧物品充能1秒。"
+      }
+    ]
+  },
+  {
+    "id": "dab89eb6-be1a-4651-a4d8-44c2d2716569",
+    "name_en": "Vengeful Strike",
+    "name_cn": "",
+    "description_en": "Your Weapons' Cooldowns are reduced by 2%.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "Cooldown / 冷却 | DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_VengefulStrike.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Weapons' Cooldowns are reduced by 2%.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -8373,11 +9986,11 @@
     "id": "3b4c3700-6c77-4954-a3e1-dfeaeab08c4a",
     "name_en": "Hardly Workin'",
     "name_cn": "假装努力",
-    "description_en": "The first 4/8/12 times you Slow each fight, Charge a Regen item 1 second(s).",
-    "description_cn": "每场战斗前4/8/12次触发减速时，为一件生命再生物品充能1秒。",
+    "description_en": "The first 4/8 times you Slow each fight, Charge a Regen item 1 second(s).",
+    "description_cn": "每场战斗前4/8次触发减速时，为一件生命再生物品充能1秒。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Mak / 马克 | Jules / 朱尔斯",
     "tags": "",
     "hidden_tags": "SlowRef / 减速引用 | RegenRef / 再生引用 | Charge / 充能",
@@ -8387,8 +10000,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 4/8/12 times you Slow each fight, Charge a Regen item 1 second(s).",
-        "cn": "每场战斗前4/8/12次触发减速时，为一件生命再生物品充能1秒。"
+        "en": "The first 4/8 times you Slow each fight, Charge a Regen item 1 second(s).",
+        "cn": "每场战斗前4/8次触发减速时，为一件生命再生物品充能1秒。"
       }
     ]
   },
@@ -8419,11 +10032,11 @@
     "id": "dec273b3-155e-4fbd-9629-5dbd2900e032",
     "name_en": "Coolant Leak",
     "name_cn": "冷却剂泄露",
-    "description_en": "The first 3/6/9 times you use your rightmost item each fight, Charge a Freeze item 1 second(s).",
-    "description_cn": "每场战斗前3/6/9次使用最右侧物品时，为一件冻结物品充能1秒。",
+    "description_en": "The first 4/8 times you use your rightmost item each fight, Charge a Freeze item 1 second(s).",
+    "description_cn": "每场战斗前4/8次使用最右侧物品时，为一件冻结物品充能1秒。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Mak / 马克 | Stelle / 斯黛拉",
     "tags": "",
     "hidden_tags": "FreezeRef / 冻结引用 | Charge / 充能",
@@ -8433,8 +10046,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first 3/6/9 times you use your rightmost item each fight, Charge a Freeze item 1 second(s).",
-        "cn": "每场战斗前3/6/9次使用最右侧物品时，为一件冻结物品充能1秒。"
+        "en": "The first 4/8 times you use your rightmost item each fight, Charge a Freeze item 1 second(s).",
+        "cn": "每场战斗前4/8次使用最右侧物品时，为一件冻结物品充能1秒。"
       }
     ]
   },
@@ -8485,11 +10098,34 @@
     ]
   },
   {
+    "id": "7f803167-d540-4ea9-bd46-9b6bdad687d3",
+    "name_en": "Growth Spurt",
+    "name_cn": "",
+    "description_en": "You have +20/30/40/50% Max Health.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁",
+    "tags": "",
+    "hidden_tags": "Health / 生命值",
+    "art_key": "Icon_Skill_GrowthSpurt.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You have +20/30/40/50% Max Health.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "daec4b27-bd32-434e-85ef-4bd4629e7d11",
     "name_en": "Bold Under Pressure",
     "name_cn": "逆境无惧",
-    "description_en": "The first time you fall below half Health each fight, Haste {ability.0.targets} items for 2 second(s).",
-    "description_cn": "每场战斗己方生命值首次降至一半时，加速{ability.0.targets}件物品2秒。",
+    "description_en": "The first time you fall below half Health each fight, Haste  items for 2 second(s).",
+    "description_cn": "每场战斗己方生命值首次降至一半时，加速件物品2秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -8502,8 +10138,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you fall below half Health each fight, Haste {ability.0.targets} items for 2 second(s).",
-        "cn": "每场战斗己方生命值首次降至一半时，加速{ability.0.targets}件物品2秒。"
+        "en": "The first time you fall below half Health each fight, Haste  items for 2 second(s).",
+        "cn": "每场战斗己方生命值首次降至一半时，加速件物品2秒。"
       }
     ]
   },

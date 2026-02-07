@@ -261,8 +261,11 @@ export default function App() {
     })();
   }, []);
 
-  // Load item sizes from items_db.json
+  // Load item sizes and full data from items_db.json
   const [itemSizes, setItemSizes] = useState<Record<string, string>>({});
+  const [itemsDbFull, setItemsDbFull] = useState<Map<string, any>>(new Map());
+  const [skillsDbFull, setSkillsDbFull] = useState<Map<string, any>>(new Map());
+  
   useEffect(() => {
     (async () => {
       try {
@@ -270,15 +273,42 @@ export default function App() {
         const url = convertFileSrc(resPath);
         const resp = await fetch(url);
         const data = await resp.json();
-        const map: Record<string, string> = {};
+        const sizeMap: Record<string, string> = {};
+        const fullMap = new Map<string, any>();
         for (const entry of data) {
-           if (entry.id && entry.size) {
-               map[entry.id] = entry.size;
+           if (entry.id) {
+               if (entry.size) sizeMap[entry.id] = entry.size;
+               fullMap.set(entry.id, entry);
            }
+           if (entry.name_cn) fullMap.set(entry.name_cn, entry);
+           if (entry.name_en) fullMap.set(entry.name_en, entry);
         }
-        setItemSizes(map);
+        setItemSizes(sizeMap);
+        setItemsDbFull(fullMap);
+        console.log('[App] Loaded items_db:', fullMap.size, 'items');
       } catch (e) {
-          console.warn("Failed to load items_db for sizes", e);
+          console.warn("Failed to load items_db", e);
+      }
+    })();
+  }, []);
+  
+  useEffect(() => {
+    (async () => {
+      try {
+        const resPath = await resolveResource('resources/skills_db.json');
+        const url = convertFileSrc(resPath);
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const fullMap = new Map<string, any>();
+        for (const entry of data) {
+           if (entry.id) fullMap.set(entry.id, entry);
+           if (entry.name_cn) fullMap.set(entry.name_cn, entry);
+           if (entry.name_en) fullMap.set(entry.name_en, entry);
+        }
+        setSkillsDbFull(fullMap);
+        console.log('[App] Loaded skills_db:', fullMap.size, 'skills');
+      } catch (e) {
+          console.warn("Failed to load skills_db", e);
       }
     })();
   }, []);
@@ -313,8 +343,10 @@ export default function App() {
         try {
           const res = await invoke<ItemData[]>("search_items", { query: searchQuery });
           
-          // Filter out "中型包裹" and apply multi-select tag filters
+          // Filter out "中型包裹", empty name_cn, and apply multi-select tag filters
           let filtered = res.filter(item => 
+            item.name_cn && // 过滤掉 name_cn 为空的项
+            item.name_cn.trim() !== '' && // 过滤掉只有空白字符的
             !item.name_cn.includes('中型包裹') && 
             !item.name.includes('Medium Package')
           );
@@ -1644,26 +1676,64 @@ export default function App() {
       displayImg: displayImg,
       displayImgBg: displayImgBg,
       skills: m.skills ? await Promise.all(m.skills.map(async s => {
+        const id = s.id || s.name;
+        
+        // 从 skills_db 获取完整技能信息
+        const fullSkillInfo = id ? skillsDbFull.get(id) : null;
+        
+        // 合并技能信息，将 descriptions 字段映射到 skills
+        let mergedSkill = s;
+        if (fullSkillInfo) {
+          mergedSkill = {
+            ...s,
+            skills: fullSkillInfo.descriptions || s.skills || [],
+            name: fullSkillInfo.name_cn || s.name,
+            name_cn: fullSkillInfo.name_cn,
+            name_en: fullSkillInfo.name_en
+          };
+        }
+        
         // Prefer art_key from skills_db if available
         let imgPath = '';
         try {
-          const art = s.id ? skillsArtMap[s.id] : undefined;
+          const art = id ? skillsArtMap[id] : undefined;
           if (art) {
             const base = art.split('/').pop() || art;
             const nameNoExt = base.replace(/\.[^/.]+$/, '');
             imgPath = `images/skill/${nameNoExt}.webp`;
           } else {
-            imgPath = `images/${s.id || s.name}.webp`;
+            imgPath = `images/${id || s.name}.webp`;
           }
         } catch (e) {
-          imgPath = `images/${s.id || s.name}.webp`;
+          imgPath = `images/${id || s.name}.webp`;
         }
-        return { ...s, displayImg: await getImg(imgPath) };
+        return { ...mergedSkill, displayImg: await getImg(imgPath) };
       })) : [],
-      items: m.items ? await Promise.all(m.items.map(async i => ({ 
-        ...i, 
-        displayImg: await getImg(`images/${i.id || i.name}.webp`) 
-      }))) : []
+      items: m.items ? await Promise.all(m.items.map(async i => {
+        const id = i.id || i.name;
+        
+        // 从 items_db 获取完整物品信息
+        const fullItemInfo = id ? itemsDbFull.get(id) : null;
+        
+        // 合并物品信息，并合并 skills 和 skills_passive
+        const merged = fullItemInfo ? 
+          {
+            ...i,
+            ...fullItemInfo,
+            current_tier: i.current_tier || fullItemInfo.current_tier,
+            tier: i.tier || fullItemInfo.tier,
+            // 合并 skills 和 skills_passive
+            skills: [
+              ...(fullItemInfo.skills || []),
+              ...(fullItemInfo.skills_passive || [])
+            ]
+          } : i;
+        
+        return { 
+          ...merged, 
+          displayImg: await getImg(`images/${merged.id || merged.name}.webp`) 
+        };
+      })) : []
     };
   };
 
@@ -1759,16 +1829,48 @@ export default function App() {
     };
 
     if (!finalData) {
+      // 即使没有 tiers 数据，也检查是否有 skills 字段
+      const hasSkills = (item as any).skills && (item as any).skills.length > 0;
+      
+      // 确定当前等级（用于边框颜色）
+      let currentTier = "bronze";
+      if (item.current_tier) {
+        currentTier = item.current_tier.toLowerCase();
+      } else if (item.tier) {
+        currentTier = item.tier.toLowerCase().replace(/[+\s]/g, '');
+      }
+      
+      const borderColorMap: Record<string, string> = {
+        bronze: "#CD7F32",
+        silver: "#C0C0C0",
+        gold: "#FFD700",
+        diamond: "#B9F2FF",
+        legendary: "#FF4500",
+      };
+      const borderColor = borderColorMap[currentTier] || borderColorMap.bronze;
+      
       const dbSize = (item.id && itemSizes[item.id]) ? itemSizes[item.id] : item.size;
       const sizeClassFallback = (dbSize || 'Medium').split(' / ')[0].toLowerCase();
       return (
-        <div className="sub-item-card tier-unknown">
+        <div 
+          className={`sub-item-card tier-${currentTier}`}
+          style={{ borderLeft: `4px solid ${borderColor}` }}
+        >
            <div className="sub-item-header">
-              <div className={`sub-item-img-wrap size-${sizeClassFallback}`}>
+              <div className={`sub-item-img-wrap size-${sizeClassFallback}`} style={{ outline: `2px solid ${borderColor}` }}>
                 <img src={item.displayImg} className="sub-item-img" />
               </div>
-              <span className="sub-item-name">{item.name} (无描述)</span>
+              <span className="sub-item-name">{item.name}{hasSkills ? '' : ' (无描述)'}</span>
            </div>
+           {hasSkills && (
+             <div className="sub-item-desc">
+               {(item as any).skills.map((skill: any, i: number) => (
+                 <div key={i} className="desc-line">
+                   {formatDescription(skill.cn || skill.en || skill)}
+                 </div>
+               ))}
+             </div>
+           )}
         </div>
       );
     }
@@ -1829,16 +1931,27 @@ export default function App() {
           </div>
         </div>
         <div className="sub-item-desc">
-          {finalData.description.map((d, i) => (
-            <div key={i} className="desc-line">
-              {isProgressionActive ? getProgressionText(d, i, 'description') : formatDescription(d)}
-            </div>
-          ))}
-          {finalData.extra_description?.map((d, i) => (
-            <div key={`extra-${i}`} className="desc-line extra-desc">
-              {isProgressionActive ? getProgressionText(d, i, 'extra_description') : formatDescription(d)}
-            </div>
-          ))}
+          {/* 优先显示 item.skills 字段（来自 items_db.json） */}
+          {(item as any).skills && (item as any).skills.length > 0 ? (
+            (item as any).skills.map((skill: any, i: number) => (
+              <div key={i} className="desc-line">
+                {isProgressionActive ? formatDescription(skill.cn || skill.en || skill) : formatDescription(skill.cn || skill.en || skill)}
+              </div>
+            ))
+          ) : (
+            <>
+              {finalData.description.map((d, i) => (
+                <div key={i} className="desc-line">
+                  {isProgressionActive ? getProgressionText(d, i, 'description') : formatDescription(d)}
+                </div>
+              ))}
+              {finalData.extra_description?.map((d, i) => (
+                <div key={`extra-${i}`} className="desc-line extra-desc">
+                  {isProgressionActive ? getProgressionText(d, i, 'extra_description') : formatDescription(d)}
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     );

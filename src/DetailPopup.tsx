@@ -102,6 +102,21 @@ interface SkillText {
     cn: string;
 }
 
+interface SkillDbData {
+    id: string;
+    name_en: string;
+    name_cn: string;
+    description_en: string;
+    description_cn: string;
+    size?: string;
+    starting_tier?: string;
+    available_tiers?: string;
+    heroes?: string;
+    tags?: string;
+    hidden_tags?: string;
+    descriptions: SkillText[];
+}
+
 interface ItemData {
     id?: string;
     uuid: string;
@@ -129,6 +144,7 @@ interface ItemData {
     regen_tiers: string;
     lifesteal_tiers: string;
     skills: SkillText[];
+    skills_passive?: SkillText[];
     enchantments: string[];
     description: string;
     image: string;
@@ -394,6 +410,7 @@ export default function DetailPopup() {
     const [hoveredMonsterItem, setHoveredMonsterItem] = useState<MonsterSubItem | null>(null);
     const [expandedMonsterItem, setExpandedMonsterItem] = useState<MonsterSubItem | null>(null);
     const [itemsDb, setItemsDb] = useState<Map<string, ItemData>>(new Map());
+    const [skillsDb, setSkillsDb] = useState<Map<string, SkillDbData>>(new Map());
     const [isDragging, setIsDragging] = useState(false);
     const isDraggingRef = useRef(false);
     const resizeStartRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
@@ -423,6 +440,27 @@ export default function DetailPopup() {
                 console.log('[DetailPopup] Loaded items_db:', map.size, 'items');
             } catch (e) {
                 console.error('[DetailPopup] Failed to load items_db:', e);
+            }
+        })();
+    }, []);
+    
+    // Load skills database  
+    useEffect(() => {
+        (async () => {
+            try {
+                const path = await resolveResource('resources/skills_db.json');
+                const response = await fetch(convertFileSrc(path));
+                const skills: SkillDbData[] = await response.json();
+                const map = new Map<string, SkillDbData>();
+                skills.forEach(skill => {
+                    if (skill.id) map.set(skill.id, skill);
+                    if (skill.name_cn) map.set(skill.name_cn, skill);
+                    if (skill.name_en) map.set(skill.name_en, skill);
+                });
+                setSkillsDb(map);
+                console.log('[DetailPopup] Loaded skills_db:', map.size, 'skills');
+            } catch (e) {
+                console.error('[DetailPopup] Failed to load skills_db:', e);
             }
         })();
     }, []);
@@ -807,23 +845,61 @@ export default function DetailPopup() {
 
                          processedData = { ...m, displayImg, displayImgBg };
                          
-                         // 3. Skills
+                         // 3. Skills - 从 skills_db 合并完整信息
                          if (m.skills) {
+                             // 动态加载 skills_db（如果还没加载）
+                             let localSkillsDb = skillsDb;
+                             if (localSkillsDb.size === 0) {
+                                 try {
+                                     const path = await resolveResource('resources/skills_db.json');
+                                     const response = await fetch(convertFileSrc(path));
+                                     const skills: SkillDbData[] = await response.json();
+                                     const map = new Map<string, SkillDbData>();
+                                     skills.forEach(skill => {
+                                         if (skill.id) map.set(skill.id, skill);
+                                         if (skill.name_cn) map.set(skill.name_cn, skill);
+                                         if (skill.name_en) map.set(skill.name_en, skill);
+                                     });
+                                     localSkillsDb = map;
+                                     console.log('[DetailPopup] Dynamically loaded skills_db:', map.size);
+                                 } catch (e) {
+                                     console.error('[DetailPopup] Failed to load skills_db:', e);
+                                 }
+                             }
+                             
                              processedData.skills = await Promise.all(m.skills.map(async s => {
                                 let imgPath = '';
-                                // Use s.id instead of s.uuid for MonsterSubItem/Skills from monsters_db
                                 const id = s.id || s.uuid; 
+                                
+                                // 从 skills_db 获取完整技能信息
+                                const fullSkillInfo = id ? localSkillsDb.get(id) : null;
+                                
+                                // 合并技能信息，将 descriptions 字段映射到 skills
+                                let mergedSkill = s;
+                                if (fullSkillInfo) {
+                                    mergedSkill = {
+                                        ...s,
+                                        // 使用 skills_db 中的 descriptions 作为 skills 字段
+                                        skills: fullSkillInfo.descriptions || s.skills || [],
+                                        name: fullSkillInfo.name_cn || s.name,
+                                        name_cn: fullSkillInfo.name_cn,
+                                        name_en: fullSkillInfo.name_en,
+                                        size: fullSkillInfo.size || s.size,
+                                        starting_tier: fullSkillInfo.starting_tier || s.starting_tier
+                                    };
+                                }
+                                
+                                // 获取技能图标
                                 const art = id ? skillsArtMapRef.current[id] : undefined;
                                 if (art) {
                                     const base = art.split('/').pop() || art;
                                     const nameNoExt = base.replace(/\.[^/.]+$/, "");
                                     imgPath = `images/skill/${nameNoExt}.webp`;
                                 } else {
-                                    // Fallback to name if id not found, similar to OverlayApp but handle spaces?
-                                    // Usually images/SkillName.webp
                                     imgPath = `images/${id || s.name}.webp`;
                                 }
-                                return { ...s, displayImg: await getImg(imgPath) };
+                                
+                                return { ...mergedSkill, displayImg: await getImg(imgPath) };
                              }));
                          }
                          
@@ -856,9 +932,20 @@ export default function DetailPopup() {
                                  // 从 items_db 中按 id 查找完整信息
                                  let fullItemInfo = id ? localItemsDb.get(id) : null;
                                  
-                                 // 合并：以 items_db 为基础，但保留 items_db 的 skills 字段
+                                 // 合并：优先使用 items_db 的完整信息
                                  const merged = fullItemInfo ? 
-                                     { ...fullItemInfo, ...i, skills: fullItemInfo.skills || i.skills || [] } : i;
+                                     { 
+                                         ...i,  // 先用 monsters_db 的基础信息
+                                         ...fullItemInfo, // 覆盖为 items_db 的完整信息
+                                         // 但保留 monsters_db 中的运行时字段
+                                         current_tier: i.current_tier || fullItemInfo.current_tier,
+                                         tier: i.tier || fullItemInfo.tier,
+                                         // 确保 skills 来自 items_db，合并 skills 和 skills_passive
+                                         skills: [
+                                             ...(fullItemInfo.skills || []),
+                                             ...(fullItemInfo.skills_passive || [])
+                                         ]
+                                     } : i;
                                  
                                  // 计算 CardFrame 路径
                                  let currentTier = (merged.current_tier || 'bronze').toLowerCase();
