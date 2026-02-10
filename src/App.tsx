@@ -1509,6 +1509,29 @@ export default function App() {
     }
   }, [yoloHotkey]);
 
+  // 监听后端复位窗口几何的事件
+  useEffect(() => {
+    const unlisten = listen('reset-window-geometry', () => {
+      console.log('[Window] Reset geometry event received');
+      // 清除自定义位置标志
+      setHasCustomPosition(false);
+      // 清除 localStorage 中的位置信息
+      localStorage.removeItem('window-has-custom-position');
+      localStorage.removeItem('window-last-position');
+      // 展开窗口
+      setIsCollapsed(false);
+      localStorage.removeItem('window-is-collapsed');
+      // 重置展开尺寸为默认值
+      setExpandedWidth(600);
+      setExpandedHeight(850);
+      localStorage.setItem('window-expanded-width', '600');
+      localStorage.setItem('window-expanded-height', '850');
+      
+      showToast("窗口已复位到默认位置和大小", "success");
+    });
+    return () => { unlisten.then(f => f()); };
+  }, []);
+
   // 基础环境侦测：分辨率适配
 
   // 冲突检测：防止 YOLO 热键和 详情热键 相同

@@ -1806,6 +1806,61 @@ fn get_window_geometry(window_label: String) -> serde_json::Value {
     serde_json::json!({})
 }
 
+#[tauri::command]
+fn reset_window_geometry(app: tauri::AppHandle) -> Result<(), String> {
+    use tauri::Manager;
+    
+    println!("[Geometry] Reset window geometry triggered");
+    
+    // 1. 清除保存的几何信息
+    let mut state = load_state();
+    state.main_window_x = None;
+    state.main_window_y = None;
+    state.main_window_width = None;
+    state.main_window_height = None;
+    save_state(&state);
+    println!("[Geometry] Cleared saved geometry");
+    
+    // 2. 获取主窗口
+    let window = app.get_webview_window("main")
+        .ok_or_else(|| "Main window not found".to_string())?;
+    
+    // 3. 获取主显示器信息
+    use xcap::Monitor;
+    let monitors = Monitor::all().map_err(|e| e.to_string())?;
+    let primary_monitor = monitors.into_iter().next()
+        .ok_or_else(|| "No monitor found".to_string())?;
+    
+    // 4. 计算默认位置（主显示器右上角）
+    let default_width = 600;
+    let default_height = 850;
+    
+    // 获取逻辑分辨率（考虑DPI缩放）
+    let scale_factor = 1.0; // 默认值
+    let logical_width = (primary_monitor.width() as f64 / scale_factor) as i32;
+    let target_x = primary_monitor.x() + logical_width - default_width;
+    let target_y = primary_monitor.y();
+    
+    println!("[Geometry] Resetting to: x={}, y={}, w={}, h={}", target_x, target_y, default_width, default_height);
+    
+    // 5. 设置窗口位置和大小
+    use tauri::{PhysicalPosition, PhysicalSize};
+    window.set_size(PhysicalSize::new(default_width as u32, default_height as u32))
+        .map_err(|e| e.to_string())?;
+    window.set_position(PhysicalPosition::new(target_x, target_y))
+        .map_err(|e| e.to_string())?;
+    
+    // 6. 显示并获取焦点
+    window.show().map_err(|e| e.to_string())?;
+    window.set_focus().map_err(|e| e.to_string())?;
+    
+    // 7. 发送事件到前端让它展开窗口
+    window.emit("reset-window-geometry", ()).map_err(|e| e.to_string())?;
+    
+    println!("[Geometry] Window geometry reset complete");
+    Ok(())
+}
+
 // 存储最后一个前台窗口的信息
 static LAST_FOREGROUND_WINDOW: std::sync::RwLock<Option<String>> = std::sync::RwLock::new(None);
 
@@ -2650,7 +2705,8 @@ pub fn run() {
                 
                 let quit_i = MenuItem::with_id(app, "quit", "Exit BazaarHelper", true, None::<&str>)?;
                 let show_i = MenuItem::with_id(app, "show", "Show Main Window", true, None::<&str>)?;
-                let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
+                let reset_i = MenuItem::with_id(app, "reset", "复位", true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&show_i, &reset_i, &quit_i])?;
 
                 let icon = app.default_window_icon().cloned().expect("No default icon found");
 
@@ -2669,6 +2725,15 @@ pub fn run() {
                                     let _ = window.show();
                                     let _ = window.set_focus();
                                 }
+                            }
+                            "reset" => {
+                                // 调用复位命令
+                                let app_clone = app.clone();
+                                std::thread::spawn(move || {
+                                    if let Err(e) = reset_window_geometry(app_clone) {
+                                        eprintln!("[Tray] Failed to reset window geometry: {}", e);
+                                    }
+                                });
                             }
                             _ => {}
                         }
@@ -3458,7 +3523,8 @@ pub fn run() {
             emit_to_main,
             save_window_geometry,
             save_detail_popup_geometry,
-            get_window_geometry
+            get_window_geometry,
+            reset_window_geometry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

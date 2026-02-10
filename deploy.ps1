@@ -1,9 +1,9 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.5.2"  # <--- 版本号
+$NEW_VERSION = "1.5.3"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
-$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新了一些野怪数据..和新物品数据。新功能暂时还没做出来。先凑合用一下吧"
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 更新了一些野怪数据..和新物品数据。新功能暂时还没做出来。先凑合用一下吧. 2. 新增一个复位按钮，防止窗口找不到了。"
 
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"
