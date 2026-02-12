@@ -4864,8 +4864,8 @@
     "id": "cbd2810c-4713-4503-a97d-30e73ccaebb7",
     "name_en": "Toxic Flame",
     "name_cn": "毒焰",
-    "description_en": "When you Burn, your Poison items gain +1/2/3 Poison for the fight. | When you Poison, your Burn items gain +1/2/3 Burn for the fight.",
-    "description_cn": "触发灼烧时，剧毒物品获得+1/2/3剧毒（限本场战斗）。 | 触发剧毒时，己方灼烧物品的灼烧提高+1/2/3（限本场战斗）。",
+    "description_en": "When you Burn, your Poison items gain +1/2/3 Poison for the fight.",
+    "description_cn": "触发灼烧时，剧毒物品获得+1/2/3剧毒（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -4880,10 +4880,6 @@
       {
         "en": "When you Burn, your Poison items gain +1/2/3 Poison for the fight.",
         "cn": "触发灼烧时，剧毒物品获得+1/2/3剧毒（限本场战斗）。"
-      },
-      {
-        "en": "When you Poison, your Burn items gain +1/2/3 Burn for the fight.",
-        "cn": "触发剧毒时，己方灼烧物品的灼烧提高+1/2/3（限本场战斗）。"
       }
     ]
   },

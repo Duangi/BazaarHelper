@@ -23,7 +23,9 @@ export interface ItemData {
   poison_tiers: string;
   regen_tiers: string;
   lifesteal_tiers: string;
-  skills: string[];
+  skills: string[] | Array<{en: string, cn: string}>;
+  skills_passive?: Array<{en: string, cn: string}>; // 被动技能
+  quests?: any; // 任务（可以是对象或数组）
   enchantments: string[];
   description: string;
   image: string;

@@ -18,12 +18,11 @@ import { SettingGroup } from './components/SettingsPanel';
 // import { MonsterView } from './views/MonsterView';
 import { ItemsView } from './views/ItemsView';
 import { CardRecognitionView } from './views/CardRecognitionView';
+import { UnifiedItemCard } from './components/UnifiedItemCard';
 
 // 导入类型和工具
 import type { ItemData, MonsterData, TabType, SyncPayload, TierInfo, MonsterSubItem } from './types';
 import { getImg, getHotkeyLabel } from './utils/helpers';
-import { renderText, renderEnchantText } from './utils/renderText';
-import { ENCHANT_COLORS, HERO_COLORS } from './constants/colors';
 
 // 保持兼容性的类型定义（以防其他地方还在使用）
 // interface ItemDataLegacy... removed
@@ -313,9 +312,8 @@ export default function App() {
     })();
   }, []);
 
-  // Lazy Load State
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_visibleCount, setVisibleCount] = useState(50);
+  // Lazy Load State for Search (Virtual Scrolling)
+  const [visibleCount, setVisibleCount] = useState(50);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   // Reset filtered items count when query changes
@@ -394,6 +392,15 @@ export default function App() {
             }
             
             const url = await getImg(imgPath);
+            
+            // Debug log for items with passive skills or quests
+            if ((item as any).skills_passive || (item as any).quests) {
+              console.log('[DEBUG] Item with skills_passive/quests:', item.name_cn, {
+                skills_passive: (item as any).skills_passive,
+                quests: (item as any).quests
+              });
+            }
+            
             return { ...item, displayImg: url };
           }));
           
@@ -850,10 +857,6 @@ export default function App() {
     }
   };
 
-  // 包装 renderText 和 renderEnchantText，提供 allTags
-  const renderTextLocal = (text: any) => renderText(text, syncData.all_tags || []);
-  const renderEnchantTextLocal = (content: string) => renderEnchantText(content, syncData.all_tags || []);
-
  // 获取当前 Day 并定期刷新
  useEffect(() => {
    let mounted = true;
@@ -945,219 +948,24 @@ export default function App() {
   const renderUnifiedItemCard = (item: ItemData, isPinned: boolean, onPin: (e: React.MouseEvent) => void) => {
     const uniqueKey = item.instance_id || item.uuid;
     const expansionKey = item.instance_id || item.uuid;
-    
-    // 从 state 中获取展开状态
     const isExpanded = expandedItems.has(expansionKey);
     const isRecognized = activeTab === "card";
-    // 简单判断是否Top match (假设 recognizedCards[0] 是最佳匹配)
     const isTopMatch = recognizedCards.length > 0 && (item === recognizedCards[0] || item.uuid === recognizedCards[0].uuid);
-    
-    const tierClass = item.tier.split(' / ')[0].toLowerCase();
-    const tierNameZh = {
-      'bronze': '青铜+',
-      'silver': '白银+',
-      'gold': '黄金+',
-      'diamond': '钻石+',
-      'legendary': '传说'
-    }[tierClass] || tierClass;
-
-    let heroZh = item.heroes[0]?.split(' / ')[1] || item.heroes[0] || "通用";
-    if (heroZh === "Common") heroZh = "通用";
-    
-    const sizeClass = item.size?.split(' / ')[0].toLowerCase() || 'medium';
 
     return (
-      <div key={uniqueKey} className={`item-card-container ${isExpanded ? 'expanded' : ''} ${isRecognized ? 'identified-glow' : ''}`} onClick={() => toggleExpand(expansionKey)}>
-        <div className={`item-card tier-${tierClass}`}>
-          <div className="card-left">
-            <div className={`image-box size-${sizeClass}`}>
-              <img src={item.displayImg} alt={item.name} />
-            </div>
-          </div>
-
-          <div className="card-center">
-            <div className="name-line">
-              <span className="name-cn">{item.name_cn}</span>
-              {isRecognized && (
-                <span className="id-badge" style={{ 
-                  marginLeft: '4px',
-                  backgroundColor: isTopMatch ? '#238636' : '#8b949e' 
-                }}>
-                  {isTopMatch ? "MATCH" : "MAYBE"}
-                </span>
-              )}
-              <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
-            </div>
-            <div className="tags-line">
-              {item.processed_tags.slice(0, 3).map(t => (
-                <span key={t} className="tag-badge">{t}</span>
-              ))}
-            </div>
-          </div>
-
-          <div className="card-right">
-            <div className="top-right-group">
-              {(() => {
-                let rawHero = 'Common';
-                if (Array.isArray(item.heroes) && item.heroes.length > 0) {
-                  rawHero = item.heroes[0];
-                } else if (typeof item.heroes === 'string' && item.heroes) {
-                  rawHero = item.heroes;
-                }
-                
-                const heroKey = rawHero.split(' / ')[0];
-                const heroColor = HERO_COLORS[heroKey] || undefined;
-                const heroAvatarMap: Record<string, string> = {
-                  'Pygmalien': '/images/heroes/pygmalien.webp',
-                  'Jules': '/images/heroes/jules.webp',
-                  'Vanessa': '/images/heroes/vanessa.webp',
-                  'Mak': '/images/heroes/mak.webp',
-                  'Dooley': '/images/heroes/dooley.webp',
-                  'Stelle': '/images/heroes/stelle.webp',
-                  'P': '/images/heroes/pygmalien.webp',
-                  'J': '/images/heroes/jules.webp',
-                  'V': '/images/heroes/vanessa.webp',
-                  'M': '/images/heroes/mak.webp',
-                  'D': '/images/heroes/dooley.webp',
-                  'S': '/images/heroes/stelle.webp'
-                };
-
-                const avatar = heroAvatarMap[heroKey] || (heroKey.length === 1 && heroAvatarMap[heroKey.toUpperCase()]);
-                
-                const HeroIcon = () => (
-                    <div className="toggle-btn hero-btn" style={{ 
-                        width: 32, height: 32, minWidth: 32, minHeight: 32, 
-                        padding: 0, marginRight: 0, cursor: 'default',
-                        border: avatar ? 'none' : undefined 
-                    }} title={heroZh}>
-                        {avatar ? 
-                            <img src={avatar} alt={heroZh} style={{width: 28, height: 28, borderRadius: '50%'}} /> : 
-                            <span style={{color: heroColor}}>{heroZh}</span>
-                        }
-                    </div>
-                );
-
-                if (activeTab === 'search') return <HeroIcon />;
-                return (
-                  <>
-                    <HeroIcon />
-                    <div 
-                      className={`pin-btn ${isPinned ? 'active' : ''}`}
-                      onClick={onPin}
-                    >
-                      {isPinned ? "📌" : "📍"}
-                    </div>
-                  </>
-                );
-              })()}
-            </div>
-            <div className="expand-chevron">{isExpanded ? '▴' : '▾'}</div>
-          </div>
-        </div>
-
-      {isExpanded && (
-        <div className={`item-details-v2 ${isPinned ? 'progression-active' : ''}`}>
-          {(() => {
-              try {
-                  const cdTiersRaw = (item as any).cooldown_tiers;
-                  const availTiersRaw = (item as any).available_tiers;
-                  
-                  const hasProgression = cdTiersRaw && typeof cdTiersRaw === 'string' && cdTiersRaw.includes('/');
-                  
-                  if (hasProgression) {
-                    const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
-                      const ms = parseFloat(v);
-                      if (isNaN(ms)) return "0.0";
-                      return (ms > 100 ? ms / 1000 : ms).toFixed(1);
-                    });
-                    const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
-                    const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
-                    
-                    return (
-                      <div className="details-left">
-                        <div className="sub-item-cd-progression" style={{ 
-                          position: 'static', 
-                          background: 'rgba(0,0,0,0.2)', 
-                          border: '1px solid rgba(255,255,255,0.05)', 
-                          padding: '4px',
-                          borderRadius: '4px',
-                          minWidth: '50px'
-                        }}>
-                          {cdVals.map((v: string, i: number) => {
-                            let tierName = 'gold';
-                            if (availTiers[i]) {
-                              tierName = availTiers[i];
-                            } else {
-                              if (cdVals.length === 2) tierName = i === 0 ? 'gold' : 'diamond';
-                              else tierName = tierSequence[i] || 'gold';
-                            }
-                            return (
-                              <React.Fragment key={i}>
-                                <div className={`cd-step val-${tierName}`} style={{ fontSize: '16px' }}>{v}</div>
-                                {i < cdVals.length - 1 && <div className="cd-arrow" style={{ transform: 'none', margin: '0' }}>↓</div>}
-                              </React.Fragment>
-                            );
-                          })}
-                          <div className="cd-unit">秒</div>
-                        </div>
-                      </div>
-                    );
-                  }
-              } catch (e) {
-                console.error("Error rendering CD progression:", e);
-              }
-              
-              return item.cooldown !== undefined && item.cooldown > 0 && (
-                <div className="details-left">
-                  <div className="cd-display">
-                    <div className="cd-value">{(item.cooldown > 100 ? item.cooldown / 1000 : item.cooldown).toFixed(1)}</div>
-                    <div className="cd-unit">秒</div>
-                  </div>
-                </div>
-              );
-          })()}
-          <div className="details-right">
-            {item.skills.map((s, idx) => (
-              <div key={idx} className="skill-item">
-                {renderTextLocal(s)}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {item.enchantments.length > 0 && isExpanded && (
-        <div className="item-enchantments-row">
-          {item.enchantments.map((enc, idx) => {
-            const parts = enc.split('|');
-            if (parts.length > 1) {
-              const name = parts[0];
-              const effect = parts[1];
-              const color = ENCHANT_COLORS[name] || '#ffcd19';
-              return (
-                <div key={idx} className="enchant-item">
-                  <span className="enchant-badge" style={{ 
-                    '--enc-clr': color
-                  } as React.CSSProperties}>{name}</span>
-                  <span className="enchant-effect">{renderEnchantTextLocal(effect)}</span>
-                </div>
-              );
-            }
-            return (
-              <div key={idx} className="enchant-item">
-                {renderTextLocal(enc)}
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {item.description && isExpanded && (
-        <div className="item-description-row">
-          <div className="description-text">
-            {renderTextLocal(item.description)}
-          </div>
-        </div>
-      )}
-    </div>
+      <UnifiedItemCard
+        key={uniqueKey}
+        item={item}
+        allTags={syncData.all_tags || []}
+        isExpanded={isExpanded}
+        isPinned={isPinned}
+        isRecognized={isRecognized}
+        isTopMatch={isTopMatch}
+        showPin={activeTab !== 'search'}
+        showExpandChevron={true}
+        onToggleExpand={() => toggleExpand(expansionKey)}
+        onPin={onPin}
+      />
     );
   };
 
@@ -2262,8 +2070,14 @@ export default function App() {
         if (e.buttons !== 0) return;
         // 如果输入框正在输入，则不交还焦点，防止焦点抢夺导致输入打断
         if (isInputFocused) return;
-        // 当鼠标划出插件界面时，自动尝试把焦点还给游戏
-        invoke("restore_game_focus").catch(() => {});
+        // 仅当上一个前台应用是游戏时，鼠标划出插件才自动把焦点还给游戏
+        invoke<boolean>("was_last_foreground_game")
+          .then((shouldRestore) => {
+            if (shouldRestore) {
+              invoke("restore_game_focus").catch(() => {});
+            }
+          })
+          .catch(() => {});
         invoke("set_overlay_ignore_cursor", { ignore: true }).catch(() => {});
       }}
     >
@@ -3850,10 +3664,15 @@ export default function App() {
 
                 {activeTab === 'search' && (
                     <div className="card-list">
-                       {searchResults.map((item, _idx) => 
+                       {searchResults.slice(0, visibleCount).map((item, _idx) => 
                          renderUnifiedItemCard(item, pinnedItems.has(item.instance_id||item.uuid), (e) => togglePin(item.instance_id||item.uuid, e))
                        )}
                        {searchResults.length === 0 && <div className="empty-tip">未找到结果</div>}
+                       {searchResults.length > visibleCount && (
+                         <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                           显示 {visibleCount} / {searchResults.length} 项，向下滚动加载更多...
+                         </div>
+                       )}
                     </div>
                 )}
               </>

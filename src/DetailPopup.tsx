@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
+import { useEffect, useState, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow, PhysicalSize, PhysicalPosition } from "@tauri-apps/api/window"; 
 // Note: ResizeDirection will be used as a string if not exported as Enum, 
@@ -7,6 +7,7 @@ import { getCurrentWindow, PhysicalSize, PhysicalPosition } from "@tauri-apps/ap
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { resolveResource } from "@tauri-apps/api/path";
 import "./App.css";
+import { UnifiedItemCard } from "./components/UnifiedItemCard";
 
 // Debounce helper
 const debounce = (func: Function, wait: number) => {
@@ -42,33 +43,6 @@ const KEYWORD_COLORS: Record<string, string> = {
 };
 
 const TIER_COLORS = ["#cd7f32", "#c0c0c0", "#ffd700", "#b9f2ff"];
-
-const ENCHANT_COLORS: Record<string, string> = {
-  "黄金": "var(--c-gold)",
-  "沉重": "var(--c-slow)",
-  "寒冰": "var(--c-freeze)",
-  "疾速": "var(--c-haste)",
-  "护盾": "var(--c-shield)",
-  "回复": "var(--c-heal)",
-  "毒素": "var(--c-poison)",
-  "炽焰": "var(--c-burn)",
-  "闪亮": "#98a8fe",
-  "致命": "var(--c-damage)",
-  "辉耀": "#98a8fe",
-  "黑曜石": "#9d4a6f"
-};
-
-const HERO_COLORS: Record<string, string> = {
-  "Vanessa": '#FF6B6B',
-  "Pygmalien": '#5BA3FF',
-  "Jules": '#D77EFF',
-  "Mak": '#D4FF85',
-  "Dooley": '#FFC048',
-  "Stelle": '#FFE74C',
-  "Common": '#E0E0E0',
-  // Abbreviations
-  "P": '#5BA3FF', "J": '#D77EFF', "V": '#FF6B6B', "M": '#D4FF85', "D": '#FFC048', "S": '#FFE74C'
-};
 
 const filterTextForTier = (text: string, currentTier: string) => {
     const tierMap: Record<string, number> = { bronze: 0, silver: 1, gold: 2, diamond: 3 };
@@ -145,6 +119,7 @@ interface ItemData {
     lifesteal_tiers: string;
     skills: SkillText[];
     skills_passive?: SkillText[];
+    quests?: any;
     enchantments: string[];
     description: string;
     image: string;
@@ -691,62 +666,6 @@ export default function DetailPopup() {
         });
     };
 
-    // 渲染附魔文本（照抄 App.tsx）
-    const renderEnchantText = (content: string) => {
-        if (!content) return null;
-        
-        const parts = content.split(/(\d+(?:\/\d+)+)/g);
-        
-        return parts.map((part, i) => {
-          if (part.includes('/')) {
-            const nums = part.split('/');
-            return (
-              <span key={i} className="progression-nums">
-                {nums.map((n, idx) => {
-                  let colorIdx = idx;
-                  if (nums.length === 2) colorIdx = idx + 2;
-                  else if (nums.length === 3) colorIdx = idx + 1;
-                  
-                  const val = parseFloat(n);
-                  const displayVal = (!isNaN(val) && val > 100) ? (val / 1000).toFixed(1) : n;
-                  
-                  return (
-                    <span key={idx}>
-                      <span style={{ color: TIER_COLORS[colorIdx] || '#fff', fontWeight: 'bold' }}>{displayVal}</span>
-                      {idx < nums.length - 1 && <span style={{ color: '#fff' }}>/</span>}
-                    </span>
-                  );
-                })}
-              </span>
-            );
-          }
-    
-          let processedPart = part;
-          processedPart = processedPart.replace(/\b(\d{3,})\b/g, (match) => {
-              const val = parseInt(match, 10);
-              return val > 100 ? (val / 1000).toFixed(1) : match;
-          });
-    
-          const keywords = Object.keys(KEYWORD_COLORS);
-          const allMatches = [...new Set([...keywords, ...allTags])].filter(k => k.length > 0);
-          
-          if (allMatches.length === 0) return processedPart;
-          
-          const regex = new RegExp(`(${allMatches.join('|')})`, 'g');
-          const subParts = processedPart.split(regex);
-          
-          return subParts.map((sub, j) => {
-            if (KEYWORD_COLORS[sub]) {
-              return <span key={j} style={{ color: KEYWORD_COLORS[sub], fontWeight: 'bold' }}>{sub}</span>;
-            }
-            if (allTags.includes(sub)) {
-              return <span key={j} style={{ color: '#8eba31', fontWeight: 'bold' }}>{sub}</span>;
-            }
-            return sub;
-          });
-        });
-    };
-
     useEffect(() => {
         console.log("[DetailPopup] Component mounted, setting up listeners");
         
@@ -939,12 +858,7 @@ export default function DetailPopup() {
                                          ...fullItemInfo, // 覆盖为 items_db 的完整信息
                                          // 但保留 monsters_db 中的运行时字段
                                          current_tier: i.current_tier || fullItemInfo.current_tier,
-                                         tier: i.tier || fullItemInfo.tier,
-                                         // 确保 skills 来自 items_db，合并 skills 和 skills_passive
-                                         skills: [
-                                             ...(fullItemInfo.skills || []),
-                                             ...(fullItemInfo.skills_passive || [])
-                                         ]
+                                         tier: i.tier || fullItemInfo.tier
                                      } : i;
                                  
                                  // 计算 CardFrame 路径
@@ -1058,42 +972,6 @@ export default function DetailPopup() {
     }
 
     // --- Render Helpers ---
-
-    const renderStatTiers = (item: ItemData) => {
-        const stats: {label: string, value: string}[] = [];
-        const check = (val: any, label: string) => {
-            if (val && typeof val === 'string' && val.includes('/')) {
-                stats.push({ label, value: val });
-            }
-        };
-
-        check(item.damage_tiers, '伤害');
-        check(item.heal_tiers, '治疗');
-        check(item.shield_tiers, '护盾');
-        if (item.cooldown_tiers && item.cooldown_tiers.includes('/')) {
-            const cdSecs = item.cooldown_tiers.split('/').map(v => (parseFloat(v)/1000).toFixed(1)).join('/');
-            stats.push({ label: 'CD', value: cdSecs + 's' });
-        }
-        check(item.ammo_tiers, '弹药');
-        check(item.burn_tiers, '灼烧');
-        check(item.poison_tiers, '中毒');
-        check(item.multicast_tiers, '多重');
-        check(item.regen_tiers, '回复');
-
-        if (stats.length === 0) return null;
-
-        return (
-            <div style={{ marginTop: '10px', background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ fontSize: '11px', color: 'var(--c-golden)', marginBottom: '8px', borderBottom: '1px solid rgba(255,205,25,0.2)', paddingBottom: '4px' }}>属性成长 (Tier Progression)</div>
-                {stats.map(s => (
-                    <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
-                        <span style={{ color: '#888' }}>{s.label}</span>
-                        <span style={{ color: '#ddd' }}>{renderText(s.value)}</span>
-                    </div>
-                ))}
-            </div>
-        );
-    };
 
     // Helper to merge description lines from all tiers
     const getUnifiedDescription = (item: MonsterSubItem): string[] => {
@@ -1240,215 +1118,17 @@ export default function DetailPopup() {
     };
 
     const renderItemContent = (item: ItemData) => {
-        const tierMap: Record<string, string> = { 'Bronze': '青铜', 'Silver': '白银', 'Gold': '黄金', 'Diamond': '钻石', 'Legendary': '传奇' };
-        const tierNameZh = tierMap[item.tier] || item.tier;
-        const tierClass = (item.tier || '').toLowerCase();
-        const sizeClass = (item.size || 'medium').toLowerCase();
-        
-        const heroMap: Record<string, string> = { 
-            Pygmalien: '皮格', Jules: '朱尔斯', Vanessa: '凡妮莎', Mak: '麦克', Dooley: '杜利', Stelle: '斯黛拉', Common: '通用',
-            // Handle abbreviations
-            P: '皮格', J: '朱尔斯', V: '凡妮莎', M: '麦克', D: '杜利', S: '斯黛拉'
-        };
-        const heroImageMap: Record<string, string> = {
-            pygmalien: '/images/heroes/pygmalien.webp',
-            jules: '/images/heroes/jules.webp',
-            vanessa: '/images/heroes/vanessa.webp',
-            mak: '/images/heroes/mak.webp',
-            dooley: '/images/heroes/dooley.webp',
-            stelle: '/images/heroes/stelle.webp',
-            // mappings for abbreviations
-            p: '/images/heroes/pygmalien.webp',
-            j: '/images/heroes/jules.webp',
-            v: '/images/heroes/vanessa.webp',
-            m: '/images/heroes/mak.webp',
-            d: '/images/heroes/dooley.webp',
-            s: '/images/heroes/stelle.webp'
-        };
-
-        const rawHero = (() => {
-            if (Array.isArray(item.heroes) && item.heroes.length > 0) return item.heroes[0];
-            if (typeof item.heroes === 'string' && item.heroes) return item.heroes;
-            return 'Common';
-        })();
-        const heroKey = rawHero.split(' / ')[0];
-        const heroZh = heroMap[heroKey] || heroKey;
-        const heroColor = HERO_COLORS[heroKey] || undefined;
-        // Use processed displayHeroImg or fallback
-        let avatar = item.displayHeroImg;
-        if (!avatar) {
-             const keyLower = heroKey.toLowerCase();
-             if (heroImageMap[keyLower]) {
-                 avatar = heroImageMap[keyLower];
-             }
-        }
-
         return (
-            <div className="item-card-container expanded">
-                <div className={`item-card tier-${tierClass}`}>
-                    <div className="card-left">
-                        <div className={`image-box size-${sizeClass}`}>
-                            <img 
-                                src={item.displayImg || ''} 
-                                alt={item.name}
-                                onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="card-center">
-                        <div className="name-line">
-                            <span className="name-cn">{item.name_cn}</span>
-                            <span className={`tier-label tier-${tierClass}`}>{tierNameZh}</span>
-                        </div>
-                        <div className="tags-line">
-                            {item.processed_tags.slice(0, 3).map(t => (
-                                <span key={t} className="tag-badge">{t}</span>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="card-right">
-                        <div className="top-right-group">
-                            {avatar ? 
-                                <button className="toggle-btn hero-btn" title={heroZh}>
-                                    <img src={avatar} alt={heroZh} />
-                                </button> : 
-                                (heroZh === '通用' ? 
-                                    <span style={{fontSize: '12px', color: '#ccc', marginRight: '4px'}}>通用</span> :
-                                    <span className="hero-badge" style={{marginRight: 0, color: heroColor}}>{heroZh}</span>
-                                )
-                            }
-                        </div>
-                        <div className="expand-chevron">▴</div>
-                    </div>
-                </div>
-
-                <div className="item-details-v2">
-                    {/* CD Progression Logic */}
-                     {(() => {
-                        try {
-                            const cdTiersRaw = (item as any).cooldown_tiers;
-                            const availTiersRaw = (item as any).available_tiers;
-                            const hasProgression = cdTiersRaw && typeof cdTiersRaw === 'string' && cdTiersRaw.includes('/');
-                            
-                            if (hasProgression) {
-                              const cdVals = (cdTiersRaw as string).split('/').map((v: string) => {
-                                const ms = parseFloat(v);
-                                if (isNaN(ms)) return "0.0";
-                                return (ms > 100 ? ms / 1000 : ms).toFixed(1);
-                              });
-                              const availTiers = (availTiersRaw || "").split('/').map((t: string) => t.toLowerCase().trim());
-                              const tierSequence = ['bronze', 'silver', 'gold', 'diamond', 'legendary'];
-                              
-                              return (
-                                <div className="details-left">
-                                  <div className="sub-item-cd-progression" style={{ 
-                                    position: 'static', 
-                                    background: 'rgba(0,0,0,0.2)', 
-                                    border: '1px solid rgba(255,255,255,0.05)', 
-                                    padding: '4px',
-                                    borderRadius: '4px',
-                                    minWidth: '50px'
-                                  }}>
-                                    {cdVals.map((v: string, i: number) => {
-                                      let tierName = 'gold';
-                                      if (availTiers[i]) {
-                                        tierName = availTiers[i];
-                                      } else {
-                                        if (cdVals.length === 2) tierName = i === 0 ? 'gold' : 'diamond';
-                                        else tierName = tierSequence[i] || 'gold';
-                                      }
-
-                                      return (
-                                        <Fragment key={i}>
-                                          <div className={`cd-step val-${tierName}`} style={{ fontSize: '16px' }}>{v}</div>
-                                          {i < cdVals.length - 1 && <div className="cd-arrow" style={{ transform: 'none', margin: '0' }}>↓</div>}
-                                        </Fragment>
-                                      );
-                                    })}
-                                    <div className="cd-unit">秒</div>
-                                  </div>
-                                </div>
-                              );
-                            }
-                        } catch (e) {
-                          console.error("Error rendering CD progression:", e);
-                        }
-                        
-                        return item.cooldown !== undefined && item.cooldown > 0 && (
-                          <div className="details-left">
-                            <div className="cd-display">
-                              <div className="cd-value">{(item.cooldown > 100 ? item.cooldown / 1000 : item.cooldown).toFixed(1)}</div>
-                              <div className="cd-unit">秒</div>
-                            </div>
-                          </div>
-                        );
-                    })()}
-                    
-                    <div className="details-right">
-                        {item.skills.map((s, idx) => (
-                            <div key={idx} className="skill-item" style={{ 
-                                marginTop: idx > 0 ? '8px' : '0',
-                                borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
-                                paddingTop: idx > 0 ? '8px' : '0'
-                            }}>
-                                {idx > 0 && (
-                                    <div style={{ 
-                                        fontSize: '11px', 
-                                        color: '#ffd700', 
-                                        marginBottom: '4px',
-                                        fontWeight: 'bold',
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '1px'
-                                    }}>
-                                        UPGRADE / EFFECT
-                                    </div>
-                                )}
-                                {renderText(s)}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {item.enchantments && item.enchantments.length > 0 && (
-                    <div className="item-enchantments-row">
-                        {item.enchantments.map((enc, idx) => {
-                            const parts = enc.split('|');
-                            if (parts.length > 1) {
-                                const name = parts[0];
-                                const effect = parts[1];
-                                const color = ENCHANT_COLORS[name] || '#ffcd19';
-                                return (
-                                    <div key={idx} className="enchant-item">
-                                        <span className="enchant-badge" style={{ 
-                                            '--enc-clr': color
-                                        } as React.CSSProperties}>{name}</span>
-                                        <span className="enchant-effect">{renderEnchantText(effect)}</span>
-                                    </div>
-                                );
-                            }
-                            return (
-                                <div key={idx} className="enchant-item">
-                                    {renderText(enc)}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-                
-                {renderStatTiers(item)}
-
-                {item.description && (
-                    <div className="item-description-row">
-                        <div className="description-text">
-                            {renderText(item.description)}
-                        </div>
-                    </div>
-                )}
-            </div>
+            <UnifiedItemCard
+                item={item as any}
+                allTags={allTags}
+                isExpanded={true}
+                isPinned={false}
+                isRecognized={false}
+                isTopMatch={false}
+                showPin={false}
+                showExpandChevron={false}
+            />
         );
     };
 

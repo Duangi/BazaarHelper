@@ -23,12 +23,13 @@ use windows::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::{
     GetWindowLongW, SetWindowLongW, SetWindowPos,
+    EnumWindows, GetWindowTextW, IsWindowVisible, SetForegroundWindow, ShowWindow,
     GWL_EXSTYLE, GWL_STYLE,
     WS_EX_TOOLWINDOW, WS_EX_APPWINDOW, WS_EX_WINDOWEDGE, WS_EX_CLIENTEDGE, WS_EX_STATICEDGE,
     WS_EX_LAYERED, WS_EX_NOACTIVATE,
     WS_CAPTION, WS_THICKFRAME, WS_POPUP, WS_SYSMENU, WS_MAXIMIZEBOX, WS_MINIMIZEBOX, WS_BORDER, WS_DLGFRAME,
     WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN,
-    SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_NOACTIVATE, SWP_FRAMECHANGED
+    SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_NOACTIVATE, SWP_FRAMECHANGED, SW_RESTORE
 };
 #[cfg(target_os = "windows")]
 use windows::Win32::Graphics::Dwm::{
@@ -36,7 +37,9 @@ use windows::Win32::Graphics::Dwm::{
     DWMWA_USE_IMMERSIVE_DARK_MODE, DWMWA_BORDER_COLOR, DWMWA_CAPTION_COLOR, DWMWA_TEXT_COLOR
 };
 #[cfg(target_os = "windows")]
-use windows::Win32::Foundation::{HWND, COLORREF};
+use windows::core::BOOL;
+#[cfg(target_os = "windows")]
+use windows::Win32::Foundation::{HWND, COLORREF, LPARAM};
 
 use opencv::core::MatTraitConst;
 use device_query::{DeviceQuery, DeviceState, MouseState};
@@ -991,6 +994,8 @@ pub struct RawItem {
     pub lifesteal: Option<i32>,
     pub lifesteal_tiers: Option<String>,
     pub skills: Option<Vec<RawSkill>>,
+    pub skills_passive: Option<Vec<RawSkill>>,
+    pub quests: Option<serde_json::Value>,
     pub descriptions: Option<Vec<RawSkill>>,
     pub enchantments: Option<serde_json::Value>,
     pub image: Option<String>,
@@ -1034,6 +1039,8 @@ pub struct ItemData {
     pub lifesteal_tiers: String,
     pub lifesteal: Option<i32>,
     pub skills: Vec<SkillText>,
+    pub skills_passive: Option<Vec<SkillText>>,
+    pub quests: Option<serde_json::Value>,
     pub enchantments: Vec<String>,
     pub description: String,
     pub instance_id: Option<String>,
@@ -1074,6 +1081,20 @@ impl From<RawItem> for ItemData {
             })
             .filter(|s| !s.cn.is_empty() || !s.en.is_empty())
             .collect();
+        
+        // Handle skills_passive
+        let skills_passive = raw.skills_passive.map(|passive_skills| {
+            passive_skills.into_iter()
+                .map(|s| SkillText {
+                    en: s.en.unwrap_or_default(),
+                    cn: s.cn.unwrap_or_default(),
+                })
+                .filter(|s| !s.cn.is_empty() || !s.en.is_empty())
+                .collect()
+        });
+        
+        // Handle quests
+        let quests = raw.quests;
         
         // Handle enchantments
         let mut enchantments = Vec::new();
@@ -1143,6 +1164,8 @@ impl From<RawItem> for ItemData {
             lifesteal_tiers: raw.lifesteal_tiers.unwrap_or_default(),
             lifesteal,
             skills,
+            skills_passive,
+            quests,
             enchantments,
             description: "".to_string(), // will be populated
             instance_id: None, // Used for tracked stash items
@@ -1930,12 +1953,69 @@ fn update_last_foreground_window() {
 }
 
 #[tauri::command]
+fn was_last_foreground_game() -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(last) = LAST_FOREGROUND_WINDOW.read() {
+            if let Some(title) = &*last {
+                let lower = title.to_lowercase();
+                return lower.contains("the bazaar") || lower.contains("thebazaar");
+            }
+        }
+        false
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        true
+    }
+}
+
+#[tauri::command]
 async fn restore_game_focus() -> Result<(), String> {
-    // This function is disabled because it was causing unintended focus-stealing behavior.
-    // By not restoring focus automatically, we give the user full control over their
-    // window focus, addressing the reported issue.
-    println!("[Focus] `restore_game_focus` called, but is intentionally disabled to prevent focus stealing.");
-    Ok(())
+    #[cfg(target_os = "windows")]
+    {
+        unsafe extern "system" fn enum_windows_proc(hwnd: HWND, lparam: LPARAM) -> BOOL {
+            if !IsWindowVisible(hwnd).as_bool() {
+                return BOOL(1);
+            }
+
+            let mut title: [u16; 512] = [0; 512];
+            let len = GetWindowTextW(hwnd, &mut title);
+            if len > 0 {
+                let window_title = String::from_utf16_lossy(&title[..len as usize]).to_lowercase();
+                if window_title.contains("the bazaar") || window_title.contains("thebazaar") {
+                    let out_ptr = lparam.0 as *mut Option<HWND>;
+                    if !out_ptr.is_null() {
+                        *out_ptr = Some(hwnd);
+                    }
+                    return BOOL(0);
+                }
+            }
+
+            BOOL(1)
+        }
+
+        let mut target_hwnd: Option<HWND> = None;
+        unsafe {
+            let ptr = &mut target_hwnd as *mut Option<HWND>;
+            let _ = EnumWindows(Some(enum_windows_proc), LPARAM(ptr as isize));
+        }
+
+        if let Some(hwnd) = target_hwnd {
+            unsafe {
+                let _ = ShowWindow(hwnd, SW_RESTORE);
+                let _ = SetForegroundWindow(hwnd);
+            }
+            println!("[Focus] Restored focus to The Bazaar window.");
+            Ok(())
+        } else {
+            Err("The Bazaar window not found".to_string())
+        }
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        Ok(())
+    }
 }
 
 fn get_cache_path() -> PathBuf {
@@ -2823,6 +2903,9 @@ pub fn run() {
                     std::thread::sleep(std::time::Duration::from_millis(500));
                     
                     let game_active = is_game_window_active();
+                    if game_active {
+                        update_last_foreground_window();
+                    }
                     let mut app_active = false;
                     
                     // Check if any of our windows allow focus and are active (like DetailPopup if interacting)
@@ -3489,6 +3572,7 @@ pub fn run() {
             hide_detail_popup,
             reset_detail_popup_position,
             restore_game_focus,
+            was_last_foreground_game,
             get_show_yolo_monitor,
             start_template_loading,
             search_items,

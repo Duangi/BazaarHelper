@@ -2170,6 +2170,16 @@ html, body, #root {
   color: #ddd;
 }
 
+/* 被动技能样式 */
+.skill-item.skill-passive {
+  color: #b7efff;
+  background: rgba(0, 236, 195, 0.08);
+  border: 1px solid rgba(0, 236, 195, 0.22);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 4px;
+}
+
 .enchant-item {
   display: flex;
   align-items: center;
@@ -2204,6 +2214,46 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ==================== 任务区域 ==================== */
+.quests-section {
+  margin: 8px 12px 12px 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quest-item {
+  background: linear-gradient(180deg, rgba(74, 84, 129, 0.2) 0%, rgba(34, 37, 56, 0.25) 100%);
+  border: 1px solid rgba(144, 152, 254, 0.28);
+  border-left: 3px solid #9098fe;
+  border-radius: 9px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quest-header {
+  font-size: calc(12px * var(--font-scale, 1));
+  font-weight: 700;
+  color: #c7ceff;
+  letter-spacing: 0.2px;
+}
+
+.quest-target {
+  font-size: calc(13px * var(--font-scale, 1));
+  line-height: 1.7;
+  color: #e3e8ff;
+}
+
+.quest-reward {
+  font-size: calc(13px * var(--font-scale, 1));
+  line-height: 1.7;
+  color: #ffe79d;
 }
 
 .item-description-row {

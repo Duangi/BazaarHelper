@@ -575,8 +575,8 @@
     "damage_tiers": "0",
     "heal": 0,
     "heal_tiers": "",
-    "shield": 50,
-    "shield_tiers": "50",
+    "shield": 40,
+    "shield_tiers": "40",
     "ammo": 0,
     "ammo_tiers": "",
     "crit": 0,
@@ -595,8 +595,8 @@
     "sell_price": 0,
     "skills": [
       {
-        "en": "Shield 50",
-        "cn": "获得50护盾"
+        "en": "Shield 40",
+        "cn": "获得40护盾"
       },
       {
         "en": "Deal Damage equal to your Shield",
@@ -605,8 +605,8 @@
     ],
     "skills_passive": [
       {
-        "en": "When this is Hasted, this gains +50/75/100 Shield for the fight.",
-        "cn": "此物品被加速时，其护盾提高+50/75/100（限本场战斗）。"
+        "en": "When this is Hasted, this gains +40/80/120 Shield for the fight.",
+        "cn": "此物品被加速时，其护盾提高+40/80/120（限本场战斗）。"
       }
     ],
     "quests": null,
@@ -10831,8 +10831,8 @@
     "sell_price": 0,
     "skills": [
       {
-        "en": "Haste another Tool for 1/1.5/2/2.5 second(s).",
-        "cn": "加速另一件工具1/1.5/2/2.5秒。"
+        "en": "Haste another Tool for 2 second(s).",
+        "cn": "加速另一件工具2秒。"
       }
     ],
     "skills_passive": [
