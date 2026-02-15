@@ -1,0 +1,70 @@
+{
+  "total_files": 1946,
+  "folders": {
+    ".": 18,
+    "EncEvent_BG": 27,
+    "EncEvent_CHAR": 38,
+    "EncEvent_Icons": 68,
+    "images": 1089,
+    "images/skill": 440,
+    "images_GUI": 39,
+    "images_monster_bg": 109,
+    "images_monster_char": 115,
+    "models": 1,
+    "sponsor": 2
+  },
+  "extensions": {
+    ".csv": 2,
+    ".dll": 2,
+    ".json": 13,
+    ".md": 1,
+    ".onnx": 1,
+    ".png": 5,
+    ".webp": 1922
+  },
+  "name_style": {
+    "contains-space": 4,
+    "lowercase": 1389,
+    "mixed-case": 545,
+    "uppercase": 8
+  },
+  "folder_extensions": {
+    ".": {
+      ".csv": 2,
+      ".dll": 2,
+      ".json": 13,
+      ".md": 1
+    },
+    "EncEvent_BG": {
+      ".webp": 27
+    },
+    "EncEvent_CHAR": {
+      ".webp": 38
+    },
+    "EncEvent_Icons": {
+      ".webp": 68
+    },
+    "images": {
+      ".webp": 1089
+    },
+    "images/skill": {
+      ".webp": 440
+    },
+    "images_GUI": {
+      ".webp": 39
+    },
+    "images_monster_bg": {
+      ".webp": 109
+    },
+    "images_monster_char": {
+      ".png": 3,
+      ".webp": 112
+    },
+    "models": {
+      ".onnx": 1
+    },
+    "sponsor": {
+      ".png": 2
+    }
+  }
+}

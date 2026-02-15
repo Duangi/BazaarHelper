@@ -8,6 +8,7 @@ interface TabBarProps {
 
 export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange }) => {
   const tabs: { id: TabType; label: string }[] = [
+    { id: 'history', label: '历史战绩' },
     { id: 'monster', label: '野怪一览' },
     { id: 'items', label: '手头物品' },
     { id: 'card', label: '卡牌识别' },

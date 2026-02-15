@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Toast as ToastType } from '../types';
 
 interface ToastContainerProps {
@@ -22,12 +22,18 @@ interface ToastItemProps {
 }
 
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
+  const onRemoveRef = useRef(onRemove);
+
+  useEffect(() => {
+    onRemoveRef.current = onRemove;
+  }, [onRemove]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      onRemove(toast.id);
+      onRemoveRef.current(toast.id);
     }, 3000);
     return () => clearTimeout(timer);
-  }, [toast.id, onRemove]);
+  }, [toast.id]);
 
   return (
     <div className={`toast toast-${toast.type}`}>

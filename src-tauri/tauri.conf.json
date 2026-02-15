@@ -22,7 +22,7 @@
                                     "decorations":  false,
                                     "transparent":  true,
                                     "backgroundColor":  "#00000000",
-                                    "visible":  false,
+                                    "visible":  true,
                                     "skipTaskbar":  true,
                                     "dragDropEnabled":  true,
                                     "visibleOnAllWorkspaces":  true

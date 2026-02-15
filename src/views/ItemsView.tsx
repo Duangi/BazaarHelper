@@ -30,11 +30,12 @@ export const ItemsView: React.FC<ItemsViewProps> = ({
       <div className="section">
         <h3 className="section-title">手牌 ({sortedHand.length})</h3>
         <div className="items-grid">
-          {sortedHand.map(item => {
+          {sortedHand.map((item, idx) => {
             const itemId = item.instance_id || item.uuid;
             const isPinned = pinnedItems.has(itemId) || pinnedItems.has(item.uuid);
+            const reactKey = item.instance_id || `${item.uuid}-${idx}`;
             return (
-              <div key={itemId}>
+              <div key={reactKey}>
                 {renderItemCard(item, isPinned, (e) => onTogglePin(itemId, e))}
               </div>
             );
@@ -45,11 +46,12 @@ export const ItemsView: React.FC<ItemsViewProps> = ({
       <div className="section">
         <h3 className="section-title">仓库 ({sortedStash.length})</h3>
         <div className="items-grid">
-          {sortedStash.map(item => {
+          {sortedStash.map((item, idx) => {
             const itemId = item.instance_id || item.uuid;
             const isPinned = pinnedItems.has(itemId) || pinnedItems.has(item.uuid);
+            const reactKey = item.instance_id || `${item.uuid}-${idx}`;
             return (
-              <div key={itemId}>
+              <div key={reactKey}>
                 {renderItemCard(item, isPinned, (e) => onTogglePin(itemId, e))}
               </div>
             );

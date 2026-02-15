@@ -1,0 +1,445 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import type { AppShellProps } from '../../components/layout/AppShell';
+import { useResourceCatalog } from '../features/useResourceCatalog';
+import { useMonsterTabLogic } from '../features/useMonsterTabLogic';
+import { useVersionUpdate } from '../features/useVersionUpdate';
+import { useCardRecognition } from '../features/useCardRecognition';
+import { useItemCardState } from '../features/useItemCardState';
+import { useTierInfoRenderer } from '../features/useTierInfoRenderer';
+import { useSearchPanelState } from '../search/useSearchPanelState';
+import { useUpdateActions } from '../features/useUpdateActions';
+import { useMatchHistory } from '../sync/useMatchHistory';
+import { useAppSettingsState } from './useAppSettingsState';
+import { useOverlayWindowState } from '../window/useOverlayWindowState';
+import { useUnifiedItemCardRenderer } from '../features/useUnifiedItemCardRenderer';
+import { useOverlayActions } from '../window/useOverlayActions';
+import { useSyncDataPipeline } from '../sync/useSyncDataPipeline';
+import { useDayTabSelection } from '../features/useDayTabSelection';
+import { useAppCoreState } from './useAppCoreState';
+import { useAppLifecycleEffects } from './useAppLifecycleEffects';
+import { useAppViewBindings } from './useAppViewBindings';
+import type { IslandStatusType } from '../../types';
+
+export const useAppController = (): AppShellProps => {
+  const [islandStatusText, setIslandStatusText] = useState('集市小抄 运行中');
+  const [islandStatusType, setIslandStatusType] = useState<IslandStatusType>('info');
+  const islandStatusTimerRef = useRef<number | null>(null);
+
+  const updateIslandStatus = useCallback((message: string, type: IslandStatusType = 'info') => {
+    setIslandStatusText(message);
+    setIslandStatusType(type);
+
+    if (islandStatusTimerRef.current) {
+      window.clearTimeout(islandStatusTimerRef.current);
+    }
+    islandStatusTimerRef.current = window.setTimeout(() => {
+      setIslandStatusText('集市小抄 运行中');
+      setIslandStatusType('info');
+      islandStatusTimerRef.current = null;
+    }, 6000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (islandStatusTimerRef.current) {
+        window.clearTimeout(islandStatusTimerRef.current);
+      }
+    };
+  }, []);
+  const {
+    activeTab,
+    setActiveTab,
+    syncData,
+    setSyncData,
+    isCollapsed,
+    setIsCollapsed,
+    allMonsters,
+    setAllMonsters,
+    selectedDay,
+    setSelectedDay,
+    templateLoading,
+    setTemplateLoading,
+    currentDay,
+    setCurrentDay,
+  } = useAppCoreState();
+
+  const {
+    fontSize,
+    setFontSize,
+    showSettings,
+    setShowSettings,
+    enableYoloAuto,
+    setEnableYoloAuto,
+    yoloScanInterval,
+    setYoloScanInterval,
+    useGpuAcceleration,
+    setUseGpuAcceleration,
+    showYoloMonitor,
+    setShowYoloMonitor,
+    yoloHotkey,
+    setYoloHotkey,
+    toasts,
+    setToasts,
+    showToast,
+    detectionHotkey,
+    setDetectionHotkey,
+    cardDetectionHotkey,
+    setCardDetectionHotkey,
+    toggleCollapseHotkey,
+    setToggleCollapseHotkey,
+    detailDisplayHotkey,
+    setDetailDisplayHotkey,
+    isRecordingHotkey,
+    setIsRecordingHotkey,
+    isRecordingCardHotkey,
+    setIsRecordingCardHotkey,
+    isRecordingToggleHotkey,
+    setIsRecordingToggleHotkey,
+    isRecordingYoloHotkey,
+    setIsRecordingYoloHotkey,
+    isRecordingDetailHotkey,
+    setIsRecordingDetailHotkey,
+    showResetHotkeysConfirm,
+    setShowResetHotkeysConfirm,
+    settingsExpanded,
+    setSettingsExpanded,
+  } = useAppSettingsState();
+
+  const { matchHistory, isLoadingHistory, loadMatchHistory } = useMatchHistory();
+  const { processItems, processSyncPayload } = useSyncDataPipeline({ setSyncData });
+
+  const { hiddenTagIcons, sponsorIcons, skillsArtMap, itemSizes, itemsDbFull, skillsDbFull } =
+    useResourceCatalog();
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching,
+    isSearchFilterCollapsed,
+    setIsSearchFilterCollapsed,
+    selectedTags,
+    setSelectedTags,
+    selectedHiddenTags,
+    setSelectedHiddenTags,
+    matchMode,
+    setMatchMode,
+    isInputFocused,
+    setIsInputFocused,
+    lastItemSize,
+    setLastItemSize,
+    searchFilterHeight,
+    isResizingFilter,
+    setResizeStartY,
+    setResizeStartHeight,
+    setIsResizingFilter,
+    visibleCount,
+    scrollAreaRef,
+    handleScroll,
+  } = useSearchPanelState({
+    activeTab,
+    selectedDay,
+    skillsArtMap,
+  });
+
+  const updateDayTabSelection = useDayTabSelection(setSelectedDay);
+
+  const {
+    manualMonsters,
+    identifiedNames,
+    expandedMonsters,
+    isRecognizing,
+    setIdentifiedNames,
+    setExpandedMonsters,
+    toggleMonsterExpand,
+    handleDayChange,
+    handleAutoRecognition,
+  } = useMonsterTabLogic({
+    activeTab,
+    selectedDay,
+    setSelectedDay,
+    allMonsters,
+    setCurrentDay: (day: number) => setCurrentDay(day),
+    skillsArtMap,
+    skillsDbFull,
+    itemsDbFull,
+    updateDayTabSelection,
+  });
+
+  const {
+    wrapRef,
+    hasCustomPosition,
+    setHasCustomPosition,
+    lastKnownPosition,
+    isLoadingGeometry,
+    isGeometryLoaded,
+    setIsGeometryLoaded,
+    currentScale,
+    isDragging,
+    isResizing,
+    lastUserResize,
+    isProgrammaticResize,
+    expandedWidthRef,
+    expandedHeightRef,
+    setExpandedWidth,
+    setExpandedHeight,
+  } = useOverlayWindowState();
+
+  const {
+    announcement,
+    currentVersion,
+    downloadProgress,
+    enterApp,
+    errorMessage,
+    isInstalling,
+    setAnnouncement,
+    setErrorMessage,
+    setIsInstalling,
+    setUpdateAvailable,
+    setUpdateStatus,
+    showVersionScreen,
+    startUpdateDownload,
+    updateAvailable,
+    updateStatus,
+  } = useVersionUpdate();
+
+  const { handleConfirmResetHotkeys, handleManualCheckUpdate, handleInstallReady } = useUpdateActions({
+    showToast,
+    currentVersion: currentVersion || '',
+    setAnnouncement,
+    setIsInstalling,
+    setShowResetHotkeysConfirm,
+    setDetectionHotkey,
+    setCardDetectionHotkey,
+    setToggleCollapseHotkey,
+    setYoloHotkey,
+    setDetailDisplayHotkey,
+    setUpdateStatus,
+    setUpdateAvailable,
+  });
+
+  const { handleToggleCollapse, handleOverlayMouseLeave, handleTopStripMouseEnter, handleOverlayMouseDown } =
+    useOverlayActions({
+      expandedHeightRef,
+      expandedWidthRef,
+      isCollapsed,
+      setIsCollapsed,
+      isProgrammaticResize,
+      isInputFocused,
+    });
+
+  const { pinnedItems, expandedItems, setExpandedItems, togglePin, toggleExpand, getSortedItems } =
+    useItemCardState();
+
+  const { recognizedCards, isRecognizingCard, handleRecognizeCard } = useCardRecognition({
+    setActiveTab,
+    setExpandedItems,
+    setErrorMessage,
+    showToast,
+  });
+
+  const { renderTierInfo } = useTierInfoRenderer(itemSizes);
+
+  const renderUnifiedItemCard = useUnifiedItemCardRenderer({
+    expandedItems,
+    activeTab,
+    recognizedCards,
+    allTags: syncData.all_tags || [],
+    toggleExpand,
+  });
+
+  const onRemoveToast = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, [setToasts]);
+
+  useAppLifecycleEffects({
+    templateLoadingComplete: templateLoading.is_complete,
+    processItems,
+    setCurrentDay: (day: number) => setCurrentDay(day),
+    setSelectedDay,
+    setSyncData,
+    currentDay,
+    onSwitchToMonsterTab: () => setActiveTab('monster'),
+    onAutoRecognition: handleAutoRecognition,
+    showVersionScreen,
+    isCollapsed,
+    setHasCustomPosition,
+    lastKnownPosition,
+    expandedWidthRef,
+    expandedHeightRef,
+    isDragging,
+    isResizing,
+    lastUserResize,
+    isProgrammaticResize,
+    processSyncPayload,
+    handleRecognizeCard,
+    setIsCollapsed,
+    setIdentifiedNames,
+    setExpandedMonsters,
+    setActiveTab: (tab: any) => setActiveTab(tab),
+    setDetectionHotkey,
+    setCardDetectionHotkey,
+    setToggleCollapseHotkey,
+    setDetailDisplayHotkey,
+    updateDayTabSelection,
+    currentScale,
+    isLoadingGeometry,
+    setExpandedWidth,
+    setExpandedHeight,
+    setIsGeometryLoaded,
+    setTemplateLoading,
+    enableYoloAuto,
+    yoloScanInterval,
+    yoloHotkey,
+    setErrorMessage,
+    setAllMonsters,
+    hasCustomPosition,
+    isGeometryLoaded,
+    detailDisplayHotkey,
+    setYoloHotkey,
+    showToast,
+    updateIslandStatus,
+  });
+
+  const settingsPanelProps = {
+    visible: showSettings,
+    onClose: () => setShowSettings(false),
+    settingsExpanded,
+    setSettingsExpanded,
+    fontSize,
+    setFontSize,
+    setExpandedWidth,
+    setExpandedHeight,
+    setHasCustomPosition,
+    showToast,
+    enableYoloAuto,
+    setEnableYoloAuto,
+    useGpuAcceleration,
+    setUseGpuAcceleration,
+    yoloScanInterval,
+    setYoloScanInterval,
+    showYoloMonitor,
+    setShowYoloMonitor,
+    yoloHotkey,
+    setYoloHotkey,
+    isRecordingYoloHotkey,
+    setIsRecordingYoloHotkey,
+    detailDisplayHotkey,
+    setDetailDisplayHotkey,
+    isRecordingDetailHotkey,
+    setIsRecordingDetailHotkey,
+    detectionHotkey,
+    setDetectionHotkey,
+    isRecordingHotkey,
+    setIsRecordingHotkey,
+    cardDetectionHotkey,
+    setCardDetectionHotkey,
+    isRecordingCardHotkey,
+    setIsRecordingCardHotkey,
+    toggleCollapseHotkey,
+    setToggleCollapseHotkey,
+    isRecordingToggleHotkey,
+    setIsRecordingToggleHotkey,
+    showResetHotkeysConfirm,
+    setShowResetHotkeysConfirm,
+    onConfirmResetHotkeys: handleConfirmResetHotkeys,
+    currentVersion: currentVersion || '...',
+    updateStatus,
+    downloadProgress,
+    updateAvailableVersion: updateAvailable?.version,
+    onManualCheckUpdate: handleManualCheckUpdate,
+    onStartUpdateDownload: startUpdateDownload,
+    onInstallReady: handleInstallReady,
+    announcement,
+    sponsorIcons,
+  };
+
+  const mainContentProps = {
+    isCollapsed,
+    activeTab,
+    setActiveTab,
+    showSettings,
+    setShowSettings,
+    settingsPanelProps,
+    isSearchFilterCollapsed,
+    setIsSearchFilterCollapsed,
+    matchMode,
+    setMatchMode,
+    searchFilterHeight,
+    searchQuery,
+    setSearchQuery,
+    setIsInputFocused,
+    lastItemSize,
+    setLastItemSize,
+    selectedTags,
+    setSelectedTags,
+    selectedHiddenTags,
+    setSelectedHiddenTags,
+    hiddenTagIcons,
+    isSearching,
+    searchResults,
+    setResizeStartY,
+    setResizeStartHeight,
+    setIsResizingFilter,
+    isResizingFilter,
+    scrollAreaRef,
+    handleScroll,
+    wrapRef,
+    matchHistory,
+    isLoadingHistory,
+    loadMatchHistory,
+    selectedDay,
+    setSelectedDay,
+    handleDayChange,
+    isRecognizing,
+    handleAutoRecognition,
+    showToast,
+    templateLoading,
+    manualMonsters,
+    identifiedNames,
+    expandedMonsters,
+    toggleMonsterExpand,
+    renderTierInfo,
+    recognizedCards,
+    isRecognizingCard,
+    expandedItems,
+    toggleExpand,
+    handleRecognizeCard,
+    renderUnifiedItemCard,
+    handItems: syncData.hand_items,
+    stashItems: syncData.stash_items,
+    pinnedItems,
+    togglePin,
+    getSortedItems,
+    visibleCount,
+  };
+
+  return useAppViewBindings({
+    showVersionScreen,
+    fontSize,
+    announcement,
+    currentVersion: currentVersion || '...',
+    updateStatus,
+    updateAvailableVersion: updateAvailable?.version,
+    downloadProgress,
+    startUpdateDownload,
+    enterApp,
+    handleInstallReady,
+    isCollapsed,
+    islandStatusText,
+    islandStatusType,
+    handleOverlayMouseLeave,
+    handleTopStripMouseEnter,
+    handleOverlayMouseDown,
+    errorMessage,
+    setErrorMessage,
+    showSettings,
+    setShowSettings,
+    handleToggleCollapse,
+    mainContentProps,
+    isInstalling,
+    toasts,
+    onRemoveToast,
+  });
+};

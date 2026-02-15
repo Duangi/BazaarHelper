@@ -77,13 +77,35 @@ export interface MonsterData {
   displayImgBg?: string;
 }
 
-export type TabType = "items" | "search" | "monster" | "card";
+export interface MatchBattleRecord {
+  day: number;
+  start_time?: string;
+  victory: boolean;
+  duration?: number | null;
+  screenshot?: string | null;
+}
+
+export interface MatchHistoryRecord {
+  match_id: string;
+  hero?: string;
+  start_time?: string;
+  end_time?: string;
+  game_date?: string;
+  days: number;
+  victory: boolean;
+  is_finished?: boolean;
+  pvp_battles: MatchBattleRecord[];
+}
+
+export type TabType = "history" | "items" | "search" | "monster" | "card";
 
 export interface Toast {
   id: number;
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
 }
+
+export type IslandStatusType = 'success' | 'error' | 'warning' | 'info';
 
 export interface SearchQuery {
   keyword: string;

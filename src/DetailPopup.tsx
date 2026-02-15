@@ -744,13 +744,13 @@ export default function DetailPopup() {
                          
                          // 1. Monster Image
                          let filename = m.image ? m.image.split('/').pop() || `${m.name_zh}.webp` : `${m.name_zh}.webp`;
-                         let displayImg = await getImg(`images_monster_char/${filename}`);
+                         let displayImg = await getImg(`assets/monsters/characters/${filename}`);
                          
                          if (!displayImg && m.name_zh.includes(' ')) {
                              const spacePos = m.name_zh.lastIndexOf(' ');
                              const baseName = m.name_zh.substring(spacePos + 1);
                              const fallbackFilename = `${baseName}.webp`;
-                             const fallbackImg = await getImg(`images_monster_char/${fallbackFilename}`);
+                             const fallbackImg = await getImg(`assets/monsters/characters/${fallbackFilename}`);
                              if (fallbackImg) { 
                                  displayImg = fallbackImg; 
                                  filename = fallbackFilename; 
@@ -760,7 +760,7 @@ export default function DetailPopup() {
                          // 2. Background Image
                          let bgFilename = filename;
                          if (m.name_zh === '绿洲守护神') bgFilename = '绿洲守护神_Day9.webp';
-                         const displayImgBg = await getImg(`images_monster_bg/${bgFilename}`);
+                         const displayImgBg = await getImg(`assets/monsters/backgrounds/${bgFilename}`);
 
                          processedData = { ...m, displayImg, displayImgBg };
                          
@@ -873,7 +873,7 @@ export default function DetailPopup() {
                                  };
                                  const tierName = tierNameMap[currentTier] || 'Bronze';
                                  const sizeName = sizeNameMap[sizeStr] || 'M';
-                                const cardFramePath = `images_GUI/CardFrame_${tierName}_${sizeName}_TUI.webp`;
+                                const cardFramePath = `assets/gui/CardFrame_${tierName}_${sizeName}_TUI.webp`;
                                  
                                  const itemImg = await getImg(imgPath);
                                  const frameImg = await getImg(cardFramePath);
@@ -1232,7 +1232,7 @@ export default function DetailPopup() {
                                         // };
                                         // const tierName = tierNameMap[currentTier] || 'Bronze';
                                         // const sizeName = sizeNameMap[sizeStr] || 'M';
-                                        // const cardFramePath = `images_GUI/CardFrame_${tierName}_${sizeName}_TUI.webp`;
+                                        // const cardFramePath = `assets/gui/CardFrame_${tierName}_${sizeName}_TUI.webp`;
                                         
                                         // 根据size确定宽度和高度 (再次放大)
                                         let boxWidth = 88;

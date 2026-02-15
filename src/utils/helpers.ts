@@ -1,19 +1,37 @@
 import { resolveResource } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { buildResourceCandidates } from "../constants/resourcePaths";
 
 const imgCache = new Map<string, string>();
+const resourceCache = new Map<string, string>();
+
+export const resolveResourceUrl = async (path: string): Promise<string> => {
+  const normalized = path.replace(/^resources\//, "").replace(/^\//, "");
+  if (resourceCache.has(normalized)) {
+    return resourceCache.get(normalized)!;
+  }
+
+  const candidates = buildResourceCandidates(normalized);
+  for (const candidate of candidates) {
+    try {
+      const fullPath = await resolveResource(`resources/${candidate}`);
+      const assetUrl = convertFileSrc(fullPath);
+      resourceCache.set(normalized, assetUrl);
+      return assetUrl;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  return "";
+};
 
 export const getImg = async (path: string | null | undefined): Promise<string> => {
   if (!path) return "";
   if (imgCache.has(path)) return imgCache.get(path)!;
-  try {
-    const fullPath = await resolveResource(`resources/${path}`);
-    const assetUrl = convertFileSrc(fullPath);
-    imgCache.set(path, assetUrl);
-    return assetUrl;
-  } catch {
-    return "";
-  }
+  const assetUrl = await resolveResourceUrl(path);
+  if (assetUrl) imgCache.set(path, assetUrl);
+  return assetUrl;
 };
 
 export const getHotkeyLabel = (code: number): string => {

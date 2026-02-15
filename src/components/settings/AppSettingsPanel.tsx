@@ -1,0 +1,685 @@
+import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { SettingGroup } from '../SettingsPanel';
+import { SponsorSection } from './SponsorSection';
+import { HotkeyCaptureOverlay } from './HotkeyCaptureOverlay';
+import { ResetHotkeysConfirmModal } from './ResetHotkeysConfirmModal';
+import { getHotkeyLabel } from '../../utils/helpers';
+
+interface SettingsExpandedState {
+  ui: boolean;
+  yolo: boolean;
+  hotkeys: boolean;
+  debug: boolean;
+}
+
+import type { Dispatch, SetStateAction } from 'react';
+
+interface AppSettingsPanelProps {
+  visible: boolean;
+  inline?: boolean;
+  onClose: () => void;
+  settingsExpanded: SettingsExpandedState;
+  setSettingsExpanded: Dispatch<SetStateAction<SettingsExpandedState>>;
+  fontSize: number;
+  setFontSize: Dispatch<SetStateAction<number>>;
+  setExpandedWidth: Dispatch<SetStateAction<number>>;
+  setExpandedHeight: Dispatch<SetStateAction<number>>;
+  setHasCustomPosition: Dispatch<SetStateAction<boolean>>;
+  showToast: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
+  enableYoloAuto: boolean;
+  setEnableYoloAuto: Dispatch<SetStateAction<boolean>>;
+  useGpuAcceleration: boolean;
+  setUseGpuAcceleration: Dispatch<SetStateAction<boolean>>;
+  yoloScanInterval: number;
+  setYoloScanInterval: Dispatch<SetStateAction<number>>;
+  showYoloMonitor: boolean;
+  setShowYoloMonitor: Dispatch<SetStateAction<boolean>>;
+  yoloHotkey: number | null;
+  setYoloHotkey: Dispatch<SetStateAction<number | null>>;
+  isRecordingYoloHotkey: boolean;
+  setIsRecordingYoloHotkey: Dispatch<SetStateAction<boolean>>;
+  detailDisplayHotkey: number | null;
+  setDetailDisplayHotkey: Dispatch<SetStateAction<number | null>>;
+  isRecordingDetailHotkey: boolean;
+  setIsRecordingDetailHotkey: Dispatch<SetStateAction<boolean>>;
+  detectionHotkey: number | null;
+  setDetectionHotkey: Dispatch<SetStateAction<number | null>>;
+  isRecordingHotkey: boolean;
+  setIsRecordingHotkey: Dispatch<SetStateAction<boolean>>;
+  cardDetectionHotkey: number | null;
+  setCardDetectionHotkey: Dispatch<SetStateAction<number | null>>;
+  isRecordingCardHotkey: boolean;
+  setIsRecordingCardHotkey: Dispatch<SetStateAction<boolean>>;
+  toggleCollapseHotkey: number | null;
+  setToggleCollapseHotkey: Dispatch<SetStateAction<number | null>>;
+  isRecordingToggleHotkey: boolean;
+  setIsRecordingToggleHotkey: Dispatch<SetStateAction<boolean>>;
+  showResetHotkeysConfirm: boolean;
+  setShowResetHotkeysConfirm: Dispatch<SetStateAction<boolean>>;
+  onConfirmResetHotkeys: () => Promise<void>;
+  currentVersion: string;
+  updateStatus: string;
+  downloadProgress: number;
+  updateAvailableVersion?: string;
+  onManualCheckUpdate: () => Promise<void>;
+  onStartUpdateDownload: () => void;
+  onInstallReady: () => void;
+  announcement: string;
+  sponsorIcons: { vx: string; zfb: string };
+}
+
+interface RuntimeLogSnapshot {
+  debug_mode: boolean;
+  log_dir: string;
+  files: string[];
+  lines: string[];
+}
+
+interface FileCheckItem {
+  key: string;
+  path: string;
+  exists: boolean;
+  size_bytes?: number;
+  required: boolean;
+}
+
+interface FileCheckReport {
+  all_ok: boolean;
+  missing_count: number;
+  checked_files: number;
+  items: FileCheckItem[];
+}
+
+const formatSizeInMb = (sizeBytes?: number) => {
+  const mb = (sizeBytes || 0) / (1024 * 1024);
+  return `${mb.toFixed(2)} MB`;
+};
+
+export function AppSettingsPanel(props: AppSettingsPanelProps) {
+  const {
+    visible,
+    inline = false,
+    onClose,
+    settingsExpanded,
+    setSettingsExpanded,
+    fontSize,
+    setFontSize,
+    setExpandedWidth,
+    setExpandedHeight,
+    setHasCustomPosition,
+    showToast,
+    enableYoloAuto,
+    setEnableYoloAuto,
+    useGpuAcceleration,
+    setUseGpuAcceleration,
+    yoloScanInterval,
+    setYoloScanInterval,
+    showYoloMonitor: _showYoloMonitor,
+    setShowYoloMonitor: _setShowYoloMonitor,
+    yoloHotkey,
+    setYoloHotkey,
+    isRecordingYoloHotkey,
+    setIsRecordingYoloHotkey,
+    detailDisplayHotkey,
+    setDetailDisplayHotkey,
+    isRecordingDetailHotkey,
+    setIsRecordingDetailHotkey,
+    detectionHotkey,
+    setDetectionHotkey,
+    isRecordingHotkey,
+    setIsRecordingHotkey,
+    cardDetectionHotkey,
+    setCardDetectionHotkey,
+    isRecordingCardHotkey,
+    setIsRecordingCardHotkey,
+    toggleCollapseHotkey,
+    setToggleCollapseHotkey,
+    isRecordingToggleHotkey,
+    setIsRecordingToggleHotkey,
+    showResetHotkeysConfirm,
+    setShowResetHotkeysConfirm,
+    onConfirmResetHotkeys,
+    currentVersion,
+    updateStatus,
+    downloadProgress,
+    updateAvailableVersion,
+    onManualCheckUpdate,
+    onStartUpdateDownload,
+    onInstallReady,
+    announcement,
+    sponsorIcons,
+  } = props;
+
+  const [isLogsLoading, setIsLogsLoading] = useState(false);
+  const [runtimeLogs, setRuntimeLogs] = useState<RuntimeLogSnapshot | null>(null);
+  const [debugMode, setDebugModeState] = useState(false);
+  const [isCheckingFiles, setIsCheckingFiles] = useState(false);
+  const [fileReport, setFileReport] = useState<FileCheckReport | null>(null);
+
+  const refreshRuntimeLogs = async () => {
+    setIsLogsLoading(true);
+    try {
+      const logs = await invoke<RuntimeLogSnapshot>('get_runtime_logs', { line_limit: 400 });
+      setRuntimeLogs(logs);
+      setDebugModeState(logs.debug_mode);
+    } catch (e) {
+      console.error('Failed to load runtime logs:', e);
+      showToast('读取日志失败', 'error');
+    } finally {
+      setIsLogsLoading(false);
+    }
+  };
+
+  const refreshFileReport = async () => {
+    setIsCheckingFiles(true);
+    try {
+      const report = await invoke<FileCheckReport>('check_required_files');
+      setFileReport(report);
+      showToast(report.all_ok ? '文件检测通过' : `缺少 ${report.missing_count} 个必要文件`, report.all_ok ? 'success' : 'warning');
+    } catch (e) {
+      console.error('Failed to check required files:', e);
+      showToast('文件检测失败', 'error');
+    } finally {
+      setIsCheckingFiles(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!visible) return;
+    invoke<boolean>('get_debug_mode')
+      .then(setDebugModeState)
+      .catch(() => {});
+    void refreshRuntimeLogs();
+  }, [visible]);
+
+  if (!visible) return null;
+
+  const panel = (
+    <div className={`settings-panel ${inline ? 'inline' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <div className="settings-header">
+          <h3>设置</h3>
+          {!inline ? <button className="close-panel-btn" onClick={onClose}>×</button> : null}
+        </div>
+
+        <div className="settings-content" data-no-drag>
+          <SettingGroup
+            title="⚙️ 界面设置"
+            expanded={settingsExpanded.ui}
+            onToggle={() => setSettingsExpanded((prev) => ({ ...prev, ui: !prev.ui }))}
+          >
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <label>字体大小: {fontSize}px</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                  setFontSize(16);
+                  localStorage.setItem('user-font-size', '16');
+                  showToast('字体大小已重置', 'success');
+                }}>重置</button>
+              </div>
+              <input
+                type="range"
+                min="10"
+                max="32"
+                value={fontSize}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  setFontSize(val);
+                  localStorage.setItem('user-font-size', val.toString());
+                }}
+              />
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <label>窗口布局</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={() => {
+                  localStorage.removeItem('plugin-width');
+                  localStorage.removeItem('plugin-height');
+                  setExpandedWidth(400);
+                  setExpandedHeight(700);
+                  setHasCustomPosition(false);
+                  showToast('窗口布局已重置', 'success');
+                }}>重置宽高与位置</button>
+              </div>
+              <div className="setting-tip">调整后将实时影响所有文字大小</div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>详情弹窗位置</label>
+                <button className="bulk-btn" style={{ padding: '4px 12px' }} onClick={async () => {
+                  try {
+                    await invoke('reset_detail_popup_position');
+                    showToast('详情弹窗位置已重置', 'success');
+                  } catch (e) {
+                    console.error('Failed to reset detail popup position:', e);
+                    showToast('重置失败', 'error');
+                  }
+                }}>重置位置</button>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
+                重置详情弹窗到默认位置（鼠标所在屏幕的中心）
+              </div>
+            </div>
+          </SettingGroup>
+
+          <SettingGroup
+            title="🔍 YOLO设置"
+            expanded={settingsExpanded.yolo}
+            onToggle={() => setSettingsExpanded((prev) => ({ ...prev, yolo: !prev.yolo }))}
+          >
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>YOLO自动识别</label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {enableYoloAuto && (
+                    <button
+                      className="bulk-btn"
+                      style={{
+                        padding: '4px 12px',
+                        background: useGpuAcceleration ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                        borderColor: useGpuAcceleration ? '#4CAF50' : '#f44336',
+                        color: useGpuAcceleration ? '#4CAF50' : '#f44336',
+                      }}
+                      onClick={() => {
+                        const newVal = !useGpuAcceleration;
+                        setUseGpuAcceleration(newVal);
+                        localStorage.setItem('use-gpu-acceleration', newVal.toString());
+                        showToast(`GPU加速已${newVal ? '开启' : '关闭'}`, 'info');
+                      }}
+                    >
+                      GPU加速: {useGpuAcceleration ? '开' : '关'}
+                    </button>
+                  )}
+                  <button
+                    className="bulk-btn"
+                    style={{
+                      padding: '4px 12px',
+                      background: enableYoloAuto ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                      borderColor: enableYoloAuto ? '#4CAF50' : '#f44336',
+                      color: enableYoloAuto ? '#4CAF50' : '#f44336',
+                    }}
+                    onClick={() => {
+                      const newVal = !enableYoloAuto;
+                      setEnableYoloAuto(newVal);
+                      localStorage.setItem('enable-yolo-auto', newVal.toString());
+                      showToast(`YOLO自动识别已${newVal ? '开启' : '关闭'}`, 'info');
+                    }}
+                  >
+                    {enableYoloAuto ? '已开启' : '已关闭'}
+                  </button>
+                </div>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                启用后每隔固定时间自动触发YOLO识别卡牌（下方可调整频率）
+              </div>
+            </div>
+
+            <div className="setting-item" style={{ opacity: enableYoloAuto ? 1 : 0.5 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>YOLO扫描频率</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={yoloScanInterval}
+                    disabled={!enableYoloAuto}
+                    onChange={(e) => {
+                      const newVal = parseFloat(e.target.value);
+                      setYoloScanInterval(newVal);
+                      localStorage.setItem('yolo-scan-interval', newVal.toString());
+                    }}
+                    style={{ width: '120px', accentColor: '#ffcd19' }}
+                  />
+                  <span style={{ fontSize: '13px', color: '#ffcd19', fontWeight: 'bold', minWidth: '50px' }}>
+                    {yoloScanInterval.toFixed(1)}s
+                  </span>
+                </div>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                设置YOLO自动识别的时间间隔（0.5秒 - 2秒）
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>YOLO结果展示</label>
+                <span style={{ fontSize: '12px', color: '#ffcd19', fontWeight: 600 }}>灵动岛概览</span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                YOLO监控独立窗口已停用。手动触发或自动扫描结果会显示在收起态灵动岛。
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>YOLO手动触发快捷键</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingYoloHotkey(true); }}>
+                  {isRecordingYoloHotkey ? '请按键...' : (yoloHotkey ? getHotkeyLabel(yoloHotkey) : '未设置')}
+                </button>
+              </div>
+              <HotkeyCaptureOverlay
+                visible={isRecordingYoloHotkey}
+                description="支持: 键盘按键, 鼠标中键/侧键（不支持左右键）"
+                allowMouseButtons={[1, 3, 4]}
+                onCapture={(vk) => {
+                  setYoloHotkey(vk);
+                  localStorage.setItem('yolo-hotkey', vk.toString());
+                  setIsRecordingYoloHotkey(false);
+                }}
+                onCancel={() => setIsRecordingYoloHotkey(false)}
+              />
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                按此键立即触发YOLO识别（默认: 未设置）
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>卡牌详情显示按键</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingDetailHotkey(true); }}>
+                  {isRecordingDetailHotkey ? '请按键...' : (detailDisplayHotkey ? getHotkeyLabel(detailDisplayHotkey) : '未设置')}
+                </button>
+              </div>
+              <HotkeyCaptureOverlay
+                visible={isRecordingDetailHotkey}
+                description="支持: 键盘按键, 鼠标左/中/右键/侧键"
+                onCapture={(vk) => {
+                  setDetailDisplayHotkey(vk);
+                  invoke('set_detail_display_hotkey', { hotkey: vk });
+                  setIsRecordingDetailHotkey(false);
+                }}
+                onCancel={() => setIsRecordingDetailHotkey(false)}
+              />
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                按此键显示鼠标位置的卡牌/怪物/事件详情（默认: 未设置）
+              </div>
+            </div>
+          </SettingGroup>
+
+          <SettingGroup
+            title="⌨️ 快捷键设置"
+            expanded={settingsExpanded.hotkeys}
+            onToggle={() => setSettingsExpanded((prev) => ({ ...prev, hotkeys: !prev.hotkeys }))}
+          >
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label>怪物识别按键</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingHotkey(true); }}>
+                  {isRecordingHotkey ? '请按键...' : (detectionHotkey ? getHotkeyLabel(detectionHotkey) : '未设置')}
+                </button>
+              </div>
+              <HotkeyCaptureOverlay
+                visible={isRecordingHotkey}
+                description="支持: 键盘按键, 鼠标左/中/右键/侧键"
+                onCapture={(vk) => {
+                  setDetectionHotkey(vk);
+                  invoke('set_detection_hotkey', { hotkey: vk });
+                  setIsRecordingHotkey(false);
+                }}
+                onCancel={() => setIsRecordingHotkey(false)}
+              />
+              <div className="setting-tip">默认: 未设置</div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label>卡牌识别按键</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingCardHotkey(true); }}>
+                  {isRecordingCardHotkey ? '请按键...' : (cardDetectionHotkey ? getHotkeyLabel(cardDetectionHotkey) : '未设置')}
+                </button>
+              </div>
+              <HotkeyCaptureOverlay
+                visible={isRecordingCardHotkey}
+                description="支持: 键盘按键, 鼠标左/中/右键/侧键"
+                onCapture={(vk) => {
+                  setCardDetectionHotkey(vk);
+                  invoke('set_card_detection_hotkey', { hotkey: vk });
+                  setIsRecordingCardHotkey(false);
+                }}
+                onCancel={() => setIsRecordingCardHotkey(false)}
+              />
+              <div className="setting-tip">默认: 未设置</div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label>一键收起/展开插件</label>
+                <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingToggleHotkey(true); }}>
+                  {isRecordingToggleHotkey ? '请按键...' : (toggleCollapseHotkey ? getHotkeyLabel(toggleCollapseHotkey) : '未设置')}
+                </button>
+              </div>
+              <HotkeyCaptureOverlay
+                visible={isRecordingToggleHotkey}
+                description="支持: 键盘按键, 鼠标中键/侧键（不支持左右键）"
+                allowMouseButtons={[1, 3, 4]}
+                onCapture={(vk) => {
+                  setToggleCollapseHotkey(vk);
+                  invoke('set_toggle_collapse_hotkey', { hotkey: vk });
+                  setIsRecordingToggleHotkey(false);
+                }}
+                onCancel={() => setIsRecordingToggleHotkey(false)}
+              />
+              <div className="setting-tip">默认: 未设置</div>
+            </div>
+
+            <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>快捷键管理</label>
+                <button className="bulk-btn" style={{ padding: '4px 12px', background: 'rgba(255, 69, 58, 0.15)', borderColor: 'rgba(255, 69, 58, 0.4)' }} onClick={() => {
+                  setShowResetHotkeysConfirm(true);
+                }}>重置所有快捷键</button>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '8px' }}>
+                将所有快捷键重置为"未设置"状态，禁用所有快捷键功能
+              </div>
+            </div>
+
+            <ResetHotkeysConfirmModal
+              visible={showResetHotkeysConfirm}
+              onCancel={() => setShowResetHotkeysConfirm(false)}
+              onConfirm={onConfirmResetHotkeys}
+            />
+          </SettingGroup>
+
+          <SettingGroup
+            title="🧪 调试与日志"
+            expanded={settingsExpanded.debug}
+            onToggle={() => setSettingsExpanded((prev) => ({ ...prev, debug: !prev.debug }))}
+          >
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                <label>开发者模式</label>
+                <button
+                  className="bulk-btn"
+                  style={{
+                    padding: '4px 12px',
+                    background: debugMode ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
+                    borderColor: debugMode ? '#4CAF50' : '#f44336',
+                    color: debugMode ? '#4CAF50' : '#f44336',
+                  }}
+                  onClick={async () => {
+                    try {
+                      const next = !debugMode;
+                      await invoke('set_debug_mode', { enabled: next });
+                      setDebugModeState(next);
+                      showToast(`开发者模式已${next ? '开启' : '关闭'}`, 'info');
+                      void refreshRuntimeLogs();
+                    } catch (e) {
+                      console.error('set_debug_mode failed:', e);
+                      showToast('切换开发者模式失败', 'error');
+                    }
+                  }}
+                >
+                  {debugMode ? '已开启' : '已关闭'}
+                </button>
+              </div>
+              <div className="setting-tip">
+                开启后后端将输出更详细的调试日志（立即生效，重启后保留）
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <label>运行日志</label>
+                <button className="bulk-btn" onClick={() => void refreshRuntimeLogs()} disabled={isLogsLoading}>
+                  {isLogsLoading ? '刷新中...' : '刷新日志'}
+                </button>
+              </div>
+              <div className="settings-log-meta">
+                <span>日志目录: {runtimeLogs?.log_dir || '...'}</span>
+                <span>日志文件: {runtimeLogs?.files.length || 0}</span>
+              </div>
+              <div className="settings-log-viewer" data-no-drag>
+                {(runtimeLogs?.lines || []).slice(-250).map((line, idx) => {
+                  const lowered = line.toLowerCase();
+                  const levelClass = lowered.includes(" error") || lowered.includes("[error]") || lowered.includes(" panic")
+                    ? 'error'
+                    : lowered.includes(" warn") || lowered.includes("[warn]")
+                      ? 'warn'
+                      : lowered.includes(" debug") || lowered.includes("[debug]")
+                        ? 'debug'
+                        : 'info';
+                  return (
+                    <div key={`${idx}-${line.slice(0, 8)}`} className={`settings-log-line ${levelClass}`}>
+                      {line}
+                    </div>
+                  );
+                })}
+                {(runtimeLogs?.lines.length || 0) === 0 && <div className="settings-log-empty">暂无日志</div>}
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <label>必需文件完整性检测</label>
+                <button className="bulk-btn" onClick={() => void refreshFileReport()} disabled={isCheckingFiles}>
+                  {isCheckingFiles ? '检测中...' : '检测所有文件'}
+                </button>
+              </div>
+              {fileReport && (
+                <div className="settings-file-report">
+                  <div className={`settings-file-report-summary ${fileReport.all_ok ? 'ok' : 'warn'}`}>
+                    {fileReport.all_ok
+                      ? `检测通过，共 ${fileReport.checked_files} 项`
+                      : `检测完成，缺少 ${fileReport.missing_count} 项必要文件`}
+                  </div>
+                  {fileReport.items.map((item) => (
+                    <div key={`${item.key}-${item.path}`} className="settings-file-row">
+                      <span className={`settings-file-dot ${item.exists ? 'ok' : item.required ? 'err' : 'warn'}`} />
+                      <span className="settings-file-key">{item.key}</span>
+                      <span className="settings-file-size">{item.exists ? formatSizeInMb(item.size_bytes) : 'missing'}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </SettingGroup>
+
+          <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
+
+          <div className="setting-item">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label>版本信息: v{currentVersion}</label>
+              <button
+                className="bulk-btn"
+                style={{
+                  padding: '2px 8px',
+                  opacity: updateStatus === 'checking' ? 0.5 : 1,
+                  cursor: updateStatus === 'checking' ? 'not-allowed' : 'pointer',
+                }}
+                disabled={updateStatus === 'checking' || updateStatus === 'downloading'}
+                onClick={() => void onManualCheckUpdate()}
+              >
+                {updateStatus === 'checking' ? '检查中...' : '检查更新'}
+              </button>
+            </div>
+
+            {updateStatus === 'checking' && <div style={{ fontSize: 'calc(12px * var(--font-scale, 1))', color: '#999' }}>正在检查远端更新...</div>}
+            {updateStatus === 'none' && <div style={{ fontSize: 'calc(12px * var(--font-scale, 1))', color: '#238636' }}>当前已经是最新版本</div>}
+
+            {(updateStatus === 'available' || updateStatus === 'downloading' || updateStatus === 'ready') && (
+              <div style={{ background: 'rgba(56, 139, 253, 0.15)', border: '1px solid rgba(56, 139, 253, 0.4)', padding: '10px', borderRadius: '6px' }}>
+                <div style={{ fontSize: 'calc(13px * var(--font-scale, 1))', fontWeight: 'bold', marginBottom: '8px', color: '#58a6ff' }}>
+                  发现新版本: v{updateAvailableVersion}
+                </div>
+
+                {updateStatus === 'available' && (
+                  <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={onStartUpdateDownload}>
+                    立即下载更新
+                  </button>
+                )}
+
+                {updateStatus === 'downloading' && (
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                      <span>正在下载后台更新...</span>
+                      <span>{downloadProgress}%</span>
+                    </div>
+                    <div style={{ background: 'rgba(255,255,255,0.1)', height: '4px', borderRadius: '2px' }}>
+                      <div style={{ background: '#58a6ff', width: `${downloadProgress}%`, height: '100%', borderRadius: '2px', transition: 'width 0.3s' }}></div>
+                    </div>
+                  </div>
+                )}
+
+                {updateStatus === 'ready' && (
+                  <button className="bulk-btn" style={{ width: '100%', padding: '6px', background: '#238636', border: 'none' }} onClick={onInstallReady}>
+                    下载完成，点击重启安装
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {announcement && (
+            <div className="setting-item" style={{ marginTop: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: '#8b949e' }}>当前公告</label>
+              <div className="settings-announcement-text">{announcement}</div>
+            </div>
+          )}
+
+          <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
+
+          <div className="setting-item">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+              <label>应用控制</label>
+              <button
+                className="bulk-btn"
+                style={{
+                  padding: '4px 12px',
+                  background: 'rgba(244, 67, 54, 0.2)',
+                  borderColor: '#f44336',
+                  color: '#ff8a80',
+                }}
+                onClick={() => {
+                  showToast('正在关闭应用...', 'info');
+                  setTimeout(() => {
+                    void invoke('request_app_exit');
+                  }, 120);
+                }}
+              >
+                关闭应用
+              </button>
+            </div>
+          </div>
+
+          <SponsorSection sponsorIcons={sponsorIcons} />
+        </div>
+      </div>
+  );
+
+  if (inline) {
+    return <div className="settings-panel-inline-host">{panel}</div>;
+  }
+
+  return (
+    <div className="settings-panel-overlay" onClick={onClose}>
+      {panel}
+    </div>
+  );
+}

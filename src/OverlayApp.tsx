@@ -191,7 +191,7 @@ const getCardFramePath = (tier: string, size: string): string => {
     };
     const normalizedSize = sizeMap[size.toLowerCase()] || 'M';
     
-    return `images_GUI/CardFrame_${normalizedTier}_${normalizedSize}_TUI.webp`;
+    return `assets/gui/CardFrame_${normalizedTier}_${normalizedSize}_TUI.webp`;
 };
 
 // 提取到外部的组件，避免因为父组件重绘导致被重新创建而闪烁
@@ -616,17 +616,17 @@ export default function OverlayApp() {
 
     const processMonsterImages = async (m: MonsterData) => {
         let filename = m.image ? m.image.split('/').pop() || `${m.name_zh}.webp` : `${m.name_zh}.webp`;
-        let displayImg = await getImg(`images_monster_char/${filename}`);
+        let displayImg = await getImg(`assets/monsters/characters/${filename}`);
         if (!displayImg && m.name_zh.includes(' ')) {
             const spacePos = m.name_zh.lastIndexOf(' ');
             const baseName = m.name_zh.substring(spacePos + 1);
             const fallbackFilename = `${baseName}.webp`;
-            const fallbackImg = await getImg(`images_monster_char/${fallbackFilename}`);
+            const fallbackImg = await getImg(`assets/monsters/characters/${fallbackFilename}`);
             if (fallbackImg) { displayImg = fallbackImg; filename = fallbackFilename; }
         }
         let bgFilename = filename;
         if (m.name_zh === '绿洲守护神') bgFilename = '绿洲守护神_Day9.webp';
-        const displayImgBg = await getImg(`images_monster_bg/${bgFilename}`);
+        const displayImgBg = await getImg(`assets/monsters/backgrounds/${bgFilename}`);
 
         return {
             ...m,

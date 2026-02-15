@@ -18,6 +18,7 @@ use opencv::{
     prelude::*,
 };
 use tauri::Manager;
+use crate::data_management::resource_paths::resolve_existing_resource;
 use crate::log_to_file;
 use chrono;
 use device_query::{DeviceQuery, DeviceState};
@@ -770,34 +771,32 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
     for (key, entry) in monsters.iter() {
         // 1. 检查数据库中定义的 image 字段
         if let Some(rel_path) = &entry.image {
-            let p = resources_dir.join(rel_path);
-            if p.exists() {
-                name_to_path.insert(key.clone(), p.clone());
+            if let Some(p) = resolve_existing_resource(&resources_dir, rel_path) {
+                name_to_path.insert(key.clone(), p);
             } else {
-                let char_path = resources_dir.join(rel_path.replace("images_monster/", "images_monster_char/"));
-                if char_path.exists() {
+                let alt_rel = rel_path.replace("images_monster/", "assets/monsters/characters/");
+                if let Some(char_path) = resolve_existing_resource(&resources_dir, &alt_rel) {
                     name_to_path.insert(key.clone(), char_path);
                 }
             }
         }
         
         // 2. 检查以 key 为名的直接图片 (e.g. 绿洲守护神_Day9.webp)
-        let char_path_key = resources_dir.join(format!("images_monster_char/{}.webp", key));
-        if char_path_key.exists() {
-            name_to_path.insert(key.clone(), char_path_key);
+        let char_path_key = resolve_existing_resource(&resources_dir, &format!("assets/monsters/characters/{}.webp", key));
+        if let Some(path) = char_path_key {
+            name_to_path.insert(key.clone(), path);
         }
 
         // 3. 检查以 name_zh 为名的直接图片 (e.g. 绿洲守护神.webp)
         if let Some(name_zh) = entry.name_zh.as_ref() {
-            let char_path_name = resources_dir.join(format!("images_monster_char/{}.webp", name_zh));
-            if char_path_name.exists() {
-                name_to_path.insert(key.clone(), char_path_name);
+            let char_path_name = resolve_existing_resource(&resources_dir, &format!("assets/monsters/characters/{}.webp", name_zh));
+            if let Some(path) = char_path_name {
+                name_to_path.insert(key.clone(), path);
             } else {
                 // 特殊处理：如果带前缀（如 "毒素 吹箭枪陷阱"），尝试查找基础名称 "吹箭枪陷阱.webp"
                 if let Some(space_pos) = name_zh.rfind(' ') {
                     let base_name = &name_zh[space_pos + 1..];
-                    let base_path = resources_dir.join(format!("images_monster_char/{}.webp", base_name));
-                    if base_path.exists() {
+                    if let Some(base_path) = resolve_existing_resource(&resources_dir, &format!("assets/monsters/characters/{}.webp", base_name)) {
                         name_to_path.insert(key.clone(), base_path);
                     }
                 }
@@ -937,9 +936,18 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
 
 // 跨平台获取鼠标位置
 fn get_mouse_position() -> (i32, i32) {
-    let device_state = DeviceState::new();
-    let mouse = device_state.get_mouse();
-    (mouse.coords.0, mouse.coords.1)
+    let result = std::panic::catch_unwind(|| {
+        let device_state = DeviceState::new();
+        let mouse = device_state.get_mouse();
+        (mouse.coords.0, mouse.coords.1)
+    });
+    match result {
+        Ok(pos) => pos,
+        Err(_) => {
+            log::warn!("[Mouse] Failed to read mouse position (likely missing accessibility permission on macOS).");
+            (0, 0)
+        }
+    }
 }
 
 // 公共函数：鼠标触发的怪物识别
@@ -1408,11 +1416,11 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
     struct RecognitionGuard;
     impl Drop for RecognitionGuard { 
         fn drop(&mut self) { 
-            crate::IS_RECOGNIZING.store(false, Ordering::Relaxed);
-            crate::update_last_recog_time(); // Add grace period
+            crate::core::recognition_state::IS_RECOGNIZING.store(false, Ordering::Relaxed);
+            crate::core::recognition_state::update_last_recog_time(); // Add grace period
         } 
     }
-    crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+    crate::core::recognition_state::IS_RECOGNIZING.store(true, Ordering::Relaxed);
     let _guard = RecognitionGuard;
 
     use xcap::{Window, Monitor};
@@ -1676,13 +1684,13 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
         if let Some(p) = event.get("image_paths")
             .and_then(|paths| paths.get("char"))
             .and_then(|c| c.as_str()) {
-            
-            let path = resources_dir.join(p);
-            potential_paths.push(path.clone());
+            let resolved_path = resolve_existing_resource(&resources_dir, p)
+                .unwrap_or_else(|| resources_dir.join(p));
+            potential_paths.push(resolved_path.clone());
             
             // 尝试替换扩展名 (应对 webp/png 不一致)
-            if let Some(stem) = path.file_stem() {
-                 if let Some(parent) = path.parent() {
+            if let Some(stem) = resolved_path.file_stem() {
+                 if let Some(parent) = resolved_path.parent() {
                      potential_paths.push(parent.join(stem).with_extension("png"));
                      potential_paths.push(parent.join(stem).with_extension("jpg"));
                  }
@@ -1690,14 +1698,21 @@ pub async fn load_event_templates(app: tauri::AppHandle) -> Result<(), String> {
         }
 
         // 2. 尝试 ID 组合猜测
+        potential_paths.push(resources_dir.join(format!("assets/events/characters/{}.png", id)));
+        potential_paths.push(resources_dir.join(format!("assets/events/characters/{}.webp", id)));
+        potential_paths.push(resources_dir.join(format!("assets/events/characters/{}.jpg", id)));
+        potential_paths.push(resources_dir.join(format!("assets/events/characters/{}_Char.png", id)));
+        potential_paths.push(resources_dir.join(format!("assets/events/characters/{}_Char.webp", id)));
+
         potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.png", id)));
         potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.webp", id)));
         potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}.jpg", id)));
-        
         potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}_Char.png", id)));
         potential_paths.push(resources_dir.join(format!("EncEvent_CHAR/{}_Char.webp", id)));
         
         // 3. 尝试 BG 目录
+        potential_paths.push(resources_dir.join(format!("assets/events/backgrounds/{}.png", id)));
+        potential_paths.push(resources_dir.join(format!("assets/events/backgrounds/{}_BG.png", id)));
         potential_paths.push(resources_dir.join(format!("EncEvent_BG/{}.png", id)));
         potential_paths.push(resources_dir.join(format!("EncEvent_BG/{}_BG.png", id)));
 
@@ -2137,11 +2152,11 @@ pub async fn recognize_monster_at_mouse() -> Result<Option<String>, String> {
     struct RecognitionGuard;
     impl Drop for RecognitionGuard { 
         fn drop(&mut self) { 
-            crate::IS_RECOGNIZING.store(false, Ordering::Relaxed);
-            crate::update_last_recog_time(); 
+            crate::core::recognition_state::IS_RECOGNIZING.store(false, Ordering::Relaxed);
+            crate::core::recognition_state::update_last_recog_time(); 
         } 
     }
-    crate::IS_RECOGNIZING.store(true, Ordering::Relaxed);
+    crate::core::recognition_state::IS_RECOGNIZING.store(true, Ordering::Relaxed);
     let _guard = RecognitionGuard;
 
     use xcap::{Window, Monitor};

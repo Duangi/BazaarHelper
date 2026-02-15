@@ -1,0 +1,22 @@
+{
+  "db": {
+    "items": "items_db.json",
+    "skills": "skills_db.json",
+    "monsters": "monsters_db.json",
+    "event_encounters": "event_encounters.json",
+    "event_detail": "event_detail.json",
+    "combat_encounters": "combat_encounters.json",
+    "card_id_mapping": "card_id_mapping.json"
+  },
+  "directories": [
+    { "canonical": "assets/items", "legacy": "images" },
+    { "canonical": "assets/skills", "legacy": "images/skill" },
+    { "canonical": "assets/monsters/characters", "legacy": "images_monster_char" },
+    { "canonical": "assets/monsters/backgrounds", "legacy": "images_monster_bg" },
+    { "canonical": "assets/gui", "legacy": "images_GUI" },
+    { "canonical": "assets/events/characters", "legacy": "EncEvent_CHAR" },
+    { "canonical": "assets/events/backgrounds", "legacy": "EncEvent_BG" },
+    { "canonical": "assets/events/icons", "legacy": "EncEvent_Icons" },
+    { "canonical": "assets/sponsor", "legacy": "sponsor" }
+  ]
+}

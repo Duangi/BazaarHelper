@@ -218,22 +218,37 @@ pub async fn preload_templates_async(resources_dir: PathBuf, cache_dir: PathBuf)
                 let p = resources_dir.join(rel_path);
                 if p.exists() {
                     found_path = Some(p);
+                } else {
+                    let p2 = resources_dir.join(rel_path.replace("images_monster/", "assets/monsters/characters/"));
+                    if p2.exists() {
+                        found_path = Some(p2);
+                    }
                 }
             }
             
             // 2. Fallback: Try Character image (Chinese name)
             if found_path.is_none() {
-                let char_path = resources_dir.join(format!("images_monster_char/{}.webp", key));
+                let char_path = resources_dir.join(format!("assets/monsters/characters/{}.webp", key));
                 if char_path.exists() {
                     found_path = Some(char_path);
+                } else {
+                    let legacy_char_path = resources_dir.join(format!("images_monster_char/{}.webp", key));
+                    if legacy_char_path.exists() {
+                        found_path = Some(legacy_char_path);
+                    }
                 }
             }
             
             // 3. Fallback: Try Background image (Chinese name)
             if found_path.is_none() {
-                let bg_path = resources_dir.join(format!("images_monster_bg/{}.webp", key));
+                let bg_path = resources_dir.join(format!("assets/monsters/backgrounds/{}.webp", key));
                 if bg_path.exists() {
                     found_path = Some(bg_path);
+                } else {
+                    let legacy_bg_path = resources_dir.join(format!("images_monster_bg/{}.webp", key));
+                    if legacy_bg_path.exists() {
+                        found_path = Some(legacy_bg_path);
+                    }
                 }
             }
 
