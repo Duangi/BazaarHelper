@@ -2,9 +2,8 @@ use std::sync::RwLock;
 use std::sync::atomic::AtomicBool;
 
 
-pub mod logs {
-    include!("logs/mod.rs");
-}
+#[path = "logs.rs"]
+pub mod logs;
 pub mod core;
 pub mod data_management;
 pub mod platforms;
