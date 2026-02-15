@@ -22,7 +22,7 @@ use cocoa::appkit::{NSWindow, NSWindowCollectionBehavior};
 #[allow(deprecated)]
 use cocoa::base::id;
 #[cfg(target_os = "macos")]
-use objc::{msg_send, sel, sel_impl};
+use objc::{class, msg_send, sel, sel_impl};
 #[cfg(target_os = "macos")]
 use tauri_nspanel::WebviewWindowExt as NSPanelExt;
 
@@ -184,6 +184,8 @@ pub fn enforce_overlay_traits(window: &tauri::WebviewWindow, label: &str) {
 
 pub fn refresh_overlay_pin(window: &tauri::WebviewWindow, label: &str) {
     let _ = window.set_always_on_top(true);
+    #[cfg(not(target_os = "macos"))]
+    let _ = label;
 
     #[cfg(target_os = "macos")]
     {
@@ -232,7 +234,28 @@ fn force_order_front_regardless(window: &tauri::WebviewWindow) {
 
 #[cfg(target_os = "macos")]
 #[allow(deprecated)]
+fn enforce_macos_transparent_chrome(window: &tauri::WebviewWindow) {
+    if let Ok(ns_window) = window.ns_window() {
+        unsafe {
+            let ns_win: id = ns_window as id;
+            let clear_color: id = msg_send![class!(NSColor), clearColor];
+            #[allow(clippy::let_unit_value)]
+            let _: () = msg_send![ns_win, setOpaque: false];
+            #[allow(clippy::let_unit_value)]
+            let _: () = msg_send![ns_win, setBackgroundColor: clear_color];
+            #[allow(clippy::let_unit_value)]
+            let _: () = msg_send![ns_win, setHasShadow: false];
+            #[allow(clippy::let_unit_value)]
+            let _: () = msg_send![ns_win, setMovableByWindowBackground: true];
+        }
+    }
+}
+
+#[cfg(target_os = "macos")]
+#[allow(deprecated)]
 pub fn setup_macos_fullscreen_overlay(window: &tauri::WebviewWindow) {
+    enforce_macos_transparent_chrome(window);
+
     match window.to_panel() {
         Ok(panel) => {
             // Preserve the existing style mask (including resizable bits) and only add
@@ -278,6 +301,7 @@ pub fn setup_macos_fullscreen_overlay(window: &tauri::WebviewWindow) {
 #[allow(unexpected_cfgs)]
 pub fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
     use cocoa::base::BOOL;
+    enforce_macos_transparent_chrome(window);
 
     if let Ok(ns_window) = window.ns_window() {
         unsafe {

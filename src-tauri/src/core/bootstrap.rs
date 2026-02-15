@@ -14,6 +14,7 @@ pub fn run() {
     if let Err(e) = logs::init_logging() {
         eprintln!("[Logger] init failed: {}", e);
     }
+    logs::start_memory_monitor();
     if let Err(e) = user_data::ensure_user_data_files() {
         log::warn!("[UserData] init failed: {}", e);
     }

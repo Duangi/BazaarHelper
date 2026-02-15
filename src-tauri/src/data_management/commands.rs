@@ -316,7 +316,7 @@ pub fn get_runtime_logs(line_limit: Option<usize>) -> Result<RuntimeLogSnapshot,
     let lines = crate::logs::read_recent_log_lines(limit)?;
     let files = crate::logs::list_log_files()?
         .into_iter()
-        .map(|p| p.to_string_lossy().to_string())
+        .map(|p: std::path::PathBuf| p.to_string_lossy().to_string())
         .collect::<Vec<_>>();
     let state = crate::load_state();
 
