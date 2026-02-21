@@ -20,7 +20,12 @@ export const useUnifiedItemCardRenderer = ({
   toggleExpand,
 }: UseUnifiedItemCardRendererOptions) => {
   return useCallback(
-    (item: ItemData, isPinned: boolean, onPin: (e: MouseEvent) => void) => {
+    (
+      item: ItemData,
+      isPinned: boolean,
+      onPin: (e: MouseEvent) => void,
+      imageSrcOverride?: string,
+    ) => {
       const uniqueKey = item.instance_id || item.uuid;
       const expansionKey = item.instance_id || item.uuid;
       const isExpanded = expandedItems.has(expansionKey);
@@ -33,6 +38,7 @@ export const useUnifiedItemCardRenderer = ({
         <UnifiedItemCard
           key={uniqueKey}
           item={item}
+          imageSrcOverride={imageSrcOverride}
           allTags={allTags}
           isExpanded={isExpanded}
           isPinned={isPinned}

@@ -7,8 +7,52 @@ use windows::Win32::UI::WindowsAndMessaging::{
     EnumWindows, GetWindowTextW, IsWindowVisible, SetForegroundWindow, ShowWindow, SW_RESTORE,
 };
 
+#[cfg(target_os = "macos")]
+use objc::{class, msg_send, sel, sel_impl};
+
 #[allow(dead_code)]
 static LAST_FOREGROUND_WINDOW: std::sync::RwLock<Option<String>> = std::sync::RwLock::new(None);
+
+#[cfg(target_os = "macos")]
+fn macos_frontmost_is_bazaar() -> bool {
+    use std::ffi::CStr;
+    use std::os::raw::c_char;
+
+    unsafe fn nsstring_to_lower(ns_str: *mut objc::runtime::Object) -> Option<String> {
+        if ns_str.is_null() {
+            return None;
+        }
+        let c_ptr: *const c_char = msg_send![ns_str, UTF8String];
+        if c_ptr.is_null() {
+            return None;
+        }
+        CStr::from_ptr(c_ptr)
+            .to_str()
+            .ok()
+            .map(|s| s.to_lowercase())
+    }
+
+    unsafe {
+        let workspace: *mut objc::runtime::Object = msg_send![class!(NSWorkspace), sharedWorkspace];
+        if workspace.is_null() {
+            return false;
+        }
+        let app: *mut objc::runtime::Object = msg_send![workspace, frontmostApplication];
+        if app.is_null() {
+            return false;
+        }
+
+        let name_obj: *mut objc::runtime::Object = msg_send![app, localizedName];
+        let bid_obj: *mut objc::runtime::Object = msg_send![app, bundleIdentifier];
+
+        let name = nsstring_to_lower(name_obj).unwrap_or_default();
+        let bundle_id = nsstring_to_lower(bid_obj).unwrap_or_default();
+
+        name.contains("bazaar")
+            || name.contains("the bazaar")
+            || bundle_id.contains("bazaar")
+    }
+}
 
 pub fn is_game_window_active() -> bool {
     #[cfg(target_os = "windows")]
@@ -29,9 +73,13 @@ pub fn is_game_window_active() -> bool {
         }
         false
     }
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "macos")]
     {
-        true
+        macos_frontmost_is_bazaar()
+    }
+    #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
+    {
+        false
     }
 }
 
@@ -52,6 +100,14 @@ pub fn update_last_foreground_window() {
                         }
                     }
                 }
+            }
+        }
+    }
+    #[cfg(target_os = "macos")]
+    {
+        if is_game_window_active() {
+            if let Ok(mut guard) = LAST_FOREGROUND_WINDOW.write() {
+                *guard = Some("the bazaar".to_string());
             }
         }
     }

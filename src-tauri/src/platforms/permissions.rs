@@ -44,17 +44,39 @@ fn open_privacy_pane(anchor: &str) {
 fn open_privacy_pane(_anchor: &str) {}
 
 pub fn ensure_macos_permissions_on_startup() -> MacPermissionStatus {
+    ensure_macos_permissions(false)
+}
+
+fn ensure_macos_permissions(force_prompt: bool) -> MacPermissionStatus {
     let mut status = check_macos_permissions();
     #[cfg(target_os = "macos")]
     {
-        if !status.accessibility {
+        let mut persisted = crate::load_state();
+
+        let should_prompt_accessibility =
+            !status.accessibility && (force_prompt || !persisted.macos_prompted_accessibility);
+        if should_prompt_accessibility {
             let _ = macos_accessibility_client::accessibility::application_is_trusted_with_prompt();
             open_privacy_pane("Privacy_Accessibility");
+            persisted.macos_prompted_accessibility = true;
         }
-        if !status.screen_recording {
+
+        let should_prompt_screen =
+            !status.screen_recording && (force_prompt || !persisted.macos_prompted_screen_recording);
+        if should_prompt_screen {
             let _ = unsafe { CGRequestScreenCaptureAccess() };
             open_privacy_pane("Privacy_ScreenCapture");
+            persisted.macos_prompted_screen_recording = true;
         }
+
+        if status.accessibility {
+            persisted.macos_prompted_accessibility = false;
+        }
+        if status.screen_recording {
+            persisted.macos_prompted_screen_recording = false;
+        }
+
+        crate::save_state(&persisted);
         status = check_macos_permissions();
     }
     status
@@ -78,5 +100,5 @@ pub fn get_macos_permission_status() -> MacPermissionStatus {
 
 #[tauri::command]
 pub fn request_macos_permissions() -> MacPermissionStatus {
-    ensure_macos_permissions_on_startup()
+    ensure_macos_permissions(true)
 }

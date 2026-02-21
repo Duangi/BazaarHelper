@@ -5134,6 +5134,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sysinfo"
+version = "0.33.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fc858248ea01b66f19d8e8a6d55f41deaf91e9d495246fd01368d99935c6c01"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
+ "memchr",
+ "ntapi",
+ "rayon",
+ "windows 0.54.0",
+]
+
+[[package]]
 name = "system-deps"
 version = "6.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5290,6 +5304,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "sysinfo 0.33.1",
  "tauri",
  "tauri-build",
  "tauri-nspanel",
@@ -7207,7 +7222,7 @@ dependencies = [
  "image",
  "log",
  "percent-encoding",
- "sysinfo",
+ "sysinfo 0.30.13",
  "thiserror 1.0.69",
  "windows 0.54.0",
  "xcb",

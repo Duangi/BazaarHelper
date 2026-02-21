@@ -8,6 +8,19 @@ use crate::{
     user_data, DbState, ItemDb, SkillDb,
 };
 
+fn env_game_log_monitor_override() -> Option<bool> {
+    match std::env::var("BAZAAR_HELPER_ENABLE_GAME_LOG_MONITOR")
+        .unwrap_or_default()
+        .trim()
+        .to_ascii_lowercase()
+        .as_str()
+    {
+        "1" | "true" | "yes" | "on" => Some(true),
+        "0" | "false" | "no" | "off" => Some(false),
+        _ => None,
+    }
+}
+
 pub fn run() {
     crate::core::lifecycle::reset_app_exit_flag();
 
@@ -73,6 +86,9 @@ pub fn run() {
         })
         .setup(move |app| {
             let state = load_state();
+            let monitor_enabled = env_game_log_monitor_override()
+                .unwrap_or(state.enable_game_log_monitor);
+            core::log_monitor_state::set_enabled(monitor_enabled);
             core::hotkey_state::update_detail_hotkey_cache(state.detail_display_hotkey);
             core::hotkey_state::update_detection_hotkey_cache(state.detection_hotkey);
             core::hotkey_state::update_card_detection_hotkey_cache(state.card_detection_hotkey);
@@ -99,6 +115,11 @@ pub fn run() {
             let thread_skills_db = db_state.skills.clone();
             let log_handle = handle.clone();
             data_management::log_monitor::spawn_log_monitor(log_handle, thread_items_db, thread_skills_db);
+            if monitor_enabled {
+                log::info!("[LogMonitor] game log monitor enabled");
+            } else {
+                log::warn!("[LogMonitor] game log monitor disabled for memory diagnosis");
+            }
 
             let startup_handle = handle.clone();
             tauri::async_runtime::spawn(async move {
@@ -107,11 +128,10 @@ pub fn run() {
                 }
             });
 
-            if platforms::permissions::can_start_global_hotkey_monitor() {
-                platforms::monitor::spawn_mouse_hotkey_monitor(handle.clone());
-            } else {
-                log::warn!("[Hotkey Monitor] Not started because accessibility permission is missing.");
+            if !platforms::permissions::can_start_global_hotkey_monitor() {
+                log::warn!("[Hotkey Monitor] Accessibility permission is missing; starting in best-effort mode.");
             }
+            platforms::monitor::spawn_mouse_hotkey_monitor(handle.clone());
 
             Ok(())
         })
@@ -122,8 +142,11 @@ pub fn run() {
             services::commands::trigger_yolo_scan,
             services::overlay::handle_overlay_right_click,
             data_management::commands::get_item_info,
+            data_management::commands::get_resource_catalog_maps,
+            data_management::commands::get_search_thumbnail_path,
             platforms::commands::set_overlay_ignore_cursor,
             platforms::commands::show_yolo_monitor_window,
+            platforms::commands::warmup_detail_popup,
             platforms::commands::show_detail_popup_at,
             platforms::commands::hide_detail_popup,
             platforms::commands::reset_detail_popup_position,
@@ -131,6 +154,7 @@ pub fn run() {
             platforms::focus::was_last_foreground_game,
             data_management::commands::get_show_yolo_monitor,
             user_data::commands::get_match_history,
+            data_management::commands::rebuild_match_history,
             services::template_loading::start_template_loading,
             data_management::commands::search_items,
             data_management::commands::get_all_monsters,
@@ -159,10 +183,6 @@ pub fn run() {
             platforms::commands::set_detail_display_hotkey,
             services::commands::get_yolo_stats,
             data_management::commands::get_sync_state,
-            data_management::commands::get_runtime_logs,
-            data_management::commands::set_debug_mode,
-            data_management::commands::get_debug_mode,
-            data_management::commands::check_required_files,
             crate::monster_recognition::recognize_card_at_mouse,
             services::commands::invoke_yolo_scan,
             services::commands::emit_to_main,

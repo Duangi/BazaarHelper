@@ -26,34 +26,6 @@
                                     "skipTaskbar":  true,
                                     "dragDropEnabled":  true,
                                     "visibleOnAllWorkspaces":  true
-                                },
-                                {
-                                    "label":  "yolo-monitor",
-                                    "title":  "YOLO Monitor",
-                                    "width":  300,
-                                    "height":  200,
-                                    "resizable":  false,
-                                    "alwaysOnTop":  true,
-                                    "decorations":  false,
-                                    "transparent":  true,
-                                    "backgroundColor":  "#00000000",
-                                    "visible":  false,
-                                    "skipTaskbar":  true,
-                                    "visibleOnAllWorkspaces":  true
-                                },
-                                {
-                                    "label":  "detail-popup",
-                                    "title":  "Detail Popup",
-                                    "width":  480,
-                                    "height":  700,
-                                    "resizable":  true,
-                                    "alwaysOnTop":  true,
-                                    "decorations":  false,
-                                    "transparent":  true,
-                                    "backgroundColor":  "#00000000",
-                                    "visible":  false,
-                                    "skipTaskbar":  true,
-                                    "visibleOnAllWorkspaces":  true
                                 }
                             ],
                 "security":  {

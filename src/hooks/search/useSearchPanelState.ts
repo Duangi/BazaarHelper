@@ -36,12 +36,10 @@ export const useSearchPanelState = ({
   const [isResizingFilter, setIsResizingFilter] = useState(false);
   const [resizeStartY, setResizeStartY] = useState(0);
   const [resizeStartHeight, setResizeStartHeight] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(50);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (activeTab !== 'search') return;
-    setVisibleCount(50);
     window.requestAnimationFrame(() => {
       if (scrollAreaRef.current) {
         scrollAreaRef.current.scrollTop = 0;
@@ -49,12 +47,7 @@ export const useSearchPanelState = ({
     });
   }, [activeTab, searchQuery, selectedTags, selectedHiddenTags, matchMode, selectedDay]);
 
-  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop - clientHeight < 200) {
-      setVisibleCount((prev) => prev + 20);
-    }
-  };
+  const handleScroll = (_e: UIEvent<HTMLDivElement>) => {};
 
   useEffect(() => {
     const handler = setTimeout(async () => {
@@ -95,7 +88,6 @@ export const useSearchPanelState = ({
             filtered.map(async (item) => {
               let imgPath = '';
               const art = item.uuid ? skillsArtMap[item.uuid] : undefined;
-
               if (art) {
                 const base = art.split('/').pop() || art;
                 const nameNoExt = base.replace(/\.[^/.]+$/, '');
@@ -103,16 +95,7 @@ export const useSearchPanelState = ({
               } else {
                 imgPath = `images/${item.uuid}.webp`;
               }
-
               const url = await getImg(imgPath);
-
-              if ((item as any).skills_passive || (item as any).quests) {
-                console.log('[DEBUG] Item with skills_passive/quests:', item.name_cn, {
-                  skills_passive: (item as any).skills_passive,
-                  quests: (item as any).quests,
-                });
-              }
-
               return { ...item, displayImg: url };
             }),
           );
@@ -175,7 +158,6 @@ export const useSearchPanelState = ({
     setResizeStartY,
     setResizeStartHeight,
     setIsResizingFilter,
-    visibleCount,
     scrollAreaRef,
     handleScroll,
   };

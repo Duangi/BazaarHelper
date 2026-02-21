@@ -357,6 +357,40 @@ pub async fn show_yolo_monitor_window(app: tauri::AppHandle, show: bool) -> Resu
     Ok(())
 }
 
+fn ensure_detail_popup_window(app: &tauri::AppHandle) -> Result<tauri::WebviewWindow, String> {
+    use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
+
+    if let Some(window) = app.get_webview_window("detail-popup") {
+        return Ok(window);
+    }
+
+    let window = WebviewWindowBuilder::new(app, "detail-popup", WebviewUrl::App("index.html".into()))
+        .title("Detail Popup")
+        .inner_size(480.0, 700.0)
+        .resizable(true)
+        .always_on_top(true)
+        .decorations(false)
+        .transparent(true)
+        .skip_taskbar(true)
+        .visible(false)
+        .visible_on_all_workspaces(true)
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    crate::platforms::window_style::reset_overlay_init_flag("detail-popup");
+    crate::platforms::window_style::enforce_overlay_traits(&window, "detail-popup");
+    Ok(window)
+}
+
+#[tauri::command]
+pub async fn warmup_detail_popup(app: tauri::AppHandle) -> Result<(), String> {
+    let window = ensure_detail_popup_window(&app)?;
+    crate::platforms::window_style::enforce_overlay_traits(&window, "detail-popup");
+    let _ = window.hide();
+    log::debug!("[Detail Popup] warmup complete");
+    Ok(())
+}
+
 #[tauri::command]
 pub async fn show_detail_popup_at(
     app: tauri::AppHandle,
@@ -365,7 +399,7 @@ pub async fn show_detail_popup_at(
     data_type: String,
     data: serde_json::Value,
 ) -> Result<(), String> {
-    use tauri::{Emitter, Manager};
+    use tauri::Emitter;
 
     log::debug!(
         "[Show Detail Popup] Requested position: ({}, {}), Type: {}",
@@ -374,55 +408,77 @@ pub async fn show_detail_popup_at(
         data_type
     );
 
-    if let Some(window) = app.get_webview_window("detail-popup") {
-        log::debug!("[Show Detail Popup] Window found");
-        let state = crate::load_state();
+    let window = ensure_detail_popup_window(&app)?;
+    log::debug!("[Show Detail Popup] Window ready");
+    let state = crate::load_state();
 
-        let saved_width = state.detail_popup_width.unwrap_or(480);
-        let saved_height = state.detail_popup_height.unwrap_or(700);
-        let final_width = if saved_width < 100 { 480 } else { saved_width };
-        let final_height = if saved_height < 100 { 700 } else { saved_height };
+    let saved_width = state.detail_popup_width.unwrap_or(480);
+    let saved_height = state.detail_popup_height.unwrap_or(700);
+    let final_width = if saved_width < 100 { 480 } else { saved_width };
+    let final_height = if saved_height < 100 { 700 } else { saved_height };
 
-        let (final_x, final_y) =
-            if let (Some(saved_x), Some(saved_y)) = (state.detail_popup_x, state.detail_popup_y) {
-                (saved_x, saved_y)
+    let (final_x, final_y) =
+        if let (Some(saved_x), Some(saved_y)) = (state.detail_popup_x, state.detail_popup_y) {
+            (saved_x, saved_y)
+        } else {
+            let monitors = window.available_monitors().map_err(|e| e.to_string())?;
+
+            let target_monitor = monitors.iter().find(|m| {
+                let pos = m.position();
+                let size = m.size();
+                x >= pos.x && x < (pos.x + size.width as i32) && y >= pos.y && y < (pos.y + size.height as i32)
+            });
+
+            if let Some(monitor) = target_monitor {
+                let pos = monitor.position();
+                let size = monitor.size();
+                let center_x = pos.x + (size.width as i32 / 2) - (final_width as i32 / 2);
+                let center_y = pos.y + (size.height as i32 / 2) - (final_height as i32 / 2);
+                log::debug!(
+                    "[Show Detail Popup] Mouse on monitor at ({}, {}), size {}x{}, centering at ({}, {})",
+                    pos.x,
+                    pos.y,
+                    size.width,
+                    size.height,
+                    center_x,
+                    center_y
+                );
+                (center_x, center_y)
             } else {
-                let monitors = window.available_monitors().map_err(|e| e.to_string())?;
+                (x - 200, y - 300)
+            }
+        };
 
-                let target_monitor = monitors.iter().find(|m| {
-                    let pos = m.position();
-                    let size = m.size();
-                    x >= pos.x && x < (pos.x + size.width as i32) && y >= pos.y && y < (pos.y + size.height as i32)
-                });
+    log::debug!(
+        "[Show Detail Popup] Using position: ({}, {}), size: {}x{}",
+        final_x,
+        final_y,
+        final_width,
+        final_height
+    );
 
-                if let Some(monitor) = target_monitor {
-                    let pos = monitor.position();
-                    let size = monitor.size();
-                    let center_x = pos.x + (size.width as i32 / 2) - (final_width as i32 / 2);
-                    let center_y = pos.y + (size.height as i32 / 2) - (final_height as i32 / 2);
-                    log::debug!(
-                        "[Show Detail Popup] Mouse on monitor at ({}, {}), size {}x{}, centering at ({}, {})",
-                        pos.x,
-                        pos.y,
-                        size.width,
-                        size.height,
-                        center_x,
-                        center_y
-                    );
-                    (center_x, center_y)
-                } else {
-                    (x - 200, y - 300)
-                }
-            };
+    #[cfg(target_os = "macos")]
+    {
+        let window_main = window.clone();
+        if let Err(e) = window.run_on_main_thread(move || {
+            let _ = window_main.set_size(tauri::PhysicalSize::new(final_width, final_height));
+            let _ = window_main.set_position(tauri::PhysicalPosition::new(final_x, final_y));
+            let _ = window_main.set_always_on_top(true);
+            crate::platforms::window_style::enforce_overlay_traits(&window_main, "detail-popup");
+            let _ = window_main.show();
+            crate::platforms::window_style::apply_no_activate_style(&window_main);
+        }) {
+            log::warn!("[Show Detail Popup] Failed to dispatch on macOS main thread: {}", e);
+        } else {
+            log::debug!("[Show Detail Popup] Window shown successfully (macOS main thread)");
+            if let Ok(visible) = window.is_visible() {
+                log::debug!("[Show Detail Popup] Visibility after show: {}", visible);
+            }
+        }
+    }
 
-        log::debug!(
-            "[Show Detail Popup] Using position: ({}, {}), size: {}x{}",
-            final_x,
-            final_y,
-            final_width,
-            final_height
-        );
-
+    #[cfg(not(target_os = "macos"))]
+    {
         let _ = window.set_size(tauri::PhysicalSize::new(final_width, final_height));
 
         match window.set_position(tauri::PhysicalPosition::new(final_x, final_y)) {
@@ -446,22 +502,19 @@ pub async fn show_detail_popup_at(
             }
             Err(e) => log::debug!("[Show Detail Popup] Failed to show window: {}", e),
         }
-
-        let payload = serde_json::json!({
-            "type": data_type,
-            "data": data
-        });
-        log::debug!("[Show Detail Popup] Emitting event with payload type: {}", data_type);
-        match window.emit("show-detail-popup", payload) {
-            Ok(_) => log::debug!("[Show Detail Popup] Event emitted to detail-popup window successfully"),
-            Err(e) => log::debug!("[Show Detail Popup] Failed to emit event: {}", e),
-        }
-
-        log::debug!("[Show Detail Popup] Window label: {}", window.label());
-    } else {
-        log::debug!("[Show Detail Popup] ERROR: detail-popup window not found!");
-        return Err("detail-popup window not found".to_string());
     }
+
+    let payload = serde_json::json!({
+        "type": data_type,
+        "data": data
+    });
+    log::debug!("[Show Detail Popup] Emitting event with payload type: {}", data_type);
+    match window.emit("show-detail-popup", payload) {
+        Ok(_) => log::debug!("[Show Detail Popup] Event emitted to detail-popup window successfully"),
+        Err(e) => log::debug!("[Show Detail Popup] Failed to emit event: {}", e),
+    }
+
+    log::debug!("[Show Detail Popup] Window label: {}", window.label());
 
     Ok(())
 }

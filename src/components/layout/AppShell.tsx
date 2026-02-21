@@ -73,7 +73,7 @@ export const AppShell = ({
       {showTopBar && topBarProps ? <AppTopBar {...topBarProps} /> : null}
       <MainContentSection {...mainContentProps} />
       <InstallingOverlay visible={isInstalling} />
-      <ToastLayer toasts={toasts} onRemove={onRemoveToast} />
+      {!isCollapsed ? <ToastLayer toasts={toasts} onRemove={onRemoveToast} /> : null}
     </div>
   );
 };

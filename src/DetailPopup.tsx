@@ -76,19 +76,9 @@ interface SkillText {
     cn: string;
 }
 
-interface SkillDbData {
-    id: string;
-    name_en: string;
-    name_cn: string;
-    description_en: string;
-    description_cn: string;
-    size?: string;
-    starting_tier?: string;
-    available_tiers?: string;
-    heroes?: string;
-    tags?: string;
-    hidden_tags?: string;
-    descriptions: SkillText[];
+interface ResourceCatalogMaps {
+    skills_art_map: Record<string, string>;
+    item_sizes: Record<string, string>;
 }
 
 interface ItemData {
@@ -384,61 +374,61 @@ export default function DetailPopup() {
     const [allTags] = useState<string[]>([]);
     const [hoveredMonsterItem, setHoveredMonsterItem] = useState<MonsterSubItem | null>(null);
     const [expandedMonsterItem, setExpandedMonsterItem] = useState<MonsterSubItem | null>(null);
-    const [itemsDb, setItemsDb] = useState<Map<string, ItemData>>(new Map());
-    const [skillsDb, setSkillsDb] = useState<Map<string, SkillDbData>>(new Map());
     const [isDragging, setIsDragging] = useState(false);
     const isDraggingRef = useRef(false);
     const resizeStartRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
     const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
     const skillsArtMapRef = useRef<Record<string, string>>({}); // Add Ref to access state in listeners
+    const itemInfoCacheRef = useRef<Map<string, ItemData | null>>(new Map());
     const imgCache = useRef<Map<string, string>>(new Map());
     const hideTimeoutRef = useRef<any>(null);
     const [contentScale, setContentScale] = useState(1.0);
     const [resizeMode, setResizeMode] = useState<string | null>(null);
     const resizeModeRef = useRef<string | null>(null);
     const wasResizingRef = useRef(false);
+    const preloadDoneRef = useRef(false);
+    const preloadPromiseRef = useRef<Promise<void> | null>(null);
     
-    // Load items database
-    useEffect(() => {
-        (async () => {
+    const ensurePreloadedResources = async () => {
+        if (preloadDoneRef.current) return;
+        if (preloadPromiseRef.current) {
+            await preloadPromiseRef.current;
+            return;
+        }
+
+        preloadPromiseRef.current = (async () => {
             try {
-                const path = await resolveResource('resources/items_db.json');
-                const response = await fetch(convertFileSrc(path));
-                const items: ItemData[] = await response.json();
-                const map = new Map<string, ItemData>();
-                items.forEach(item => {
-                    if (item.id) map.set(item.id, item);
-                    if (item.name_cn) map.set(item.name_cn, item);
-                    if (item.name_en) map.set(item.name_en, item);
+                const maps = await invoke<ResourceCatalogMaps>('get_resource_catalog_maps');
+                setSkillsArtMap(maps.skills_art_map || {});
+                preloadDoneRef.current = true;
+                console.log('[DetailPopup] Lazy preloaded resources:', {
+                    arts: Object.keys(maps.skills_art_map || {}).length,
                 });
-                setItemsDb(map);
-                console.log('[DetailPopup] Loaded items_db:', map.size, 'items');
             } catch (e) {
-                console.error('[DetailPopup] Failed to load items_db:', e);
+                console.error('[DetailPopup] Failed to preload resources:', e);
+            } finally {
+                preloadPromiseRef.current = null;
             }
         })();
-    }, []);
-    
-    // Load skills database  
-    useEffect(() => {
-        (async () => {
-            try {
-                const path = await resolveResource('resources/skills_db.json');
-                const response = await fetch(convertFileSrc(path));
-                const skills: SkillDbData[] = await response.json();
-                const map = new Map<string, SkillDbData>();
-                skills.forEach(skill => {
-                    if (skill.id) map.set(skill.id, skill);
-                    if (skill.name_cn) map.set(skill.name_cn, skill);
-                    if (skill.name_en) map.set(skill.name_en, skill);
-                });
-                setSkillsDb(map);
-                console.log('[DetailPopup] Loaded skills_db:', map.size, 'skills');
-            } catch (e) {
-                console.error('[DetailPopup] Failed to load skills_db:', e);
-            }
-        })();
-    }, []);
+
+        await preloadPromiseRef.current;
+    };
+
+    const getItemInfoCached = async (id?: string): Promise<ItemData | null> => {
+        const key = (id || '').trim();
+        if (!key) return null;
+        if (itemInfoCacheRef.current.has(key)) {
+            return itemInfoCacheRef.current.get(key) || null;
+        }
+        try {
+            const info = await invoke<ItemData | null>('get_item_info', { id: key });
+            itemInfoCacheRef.current.set(key, info || null);
+            return info || null;
+        } catch {
+            itemInfoCacheRef.current.set(key, null);
+            return null;
+        }
+    };
     
     // Sync font scale from settings
     useEffect(() => {
@@ -544,46 +534,7 @@ export default function DetailPopup() {
     const containerRef = useRef<HTMLDivElement>(null);
     const MAX_CACHE_SIZE = 200;
 
-    // Load skills_db for art mapping
-    useEffect(() => {
-        (async () => {
-            try {
-                const resourcePath = await resolveResource('resources/skills_db.json');
-                const content = await invoke<string>('read_file_string', { path: resourcePath }).catch(() => null);
-                
-                // Fallback: fetch via http if invoke fails or just use fetch directly like OverlayApp might do?
-                // OverlayApp uses `readTextFile` from plugin-fs usually, or imports it?
-                // OverlayApp code snippet showed: 
-                // const resourcePath = await resolveResource('resources/skills_db.json');
-                // const content = await readTextFile(resourcePath);
-                // But creating a new tool to read OverlayApp imports... better stick to established patterns.
-                // Assuming `readTextFile` is available or use `fetch` with convertFileSrc.
-                
-                let jsonContent = content;
-                if (!jsonContent) {
-                     const url = convertFileSrc(resourcePath);
-                     const res = await fetch(url);
-                     jsonContent = await res.text();
-                }
-
-                if (jsonContent) {
-                    const db = JSON.parse(jsonContent);
-                    const map: Record<string, string> = {};
-                    for (const key in db) {
-                        const entry = db[key];
-                        if (entry.id && entry.art_key) {
-                            const basename = entry.art_key.split('/').pop();
-                            map[entry.id] = basename;
-                        }
-                    }
-                    setSkillsArtMap(map);
-                    console.log("[DetailPopup] Loaded skills art map, size:", Object.keys(map).length);
-                }
-            } catch (e) {
-                console.warn('[DetailPopup] Failed to load skills_db.json', e);
-            }
-        })();
-    }, []);
+    // NOTE: resources are lazily preloaded on first show-detail-popup event.
 
     const getImg = async (path: string | null | undefined) => {
         if (!path) return "";
@@ -687,6 +638,7 @@ export default function DetailPopup() {
                 "show-detail-popup",
                 async (event) => {
                     console.log("[DetailPopup] Received show-detail-popup event:", event.payload);
+                    await ensurePreloadedResources();
                     
                     // Cancel pending hide
                     if (hideTimeoutRef.current) {
@@ -764,47 +716,26 @@ export default function DetailPopup() {
 
                          processedData = { ...m, displayImg, displayImgBg };
                          
-                         // 3. Skills - 从 skills_db 合并完整信息
-                         if (m.skills) {
-                             // 动态加载 skills_db（如果还没加载）
-                             let localSkillsDb = skillsDb;
-                             if (localSkillsDb.size === 0) {
-                                 try {
-                                     const path = await resolveResource('resources/skills_db.json');
-                                     const response = await fetch(convertFileSrc(path));
-                                     const skills: SkillDbData[] = await response.json();
-                                     const map = new Map<string, SkillDbData>();
-                                     skills.forEach(skill => {
-                                         if (skill.id) map.set(skill.id, skill);
-                                         if (skill.name_cn) map.set(skill.name_cn, skill);
-                                         if (skill.name_en) map.set(skill.name_en, skill);
-                                     });
-                                     localSkillsDb = map;
-                                     console.log('[DetailPopup] Dynamically loaded skills_db:', map.size);
-                                 } catch (e) {
-                                     console.error('[DetailPopup] Failed to load skills_db:', e);
-                                 }
-                             }
-                             
+                         // 3. Skills - 从后端DB按需合并完整信息
+                        if (m.skills) {
                              processedData.skills = await Promise.all(m.skills.map(async s => {
                                 let imgPath = '';
                                 const id = s.id || s.uuid; 
                                 
-                                // 从 skills_db 获取完整技能信息
-                                const fullSkillInfo = id ? localSkillsDb.get(id) : null;
+                                // 从后端获取完整技能信息
+                                const fullSkillInfo = await getItemInfoCached(id);
                                 
-                                // 合并技能信息，将 descriptions 字段映射到 skills
+                                // 合并技能信息
                                 let mergedSkill = s;
                                 if (fullSkillInfo) {
                                     mergedSkill = {
                                         ...s,
-                                        // 使用 skills_db 中的 descriptions 作为 skills 字段
-                                        skills: fullSkillInfo.descriptions || s.skills || [],
-                                        name: fullSkillInfo.name_cn || s.name,
+                                        skills: (fullSkillInfo.skills as any) || s.skills || [],
+                                        name: fullSkillInfo.name_cn || fullSkillInfo.name || s.name,
                                         name_cn: fullSkillInfo.name_cn,
-                                        name_en: fullSkillInfo.name_en,
+                                        name_en: fullSkillInfo.name,
                                         size: fullSkillInfo.size || s.size,
-                                        starting_tier: fullSkillInfo.starting_tier || s.starting_tier
+                                        starting_tier: (fullSkillInfo as any).starting_tier || fullSkillInfo.tier || s.starting_tier
                                     };
                                 }
                                 
@@ -822,34 +753,14 @@ export default function DetailPopup() {
                              }));
                          }
                          
-                         // 4. Items - 从 items_db 合并完整信息
+                         // 4. Items - 从后端DB按需合并完整信息
                          if (m.items) {
-                             // 如果 itemsDb 还是空的，直接加载
-                             let localItemsDb = itemsDb;
-                             if (localItemsDb.size === 0) {
-                                 try {
-                                     const path = await resolveResource('resources/items_db.json');
-                                     const response = await fetch(convertFileSrc(path));
-                                     const items: ItemData[] = await response.json();
-                                     const map = new Map<string, ItemData>();
-                                     items.forEach(item => {
-                                         if (item.id) map.set(item.id, item);
-                                         if (item.name_cn) map.set(item.name_cn, item);
-                                         if (item.name_en) map.set(item.name_en, item);
-                                     });
-                                     localItemsDb = map;
-                                     console.log('[DetailPopup] Dynamically loaded items_db:', map.size);
-                                 } catch (e) {
-                                     console.error('[DetailPopup] Failed to load items_db:', e);
-                                 }
-                             }
-                             
                              processedData.items = await Promise.all(m.items.map(async i => {
                                  const id = i.id || i.uuid;
                                  let imgPath = `images/${id || i.name}.webp`;
                                  
-                                 // 从 items_db 中按 id 查找完整信息
-                                 let fullItemInfo = id ? localItemsDb.get(id) : null;
+                                 // 从后端DB中按 id 查找完整信息
+                                 const fullItemInfo = await getItemInfoCached(id);
                                  
                                  // 合并：优先使用 items_db 的完整信息
                                  const merged = fullItemInfo ? 

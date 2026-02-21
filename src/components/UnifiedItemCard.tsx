@@ -5,6 +5,7 @@ import { renderText, renderEnchantText } from '../utils/renderText';
 
 interface UnifiedItemCardProps {
   item: ItemData;
+  imageSrcOverride?: string;
   allTags: string[];
   isExpanded: boolean;
   isPinned?: boolean;
@@ -31,8 +32,9 @@ const HERO_AVATAR_MAP: Record<string, string> = {
   S: '/images/heroes/stelle.webp'
 };
 
-export const UnifiedItemCard: React.FC<UnifiedItemCardProps> = ({
+const UnifiedItemCardImpl: React.FC<UnifiedItemCardProps> = ({
   item,
+  imageSrcOverride,
   allTags,
   isExpanded,
   isPinned = false,
@@ -69,6 +71,7 @@ export const UnifiedItemCard: React.FC<UnifiedItemCardProps> = ({
 
   const renderTextLocal = (text: any) => renderText(text, allTags || []);
   const renderEnchantTextLocal = (content: string) => renderEnchantText(content, allTags || []);
+  const displayImg = imageSrcOverride || item.displayImg;
 
   return (
     <div
@@ -78,7 +81,7 @@ export const UnifiedItemCard: React.FC<UnifiedItemCardProps> = ({
       <div className={`item-card tier-${tierClass}`}>
         <div className="card-left">
           <div className={`image-box size-${sizeClass}`}>
-            <img src={item.displayImg} alt={item.name} />
+            <img src={displayImg} alt={item.name} loading="lazy" decoding="async" />
           </div>
         </div>
 
@@ -239,3 +242,17 @@ export const UnifiedItemCard: React.FC<UnifiedItemCardProps> = ({
     </div>
   );
 };
+
+export const UnifiedItemCard = React.memo(
+  UnifiedItemCardImpl,
+  (prev, next) =>
+    prev.item === next.item &&
+    prev.imageSrcOverride === next.imageSrcOverride &&
+    prev.allTags === next.allTags &&
+    prev.isExpanded === next.isExpanded &&
+    prev.isPinned === next.isPinned &&
+    prev.isRecognized === next.isRecognized &&
+    prev.isTopMatch === next.isTopMatch &&
+    prev.showPin === next.showPin &&
+    prev.showExpandChevron === next.showExpandChevron,
+);

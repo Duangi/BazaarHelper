@@ -560,6 +560,109 @@ html, body, #root {
   white-space: nowrap;
 }
 
+.settings-memory-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  color: #c8d1dc;
+  font-size: 11px;
+}
+
+.settings-memory-tip {
+  color: #8ea0b5;
+  font-size: 11px;
+}
+
+.settings-memory-viewer {
+  margin-top: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 205, 25, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.settings-memory-process-viewer {
+  margin-top: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid rgba(88, 166, 255, 0.28);
+  background: rgba(22, 27, 34, 0.45);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.settings-memory-process-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+}
+
+.settings-memory-process-row:last-child {
+  border-bottom: none;
+}
+
+.settings-memory-process-key {
+  color: #d7e2ef;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-memory-process-meta {
+  color: #8ea0b5;
+}
+
+.settings-memory-process-size {
+  color: #7ee787;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.settings-memory-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) 56px 90px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+}
+
+.settings-memory-row:last-child {
+  border-bottom: none;
+}
+
+.settings-memory-key {
+  color: #d7e2ef;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-memory-count {
+  color: #9ab0c8;
+  text-align: right;
+}
+
+.settings-memory-size {
+  color: #ffd166;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.settings-memory-note {
+  color: #8b99ab;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Webkit 滚动条样式 (Chrome, Safari, Edge) */
 .settings-content::-webkit-scrollbar {
   width: 10px;

@@ -12,10 +12,28 @@ pub fn setup_app_shell(app: &mut tauri::App) -> Result<(), Box<dyn std::error::E
 
     if let Some(window) = app.get_webview_window("main") {
         crate::platforms::window_style::apply_main_window_style(&window);
-        crate::platforms::window_style::enforce_overlay_traits(&window, "main");
         let _ = window.remove_menu();
         let _ = window.show();
         let _ = window.set_focus();
+        crate::platforms::window_style::enforce_overlay_traits(&window, "main");
+
+        #[cfg(target_os = "macos")]
+        {
+            // Startup race: macOS fullscreen/topmost flags may apply after first show.
+            // Re-apply a few times so user doesn't need to drag window manually.
+            let window_clone = window.clone();
+            std::thread::spawn(move || {
+                for (idx, delay_ms) in [200_u64, 700_u64, 1600_u64].into_iter().enumerate() {
+                    std::thread::sleep(std::time::Duration::from_millis(delay_ms));
+                    if idx == 0 {
+                        crate::platforms::window_style::enforce_overlay_traits(&window_clone, "main");
+                    } else {
+                        crate::platforms::window_style::refresh_overlay_pin(&window_clone, "main");
+                    }
+                    let _ = window_clone.show();
+                }
+            });
+        }
 
         #[cfg(target_os = "windows")]
         {

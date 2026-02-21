@@ -4,6 +4,16 @@ import { buildResourceCandidates } from "../constants/resourcePaths";
 
 const imgCache = new Map<string, string>();
 const resourceCache = new Map<string, string>();
+const CACHE_MAX = 320;
+
+const setWithLimit = (cache: Map<string, string>, key: string, value: string) => {
+  cache.set(key, value);
+  if (cache.size <= CACHE_MAX) return;
+  const oldest = cache.keys().next().value;
+  if (oldest) {
+    cache.delete(oldest);
+  }
+};
 
 export const resolveResourceUrl = async (path: string): Promise<string> => {
   const normalized = path.replace(/^resources\//, "").replace(/^\//, "");
@@ -16,7 +26,7 @@ export const resolveResourceUrl = async (path: string): Promise<string> => {
     try {
       const fullPath = await resolveResource(`resources/${candidate}`);
       const assetUrl = convertFileSrc(fullPath);
-      resourceCache.set(normalized, assetUrl);
+      setWithLimit(resourceCache, normalized, assetUrl);
       return assetUrl;
     } catch {
       // try next candidate
@@ -30,7 +40,7 @@ export const getImg = async (path: string | null | undefined): Promise<string> =
   if (!path) return "";
   if (imgCache.has(path)) return imgCache.get(path)!;
   const assetUrl = await resolveResourceUrl(path);
-  if (assetUrl) imgCache.set(path, assetUrl);
+  if (assetUrl) setWithLimit(imgCache, path, assetUrl);
   return assetUrl;
 };
 

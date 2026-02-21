@@ -430,6 +430,100 @@ pub fn get_loading_progress() -> LoadingProgress {
         })
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct RecognitionCacheMemoryStat {
+    pub key: String,
+    pub count: usize,
+    pub estimated_bytes: u64,
+    pub note: Option<String>,
+}
+
+fn estimate_template_dynamic_bytes(entry: &TemplateCache) -> u64 {
+    (entry.name.capacity() as u64)
+        + (entry.day.capacity() as u64)
+        + (entry.keypoints.capacity() as u64 * std::mem::size_of::<(f32, f32)>() as u64)
+        + (entry.descriptors.capacity() as u64)
+        + (entry.sample_png.capacity() as u64)
+}
+
+fn estimate_template_cache_bytes(cache: &Vec<TemplateCache>) -> u64 {
+    let outer = std::mem::size_of::<Vec<TemplateCache>>() as u64
+        + (cache.capacity() as u64 * std::mem::size_of::<TemplateCache>() as u64);
+    outer
+        + cache
+            .iter()
+            .map(estimate_template_dynamic_bytes)
+            .sum::<u64>()
+}
+
+fn estimate_event_template_dynamic_bytes(entry: &EventTemplateCache) -> u64 {
+    (entry.id.capacity() as u64) + (entry.name.capacity() as u64) + (entry.descriptors.capacity() as u64)
+}
+
+fn estimate_event_template_cache_bytes(cache: &Vec<EventTemplateCache>) -> u64 {
+    let outer = std::mem::size_of::<Vec<EventTemplateCache>>() as u64
+        + (cache.capacity() as u64 * std::mem::size_of::<EventTemplateCache>() as u64);
+    outer
+        + cache
+            .iter()
+            .map(estimate_event_template_dynamic_bytes)
+            .sum::<u64>()
+}
+
+pub fn collect_recognition_cache_memory_stats() -> Vec<RecognitionCacheMemoryStat> {
+    let mut stats = Vec::new();
+
+    let push_template =
+        |key: &str, cache: Option<&Vec<TemplateCache>>, stats: &mut Vec<RecognitionCacheMemoryStat>| {
+            if let Some(c) = cache {
+                stats.push(RecognitionCacheMemoryStat {
+                    key: key.to_string(),
+                    count: c.len(),
+                    estimated_bytes: estimate_template_cache_bytes(c),
+                    note: None,
+                });
+            } else {
+                stats.push(RecognitionCacheMemoryStat {
+                    key: key.to_string(),
+                    count: 0,
+                    estimated_bytes: 0,
+                    note: Some("not_loaded".to_string()),
+                });
+            }
+        };
+
+    push_template("cache:monster_templates", TEMPLATE_CACHE.get(), &mut stats);
+    push_template("cache:card_templates", CARD_TEMPLATE_CACHE.get(), &mut stats);
+    push_template("cache:card_templates_small", CARD_SMALL_CACHE.get(), &mut stats);
+    push_template("cache:card_templates_medium", CARD_MEDIUM_CACHE.get(), &mut stats);
+    push_template("cache:card_templates_large", CARD_LARGE_CACHE.get(), &mut stats);
+
+    if let Some(event_cache) = EVENT_TEMPLATE_CACHE.get() {
+        stats.push(RecognitionCacheMemoryStat {
+            key: "cache:event_templates".to_string(),
+            count: event_cache.len(),
+            estimated_bytes: estimate_event_template_cache_bytes(event_cache),
+            note: None,
+        });
+    } else {
+        stats.push(RecognitionCacheMemoryStat {
+            key: "cache:event_templates".to_string(),
+            count: 0,
+            estimated_bytes: 0,
+            note: Some("not_loaded".to_string()),
+        });
+    }
+
+    stats.push(RecognitionCacheMemoryStat {
+        key: "cache:yolo_session".to_string(),
+        count: if YOLO_SESSION.get().is_some() { 1 } else { 0 },
+        estimated_bytes: 0,
+        note: Some("native_session_unmeasured".to_string()),
+    });
+
+    stats
+}
+
 // 使用 OpenCV ORB 提取特征点和描述符
 fn extract_features_orb(image_path: &str, n_features: i32) -> Result<(Vec<(f32, f32)>, Vec<u8>, i32, i32), opencv::Error> {
     // 读取图片 (支持中文路径)
@@ -1423,7 +1517,7 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
     crate::core::recognition_state::IS_RECOGNIZING.store(true, Ordering::Relaxed);
     let _guard = RecognitionGuard;
 
-    use xcap::{Window, Monitor};
+    use xcap::Monitor;
     use enigo::{Enigo, Mouse, Settings};
 
     // 1. 获取鼠标位置
@@ -1436,29 +1530,49 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
         Err(e) => return Err(format!("Failed to get mouse location: {:?}", e)),
     };
 
-    // 2. 截图
-    let windows = Window::all().map_err(|e| e.to_string())?;
-    let bazaar_window = windows.into_iter().find(|w| {
-        let title = w.title().to_lowercase();
-        let app_name = w.app_name().to_lowercase();
-        title.contains("the bazaar") || app_name.contains("the bazaar")
+    // 2. 截图：直接以“鼠标所在显示器”为基准，避免窗口坐标系(DPI/Retina)不一致导致裁剪越界。
+    let monitors = Monitor::all().map_err(|e| e.to_string())?;
+    let mut target_monitor = monitors.into_iter().find(|m| {
+        let mx = m.x();
+        let my = m.y();
+        let mw = m.width() as i32;
+        let mh = m.height() as i32;
+        mouse_x >= mx && mouse_x < mx + mw && mouse_y >= my && mouse_y < my + mh
     });
 
-    let (screenshot, win_x, win_y) = if let Some(window) = bazaar_window {
-        (window.capture_image().map_err(|e| e.to_string())?, window.x(), window.y())
-    } else {
-        let monitors = Monitor::all().map_err(|e| e.to_string())?;
-        let target_monitor = monitors.into_iter().find(|m| {
-             let mx = m.x(); let my = m.y(); let mw = m.width(); let mh = m.height();
-             mouse_x >= mx && mouse_x < mx + mw as i32 && mouse_y >= my && mouse_y < my + mh as i32
-        }).ok_or("Mouse not in monitor")?;
-        (target_monitor.capture_image().map_err(|e| e.to_string())?, target_monitor.x(), target_monitor.y())
-    };
+    // Retina/缩放兼容：如果首轮没命中，尝试按 0.5/2.0 比例重新匹配。
+    if target_monitor.is_none() {
+        let monitors_retry = Monitor::all().map_err(|e| e.to_string())?;
+        let candidates = [
+            (mouse_x / 2, mouse_y / 2),
+            (mouse_x.saturating_mul(2), mouse_y.saturating_mul(2)),
+        ];
+        target_monitor = monitors_retry.into_iter().find(|m| {
+            let mx = m.x();
+            let my = m.y();
+            let mw = m.width() as i32;
+            let mh = m.height() as i32;
+            candidates.iter().any(|(cx, cy)| *cx >= mx && *cx < mx + mw && *cy >= my && *cy < my + mh)
+        });
+    }
+
+    let target_monitor = target_monitor.ok_or("Mouse not in monitor")?;
+    let screenshot = target_monitor.capture_image().map_err(|e| e.to_string())?;
+    let win_x = target_monitor.x();
+    let win_y = target_monitor.y();
+    let win_w = target_monitor.width() as i32;
+    let win_h = target_monitor.height() as i32;
 
     let img = DynamicImage::ImageRgba8(screenshot);
     let (img_w, img_h) = img.dimensions();
-    let rel_x = mouse_x - win_x;
-    let rel_y = mouse_y - win_y;
+    let rel_x_raw = mouse_x - win_x;
+    let rel_y_raw = mouse_y - win_y;
+    let scale_x = if win_w > 0 { img_w as f32 / win_w as f32 } else { 1.0 };
+    let scale_y = if win_h > 0 { img_h as f32 / win_h as f32 } else { 1.0 };
+    let rel_x = (rel_x_raw as f32 * scale_x).round() as i32;
+    let rel_y = (rel_y_raw as f32 * scale_y).round() as i32;
+    let rel_x = rel_x.clamp(0, (img_w.saturating_sub(1)) as i32);
+    let rel_y = rel_y.clamp(0, (img_h.saturating_sub(1)) as i32);
     
     // 4K 自适应：调整截图范围。
     // 竖直方向保持屏幕高度的 75%，水平方向缩小一半，设为屏幕高度的 50%
@@ -1473,7 +1587,13 @@ pub async fn recognize_card_at_mouse() -> Result<Option<serde_json::Value>, Stri
     let crop_w = if crop_x + target_w > img_w { img_w.saturating_sub(crop_x) } else { target_w };
     let crop_h = if crop_y + target_h > img_h { img_h.saturating_sub(crop_y) } else { target_h };
 
-    if crop_w < 50 || crop_h < 50 { return Err("Invalid crop size".into()); }
+    if crop_w < 50 || crop_h < 50 {
+        log::warn!(
+            "[Card Recognition] Invalid crop (w={}, h={}) mouse=({},{}), monitor=({},{} {}x{}), rel_raw=({},{}), rel_scaled=({},{}), img={}x{}",
+            crop_w, crop_h, mouse_x, mouse_y, win_x, win_y, win_w, win_h, rel_x_raw, rel_y_raw, rel_x, rel_y, img_w, img_h
+        );
+        return Ok(None);
+    }
     let mut cropped_img = img.crop_imm(crop_x, crop_y, crop_w, crop_h);
     
     // 4K 优化：针对高分辨率截图，缩减尺寸以加快特征提取和比对（由 512 提升至 800 以保留更多细节）

@@ -59,7 +59,10 @@ pub async fn handle_overlay_right_click(
     };
 
     if img_opt.is_none() {
-        return Ok(None);
+        return Err("暂无YOLO截图，请先触发一次YOLO扫描".to_string());
+    }
+    if detections.is_empty() {
+        return Err("YOLO结果为空，请先触发YOLO并确认识别到目标".to_string());
     }
     let img = img_opt.unwrap();
     let (img_w, img_h) = img.dimensions();
@@ -241,6 +244,78 @@ pub async fn handle_overlay_right_click(
     }
 
     Ok(None)
+}
+
+pub async fn handle_detail_hotkey_click(
+    app: tauri::AppHandle,
+    x: i32,
+    y: i32,
+) -> Result<Option<serde_json::Value>, String> {
+    let primary = handle_overlay_right_click(app.clone(), x, y).await;
+    if let Ok(Some(value)) = primary {
+        return Ok(Some(value));
+    }
+
+    // If cached YOLO result is stale/missed target, force one fresh scan and retry once.
+    let primary_is_none = matches!(&primary, Ok(None));
+    let mut primary_err = primary.err();
+    let should_retry_with_rescan = matches!(
+        &primary_err,
+        Some(e)
+            if e.contains("暂无YOLO截图")
+                || e.contains("YOLO结果为空")
+                || e.contains("Invalid crop size")
+    ) || primary_is_none;
+
+    if should_retry_with_rescan {
+        log::debug!("[Detail Hotkey] YOLO cache miss, triggering fresh scan and retrying click.");
+        match crate::services::commands::trigger_yolo_scan(app.clone(), true).await {
+            Ok(count) => log::debug!("[Detail Hotkey] Fresh YOLO scan done, detections={}", count),
+            Err(e) => log::debug!("[Detail Hotkey] Fresh YOLO scan failed: {}", e),
+        }
+
+        let retry = handle_overlay_right_click(app.clone(), x, y).await;
+        if let Ok(Some(value)) = retry {
+            return Ok(Some(value));
+        }
+        if primary_err.is_none() {
+            primary_err = retry.err();
+        }
+    }
+
+    match crate::monster_recognition::recognize_card_at_mouse().await {
+        Ok(Some(raw)) => {
+            let first_id = raw
+                .as_array()
+                .and_then(|arr| arr.first())
+                .and_then(|v| v.get("id"))
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+
+            if let Some(card_id) = first_id {
+                let db_state = app.state::<DbState>();
+                if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
+                    return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+                }
+                return Err(format!("识别到卡牌 {}，但未在数据库中找到详情", card_id));
+            }
+            Err("ORB后备识别返回了空结果".to_string())
+        }
+        Ok(None) => {
+            if let Some(err) = primary_err {
+                Err(err)
+            } else {
+                Ok(None)
+            }
+        }
+        Err(e) => {
+            if let Some(err) = primary_err {
+                Err(format!("{err}; ORB后备识别失败: {e}"))
+            } else {
+                Err(e)
+            }
+        }
+    }
 }
 
 async fn get_item_info_internal(state: &DbState, id: String) -> Option<ItemData> {

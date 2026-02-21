@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { SettingGroup } from '../SettingsPanel';
 import { SponsorSection } from './SponsorSection';
@@ -69,34 +69,7 @@ interface AppSettingsPanelProps {
   sponsorIcons: { vx: string; zfb: string };
 }
 
-interface RuntimeLogSnapshot {
-  debug_mode: boolean;
-  log_dir: string;
-  files: string[];
-  lines: string[];
-}
-
-interface FileCheckItem {
-  key: string;
-  path: string;
-  exists: boolean;
-  size_bytes?: number;
-  required: boolean;
-}
-
-interface FileCheckReport {
-  all_ok: boolean;
-  missing_count: number;
-  checked_files: number;
-  items: FileCheckItem[];
-}
-
-const formatSizeInMb = (sizeBytes?: number) => {
-  const mb = (sizeBytes || 0) / (1024 * 1024);
-  return `${mb.toFixed(2)} MB`;
-};
-
-export function AppSettingsPanel(props: AppSettingsPanelProps) {
+function AppSettingsPanelImpl(props: AppSettingsPanelProps) {
   const {
     visible,
     inline = false,
@@ -150,48 +123,6 @@ export function AppSettingsPanel(props: AppSettingsPanelProps) {
     announcement,
     sponsorIcons,
   } = props;
-
-  const [isLogsLoading, setIsLogsLoading] = useState(false);
-  const [runtimeLogs, setRuntimeLogs] = useState<RuntimeLogSnapshot | null>(null);
-  const [debugMode, setDebugModeState] = useState(false);
-  const [isCheckingFiles, setIsCheckingFiles] = useState(false);
-  const [fileReport, setFileReport] = useState<FileCheckReport | null>(null);
-
-  const refreshRuntimeLogs = async () => {
-    setIsLogsLoading(true);
-    try {
-      const logs = await invoke<RuntimeLogSnapshot>('get_runtime_logs', { line_limit: 400 });
-      setRuntimeLogs(logs);
-      setDebugModeState(logs.debug_mode);
-    } catch (e) {
-      console.error('Failed to load runtime logs:', e);
-      showToast('读取日志失败', 'error');
-    } finally {
-      setIsLogsLoading(false);
-    }
-  };
-
-  const refreshFileReport = async () => {
-    setIsCheckingFiles(true);
-    try {
-      const report = await invoke<FileCheckReport>('check_required_files');
-      setFileReport(report);
-      showToast(report.all_ok ? '文件检测通过' : `缺少 ${report.missing_count} 个必要文件`, report.all_ok ? 'success' : 'warning');
-    } catch (e) {
-      console.error('Failed to check required files:', e);
-      showToast('文件检测失败', 'error');
-    } finally {
-      setIsCheckingFiles(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!visible) return;
-    invoke<boolean>('get_debug_mode')
-      .then(setDebugModeState)
-      .catch(() => {});
-    void refreshRuntimeLogs();
-  }, [visible]);
 
   if (!visible) return null;
 
@@ -487,100 +418,6 @@ export function AppSettingsPanel(props: AppSettingsPanelProps) {
             />
           </SettingGroup>
 
-          <SettingGroup
-            title="🧪 调试与日志"
-            expanded={settingsExpanded.debug}
-            onToggle={() => setSettingsExpanded((prev) => ({ ...prev, debug: !prev.debug }))}
-          >
-            <div className="setting-item">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-                <label>开发者模式</label>
-                <button
-                  className="bulk-btn"
-                  style={{
-                    padding: '4px 12px',
-                    background: debugMode ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)',
-                    borderColor: debugMode ? '#4CAF50' : '#f44336',
-                    color: debugMode ? '#4CAF50' : '#f44336',
-                  }}
-                  onClick={async () => {
-                    try {
-                      const next = !debugMode;
-                      await invoke('set_debug_mode', { enabled: next });
-                      setDebugModeState(next);
-                      showToast(`开发者模式已${next ? '开启' : '关闭'}`, 'info');
-                      void refreshRuntimeLogs();
-                    } catch (e) {
-                      console.error('set_debug_mode failed:', e);
-                      showToast('切换开发者模式失败', 'error');
-                    }
-                  }}
-                >
-                  {debugMode ? '已开启' : '已关闭'}
-                </button>
-              </div>
-              <div className="setting-tip">
-                开启后后端将输出更详细的调试日志（立即生效，重启后保留）
-              </div>
-            </div>
-
-            <div className="setting-item">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                <label>运行日志</label>
-                <button className="bulk-btn" onClick={() => void refreshRuntimeLogs()} disabled={isLogsLoading}>
-                  {isLogsLoading ? '刷新中...' : '刷新日志'}
-                </button>
-              </div>
-              <div className="settings-log-meta">
-                <span>日志目录: {runtimeLogs?.log_dir || '...'}</span>
-                <span>日志文件: {runtimeLogs?.files.length || 0}</span>
-              </div>
-              <div className="settings-log-viewer" data-no-drag>
-                {(runtimeLogs?.lines || []).slice(-250).map((line, idx) => {
-                  const lowered = line.toLowerCase();
-                  const levelClass = lowered.includes(" error") || lowered.includes("[error]") || lowered.includes(" panic")
-                    ? 'error'
-                    : lowered.includes(" warn") || lowered.includes("[warn]")
-                      ? 'warn'
-                      : lowered.includes(" debug") || lowered.includes("[debug]")
-                        ? 'debug'
-                        : 'info';
-                  return (
-                    <div key={`${idx}-${line.slice(0, 8)}`} className={`settings-log-line ${levelClass}`}>
-                      {line}
-                    </div>
-                  );
-                })}
-                {(runtimeLogs?.lines.length || 0) === 0 && <div className="settings-log-empty">暂无日志</div>}
-              </div>
-            </div>
-
-            <div className="setting-item">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                <label>必需文件完整性检测</label>
-                <button className="bulk-btn" onClick={() => void refreshFileReport()} disabled={isCheckingFiles}>
-                  {isCheckingFiles ? '检测中...' : '检测所有文件'}
-                </button>
-              </div>
-              {fileReport && (
-                <div className="settings-file-report">
-                  <div className={`settings-file-report-summary ${fileReport.all_ok ? 'ok' : 'warn'}`}>
-                    {fileReport.all_ok
-                      ? `检测通过，共 ${fileReport.checked_files} 项`
-                      : `检测完成，缺少 ${fileReport.missing_count} 项必要文件`}
-                  </div>
-                  {fileReport.items.map((item) => (
-                    <div key={`${item.key}-${item.path}`} className="settings-file-row">
-                      <span className={`settings-file-dot ${item.exists ? 'ok' : item.required ? 'err' : 'warn'}`} />
-                      <span className="settings-file-key">{item.key}</span>
-                      <span className="settings-file-size">{item.exists ? formatSizeInMb(item.size_bytes) : 'missing'}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </SettingGroup>
-
           <div className="setting-divider" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '15px 0' }}></div>
 
           <div className="setting-item">
@@ -683,3 +520,5 @@ export function AppSettingsPanel(props: AppSettingsPanelProps) {
     </div>
   );
 }
+
+export const AppSettingsPanel = memo(AppSettingsPanelImpl);

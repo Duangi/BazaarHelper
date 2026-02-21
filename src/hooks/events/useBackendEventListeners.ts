@@ -1,4 +1,4 @@
-import { useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
+import { useEffect, useRef, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -40,6 +40,18 @@ export const useBackendEventListeners = ({
   setDetailDisplayHotkey,
   updateIslandStatus,
 }: UseBackendEventListenersOptions) => {
+  const processSyncPayloadRef = useRef(processSyncPayload);
+  const handleAutoRecognitionRef = useRef(handleAutoRecognition);
+  const handleRecognizeCardRef = useRef(handleRecognizeCard);
+  const updateIslandStatusRef = useRef(updateIslandStatus);
+
+  useEffect(() => {
+    processSyncPayloadRef.current = processSyncPayload;
+    handleAutoRecognitionRef.current = handleAutoRecognition;
+    handleRecognizeCardRef.current = handleRecognizeCard;
+    updateIslandStatusRef.current = updateIslandStatus;
+  }, [processSyncPayload, handleAutoRecognition, handleRecognizeCard, updateIslandStatus]);
+
   useEffect(() => {
     const unlisteners: (() => void)[] = [];
     let isMounted = true;
@@ -64,7 +76,7 @@ export const useBackendEventListeners = ({
       };
 
       await safeListen<SyncPayload>('sync-items', async (payload) => {
-        await processSyncPayload(payload);
+        await processSyncPayloadRef.current(payload);
       });
 
       await safeListen<number | null>('trigger-monster-recognition', (dayNum) => {
@@ -75,13 +87,13 @@ export const useBackendEventListeners = ({
           setCurrentDay(dayNum);
         }
         setTimeout(() => {
-          if (isMounted) void handleAutoRecognition(dayNum);
+          if (isMounted) void handleAutoRecognitionRef.current(dayNum);
         }, 500);
       });
 
       await safeListen<void>('hotkey-card', () => {
         console.log('收到卡牌识别触发事件');
-        handleRecognizeCard(true);
+        handleRecognizeCardRef.current(true);
       });
 
       await safeListen<void>('hotkey-collapse', () => {
@@ -143,7 +155,7 @@ export const useBackendEventListeners = ({
 
       await safeListen<{ message: string; type?: IslandStatusType }>('island-status', (payload) => {
         if (!payload?.message) return;
-        updateIslandStatus(payload.message, payload.type ?? 'info');
+        updateIslandStatusRef.current(payload.message, payload.type ?? 'info');
       });
 
       invoke<number | null>('get_detection_hotkey').then((val) => isMounted && setDetectionHotkey(val));
@@ -159,21 +171,5 @@ export const useBackendEventListeners = ({
       unlisteners.forEach((fn) => fn());
       unlisteners.length = 0;
     };
-  }, [
-    handleAutoRecognition,
-    handleRecognizeCard,
-    isResizing,
-    processSyncPayload,
-    setActiveTab,
-    setCardDetectionHotkey,
-    setCurrentDay,
-    setDetailDisplayHotkey,
-    setDetectionHotkey,
-    setExpandedMonsters,
-    setIdentifiedNames,
-    setIsCollapsed,
-    setSelectedDay,
-    setToggleCollapseHotkey,
-    updateIslandStatus,
-  ]);
+  }, []);
 };

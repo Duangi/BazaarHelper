@@ -35,7 +35,7 @@ interface SearchFiltersPanelProps {
   isResizingFilter: boolean;
 }
 
-export const SearchFiltersPanel: React.FC<SearchFiltersPanelProps> = ({
+const SearchFiltersPanelImpl: React.FC<SearchFiltersPanelProps> = ({
   isSearchFilterCollapsed,
   setIsSearchFilterCollapsed,
   matchMode,
@@ -429,3 +429,5 @@ export const SearchFiltersPanel: React.FC<SearchFiltersPanelProps> = ({
     </div>
   );
 };
+
+export const SearchFiltersPanel = React.memo(SearchFiltersPanelImpl);

@@ -84,6 +84,7 @@ export const useAppLifecycleEffects = (options: any) => {
     yoloHotkey: options.yoloHotkey,
     setErrorMessage: options.setErrorMessage,
     updateIslandStatus: options.updateIslandStatus,
+    showToast: options.showToast,
   });
 
   useMonstersBootstrap({ setAllMonsters: options.setAllMonsters });

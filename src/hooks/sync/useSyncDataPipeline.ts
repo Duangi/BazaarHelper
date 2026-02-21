@@ -10,6 +10,7 @@ interface UseSyncDataPipelineOptions {
 
 export const useSyncDataPipeline = ({ setSyncData }: UseSyncDataPipelineOptions) => {
   const latestSyncSeqRef = useRef(0);
+  const lastPayloadSignatureRef = useRef<string>('');
 
   const processItems = useCallback(async (items: ItemData[]) => {
     return Promise.all(
@@ -22,6 +23,20 @@ export const useSyncDataPipeline = ({ setSyncData }: UseSyncDataPipelineOptions)
 
   const processSyncPayload = useCallback(
     async (payload: SyncPayload) => {
+      const signature = JSON.stringify({
+        hand: (payload.hand_items || [])
+          .map((i) => i.instance_id || i.uuid)
+          .sort(),
+        stash: (payload.stash_items || [])
+          .map((i) => i.instance_id || i.uuid)
+          .sort(),
+      });
+
+      if (signature === lastPayloadSignatureRef.current) {
+        return;
+      }
+      lastPayloadSignatureRef.current = signature;
+
       const seq = ++latestSyncSeqRef.current;
       const [hand, stash] = await Promise.all([
         processItems(payload.hand_items || []),

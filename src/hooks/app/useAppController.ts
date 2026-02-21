@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { AppShellProps } from '../../components/layout/AppShell';
 import { useResourceCatalog } from '../features/useResourceCatalog';
@@ -19,7 +19,7 @@ import { useDayTabSelection } from '../features/useDayTabSelection';
 import { useAppCoreState } from './useAppCoreState';
 import { useAppLifecycleEffects } from './useAppLifecycleEffects';
 import { useAppViewBindings } from './useAppViewBindings';
-import type { IslandStatusType } from '../../types';
+import type { IslandStatusType, SyncPayload } from '../../types';
 
 export const useAppController = (): AppShellProps => {
   const [islandStatusText, setIslandStatusText] = useState('集市小抄 运行中');
@@ -106,11 +106,38 @@ export const useAppController = (): AppShellProps => {
     setSettingsExpanded,
   } = useAppSettingsState();
 
-  const { matchHistory, isLoadingHistory, loadMatchHistory } = useMatchHistory();
+  const { matchHistory, isLoadingHistory, loadMatchHistory } = useMatchHistory({
+    enabled: activeTab === 'history',
+  });
   const { processItems, processSyncPayload } = useSyncDataPipeline({ setSyncData });
+  const deferredSyncPayloadRef = useRef<SyncPayload | null>(null);
 
-  const { hiddenTagIcons, sponsorIcons, skillsArtMap, itemSizes, itemsDbFull, skillsDbFull } =
-    useResourceCatalog();
+  const processSyncPayloadRouted = useCallback(async (payload: SyncPayload) => {
+    if (activeTab === 'search') {
+      // Search tab is DB-only; defer live sync updates to avoid high-frequency heavy rerenders.
+      deferredSyncPayloadRef.current = payload;
+      return;
+    }
+    await processSyncPayload(payload);
+  }, [activeTab, processSyncPayload]);
+
+  useEffect(() => {
+    if (activeTab === 'search') return;
+    const pending = deferredSyncPayloadRef.current;
+    if (!pending) return;
+    deferredSyncPayloadRef.current = null;
+    void processSyncPayload(pending);
+  }, [activeTab, processSyncPayload]);
+
+  const showToastSmart = useCallback((message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    if (isCollapsed) {
+      updateIslandStatus(message, type as IslandStatusType);
+      return;
+    }
+    showToast(message, type);
+  }, [isCollapsed, showToast, updateIslandStatus]);
+
+  const { hiddenTagIcons, sponsorIcons, skillsArtMap, itemSizes } = useResourceCatalog();
 
   const {
     searchQuery,
@@ -134,7 +161,6 @@ export const useAppController = (): AppShellProps => {
     setResizeStartY,
     setResizeStartHeight,
     setIsResizingFilter,
-    visibleCount,
     scrollAreaRef,
     handleScroll,
   } = useSearchPanelState({
@@ -162,8 +188,6 @@ export const useAppController = (): AppShellProps => {
     allMonsters,
     setCurrentDay: (day: number) => setCurrentDay(day),
     skillsArtMap,
-    skillsDbFull,
-    itemsDbFull,
     updateDayTabSelection,
   });
 
@@ -205,7 +229,7 @@ export const useAppController = (): AppShellProps => {
   } = useVersionUpdate();
 
   const { handleConfirmResetHotkeys, handleManualCheckUpdate, handleInstallReady } = useUpdateActions({
-    showToast,
+    showToast: showToastSmart,
     currentVersion: currentVersion || '',
     setAnnouncement,
     setIsInstalling,
@@ -236,7 +260,7 @@ export const useAppController = (): AppShellProps => {
     setActiveTab,
     setExpandedItems,
     setErrorMessage,
-    showToast,
+    showToast: showToastSmart,
   });
 
   const { renderTierInfo } = useTierInfoRenderer(itemSizes);
@@ -272,7 +296,7 @@ export const useAppController = (): AppShellProps => {
     isResizing,
     lastUserResize,
     isProgrammaticResize,
-    processSyncPayload,
+    processSyncPayload: processSyncPayloadRouted,
     handleRecognizeCard,
     setIsCollapsed,
     setIdentifiedNames,
@@ -298,13 +322,15 @@ export const useAppController = (): AppShellProps => {
     isGeometryLoaded,
     detailDisplayHotkey,
     setYoloHotkey,
-    showToast,
+    showToast: showToastSmart,
     updateIslandStatus,
   });
 
-  const settingsPanelProps = {
+  const handleCloseSettings = useCallback(() => setShowSettings(false), [setShowSettings]);
+
+  const settingsPanelProps = useMemo(() => ({
     visible: showSettings,
-    onClose: () => setShowSettings(false),
+    onClose: handleCloseSettings,
     settingsExpanded,
     setSettingsExpanded,
     fontSize,
@@ -312,7 +338,7 @@ export const useAppController = (): AppShellProps => {
     setExpandedWidth,
     setExpandedHeight,
     setHasCustomPosition,
-    showToast,
+    showToast: showToastSmart,
     enableYoloAuto,
     setEnableYoloAuto,
     useGpuAcceleration,
@@ -353,9 +379,60 @@ export const useAppController = (): AppShellProps => {
     onInstallReady: handleInstallReady,
     announcement,
     sponsorIcons,
-  };
+  }), [
+    announcement,
+    cardDetectionHotkey,
+    currentVersion,
+    detailDisplayHotkey,
+    detectionHotkey,
+    downloadProgress,
+    enableYoloAuto,
+    fontSize,
+    handleCloseSettings,
+    handleConfirmResetHotkeys,
+    handleInstallReady,
+    handleManualCheckUpdate,
+    isRecordingCardHotkey,
+    isRecordingDetailHotkey,
+    isRecordingHotkey,
+    isRecordingToggleHotkey,
+    isRecordingYoloHotkey,
+    setCardDetectionHotkey,
+    setDetectionHotkey,
+    setDetailDisplayHotkey,
+    setEnableYoloAuto,
+    setExpandedHeight,
+    setExpandedWidth,
+    setFontSize,
+    setHasCustomPosition,
+    setIsRecordingCardHotkey,
+    setIsRecordingDetailHotkey,
+    setIsRecordingHotkey,
+    setIsRecordingToggleHotkey,
+    setIsRecordingYoloHotkey,
+    setShowResetHotkeysConfirm,
+    setSettingsExpanded,
+    setShowYoloMonitor,
+    setToggleCollapseHotkey,
+    setUseGpuAcceleration,
+    setYoloHotkey,
+    setYoloScanInterval,
+    settingsExpanded,
+    showResetHotkeysConfirm,
+    showSettings,
+    showToastSmart,
+    showYoloMonitor,
+    sponsorIcons,
+    startUpdateDownload,
+    toggleCollapseHotkey,
+    updateAvailable?.version,
+    updateStatus,
+    useGpuAcceleration,
+    yoloHotkey,
+    yoloScanInterval,
+  ]);
 
-  const mainContentProps = {
+  const mainContentProps = useMemo(() => ({
     isCollapsed,
     activeTab,
     setActiveTab,
@@ -394,7 +471,7 @@ export const useAppController = (): AppShellProps => {
     handleDayChange,
     isRecognizing,
     handleAutoRecognition,
-    showToast,
+    showToast: showToastSmart,
     templateLoading,
     manualMonsters,
     identifiedNames,
@@ -412,8 +489,64 @@ export const useAppController = (): AppShellProps => {
     pinnedItems,
     togglePin,
     getSortedItems,
-    visibleCount,
-  };
+  }), [
+    activeTab,
+    expandedItems,
+    expandedMonsters,
+    getSortedItems,
+    handleAutoRecognition,
+    handleDayChange,
+    handleRecognizeCard,
+    handleScroll,
+    hiddenTagIcons,
+    identifiedNames,
+    isCollapsed,
+    isLoadingHistory,
+    isRecognizing,
+    isRecognizingCard,
+    isResizingFilter,
+    isSearchFilterCollapsed,
+    isSearching,
+    lastItemSize,
+    loadMatchHistory,
+    manualMonsters,
+    matchHistory,
+    matchMode,
+    pinnedItems,
+    recognizedCards,
+    renderTierInfo,
+    renderUnifiedItemCard,
+    scrollAreaRef,
+    searchFilterHeight,
+    searchQuery,
+    searchResults,
+    selectedDay,
+    selectedHiddenTags,
+    selectedTags,
+    setActiveTab,
+    setIsInputFocused,
+    setIsResizingFilter,
+    setIsSearchFilterCollapsed,
+    setLastItemSize,
+    setMatchMode,
+    setResizeStartHeight,
+    setResizeStartY,
+    setSearchQuery,
+    setSelectedDay,
+    setSelectedHiddenTags,
+    setSelectedTags,
+    setShowSettings,
+    settingsPanelProps,
+    showSettings,
+    showToastSmart,
+    syncData.hand_items,
+    syncData.stash_items,
+    templateLoading,
+    toggleExpand,
+    toggleMonsterExpand,
+    togglePin,
+    wrapRef,
+  ]);
 
   return useAppViewBindings({
     showVersionScreen,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import YoloMonitor from "./YoloMonitor";
@@ -23,6 +23,30 @@ function Root() {
     setComponent(componentType);
   }, []);
 
+  useEffect(() => {
+    const windowLabel = getCurrentWindow().label;
+    const perfWithMemory = performance as Performance & {
+      memory?: {
+        usedJSHeapSize: number;
+        totalJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      };
+    };
+
+    if (!perfWithMemory.memory) return;
+
+    const toMB = (v: number) => (v / 1024 / 1024).toFixed(1);
+    const timer = window.setInterval(() => {
+      const m = perfWithMemory.memory;
+      if (!m) return;
+      console.debug(
+        `[WebMem][${windowLabel}] used=${toMB(m.usedJSHeapSize)}MB total=${toMB(m.totalJSHeapSize)}MB limit=${toMB(m.jsHeapSizeLimit)}MB`,
+      );
+    }, 10000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   if (component === null) {
     console.log("[Main.tsx] Component is null, waiting...");
     return null;
@@ -32,16 +56,16 @@ function Root() {
   
   if (component === "yolo-monitor") {
     console.log("[Main.tsx] ✅ Rendering YoloMonitor");
-    return <React.StrictMode><YoloMonitor /></React.StrictMode>;
+    return <YoloMonitor />;
   } else if (component === "detail-popup") {
     console.log("[Main.tsx] ✅ Rendering DetailPopup");
-    return <React.StrictMode><DetailPopup /></React.StrictMode>;
+    return <DetailPopup />;
   } else if (component === "monster-calibration") {
     console.log("[Main.tsx] ✅ Rendering MonsterCalibration");
-    return <React.StrictMode><MonsterCalibration /></React.StrictMode>;
+    return <MonsterCalibration />;
   } else {
     console.log("[Main.tsx] ✅ Rendering App (main window)");
-    return <React.StrictMode><App /></React.StrictMode>;
+    return <App />;
   }
 }
 

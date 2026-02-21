@@ -61,6 +61,12 @@ pub struct PersistentState {
     pub main_window_height: Option<u32>,
     #[serde(default)]
     pub debug_mode: bool,
+    #[serde(default = "default_enable_game_log_monitor")]
+    pub enable_game_log_monitor: bool,
+    #[serde(default)]
+    pub macos_prompted_accessibility: bool,
+    #[serde(default)]
+    pub macos_prompted_screen_recording: bool,
 }
 
 // 跨平台虚拟键常量
@@ -90,11 +96,15 @@ impl Default for PersistentState {
             main_window_width: None,
             main_window_height: None,
             debug_mode: false,
+            enable_game_log_monitor: true,
+            macos_prompted_accessibility: false,
+            macos_prompted_screen_recording: false,
         }
     }
 }
 
 fn default_show_yolo_monitor() -> bool { false }
+fn default_enable_game_log_monitor() -> bool { true }
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RawSkill {
     pub en: Option<String>,

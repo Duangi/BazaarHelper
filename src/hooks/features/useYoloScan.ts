@@ -9,6 +9,7 @@ interface UseYoloScanOptions {
   yoloHotkey: number | null;
   setErrorMessage: Dispatch<SetStateAction<string | null>>;
   updateIslandStatus: (message: string, type?: IslandStatusType) => void;
+  showToast?: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
 export const useYoloScan = ({
@@ -17,25 +18,41 @@ export const useYoloScan = ({
   yoloHotkey,
   setErrorMessage,
   updateIslandStatus,
+  showToast,
 }: UseYoloScanOptions) => {
   const runYoloScan = useCallback(async (source: 'manual' | 'auto' = 'manual') => {
     const useGpu = localStorage.getItem('use-gpu-acceleration');
     const useGpuBool = useGpu === 'true';
+    const sourceLabel = source === 'manual' ? '手动' : '自动';
+    const shouldNotifyUi = source === 'manual';
 
     try {
       if ((window as any).__yolo_running) {
         console.log('[YOLO Manual/Auto] Scan already running, skipping');
+        if (shouldNotifyUi) {
+          updateIslandStatus(`YOLO(${sourceLabel}): 正在扫描中...`, 'info');
+        }
         return;
       }
       (window as any).__yolo_running = true;
+      const startedAt = performance.now();
       console.log(`[YOLO Manual/Auto] Starting scan (GPU: ${useGpuBool})`);
+      if (shouldNotifyUi) {
+        updateIslandStatus(`YOLO(${sourceLabel}): 正在扫描...`, 'info');
+      }
       const count = await invoke<number>('trigger_yolo_scan', { useGpu: useGpuBool });
+      const elapsedMs = Math.round(performance.now() - startedAt);
       console.log(`[YOLO Manual/Auto] Scan complete, detected ${count} objects`);
-      const sourceLabel = source === 'manual' ? '手动' : '自动';
       if (count > 0) {
-        updateIslandStatus(`YOLO(${sourceLabel}): 识别到 ${count} 个目标`, 'success');
+        if (shouldNotifyUi) {
+          updateIslandStatus(`YOLO(${sourceLabel}): 识别到 ${count} 个目标 (${elapsedMs}ms)`, 'success');
+          showToast?.(`YOLO扫描完成：识别到 ${count} 个目标`, 'success');
+        }
       } else {
-        updateIslandStatus(`YOLO(${sourceLabel}): 未识别到目标`, 'warning');
+        if (shouldNotifyUi) {
+          updateIslandStatus(`YOLO(${sourceLabel}): 未识别到目标 (${elapsedMs}ms)`, 'warning');
+          showToast?.('YOLO扫描完成：未识别到目标', 'warning');
+        }
       }
 
       try {
@@ -46,12 +63,15 @@ export const useYoloScan = ({
       }
     } catch (err) {
       console.error('[YOLO Manual/Auto] Scan failed:', err);
-      setErrorMessage(`YOLO扫描失败: ${err}`);
-      updateIslandStatus('YOLO 扫描失败', 'error');
+      if (shouldNotifyUi) {
+        setErrorMessage(`YOLO扫描失败: ${err}`);
+        updateIslandStatus('YOLO 扫描失败', 'error');
+        showToast?.(`YOLO扫描失败: ${err}`, 'error');
+      }
     } finally {
       (window as any).__yolo_running = false;
     }
-  }, [setErrorMessage, updateIslandStatus]);
+  }, [setErrorMessage, showToast, updateIslandStatus]);
 
   useEffect(() => {
     if (!enableYoloAuto) {

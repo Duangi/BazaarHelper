@@ -78,16 +78,20 @@ interface MainContentSectionProps {
   expandedItems: Set<string>;
   toggleExpand: (itemId: string) => void;
   handleRecognizeCard: (forceRefresh?: boolean) => Promise<void>;
-  renderUnifiedItemCard: (item: ItemData, isPinned: boolean, onPin: (e: React.MouseEvent) => void) => React.ReactNode;
+  renderUnifiedItemCard: (
+    item: ItemData,
+    isPinned: boolean,
+    onPin: (e: React.MouseEvent) => void,
+    imageSrcOverride?: string,
+  ) => React.ReactNode;
   handItems: ItemData[];
   stashItems: ItemData[];
   pinnedItems: Map<string, number>;
   togglePin: (itemId: string, e: React.MouseEvent) => void;
   getSortedItems: (items: ItemData[]) => ItemData[];
-  visibleCount: number;
 }
 
-export function MainContentSection(props: MainContentSectionProps) {
+function MainContentSectionImpl(props: MainContentSectionProps) {
   const {
     isCollapsed,
     activeTab,
@@ -145,7 +149,6 @@ export function MainContentSection(props: MainContentSectionProps) {
     pinnedItems,
     togglePin,
     getSortedItems,
-    visibleCount,
   } = props;
 
   if (isCollapsed) return null;
@@ -239,7 +242,7 @@ export function MainContentSection(props: MainContentSectionProps) {
 
                 {activeTab === 'search' && (
                   <div className="card-list">
-                    {searchResults.slice(0, visibleCount).map((item) =>
+                    {searchResults.map((item) =>
                       renderUnifiedItemCard(
                         item,
                         pinnedItems.has(item.instance_id || item.uuid),
@@ -247,11 +250,6 @@ export function MainContentSection(props: MainContentSectionProps) {
                       ),
                     )}
                     {searchResults.length === 0 && <div className="empty-tip">未找到结果</div>}
-                    {searchResults.length > visibleCount && (
-                      <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
-                        显示 {visibleCount} / {searchResults.length} 项，向下滚动加载更多...
-                      </div>
-                    )}
                   </div>
                 )}
               </>
@@ -262,3 +260,5 @@ export function MainContentSection(props: MainContentSectionProps) {
     </MainShell>
   );
 }
+
+export const MainContentSection = React.memo(MainContentSectionImpl);

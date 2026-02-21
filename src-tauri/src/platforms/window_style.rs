@@ -173,30 +173,71 @@ pub fn enforce_overlay_traits(window: &tauri::WebviewWindow, label: &str) {
 
     #[cfg(target_os = "macos")]
     {
+        let should_setup = mark_overlay_initialized(label);
         let label_owned = label.to_string();
         run_macos_on_main_thread(window, "enforce_overlay_traits", move |window_main| {
-            // Use NSPanel path for all overlay windows (including main) to keep fullscreen/top-layer behavior consistent.
-            setup_macos_fullscreen_overlay(&window_main);
-            log::debug!("[macOS] Enforced fullscreen overlay traits for '{}' (NSPanel)", label_owned);
+            if should_setup {
+                // Only do heavy NSPanel conversion once per window lifecycle.
+                setup_macos_fullscreen_overlay(&window_main);
+                log::debug!("[macOS] Enforced fullscreen overlay traits for '{}' (NSPanel)", label_owned);
+            } else {
+                fallback_setup_macos_overlay(&window_main);
+                log::trace!("[macOS] Refreshed fullscreen overlay traits for '{}'", label_owned);
+            }
         });
     }
 }
 
 pub fn refresh_overlay_pin(window: &tauri::WebviewWindow, label: &str) {
-    let _ = window.set_always_on_top(true);
     #[cfg(not(target_os = "macos"))]
-    let _ = label;
+    {
+        let _ = window.set_always_on_top(true);
+        let _ = label;
+    }
 
     #[cfg(target_os = "macos")]
     {
-        let _ = window.set_visible_on_all_workspaces(true);
         let label_owned = label.to_string();
         run_macos_on_main_thread(window, "refresh_overlay_pin", move |window_main| {
+            let _ = window_main.set_always_on_top(true);
+            let _ = window_main.set_visible_on_all_workspaces(true);
             fallback_setup_macos_overlay(&window_main);
             log::trace!("[macOS] Refreshed overlay pin for '{}'", label_owned);
         });
     }
 }
+
+#[cfg(target_os = "macos")]
+fn overlay_init_flags() -> &'static Mutex<HashSet<String>> {
+    static OVERLAY_INIT_FLAGS: OnceLock<Mutex<HashSet<String>>> = OnceLock::new();
+    OVERLAY_INIT_FLAGS.get_or_init(|| Mutex::new(HashSet::new()))
+}
+
+#[cfg(target_os = "macos")]
+fn mark_overlay_initialized(label: &str) -> bool {
+    let set = overlay_init_flags();
+    if let Ok(mut guard) = set.lock() {
+        if guard.contains(label) {
+            false
+        } else {
+            guard.insert(label.to_string());
+            true
+        }
+    } else {
+        true
+    }
+}
+
+#[cfg(target_os = "macos")]
+pub fn reset_overlay_init_flag(label: &str) {
+    let set = overlay_init_flags();
+    if let Ok(mut guard) = set.lock() {
+        guard.remove(label);
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+pub fn reset_overlay_init_flag(_label: &str) {}
 
 #[cfg(target_os = "macos")]
 fn run_macos_on_main_thread<F>(window: &tauri::WebviewWindow, task_name: &str, task: F)
@@ -329,3 +370,7 @@ pub fn fallback_setup_macos_overlay(window: &tauri::WebviewWindow) {
 #[cfg(not(target_os = "macos"))]
 #[allow(dead_code)]
 pub fn setup_macos_fullscreen_overlay(_window: &tauri::WebviewWindow) {}
+#[cfg(target_os = "macos")]
+use std::collections::HashSet;
+#[cfg(target_os = "macos")]
+use std::sync::{Mutex, OnceLock};

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
 import type { MonsterData } from '../../types';
@@ -11,8 +11,6 @@ interface UseMonsterTabLogicOptions {
   allMonsters: Record<string, MonsterData>;
   setCurrentDay: (day: number) => void;
   skillsArtMap: Record<string, string>;
-  skillsDbFull: Map<string, any>;
-  itemsDbFull: Map<string, any>;
   updateDayTabSelection: (day: number) => void;
 }
 
@@ -23,14 +21,28 @@ export const useMonsterTabLogic = ({
   allMonsters,
   setCurrentDay,
   skillsArtMap,
-  skillsDbFull,
-  itemsDbFull,
   updateDayTabSelection,
 }: UseMonsterTabLogicOptions) => {
   const [manualMonsters, setManualMonsters] = useState<MonsterData[]>([]);
   const [identifiedNames, setIdentifiedNames] = useState<string[]>([]);
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set());
   const [isRecognizing, setIsRecognizing] = useState(false);
+  const detailCacheRef = useRef<Map<string, any>>(new Map());
+
+  const getItemDetailById = useCallback(async (id: string | undefined) => {
+    if (!id) return null;
+    const cached = detailCacheRef.current.get(id);
+    if (cached) return cached;
+    try {
+      const detail = await invoke<any | null>('get_item_info', { id });
+      if (detail) {
+        detailCacheRef.current.set(id, detail);
+      }
+      return detail;
+    } catch {
+      return null;
+    }
+  }, []);
 
   const normalizeDay = useCallback((value: string | undefined | null): string => {
     if (!value) return 'Day 1';
@@ -80,7 +92,7 @@ export const useMonsterTabLogic = ({
         ? await Promise.all(
             m.skills.map(async (s) => {
               const id = s.id || s.name;
-              const fullSkillInfo = id ? skillsDbFull.get(id) : null;
+              const fullSkillInfo = await getItemDetailById(id);
 
               let mergedSkill = s;
               if (fullSkillInfo) {
@@ -115,7 +127,7 @@ export const useMonsterTabLogic = ({
         ? await Promise.all(
             m.items.map(async (i) => {
               const id = i.id || i.name;
-              const fullItemInfo = id ? itemsDbFull.get(id) : null;
+              const fullItemInfo = await getItemDetailById(id);
 
               const merged = fullItemInfo
                 ? {
@@ -135,7 +147,7 @@ export const useMonsterTabLogic = ({
           )
         : [],
     };
-  }, [itemsDbFull, skillsArtMap, skillsDbFull]);
+  }, [getItemDetailById, skillsArtMap]);
 
   const updateFilteredMonsters = useCallback(async (day: string) => {
     let targetDay = normalizeDay(day);
