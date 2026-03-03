@@ -3,6 +3,7 @@ import { currentMonitor } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 interface UseWindowGeometryRestoreOptions {
+  enabled?: boolean;
   currentScale: MutableRefObject<number>;
   lastKnownPosition: MutableRefObject<{ x: number; y: number } | null>;
   expandedWidthRef: MutableRefObject<number>;
@@ -15,6 +16,7 @@ interface UseWindowGeometryRestoreOptions {
 }
 
 export const useWindowGeometryRestore = ({
+  enabled = true,
   currentScale,
   lastKnownPosition,
   expandedWidthRef,
@@ -26,6 +28,8 @@ export const useWindowGeometryRestore = ({
   setIsGeometryLoaded,
 }: UseWindowGeometryRestoreOptions) => {
   useEffect(() => {
+    if (!enabled) return;
+
     const loadSavedPosition = async () => {
       try {
         const geometry = await invoke<{ x?: number; y?: number; width?: number; height?: number }>(
@@ -85,6 +89,7 @@ export const useWindowGeometryRestore = ({
 
     void loadSavedPosition();
   }, [
+    enabled,
     currentScale,
     expandedHeightRef,
     expandedWidthRef,

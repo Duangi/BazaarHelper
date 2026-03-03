@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 
 import type { AppShellProps } from '../../components/layout/AppShell';
 import { useResourceCatalog } from '../features/useResourceCatalog';
@@ -22,6 +23,9 @@ import { useAppViewBindings } from './useAppViewBindings';
 import type { IslandStatusType, SyncPayload } from '../../types';
 
 export const useAppController = (): AppShellProps => {
+  const selfTestMode = import.meta.env.VITE_BH_SELF_TEST === '1';
+  const selfTestTab = (import.meta.env.VITE_BH_SELF_TEST_TAB || '').trim().toLowerCase();
+  const disableHistorySync = import.meta.env.VITE_BH_DISABLE_HISTORY_SYNC === '1';
   const [islandStatusText, setIslandStatusText] = useState('集市小抄 运行中');
   const [islandStatusType, setIslandStatusType] = useState<IslandStatusType>('info');
   const islandStatusTimerRef = useRef<number | null>(null);
@@ -63,6 +67,68 @@ export const useAppController = (): AppShellProps => {
     currentDay,
     setCurrentDay,
   } = useAppCoreState();
+
+  const {
+    announcement,
+    currentVersion,
+    downloadProgress,
+    enterApp,
+    errorMessage,
+    isInstalling,
+    setAnnouncement,
+    setErrorMessage,
+    setIsInstalling,
+    setUpdateAvailable,
+    setUpdateStatus,
+    showVersionScreen,
+    startUpdateDownload,
+    updateAvailable,
+    updateStatus,
+  } = useVersionUpdate();
+
+  const appRuntimeEnabled = !showVersionScreen;
+
+  useEffect(() => {
+    if (!selfTestMode || !appRuntimeEnabled) return;
+
+    const order: Array<'history' | 'items' | 'search' | 'monster' | 'card'> = [
+      'history',
+      'items',
+      'search',
+      'monster',
+      'card',
+    ];
+    if (
+      selfTestTab === 'history'
+      || selfTestTab === 'items'
+      || selfTestTab === 'search'
+      || selfTestTab === 'monster'
+      || selfTestTab === 'card'
+    ) {
+      setActiveTab(selfTestTab);
+      console.log(`[SelfTest] fixed tab => ${selfTestTab}`);
+      return;
+    }
+
+    let idx = 0;
+
+    setActiveTab(order[idx]);
+    const timer = window.setInterval(() => {
+      idx = (idx + 1) % order.length;
+      setActiveTab(order[idx]);
+      console.log(`[SelfTest] switched tab => ${order[idx]}`);
+    }, 45_000);
+
+    return () => window.clearInterval(timer);
+  }, [appRuntimeEnabled, selfTestMode, selfTestTab, setActiveTab]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bh-active-tab', activeTab);
+    } catch {
+      // ignore localStorage failures
+    }
+  }, [activeTab]);
 
   const {
     fontSize,
@@ -107,19 +173,20 @@ export const useAppController = (): AppShellProps => {
   } = useAppSettingsState();
 
   const { matchHistory, isLoadingHistory, loadMatchHistory } = useMatchHistory({
-    enabled: activeTab === 'history',
+    enabled: appRuntimeEnabled && activeTab === 'history' && !disableHistorySync,
   });
   const { processItems, processSyncPayload } = useSyncDataPipeline({ setSyncData });
   const deferredSyncPayloadRef = useRef<SyncPayload | null>(null);
 
   const processSyncPayloadRouted = useCallback(async (payload: SyncPayload) => {
-    if (activeTab === 'search') {
-      // Search tab is DB-only; defer live sync updates to avoid high-frequency heavy rerenders.
+    if (activeTab === 'search' || isCollapsed) {
+      // Search tab and collapsed island are DB-only/presentation-light.
+      // Defer live sync updates to avoid high-frequency heavy rerenders in idle mode.
       deferredSyncPayloadRef.current = payload;
       return;
     }
     await processSyncPayload(payload);
-  }, [activeTab, processSyncPayload]);
+  }, [activeTab, isCollapsed, processSyncPayload]);
 
   useEffect(() => {
     if (activeTab === 'search') return;
@@ -137,7 +204,62 @@ export const useAppController = (): AppShellProps => {
     showToast(message, type);
   }, [isCollapsed, showToast, updateIslandStatus]);
 
-  const { hiddenTagIcons, sponsorIcons, skillsArtMap, itemSizes } = useResourceCatalog();
+  const logMonitorBaselineEnabledRef = useRef<boolean | null>(null);
+  const logMonitorPausedByIslandRef = useRef(false);
+
+  useEffect(() => {
+    if (!appRuntimeEnabled) return;
+
+    let disposed = false;
+
+    const syncRuntimeLogMonitor = async () => {
+      try {
+        if (logMonitorBaselineEnabledRef.current === null) {
+          const enabled = await invoke<boolean>('get_game_log_monitor_enabled');
+          if (disposed) return;
+          logMonitorBaselineEnabledRef.current = enabled;
+        }
+
+        const baselineEnabled = logMonitorBaselineEnabledRef.current ?? true;
+        if (!baselineEnabled) return;
+
+        if (isCollapsed) {
+          if (!logMonitorPausedByIslandRef.current) {
+            await invoke<boolean>('set_game_log_monitor_runtime', { enabled: false });
+            if (disposed) return;
+            logMonitorPausedByIslandRef.current = true;
+          }
+          return;
+        }
+
+        if (logMonitorPausedByIslandRef.current) {
+          await invoke<boolean>('set_game_log_monitor_runtime', { enabled: true });
+          if (disposed) return;
+          logMonitorPausedByIslandRef.current = false;
+        }
+      } catch (error) {
+        if (!disposed) {
+          console.warn('[LogMonitor] runtime auto pause/resume failed:', error);
+        }
+      }
+    };
+
+    void syncRuntimeLogMonitor();
+
+    return () => {
+      disposed = true;
+    };
+  }, [appRuntimeEnabled, isCollapsed]);
+
+  useEffect(() => {
+    return () => {
+      if (logMonitorPausedByIslandRef.current) {
+        void invoke<boolean>('set_game_log_monitor_runtime', { enabled: true }).catch(() => {});
+      }
+    };
+  }, []);
+
+  const { hiddenTagIcons, sponsorIcons, skillsArtMap, itemSizes } = useResourceCatalog(appRuntimeEnabled);
 
   const {
     searchQuery,
@@ -163,6 +285,8 @@ export const useAppController = (): AppShellProps => {
     setIsResizingFilter,
     scrollAreaRef,
     handleScroll,
+    searchScrollTop,
+    searchViewportHeight,
   } = useSearchPanelState({
     activeTab,
     selectedDay,
@@ -182,6 +306,7 @@ export const useAppController = (): AppShellProps => {
     handleDayChange,
     handleAutoRecognition,
   } = useMonsterTabLogic({
+    enabled: appRuntimeEnabled,
     activeTab,
     selectedDay,
     setSelectedDay,
@@ -209,24 +334,6 @@ export const useAppController = (): AppShellProps => {
     setExpandedWidth,
     setExpandedHeight,
   } = useOverlayWindowState();
-
-  const {
-    announcement,
-    currentVersion,
-    downloadProgress,
-    enterApp,
-    errorMessage,
-    isInstalling,
-    setAnnouncement,
-    setErrorMessage,
-    setIsInstalling,
-    setUpdateAvailable,
-    setUpdateStatus,
-    showVersionScreen,
-    startUpdateDownload,
-    updateAvailable,
-    updateStatus,
-  } = useVersionUpdate();
 
   const { handleConfirmResetHotkeys, handleManualCheckUpdate, handleInstallReady } = useUpdateActions({
     showToast: showToastSmart,
@@ -462,6 +569,8 @@ export const useAppController = (): AppShellProps => {
     isResizingFilter,
     scrollAreaRef,
     handleScroll,
+    searchScrollTop,
+    searchViewportHeight,
     wrapRef,
     matchHistory,
     isLoadingHistory,
@@ -520,6 +629,8 @@ export const useAppController = (): AppShellProps => {
     searchFilterHeight,
     searchQuery,
     searchResults,
+    searchScrollTop,
+    searchViewportHeight,
     selectedDay,
     selectedHiddenTags,
     selectedTags,

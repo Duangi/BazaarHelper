@@ -1,9 +1,7 @@
 import './App.css';
 
-import { AppShell } from './components/layout/AppShell';
-import { useAppController } from './hooks/app/useAppController';
+import AppV2 from './AppV2';
 
 export default function App() {
-  const appShellProps = useAppController();
-  return <AppShell {...appShellProps} />;
+  return <AppV2 />;
 }

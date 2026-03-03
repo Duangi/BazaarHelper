@@ -2,8 +2,22 @@ import { useState } from 'react';
 
 import type { MonsterData, TabType, SyncPayload } from '../../types';
 
+const VALID_TABS: TabType[] = ['history', 'items', 'search', 'monster', 'card'];
+
+const getInitialTab = (): TabType => {
+  try {
+    const raw = localStorage.getItem('bh-active-tab') as TabType | null;
+    if (raw && VALID_TABS.includes(raw)) {
+      return raw;
+    }
+  } catch {
+    // ignore localStorage failures
+  }
+  return 'history';
+};
+
 export const useAppCoreState = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('history');
+  const [activeTab, setActiveTab] = useState<TabType>(getInitialTab);
   const [syncData, setSyncData] = useState<SyncPayload & { monster: any[] }>({
     hand_items: [],
     stash_items: [],

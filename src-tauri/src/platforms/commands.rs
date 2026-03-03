@@ -49,6 +49,15 @@ pub fn get_window_geometry(window_label: String) -> serde_json::Value {
             "height": state.main_window_height
         });
     }
+    if window_label == "detail-popup" {
+        let state = crate::load_state();
+        return serde_json::json!({
+            "x": state.detail_popup_x,
+            "y": state.detail_popup_y,
+            "width": state.detail_popup_width,
+            "height": state.detail_popup_height
+        });
+    }
     serde_json::json!({})
 }
 

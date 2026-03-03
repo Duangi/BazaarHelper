@@ -9,6 +9,8 @@ use windows::Win32::UI::WindowsAndMessaging::{
 
 #[cfg(target_os = "macos")]
 use objc::{class, msg_send, sel, sel_impl};
+#[cfg(target_os = "macos")]
+use objc::rc::autoreleasepool;
 
 #[allow(dead_code)]
 static LAST_FOREGROUND_WINDOW: std::sync::RwLock<Option<String>> = std::sync::RwLock::new(None);
@@ -32,7 +34,7 @@ fn macos_frontmost_is_bazaar() -> bool {
             .map(|s| s.to_lowercase())
     }
 
-    unsafe {
+    autoreleasepool(|| unsafe {
         let workspace: *mut objc::runtime::Object = msg_send![class!(NSWorkspace), sharedWorkspace];
         if workspace.is_null() {
             return false;
@@ -51,7 +53,7 @@ fn macos_frontmost_is_bazaar() -> bool {
         name.contains("bazaar")
             || name.contains("the bazaar")
             || bundle_id.contains("bazaar")
-    }
+    })
 }
 
 pub fn is_game_window_active() -> bool {
@@ -124,6 +126,11 @@ pub fn was_last_foreground_game() -> bool {
         }
     }
     false
+}
+
+#[tauri::command]
+pub fn is_game_window_active_cmd() -> bool {
+    is_game_window_active()
 }
 
 #[tauri::command]

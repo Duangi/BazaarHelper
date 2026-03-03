@@ -5,7 +5,7 @@ use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::PathBuf;
 use std::sync::{Mutex, OnceLock};
 
-use chrono::{DateTime, Local};
+use chrono::Local;
 use image::GenericImageView;
 use regex::Regex;
 use sysinfo::{Pid, ProcessesToUpdate, System};
@@ -24,9 +24,141 @@ pub struct SearchQuery {
     pub hidden_tags: Option<String>,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct SearchItemLite {
+    pub uuid: String,
+    pub name: String,
+    pub name_cn: String,
+    pub tier: String,
+    pub available_tiers: String,
+    pub size: Option<String>,
+    pub tags: String,
+    pub hidden_tags: String,
+    pub processed_tags: Vec<String>,
+    pub heroes: Vec<String>,
+}
+
+fn parse_hero_list(raw: Option<&str>) -> Vec<String> {
+    raw.unwrap_or_default()
+        .split('|')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(ToString::to_string)
+        .collect()
+}
+
+fn to_search_item_lite(item: &ItemData) -> SearchItemLite {
+    SearchItemLite {
+        uuid: item.uuid.clone(),
+        name: item.name.clone(),
+        name_cn: item.name_cn.clone(),
+        tier: item.tier.clone(),
+        available_tiers: item.available_tiers.clone(),
+        size: item.size.clone(),
+        tags: item.tags.clone(),
+        hidden_tags: item.hidden_tags.clone(),
+        processed_tags: item.processed_tags.clone(),
+        heroes: parse_hero_list(item.heroes.as_deref()),
+    }
+}
+
 #[tauri::command]
 pub fn get_show_yolo_monitor() -> Result<bool, String> {
     Ok(false)
+}
+
+#[tauri::command]
+pub fn search_items_light(query: SearchQuery, state: State<'_, DbState>) -> Result<Vec<SearchItemLite>, String> {
+    let mut results = Vec::new();
+    let keyword = query.keyword.as_deref().map(|s| s.to_lowercase());
+    let size_filter = query.size.as_deref().map(|s| s.to_lowercase());
+    let tier_filter = query.start_tier.as_deref().map(|s| s.to_lowercase());
+    let hero_filter = query.hero.as_deref().map(|s| s.to_lowercase());
+    let tags_filter = query.tags.as_deref().map(|s| s.to_lowercase());
+    let htags_filter = query.hidden_tags.as_deref().map(|s| s.to_lowercase());
+
+    let match_item = |item: &ItemData| -> bool {
+        if let Some(ref k) = keyword {
+            if !item.name_cn.to_lowercase().contains(k) && !item.name.to_lowercase().contains(k) {
+                return false;
+            }
+        }
+        if let Some(ref s) = size_filter {
+            if !item
+                .size
+                .as_ref()
+                .map(|v| v.to_lowercase())
+                .unwrap_or_default()
+                .contains(s)
+            {
+                return false;
+            }
+        }
+        if let Some(ref t) = tier_filter {
+            if !item.tier.to_lowercase().contains(t) {
+                return false;
+            }
+        }
+        if let Some(ref h) = hero_filter {
+            let hero_text = item.heroes.as_deref().unwrap_or_default().to_lowercase();
+            if !hero_text.contains(h) {
+                return false;
+            }
+        }
+        if let Some(ref t) = tags_filter {
+            if !item.tags.to_lowercase().contains(t) {
+                return false;
+            }
+        }
+        if let Some(ref h) = htags_filter {
+            if !item.hidden_tags.to_lowercase().contains(h) {
+                return false;
+            }
+        }
+        true
+    };
+
+    let search_type = query.item_type.as_deref().unwrap_or("all");
+
+    if search_type == "all" || search_type == "item" {
+        if let Ok(db) = state.items.read() {
+            for item in &db.list {
+                if match_item(item) {
+                    results.push(to_search_item_lite(item));
+                }
+            }
+        }
+    }
+
+    if search_type == "all" || search_type == "skill" {
+        if let Ok(db) = state.skills.read() {
+            for item in &db.list {
+                if match_item(item) {
+                    results.push(to_search_item_lite(item));
+                }
+            }
+        }
+    }
+
+    results.sort_by(|a, b| {
+        let tier_rank = |t: &str| match t.split('/').next().unwrap_or("").trim() {
+            "Bronze" | "Common" => 1,
+            "Silver" => 2,
+            "Gold" => 3,
+            "Diamond" => 4,
+            "Legendary" => 5,
+            _ => 10,
+        };
+        let ta = tier_rank(&a.tier);
+        let tb = tier_rank(&b.tier);
+        if ta != tb {
+            ta.cmp(&tb)
+        } else {
+            a.name_cn.cmp(&b.name_cn)
+        }
+    });
+
+    Ok(results)
 }
 
 #[tauri::command]
@@ -248,14 +380,37 @@ pub fn update_day(day: u32) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn get_item_info(state: State<'_, DbState>, id: String) -> Result<Option<ItemData>, String> {
-    let db = state.items.read().unwrap();
-    if let Some(&idx) = db.id_map.get(&id) {
-        return Ok(Some(db.list[idx].clone()));
+    let lookup_id = id.trim();
+    if lookup_id.is_empty() {
+        return Ok(None);
     }
 
-    let sdb = state.skills.read().unwrap();
-    if let Some(&idx) = sdb.id_map.get(&id) {
-        return Ok(Some(sdb.list[idx].clone()));
+    {
+        let db = state.items.read().unwrap();
+        if let Some(&idx) = db.id_map.get(lookup_id) {
+            return Ok(Some(db.list[idx].clone()));
+        }
+        if let Some(item) = db.list.iter().find(|item| {
+            item.uuid.eq_ignore_ascii_case(lookup_id)
+                || item.name.eq_ignore_ascii_case(lookup_id)
+                || item.name_cn.eq_ignore_ascii_case(lookup_id)
+        }) {
+            return Ok(Some(item.clone()));
+        }
+    }
+
+    {
+        let sdb = state.skills.read().unwrap();
+        if let Some(&idx) = sdb.id_map.get(lookup_id) {
+            return Ok(Some(sdb.list[idx].clone()));
+        }
+        if let Some(item) = sdb.list.iter().find(|item| {
+            item.uuid.eq_ignore_ascii_case(lookup_id)
+                || item.name.eq_ignore_ascii_case(lookup_id)
+                || item.name_cn.eq_ignore_ascii_case(lookup_id)
+        }) {
+            return Ok(Some(item.clone()));
+        }
     }
 
     Ok(None)
@@ -354,6 +509,10 @@ pub fn get_search_thumbnail_path(
     app: tauri::AppHandle,
     resource_path: String,
 ) -> Result<String, String> {
+    resolve_search_thumbnail_path(&app, &resource_path)
+}
+
+fn resolve_search_thumbnail_path(app: &tauri::AppHandle, resource_path: &str) -> Result<String, String> {
     let normalized = resource_path
         .trim()
         .replace('\\', "/")
@@ -404,6 +563,25 @@ pub fn get_search_thumbnail_path(
     }
 
     Ok(thumb_path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub fn get_search_thumbnail_paths(
+    app: tauri::AppHandle,
+    resource_paths: Vec<String>,
+) -> Result<HashMap<String, String>, String> {
+    let mut result = HashMap::new();
+
+    for path in resource_paths {
+        if path.trim().is_empty() {
+            continue;
+        }
+        if let Ok(resolved) = resolve_search_thumbnail_path(&app, &path) {
+            result.insert(path, resolved);
+        }
+    }
+
+    Ok(result)
 }
 
 #[tauri::command]
@@ -856,12 +1034,16 @@ pub fn get_memory_breakdown(state: State<'_, DbState>) -> Result<MemoryBreakdown
     }
 
     if let Ok(image_opt) = crate::get_yolo_scan_image().read() {
-        let (bytes, note) = if let Some(img) = image_opt.as_ref() {
-            let (w, h) = img.dimensions();
-            let channels = 4_u64;
+        let (bytes, note) = if let Some(encoded) = image_opt.as_ref() {
+            let dims = image::load_from_memory(encoded).ok().map(|img| img.dimensions());
+            let note = if let Some((w, h)) = dims {
+                Some(format!("jpeg:{} bytes, {}x{}", encoded.len(), w, h))
+            } else {
+                Some(format!("jpeg:{} bytes, decode_failed", encoded.len()))
+            };
             (
-                (w as u64) * (h as u64) * channels,
-                Some(format!("{}x{}x{}", w, h, channels)),
+                encoded.len() as u64,
+                note,
             )
         } else {
             (0, Some("empty".to_string()))
@@ -931,6 +1113,16 @@ pub fn set_game_log_monitor_enabled(enabled: bool) -> Result<bool, String> {
 #[tauri::command]
 pub fn get_game_log_monitor_enabled() -> Result<bool, String> {
     Ok(crate::core::log_monitor_state::is_enabled())
+}
+
+#[tauri::command]
+pub fn set_game_log_monitor_runtime(enabled: bool) -> Result<bool, String> {
+    crate::core::log_monitor_state::set_enabled(enabled);
+    log::info!(
+        "[LogMonitor] runtime transient switch set to {}",
+        if enabled { "enabled" } else { "disabled" }
+    );
+    Ok(enabled)
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -1024,10 +1216,14 @@ fn extract_log_timestamp(line: &str) -> Option<String> {
     Some(line[1..end].to_string())
 }
 
-fn build_history_match_id(file_date: &str, start_time: &str) -> String {
+fn build_history_match_id(start_time: &str) -> String {
     let mut hasher = DefaultHasher::new();
-    format!("{file_date}-{start_time}").hash(&mut hasher);
+    start_time.hash(&mut hasher);
     format!("{:016x}", hasher.finish())
+}
+
+fn history_today_date() -> String {
+    Local::now().format("%Y-%m-%d").to_string()
 }
 
 fn history_match_sort_key(record: &HistoryMatchRecord) -> String {
@@ -1183,15 +1379,6 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
             continue;
         }
 
-        let file_date = std::fs::metadata(path)
-            .ok()
-            .and_then(|m| m.modified().ok())
-            .map(|ts| {
-                let dt: DateTime<Local> = DateTime::from(ts);
-                dt.format("%Y-%m-%d").to_string()
-            });
-
-        let file_date_key = file_date.clone().unwrap_or_default();
         if let Ok(mut file) = File::open(path) {
             let start_offset = file
                 .metadata()
@@ -1231,13 +1418,13 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
                             (line_idx * 17) % 1000
                         )
                     });
-                    let match_id = build_history_match_id(&file_date_key, &start_time);
+                    let match_id = build_history_match_id(&start_time);
                     records.push(HistoryMatchRecord {
                         match_id,
                         hero: None,
                         start_time,
                         end_time: None,
-                        game_date: file_date.clone(),
+                        game_date: None,
                         days: 1,
                         victory: false,
                         is_finished: false,
@@ -1346,30 +1533,63 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
     }
 
     let parsed = parse_history_from_logs(&paths);
-    let normalized = if force {
-        normalize_history(parsed)
-    } else {
-        let existing = crate::user_data::load_match_history()
-            .unwrap_or_else(|_| serde_json::json!({ "matches": [] }));
-        let existing_root = serde_json::from_value::<HistoryRoot>(existing).unwrap_or_default();
-        let mut merged: HashMap<String, HistoryMatchRecord> = HashMap::new();
+    let today = history_today_date();
+    let existing = crate::user_data::load_match_history()
+        .unwrap_or_else(|_| serde_json::json!({ "matches": [] }));
+    let existing_root = serde_json::from_value::<HistoryRoot>(existing).unwrap_or_default();
 
-        for record in existing_root.matches {
-            merged.insert(history_record_key(&record), record);
-        }
-        for record in parsed.matches {
+    let mut merged: HashMap<String, HistoryMatchRecord> = HashMap::new();
+    let mut start_time_index: HashMap<String, String> = HashMap::new();
+
+    if !force {
+        for mut record in existing_root.matches {
+            if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
+                record.game_date = Some(today.clone());
+            }
             let key = history_record_key(&record);
-            if let Some(existing_rec) = merged.get_mut(&key) {
+            start_time_index
+                .entry(record.start_time.clone())
+                .or_insert_with(|| key.clone());
+            merged.insert(key, record);
+        }
+    } else {
+        // Force rebuild keeps only parsed matches, but still uses existing records to preserve
+        // "first seen date" when the same start_time appears again.
+        for record in existing_root.matches {
+            let key = history_record_key(&record);
+            start_time_index
+                .entry(record.start_time.clone())
+                .or_insert(key);
+        }
+    }
+
+    for mut record in parsed.matches {
+        if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
+            record.game_date = Some(today.clone());
+        }
+
+        let key = history_record_key(&record);
+        if let Some(existing_rec) = merged.get_mut(&key) {
+            merge_match_records(existing_rec, &record);
+            continue;
+        }
+
+        if let Some(existing_key) = start_time_index.get(&record.start_time).cloned() {
+            if let Some(existing_rec) = merged.get_mut(&existing_key) {
                 merge_match_records(existing_rec, &record);
-            } else {
-                merged.insert(key, record);
+                continue;
             }
         }
 
-        normalize_history(HistoryRoot {
-            matches: merged.into_values().collect(),
-        })
-    };
+        start_time_index
+            .entry(record.start_time.clone())
+            .or_insert_with(|| key.clone());
+        merged.insert(key, record);
+    }
+
+    let normalized = normalize_history(HistoryRoot {
+        matches: merged.into_values().collect(),
+    });
 
     let value = serde_json::to_value(&normalized).map_err(|e| e.to_string())?;
     crate::user_data::save_match_history(&value)?;

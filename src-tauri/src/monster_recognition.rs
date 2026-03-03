@@ -2,7 +2,9 @@ use image::{DynamicImage, GenericImageView, imageops::FilterType};
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex, OnceLock};
+use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
+#[cfg(target_os = "windows")]
+use std::sync::atomic::{AtomicBool, Ordering};
 use rayon::prelude::*;
 use ndarray::Array;
 use ort::{
@@ -77,21 +79,17 @@ fn crop_focus(img: &DynamicImage, top_fraction: f32, center_fraction: f32, h_off
     img.crop_imm(crop_x, crop_y, crop_w, crop_h)
 }
 
-static YOLO_SESSION: OnceLock<Mutex<Session>> = OnceLock::new();
+static YOLO_SESSION_CPU: OnceLock<Mutex<Session>> = OnceLock::new();
+#[cfg(target_os = "windows")]
+static YOLO_SESSION_DML: OnceLock<Mutex<Session>> = OnceLock::new();
+#[cfg(target_os = "windows")]
+static YOLO_DML_DISABLED: AtomicBool = AtomicBool::new(false);
 
-pub fn get_yolo_session(model_path: &PathBuf, #[allow(unused_variables)] use_gpu: bool) -> Result<impl std::ops::DerefMut<Target = Session> + '_, String> {
-    if let Some(mutex) = YOLO_SESSION.get() {
-        return mutex.lock().map_err(|e| e.to_string());
-    }
-
-    // Windows: 支持 DirectML GPU 加速
-    // macOS/Linux: 仅 CPU 推理
-    #[cfg(target_os = "windows")]
-    let actually_use_gpu = use_gpu;
-    #[cfg(not(target_os = "windows"))]
-    let actually_use_gpu = false;
-
-    if actually_use_gpu {
+fn build_yolo_session(
+    model_path: &PathBuf,
+    #[allow(unused_variables)] use_gpu: bool,
+) -> Result<Session, String> {
+    if use_gpu {
         log_to_file("[YOLO] Initializing session with DirectML execution provider...");
     } else {
         log_to_file("[YOLO] Initializing session with CPU execution provider...");
@@ -101,13 +99,16 @@ pub fn get_yolo_session(model_path: &PathBuf, #[allow(unused_variables)] use_gpu
         .map_err(|e| format!("创建Session Builder失败: {}", e))?;
 
     #[cfg(target_os = "windows")]
-    let builder = if actually_use_gpu {
+    let builder = if use_gpu {
         builder
             .with_execution_providers([DirectMLExecutionProvider::default().build()])
             .map_err(|e| format!("DirectML执行提供者加载失败: {}. 请确保已安装GPU驱动和DirectML.dll在程序目录中。", e))?
     } else {
         builder
     };
+
+    #[cfg(not(target_os = "windows"))]
+    let _ = use_gpu;
 
     let session = builder
         .with_optimization_level(GraphOptimizationLevel::Level3)
@@ -117,13 +118,51 @@ pub fn get_yolo_session(model_path: &PathBuf, #[allow(unused_variables)] use_gpu
         .commit_from_file(model_path)
         .map_err(|e| format!("加载ONNX模型失败: {}. 模型路径: {:?}", e, model_path))?;
 
-    if actually_use_gpu {
+    if use_gpu {
         log_to_file("[YOLO] Session initialized successfully with DirectML");
     } else {
         log_to_file("[YOLO] Session initialized successfully with CPU");
     }
-    let _ = YOLO_SESSION.set(Mutex::new(session));
-    YOLO_SESSION.get().unwrap().lock().map_err(|e| e.to_string())
+    Ok(session)
+}
+
+pub fn get_yolo_session(
+    model_path: &PathBuf,
+    #[allow(unused_variables)] use_gpu: bool,
+) -> Result<MutexGuard<'static, Session>, String> {
+    #[cfg(target_os = "windows")]
+    {
+        if use_gpu && !YOLO_DML_DISABLED.load(Ordering::Relaxed) {
+            if YOLO_SESSION_DML.get().is_none() {
+                match build_yolo_session(model_path, true) {
+                    Ok(session) => {
+                        let _ = YOLO_SESSION_DML.set(Mutex::new(session));
+                    }
+                    Err(e) => {
+                        YOLO_DML_DISABLED.store(true, Ordering::Relaxed);
+                        log_to_file(&format!(
+                            "[YOLO] DirectML init failed once, disabling GPU session retry and using CPU afterwards: {}",
+                            e
+                        ));
+                        return Err(e);
+                    }
+                }
+            }
+            let mutex = YOLO_SESSION_DML
+                .get()
+                .ok_or_else(|| "failed to initialize DirectML YOLO session".to_string())?;
+            return mutex.lock().map_err(|e| e.to_string());
+        }
+    }
+
+    if YOLO_SESSION_CPU.get().is_none() {
+        let session = build_yolo_session(model_path, false)?;
+        let _ = YOLO_SESSION_CPU.set(Mutex::new(session));
+    }
+    let mutex = YOLO_SESSION_CPU
+        .get()
+        .ok_or_else(|| "failed to initialize CPU YOLO session".to_string())?;
+    mutex.lock().map_err(|e| e.to_string())
 }
 
 pub fn run_yolo_inference(img: &DynamicImage, model_path: &PathBuf, use_gpu: bool) -> Result<Vec<YoloDetection>, String> {
@@ -516,7 +555,19 @@ pub fn collect_recognition_cache_memory_stats() -> Vec<RecognitionCacheMemorySta
 
     stats.push(RecognitionCacheMemoryStat {
         key: "cache:yolo_session".to_string(),
-        count: if YOLO_SESSION.get().is_some() { 1 } else { 0 },
+        count: {
+            #[cfg(target_os = "windows")]
+            let mut loaded = if YOLO_SESSION_CPU.get().is_some() { 1 } else { 0 };
+            #[cfg(not(target_os = "windows"))]
+            let loaded = if YOLO_SESSION_CPU.get().is_some() { 1 } else { 0 };
+            #[cfg(target_os = "windows")]
+            {
+                if YOLO_SESSION_DML.get().is_some() {
+                    loaded += 1;
+                }
+            }
+            loaded
+        },
         estimated_bytes: 0,
         note: Some("native_session_unmeasured".to_string()),
     });

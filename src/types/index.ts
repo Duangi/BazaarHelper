@@ -37,6 +37,20 @@ export interface ItemData {
   matchCount?: number;
 }
 
+export interface SearchItemLite {
+  uuid: string;
+  name: string;
+  name_cn: string;
+  tier: string;
+  available_tiers: string;
+  size?: string;
+  tags: string;
+  hidden_tags: string;
+  processed_tags: string[];
+  heroes: string[];
+  displayImg?: string;
+}
+
 export interface SyncPayload {
   hand_items: ItemData[];
   stash_items: ItemData[];

@@ -410,7 +410,7 @@ export default function OverlayApp() {
         const endUnlisten = Promise.resolve(() => {});
         
         // 监听主窗口关闭事件
-        listen("main-window-closing", () => {
+        const closeUnlisten = listen("main-window-closing", () => {
             console.log('[Overlay] Main window closing, hiding overlay');
             setYoloResult(null);
             setShowYoloMonitor(false);
@@ -456,6 +456,7 @@ export default function OverlayApp() {
         return () => {
             startUnlisten.then(u => u());
             endUnlisten.then(u => u());
+            closeUnlisten.then(u => u());
             statsUnlisten.then(u => u());
             positionUnlisten.then(u => u());
             // 清理图片缓存

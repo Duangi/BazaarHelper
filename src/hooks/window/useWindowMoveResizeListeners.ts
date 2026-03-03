@@ -3,6 +3,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 interface UseWindowMoveResizeListenersOptions {
+  enabled?: boolean;
   showVersionScreen: boolean;
   isCollapsed: boolean;
   setHasCustomPosition: Dispatch<SetStateAction<boolean>>;
@@ -16,6 +17,7 @@ interface UseWindowMoveResizeListenersOptions {
 }
 
 export const useWindowMoveResizeListeners = ({
+  enabled = true,
   showVersionScreen,
   isCollapsed,
   setHasCustomPosition,
@@ -42,6 +44,8 @@ export const useWindowMoveResizeListeners = ({
   }, [isCollapsed]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const appWindow = getCurrentWindow();
     let unlistenMove: (() => void) | null = null;
     let unlistenResize: (() => void) | null = null;
@@ -53,6 +57,11 @@ export const useWindowMoveResizeListeners = ({
 
       unlistenMove = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
         if (!isInitialized.current) return;
+
+        // Keep startup/version page position independent from main overlay position.
+        if (showVersionScreenRef.current) {
+          return;
+        }
 
         isDragging.current = true;
         setHasCustomPosition(true);
@@ -136,6 +145,7 @@ export const useWindowMoveResizeListeners = ({
       if (saveSizeTimer.current) clearTimeout(saveSizeTimer.current);
     };
   }, [
+    enabled,
     expandedHeightRef,
     expandedWidthRef,
     isDragging,

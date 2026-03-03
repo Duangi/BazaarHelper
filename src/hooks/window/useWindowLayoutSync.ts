@@ -50,6 +50,7 @@ export const useWindowLayoutSync = ({
   setExpandedHeight,
   showToast,
 }: UseWindowLayoutSyncOptions) => {
+  const lastAlwaysOnTopRef = useRef<boolean | null>(null);
   useEffect(() => {
     const unlisten = listen('reset-window-geometry', () => {
       console.log('[Window] Reset geometry event received');
@@ -103,7 +104,7 @@ export const useWindowLayoutSync = ({
 
   const lastLayout = useRef<string>('');
   useEffect(() => {
-    if (isLoadingGeometry.current) {
+    if (isLoadingGeometry.current && !showVersionScreen) {
       console.log('[Layout] Skipping syncLayout - still loading geometry from backend');
       return;
     }
@@ -148,13 +149,10 @@ export const useWindowLayoutSync = ({
       if (showVersionScreen) {
         targetW = 600;
         targetH = 850;
-        if (hasCustomPosition && lastKnownPosition.current) {
-          targetX = Math.round(lastKnownPosition.current.x / logicalScale);
-          targetY = Math.round(lastKnownPosition.current.y / logicalScale);
-        } else {
-          targetX = Math.round(pX + (pWidth - targetW) / 2);
-          targetY = Math.round(pY + (pHeight - targetH) / 2);
-        }
+        // Startup/version gate should always appear centered, independent from
+        // the saved in-game overlay position.
+        targetX = Math.round(pX + (pWidth - targetW) / 2);
+        targetY = Math.round(pY + (pHeight - targetH) / 2);
       } else {
         targetW = Math.round(Math.min(expandedWidthRef.current, pWidth - 20));
         targetH = Math.round(Math.min(isCollapsed ? 45 : expandedHeightRef.current, pHeight - 40));
@@ -210,8 +208,16 @@ export const useWindowLayoutSync = ({
           await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
 
-        await appWindow.setAlwaysOnTop(!showVersionScreen);
-        await appWindow.show();
+        const shouldBeOnTop = !showVersionScreen;
+        if (lastAlwaysOnTopRef.current !== shouldBeOnTop) {
+          await appWindow.setAlwaysOnTop(shouldBeOnTop);
+          lastAlwaysOnTopRef.current = shouldBeOnTop;
+        }
+
+        const isVisible = await appWindow.isVisible().catch(() => true);
+        if (!isVisible) {
+          await appWindow.show();
+        }
       } catch (e) {
         console.error('[Layout] Sync failed:', e);
         lastLayout.current = '';

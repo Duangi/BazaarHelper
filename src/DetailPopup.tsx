@@ -414,6 +414,7 @@ export default function DetailPopup() {
         await preloadPromiseRef.current;
     };
 
+    const ITEM_INFO_CACHE_MAX = 512;
     const getItemInfoCached = async (id?: string): Promise<ItemData | null> => {
         const key = (id || '').trim();
         if (!key) return null;
@@ -423,9 +424,17 @@ export default function DetailPopup() {
         try {
             const info = await invoke<ItemData | null>('get_item_info', { id: key });
             itemInfoCacheRef.current.set(key, info || null);
+            if (itemInfoCacheRef.current.size > ITEM_INFO_CACHE_MAX) {
+                const oldestKey = itemInfoCacheRef.current.keys().next().value;
+                if (oldestKey) itemInfoCacheRef.current.delete(oldestKey);
+            }
             return info || null;
         } catch {
             itemInfoCacheRef.current.set(key, null);
+            if (itemInfoCacheRef.current.size > ITEM_INFO_CACHE_MAX) {
+                const oldestKey = itemInfoCacheRef.current.keys().next().value;
+                if (oldestKey) itemInfoCacheRef.current.delete(oldestKey);
+            }
             return null;
         }
     };
@@ -453,8 +462,16 @@ export default function DetailPopup() {
     useEffect(() => {
         (async () => {
             try {
-                const geometry = await invoke<{ x: number; y: number; width: number; height: number } | null>('get_window_geometry', { label: 'detail-popup' });
-                if (geometry) {
+                const geometry = await invoke<{ x?: number | null; y?: number | null; width?: number | null; height?: number | null } | null>('get_window_geometry', { windowLabel: 'detail-popup' });
+                if (
+                    geometry
+                    && typeof geometry.x === 'number'
+                    && typeof geometry.y === 'number'
+                    && typeof geometry.width === 'number'
+                    && typeof geometry.height === 'number'
+                    && geometry.width > 100
+                    && geometry.height > 100
+                ) {
                     const win = getCurrentWindow();
                     await win.setPosition(new PhysicalPosition(geometry.x, geometry.y));
                     await win.setSize(new PhysicalSize(geometry.width, geometry.height));
@@ -842,15 +859,13 @@ export default function DetailPopup() {
                 hideTimeoutRef.current = setTimeout(async () => {
                     setIsVisible(false);
                     setData(null);
-                    
-                    // 只有在完全隐藏后才缩小窗口，避免动画过程中由于窗口缩小导致的闪烁
-                    const currentWindow = getCurrentWindow();
+                    // Release popup-side caches aggressively to avoid long-lived WebContent growth.
+                    imgCache.current.clear();
+                    itemInfoCacheRef.current.clear();
                     try {
-                        // 使用逻辑像素 1x1，或者至少 10x10 确保不会导致某些显卡驱动问题
-                        await currentWindow.setSize(new PhysicalSize(1, 1));
-                        console.log("[DetailPopup] Window size set to 1x1 after fade out");
+                        await getCurrentWindow().hide();
                     } catch (e) {
-                        console.error("[DetailPopup] Failed to resize window:", e);
+                        console.warn("[DetailPopup] Failed to hide window:", e);
                     }
                 }, 300);
             });
@@ -860,6 +875,12 @@ export default function DetailPopup() {
 
         return () => {
             console.log("[DetailPopup] Component unmounting, cleaning up listeners");
+            if (hideTimeoutRef.current) {
+                clearTimeout(hideTimeoutRef.current);
+                hideTimeoutRef.current = null;
+            }
+            imgCache.current.clear();
+            itemInfoCacheRef.current.clear();
             if (showUnlisten) showUnlisten();
             if (hideUnlisten) hideUnlisten();
         };
@@ -867,20 +888,7 @@ export default function DetailPopup() {
 
     // 无论是否可见，都保持组件挂载，通过 isVisible 控制渲染
     // 这样 containerRef 始终是稳定的
-    if (!isVisible || !data) {
-        return (
-            <div 
-                ref={containerRef}
-                style={{
-                    width: '1px',
-                    height: '1px',
-                    opacity: 0,
-                    pointerEvents: 'none',
-                    overflow: 'hidden'
-                }} 
-            />
-        );
-    }
+    if (!isVisible || !data) return null;
 
     // --- Render Helpers ---
 

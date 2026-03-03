@@ -13,6 +13,7 @@ export const useMatchHistory = ({ enabled = true }: UseMatchHistoryOptions = {})
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [dirtyWhileHidden, setDirtyWhileHidden] = useState(false);
   const inFlightRef = useRef(false);
+  const hasLoadedOnceRef = useRef(false);
 
   const loadMatchHistory = useCallback(async (options?: { rebuild?: boolean; force?: boolean }) => {
     if (inFlightRef.current) return;
@@ -23,7 +24,24 @@ export const useMatchHistory = ({ enabled = true }: UseMatchHistoryOptions = {})
         await invoke('rebuild_match_history', { force: Boolean(options.force) });
       }
       const payload = await invoke<{ matches?: MatchHistoryRecord[] }>('get_match_history');
-      setMatchHistory(Array.isArray(payload?.matches) ? payload.matches : []);
+      const nextMatches = Array.isArray(payload?.matches) ? payload.matches : [];
+      setMatchHistory((prev) => {
+        if (prev.length !== nextMatches.length) return nextMatches;
+        for (let i = 0; i < prev.length; i += 1) {
+          const a = prev[i];
+          const b = nextMatches[i];
+          if (
+            a.match_id !== b.match_id
+            || a.hero !== b.hero
+            || a.days !== b.days
+            || a.victory !== b.victory
+            || (a.pvp_battles?.length || 0) !== (b.pvp_battles?.length || 0)
+          ) {
+            return nextMatches;
+          }
+        }
+        return prev;
+      });
       setDirtyWhileHidden(false);
     } catch (error) {
       console.error('[History] Failed to load match history:', error);
@@ -35,21 +53,17 @@ export const useMatchHistory = ({ enabled = true }: UseMatchHistoryOptions = {})
   }, []);
 
   useEffect(() => {
-    if (!enabled) return;
-    if (dirtyWhileHidden || matchHistory.length === 0) {
+    if (!enabled) {
+      hasLoadedOnceRef.current = false;
+      setMatchHistory((prev) => (prev.length === 0 ? prev : []));
+      setDirtyWhileHidden(false);
+      return;
+    }
+    if (!hasLoadedOnceRef.current || dirtyWhileHidden) {
+      hasLoadedOnceRef.current = true;
       void loadMatchHistory({ rebuild: true, force: true });
     }
-  }, [dirtyWhileHidden, enabled, loadMatchHistory, matchHistory.length]);
-
-  useEffect(() => {
-    if (!enabled) return;
-    const timer = window.setInterval(() => {
-      void loadMatchHistory({ rebuild: true, force: false });
-    }, 60_000);
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, [enabled, loadMatchHistory]);
+  }, [dirtyWhileHidden, enabled, loadMatchHistory]);
 
   useEffect(() => {
     let disposed = false;

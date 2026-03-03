@@ -168,6 +168,18 @@ html, body, #root {
   border: none !important;
 }
 
+.memory-safe-mode *,
+.memory-safe-mode *::before,
+.memory-safe-mode *::after {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
 .overlay.is-resizing * {
   transition: none !important;
 }
@@ -192,14 +204,24 @@ html, body, #root {
 .overlay.collapsed {
   background: linear-gradient(180deg, rgba(22, 24, 28, 0.94), rgba(12, 14, 18, 0.94));
   border-radius: 999px;
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  isolation: isolate;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   overflow: hidden;
-  clip-path: inset(0 round 999px);
-  -webkit-clip-path: inset(0 round 999px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: saturate(120%) blur(8px);
+  clip-path: none;
+  -webkit-clip-path: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: none;
+}
+
+.overlay.collapsed * {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .window-drag-strip {
@@ -234,7 +256,7 @@ html, body, #root {
   font-size: calc(13px * var(--font-scale, 1));
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  animation: islandReveal 0.24s ease-out;
+  animation: none;
   z-index: 755;
   border-radius: inherit;
 }
@@ -244,27 +266,27 @@ html, body, #root {
   height: 8px;
   border-radius: 999px;
   background: #58a6ff;
-  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.2);
+  box-shadow: none;
 }
 
 .dynamic-island-dot.success {
   background: #37d36b;
-  box-shadow: 0 0 0 4px rgba(55, 211, 107, 0.2);
+  box-shadow: none;
 }
 
 .dynamic-island-dot.error {
   background: #ff6b6b;
-  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.22);
+  box-shadow: none;
 }
 
 .dynamic-island-dot.warning {
   background: #ffcd19;
-  box-shadow: 0 0 0 4px rgba(255, 205, 25, 0.22);
+  box-shadow: none;
 }
 
 .dynamic-island-dot.info {
   background: #58a6ff;
-  box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.2);
+  box-shadow: none;
 }
 
 @keyframes islandReveal {
@@ -365,7 +387,8 @@ html, body, #root {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(2px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -1128,7 +1151,7 @@ html, body, #root {
   height: 100%;
   object-fit: cover;
   z-index: 2; /* 角色放顶层 */
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); /* 增加投影以区分层级，解决视觉跳动 */
+  filter: none;
   backface-visibility: hidden;
 }
 
@@ -2563,6 +2586,19 @@ html, body, #root {
   margin-top: 4px;
 }
 
+.skill-item.skill-multicast {
+  color: #ffd36b;
+  background: rgba(255, 205, 25, 0.1);
+  border: 1px solid rgba(255, 205, 25, 0.28);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.skill-item.skill-empty {
+  color: rgba(255, 255, 255, 0.52);
+  font-style: italic;
+}
+
 .enchant-item {
   display: flex;
   align-items: center;
@@ -2768,13 +2804,14 @@ html, body, #root {
   align-items: center;
   gap: 12px;
   font-size: 14px;
-  animation: slideInFromTop 0.3s ease;
+  animation: none;
   pointer-events: auto;
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .toast.removing {
-  animation: slideOutToTop 0.3s ease forwards;
+  animation: none;
 }
 
 .toast-success {
@@ -2810,4 +2847,17 @@ html, body, #root {
 .toast-message {
   flex: 1;
   line-height: 1.4;
+}
+
+/* Dev memory profile mode:
+   aggressively disable expensive visual effects that may accumulate compositor memory in WebKit. */
+.dev-memory-safe *,
+.dev-memory-safe *::before,
+.dev-memory-safe *::after {
+  animation: none !important;
+  transition: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  filter: none !important;
 }

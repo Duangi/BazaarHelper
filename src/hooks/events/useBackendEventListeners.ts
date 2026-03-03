@@ -6,6 +6,7 @@ import type { SyncPayload } from '../../types';
 import type { IslandStatusType } from '../../types';
 
 interface UseBackendEventListenersOptions {
+  enabled?: boolean;
   isResizing: MutableRefObject<boolean>;
   processSyncPayload: (payload: SyncPayload) => Promise<void>;
   handleAutoRecognition: (day: number | null) => Promise<void>;
@@ -24,6 +25,7 @@ interface UseBackendEventListenersOptions {
 }
 
 export const useBackendEventListeners = ({
+  enabled = true,
   isResizing,
   processSyncPayload,
   handleAutoRecognition,
@@ -44,6 +46,9 @@ export const useBackendEventListeners = ({
   const handleAutoRecognitionRef = useRef(handleAutoRecognition);
   const handleRecognizeCardRef = useRef(handleRecognizeCard);
   const updateIslandStatusRef = useRef(updateIslandStatus);
+  const pendingSyncPayloadRef = useRef<SyncPayload | null>(null);
+  const syncFlushTimerRef = useRef<number | null>(null);
+  const syncFlushInFlightRef = useRef(false);
 
   useEffect(() => {
     processSyncPayloadRef.current = processSyncPayload;
@@ -53,8 +58,48 @@ export const useBackendEventListeners = ({
   }, [processSyncPayload, handleAutoRecognition, handleRecognizeCard, updateIslandStatus]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const unlisteners: (() => void)[] = [];
     let isMounted = true;
+
+    const flushPendingSyncPayload = async () => {
+      if (!isMounted) return;
+      if (syncFlushInFlightRef.current) return;
+
+      const payload = pendingSyncPayloadRef.current;
+      if (!payload) return;
+
+      if (document.visibilityState !== 'visible') {
+        syncFlushTimerRef.current = window.setTimeout(() => {
+          syncFlushTimerRef.current = null;
+          void flushPendingSyncPayload();
+        }, 350);
+        return;
+      }
+
+      pendingSyncPayloadRef.current = null;
+      syncFlushInFlightRef.current = true;
+      try {
+        await processSyncPayloadRef.current(payload);
+      } finally {
+        syncFlushInFlightRef.current = false;
+        if (pendingSyncPayloadRef.current && isMounted && syncFlushTimerRef.current === null) {
+          syncFlushTimerRef.current = window.setTimeout(() => {
+            syncFlushTimerRef.current = null;
+            void flushPendingSyncPayload();
+          }, 80);
+        }
+      }
+    };
+
+    const scheduleSyncFlush = () => {
+      if (syncFlushTimerRef.current !== null) return;
+      syncFlushTimerRef.current = window.setTimeout(() => {
+        syncFlushTimerRef.current = null;
+        void flushPendingSyncPayload();
+      }, 120);
+    };
 
     const setupListeners = async () => {
       const safeListen = async <T,>(event: string, callback: (payload: T) => void | Promise<void>) => {
@@ -76,7 +121,8 @@ export const useBackendEventListeners = ({
       };
 
       await safeListen<SyncPayload>('sync-items', async (payload) => {
-        await processSyncPayloadRef.current(payload);
+        pendingSyncPayloadRef.current = payload;
+        scheduleSyncFlush();
       });
 
       await safeListen<number | null>('trigger-monster-recognition', (dayNum) => {
@@ -168,8 +214,14 @@ export const useBackendEventListeners = ({
 
     return () => {
       isMounted = false;
+      pendingSyncPayloadRef.current = null;
+      syncFlushInFlightRef.current = false;
+      if (syncFlushTimerRef.current !== null) {
+        window.clearTimeout(syncFlushTimerRef.current);
+        syncFlushTimerRef.current = null;
+      }
       unlisteners.forEach((fn) => fn());
       unlisteners.length = 0;
     };
-  }, []);
+  }, [enabled]);
 };

@@ -8,15 +8,20 @@ interface CardRecognitionViewProps {
   expandedItems: Set<string>;
   onToggleExpand: (uuid: string) => void;
   onRecognize: () => void;
-  renderItemCard: (item: ItemData, isPinned: boolean, onPin: (e: React.MouseEvent) => void) => React.ReactNode;
+  renderItemCard: (
+    item: ItemData,
+    isPinned: boolean,
+    onPin: (e: React.MouseEvent) => void,
+    imageSrcOverride?: string,
+  ) => React.ReactNode;
 }
 
 export const CardRecognitionView: React.FC<CardRecognitionViewProps> = ({
   recognizedCards,
   isRecognizing,
-  // expandedItems,
-  // onToggleExpand,
-  // onRecognize, // Not used in UI anymore
+  expandedItems,
+  onToggleExpand,
+  onRecognize,
   renderItemCard
 }) => {
   const [hotkeyLabel, setHotkeyLabel] = useState("Loading...");
@@ -79,6 +84,16 @@ export const CardRecognitionView: React.FC<CardRecognitionViewProps> = ({
                 fontWeight: 'bold'
             }}>{hotkeyLabel}</span> 进行识别
         </div>
+        <div style={{ marginTop: '14px' }}>
+          <button
+            className="bulk-btn"
+            onClick={onRecognize}
+            disabled={isRecognizing}
+            style={{ minWidth: '140px' }}
+          >
+            {isRecognizing ? '识别中...' : '手动识别一次'}
+          </button>
+        </div>
         {isRecognizing && (
             <div style={{ marginTop: '16px', color: '#58a6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <span className="loader-spinner" style={{width: 16, height: 16, border: '2px solid #58a6ff', borderBottomColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite'}}></span>
@@ -140,7 +155,16 @@ export const CardRecognitionView: React.FC<CardRecognitionViewProps> = ({
                                 )}
                             </div>
                         )}
-                        {renderItemCard(card, false, () => {})}
+                        {renderItemCard(card, false, () => {}, card.displayImg)}
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                          <button
+                            className="bulk-btn"
+                            style={{ padding: '4px 10px', fontSize: '12px' }}
+                            onClick={() => onToggleExpand(card.instance_id || card.uuid)}
+                          >
+                            {expandedItems.has(card.instance_id || card.uuid) ? '收起详情' : '展开详情'}
+                          </button>
+                        </div>
                     </div>
                 ))}
               </div>

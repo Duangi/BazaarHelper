@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { ItemData, SyncPayload } from '../../types';
 
 interface UseInitialSyncOptions {
+  enabled?: boolean;
   templateLoadingComplete: boolean;
   processItems: (items: ItemData[]) => Promise<ItemData[]>;
   setCurrentDay: (day: number) => void;
@@ -13,6 +14,7 @@ interface UseInitialSyncOptions {
 }
 
 export const useInitialSync = ({
+  enabled = true,
   templateLoadingComplete,
   processItems,
   setCurrentDay,
@@ -20,6 +22,7 @@ export const useInitialSync = ({
   setSyncData,
 }: UseInitialSyncOptions) => {
   useEffect(() => {
+    if (!enabled) return;
     if (!templateLoadingComplete) return;
 
     const doInitialSync = async () => {
@@ -51,5 +54,5 @@ export const useInitialSync = ({
     };
 
     void doInitialSync();
-  }, [processItems, setCurrentDay, setSelectedDay, setSyncData, templateLoadingComplete]);
+  }, [enabled, processItems, setCurrentDay, setSelectedDay, setSyncData, templateLoadingComplete]);
 };

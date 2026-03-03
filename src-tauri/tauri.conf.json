@@ -17,6 +17,7 @@
                                     "title":  "BazaarHelper",
                                     "width":  600,
                                     "height":  850,
+                                    "devtools":  false,
                                     "resizable":  true,
                                     "alwaysOnTop":  true,
                                     "decorations":  false,

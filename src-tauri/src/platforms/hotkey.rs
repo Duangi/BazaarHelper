@@ -8,14 +8,16 @@ use device_query::Keycode;
 
 #[cfg(target_os = "macos")]
 use objc::{class, msg_send, sel, sel_impl};
+#[cfg(target_os = "macos")]
+use objc::rc::autoreleasepool;
 
 #[cfg(target_os = "macos")]
 fn macos_pressed_mouse_buttons_mask() -> Option<u64> {
-    unsafe {
+    autoreleasepool(|| unsafe {
         let ns_event_class = class!(NSEvent);
         let mask: u64 = msg_send![ns_event_class, pressedMouseButtons];
         Some(mask)
-    }
+    })
 }
 
 #[cfg(target_os = "macos")]

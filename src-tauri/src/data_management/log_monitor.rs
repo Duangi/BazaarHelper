@@ -400,19 +400,16 @@ pub fn spawn_log_monitor(
             let monitor_enabled = crate::core::log_monitor_state::is_enabled();
             if !monitor_enabled {
                 if monitor_was_enabled {
-                    if let Ok(meta) = std::fs::metadata(&log_path) {
-                        last_size = meta.len();
-                    }
-                    log::info!("[LogMonitor] paused by runtime switch");
+                    log::info!(
+                        "[LogMonitor] paused by runtime switch (cursor kept at {}, backlog will be replayed on resume)",
+                        last_size
+                    );
                 }
                 monitor_was_enabled = false;
                 continue;
             }
             if !monitor_was_enabled {
-                if let Ok(meta) = std::fs::metadata(&log_path) {
-                    last_size = meta.len();
-                }
-                log::info!("[LogMonitor] resumed by runtime switch");
+                log::info!("[LogMonitor] resumed by runtime switch, replaying backlog from {}", last_size);
                 monitor_was_enabled = true;
                 continue;
             }

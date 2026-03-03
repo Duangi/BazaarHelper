@@ -15,13 +15,15 @@ interface ResourceCatalogMaps {
   item_sizes: Record<string, string>;
 }
 
-export const useResourceCatalog = (): ResourceCatalogState => {
+export const useResourceCatalog = (enabled = true): ResourceCatalogState => {
   const [hiddenTagIcons, setHiddenTagIcons] = useState<Record<string, string>>({});
   const [sponsorIcons, setSponsorIcons] = useState<{ vx: string; zfb: string }>({ vx: '', zfb: '' });
   const [skillsArtMap, setSkillsArtMap] = useState<Record<string, string>>({});
   const [itemSizes, setItemSizes] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    if (!enabled) return;
+
     (async () => {
       const iconNames = [
         'Ammo', 'Burn', 'Charge', 'Cooldown', 'CritChance', 'Damage', 'Income',
@@ -49,9 +51,11 @@ export const useResourceCatalog = (): ResourceCatalogState => {
         console.error('Failed to load sponsor icons', error);
       }
     })();
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     (async () => {
       try {
         const maps = await invoke<ResourceCatalogMaps>('get_resource_catalog_maps');
@@ -61,7 +65,7 @@ export const useResourceCatalog = (): ResourceCatalogState => {
         console.warn('Failed to load resource catalog maps', error);
       }
     })();
-  }, []);
+  }, [enabled]);
 
   return {
     hiddenTagIcons,

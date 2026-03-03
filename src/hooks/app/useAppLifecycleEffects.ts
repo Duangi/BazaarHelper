@@ -11,7 +11,10 @@ import { useWindowMoveResizeListeners } from '../window/useWindowMoveResizeListe
 import { useYoloScan } from '../features/useYoloScan';
 
 export const useAppLifecycleEffects = (options: any) => {
+  const appRuntimeEnabled = !options.showVersionScreen;
+
   useInitialSync({
+    enabled: appRuntimeEnabled,
     templateLoadingComplete: options.templateLoadingComplete,
     processItems: options.processItems,
     setCurrentDay: (day) => options.setCurrentDay(day),
@@ -20,12 +23,14 @@ export const useAppLifecycleEffects = (options: any) => {
   });
 
   useMonsterHotkeyListener({
+    enabled: appRuntimeEnabled,
     currentDay: options.currentDay,
     onSwitchToMonsterTab: options.onSwitchToMonsterTab,
     onAutoRecognition: options.onAutoRecognition,
   });
 
   useWindowMoveResizeListeners({
+    enabled: appRuntimeEnabled,
     showVersionScreen: options.showVersionScreen,
     isCollapsed: options.isCollapsed,
     setHasCustomPosition: options.setHasCustomPosition,
@@ -41,6 +46,7 @@ export const useAppLifecycleEffects = (options: any) => {
   useGlobalOverlayEvents();
 
   useBackendEventListeners({
+    enabled: appRuntimeEnabled,
     isResizing: options.isResizing,
     processSyncPayload: options.processSyncPayload,
     handleAutoRecognition: options.onAutoRecognition,
@@ -59,12 +65,14 @@ export const useAppLifecycleEffects = (options: any) => {
   });
 
   useCurrentDayBootstrap({
+    enabled: appRuntimeEnabled,
     currentDay: options.currentDay,
     setCurrentDay: (day) => options.setCurrentDay(day),
     updateDayTabSelection: options.updateDayTabSelection,
   });
 
   useWindowGeometryRestore({
+    enabled: appRuntimeEnabled,
     currentScale: options.currentScale,
     lastKnownPosition: options.lastKnownPosition,
     expandedWidthRef: options.expandedWidthRef,
@@ -76,10 +84,12 @@ export const useAppLifecycleEffects = (options: any) => {
     setIsGeometryLoaded: options.setIsGeometryLoaded,
   });
 
-  useTemplateLoadingProgress(options.setTemplateLoading);
+  useTemplateLoadingProgress(options.setTemplateLoading, appRuntimeEnabled);
 
   useYoloScan({
+    enabled: appRuntimeEnabled,
     enableYoloAuto: options.enableYoloAuto,
+    isCollapsed: options.isCollapsed,
     yoloScanInterval: options.yoloScanInterval,
     yoloHotkey: options.yoloHotkey,
     setErrorMessage: options.setErrorMessage,
@@ -87,7 +97,7 @@ export const useAppLifecycleEffects = (options: any) => {
     showToast: options.showToast,
   });
 
-  useMonstersBootstrap({ setAllMonsters: options.setAllMonsters });
+  useMonstersBootstrap({ enabled: appRuntimeEnabled, setAllMonsters: options.setAllMonsters });
 
   useWindowLayoutSync({
     showVersionScreen: options.showVersionScreen,

@@ -6,14 +6,16 @@ use tauri::{Emitter, Manager};
 
 #[cfg(target_os = "macos")]
 use objc::{class, msg_send, sel, sel_impl};
+#[cfg(target_os = "macos")]
+use objc::rc::autoreleasepool;
 
 #[cfg(target_os = "macos")]
 fn macos_pressed_mouse_buttons_mask() -> Option<u64> {
-    unsafe {
+    autoreleasepool(|| unsafe {
         let ns_event_class = class!(NSEvent);
         let mask: u64 = msg_send![ns_event_class, pressedMouseButtons];
         Some(mask)
-    }
+    })
 }
 
 #[cfg(target_os = "macos")]
@@ -67,19 +69,19 @@ pub fn spawn_focus_monitor(handle_focus: tauri::AppHandle) {
         let mut macos_guard_tick: u32 = 0;
 
         loop {
-            std::thread::sleep(Duration::from_millis(500));
-
-            #[cfg(target_os = "macos")]
-            {
-                macos_guard_tick = macos_guard_tick.wrapping_add(1);
-                if macos_guard_tick % 6 == 0 {
-                    reapply_macos_overlay_traits(&handle_focus);
-                }
-            }
+            std::thread::sleep(Duration::from_millis(1000));
 
             let game_active = crate::platforms::focus::is_game_window_active();
             if game_active {
                 crate::platforms::focus::update_last_foreground_window();
+            }
+
+            #[cfg(target_os = "macos")]
+            {
+                macos_guard_tick = macos_guard_tick.wrapping_add(1);
+                if game_active && macos_guard_tick % 6 == 0 {
+                    reapply_macos_overlay_traits(&handle_focus);
+                }
             }
             #[allow(unused_mut)]
             let mut app_active = false;
@@ -154,10 +156,10 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             "[Hotkey Monitor] macOS fallback enabled: if right-click is swallowed by fullscreen game mode, press Q or E to trigger detail."
         );
         let device_state = DeviceState::new();
-        let mut last_left_click = false;
-        let mut last_right_click = false;
         let mut last_trigger_active = false;
         let mut heartbeat_tick: u32 = 0;
+        let mut game_active_cached = false;
+        let mut game_refresh_tick: u32 = 0;
 
         let mut last_yolo_active = false;
         let mut last_detection_active = false;
@@ -165,7 +167,8 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
         let mut last_collapse_active = false;
 
         loop {
-            std::thread::sleep(Duration::from_millis(50));
+            let loop_sleep_ms = if game_active_cached { 50 } else { 250 };
+            std::thread::sleep(Duration::from_millis(loop_sleep_ms));
             heartbeat_tick = heartbeat_tick.wrapping_add(1);
 
             let detail_visible = if let Some(w) = handle_monitor.get_webview_window("detail-popup") {
@@ -173,14 +176,23 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             } else {
                 false
             };
-
-            let game_active = crate::platforms::focus::is_game_window_active();
+            game_refresh_tick = game_refresh_tick.wrapping_add(1);
+            if game_refresh_tick % 4 == 0 || detail_visible {
+                game_active_cached = crate::platforms::focus::is_game_window_active();
+                if game_active_cached {
+                    crate::platforms::focus::update_last_foreground_window();
+                }
+            }
+            let game_active = game_active_cached;
             let allow_hotkey_actions = game_active || detail_visible;
 
             if !game_active && !detail_visible {
-                last_left_click = false;
-                last_right_click = false;
                 last_trigger_active = false;
+                last_yolo_active = false;
+                last_detection_active = false;
+                last_card_active = false;
+                last_collapse_active = false;
+                continue;
             }
 
             let mouse: MouseState = device_state.get_mouse();
@@ -225,27 +237,8 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
                 }
             };
 
-            if game_active || detail_visible {
-                if detail_visible && (left_click || right_click) {
-                    if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
-                        if let (Ok(pos), Ok(size)) = (popup_window.outer_position(), popup_window.outer_size()) {
-                            let inside = mx >= pos.x
-                                && mx <= pos.x + size.width as i32
-                                && my >= pos.y
-                                && my <= pos.y + size.height as i32;
-
-                            if !inside && ((left_click && !last_left_click) || (right_click && !last_right_click)) {
-                                log::debug!(
-                                    "[Mouse Monitor] Click detected outside detail-popup at ({}, {}), hiding.",
-                                    mx,
-                                    my
-                                );
-                                let _ = popup_window.emit("hide-detail-popup", ());
-                            }
-                        }
-                    }
-                }
-            }
+            // Keep detail-popup interactive: do not auto-hide on global mouse clicks.
+            // Closing is handled by explicit user actions (hotkey toggle / UI controls / focus rules).
 
             let detail_code = crate::core::hotkey_state::get_cached_detail_hotkey().unwrap_or(2);
             let mut trigger_active = {
@@ -512,8 +505,6 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
 
             last_trigger_active = trigger_active;
-            last_left_click = left_click;
-            last_right_click = right_click;
             last_yolo_active = yolo_active;
             last_detection_active = detection_active;
             last_card_active = card_active;

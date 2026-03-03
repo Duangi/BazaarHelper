@@ -32,6 +32,19 @@ const HERO_AVATAR_MAP: Record<string, string> = {
   S: '/images/heroes/stelle.webp'
 };
 
+const getMulticastLabel = (raw?: string) => {
+  if (!raw || typeof raw !== 'string') return null;
+  const vals = raw
+    .split('/')
+    .map((v) => Number.parseFloat(v.trim()))
+    .filter((v) => Number.isFinite(v) && v > 1);
+  if (vals.length === 0) return null;
+  const min = Math.floor(Math.min(...vals));
+  const max = Math.floor(Math.max(...vals));
+  if (min === max) return `多重触发：${max}`;
+  return `多重触发：${min}-${max}`;
+};
+
 const UnifiedItemCardImpl: React.FC<UnifiedItemCardProps> = ({
   item,
   imageSrcOverride,
@@ -72,6 +85,15 @@ const UnifiedItemCardImpl: React.FC<UnifiedItemCardProps> = ({
   const renderTextLocal = (text: any) => renderText(text, allTags || []);
   const renderEnchantTextLocal = (content: string) => renderEnchantText(content, allTags || []);
   const displayImg = imageSrcOverride || item.displayImg;
+  const skills = Array.isArray(item.skills) ? item.skills : [];
+  const passiveSkills = Array.isArray((item as any).skills_passive) ? (item as any).skills_passive : [];
+  const multicastLabel = getMulticastLabel((item as any).multicast_tiers);
+  const hasAnyDetail =
+    skills.length > 0
+    || passiveSkills.length > 0
+    || Boolean(multicastLabel)
+    || ((item.enchantments || []).length > 0)
+    || Boolean(item.description);
 
   return (
     <div
@@ -181,17 +203,23 @@ const UnifiedItemCardImpl: React.FC<UnifiedItemCardProps> = ({
             })()}
 
             <div className="details-right">
-              {(item.skills || []).map((skill, idx) => (
+              {multicastLabel && (
+                <div className="skill-item skill-multicast">🔁 {multicastLabel}</div>
+              )}
+              {skills.map((skill, idx) => (
                 <div key={idx} className="skill-item">
                   🗡️ {renderTextLocal(skill)}
                 </div>
               ))}
-              {(item as any).skills_passive && Array.isArray((item as any).skills_passive) && (item as any).skills_passive.length > 0 && (
-                (item as any).skills_passive.map((skill: any, idx: number) => (
+              {passiveSkills.length > 0 && (
+                passiveSkills.map((skill: any, idx: number) => (
                   <div key={`passive-${idx}`} className="skill-item skill-passive">
                     ⚙️ {renderTextLocal(skill)}
                   </div>
                 ))
+              )}
+              {!hasAnyDetail && (
+                <div className="skill-item skill-empty">暂无详情，稍后可重试。</div>
               )}
             </div>
           </div>

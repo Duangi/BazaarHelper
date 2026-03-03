@@ -2,17 +2,20 @@ import { useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
 interface UseCurrentDayBootstrapOptions {
+  enabled?: boolean;
   currentDay: number | null;
   setCurrentDay: (day: number) => void;
   updateDayTabSelection: (day: number) => void;
 }
 
 export const useCurrentDayBootstrap = ({
+  enabled = true,
   currentDay,
   setCurrentDay,
   updateDayTabSelection,
 }: UseCurrentDayBootstrapOptions) => {
   useEffect(() => {
+    if (!enabled) return;
     let mounted = true;
     const fetchDay = async () => {
       try {
@@ -29,5 +32,5 @@ export const useCurrentDayBootstrap = ({
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [enabled, currentDay, setCurrentDay, updateDayTabSelection]);
 };

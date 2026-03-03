@@ -31,7 +31,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onRemoveRef.current(toast.id);
-    }, 3000);
+    }, 1800);
     return () => clearTimeout(timer);
   }, [toast.id]);
 

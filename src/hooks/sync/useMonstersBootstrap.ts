@@ -6,13 +6,17 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { MonsterData } from '../../types';
 
 interface UseMonstersBootstrapOptions {
+  enabled?: boolean;
   setAllMonsters: Dispatch<SetStateAction<Record<string, MonsterData>>>;
 }
 
-export const useMonstersBootstrap = ({ setAllMonsters }: UseMonstersBootstrapOptions) => {
+export const useMonstersBootstrap = ({ enabled = true, setAllMonsters }: UseMonstersBootstrapOptions) => {
   useEffect(() => {
+    if (!enabled) return;
+
     let cancelled = false;
     let retryCount = 0;
+    let retryTimer: number | null = null;
 
     const loadAllMonsters = async () => {
       if (cancelled) return;
@@ -28,20 +32,26 @@ export const useMonstersBootstrap = ({ setAllMonsters }: UseMonstersBootstrapOpt
         if (retryCount % 5 === 0) {
           console.log(`[Init] Monsters DB still empty, retrying... (attempt ${retryCount})`);
         }
-        setTimeout(loadAllMonsters, 1000);
+        retryTimer = window.setTimeout(loadAllMonsters, 1000);
       } catch (e) {
         console.error('加载全量怪物失败:', e);
-        setTimeout(loadAllMonsters, 1500);
+        retryTimer = window.setTimeout(loadAllMonsters, 1500);
       }
     };
 
     void loadAllMonsters();
     return () => {
       cancelled = true;
+      if (retryTimer !== null) {
+        window.clearTimeout(retryTimer);
+        retryTimer = null;
+      }
     };
-  }, [setAllMonsters]);
+  }, [enabled, setAllMonsters]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     let unlisten: (() => void) | null = null;
 
     const setup = async () => {
@@ -64,5 +74,5 @@ export const useMonstersBootstrap = ({ setAllMonsters }: UseMonstersBootstrapOpt
     return () => {
       if (unlisten) unlisten();
     };
-  }, [setAllMonsters]);
+  }, [enabled, setAllMonsters]);
 };

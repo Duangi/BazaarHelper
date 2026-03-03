@@ -15,7 +15,7 @@ export const useAppSettingsState = () => {
   });
   const [yoloScanInterval, setYoloScanInterval] = useState(() => {
     const saved = localStorage.getItem('yolo-scan-interval');
-    return saved ? parseFloat(saved) : 1.0;
+    return saved ? parseFloat(saved) : 15.0;
   });
 
   useEffect(() => {

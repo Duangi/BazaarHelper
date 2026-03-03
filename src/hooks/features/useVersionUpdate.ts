@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getVersion } from '@tauri-apps/api/app';
 import { invoke } from '@tauri-apps/api/core';
 import { type Update } from '@tauri-apps/plugin-updater';
@@ -6,7 +6,8 @@ import { type Update } from '@tauri-apps/plugin-updater';
 type UpdateStatus = 'none' | 'checking' | 'available' | 'downloading' | 'ready';
 
 export const useVersionUpdate = () => {
-  const [showVersionScreen, setShowVersionScreen] = useState(true);
+  const selfTestMode = import.meta.env.VITE_BH_SELF_TEST === '1';
+  const [showVersionScreen, setShowVersionScreen] = useState(() => !selfTestMode);
   const [currentVersion, setCurrentVersion] = useState('');
   const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus>('none');
@@ -14,12 +15,16 @@ export const useVersionUpdate = () => {
   const [isInstalling, setIsInstalling] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState('');
+  const preloadTriggeredRef = useRef(false);
 
   const enterApp = async () => {
     console.log('[Update] Entering App. updateAvailable:', !!updateAvailable);
     setShowVersionScreen(false);
-    invoke('start_template_loading').catch(console.error);
-    invoke('load_event_templates').catch(console.error);
+    if (!preloadTriggeredRef.current) {
+      preloadTriggeredRef.current = true;
+      invoke('start_template_loading').catch(console.error);
+      invoke('load_event_templates').catch(console.error);
+    }
 
     if (updateAvailable) {
       console.log('[Update] Found update, but entering app without auto-download (Manual Trigger Mode).');

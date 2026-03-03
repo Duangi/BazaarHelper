@@ -36,27 +36,19 @@ pub async fn handle_overlay_right_click(
     y: i32,
 ) -> Result<Option<serde_json::Value>, String> {
     let detections = crate::get_yolo_scan_results().read().unwrap().clone();
-    let img_opt = crate::get_yolo_scan_image().read().unwrap().clone();
-
-    let (window_x, window_y, window_logical_width, window_logical_height) = {
-        let game_window = xcap::Window::all().ok().and_then(|windows| {
-            windows.into_iter().find(|w| {
-                let title = w.title().to_lowercase();
-                let app_name = w.app_name().to_lowercase();
-                title.contains("the bazaar")
-                    || app_name.contains("the bazaar")
-                    || title.contains("thebazaar")
-                    || app_name.contains("thebazaar")
-            })
-        });
-
-        if let Some(window) = game_window {
-            (window.x(), window.y(), window.width(), window.height())
-        } else {
-            let (x, y) = *crate::get_yolo_window_offset().read().unwrap();
-            (x, y, 0, 0)
-        }
+    let img_opt = {
+        let image_bytes = crate::get_yolo_scan_image().read().unwrap();
+        image_bytes
+            .as_ref()
+            .and_then(|bytes| image::load_from_memory(bytes).ok())
     };
+
+    let meta = *crate::services::yolo_state::get_yolo_capture_meta()
+        .read()
+        .unwrap();
+    let (fallback_x, fallback_y) = *crate::get_yolo_window_offset().read().unwrap();
+    let window_x = if meta.logical_width > 0 { meta.origin_x } else { fallback_x };
+    let window_y = if meta.logical_height > 0 { meta.origin_y } else { fallback_y };
 
     if img_opt.is_none() {
         return Err("暂无YOLO截图，请先触发一次YOLO扫描".to_string());
@@ -67,29 +59,17 @@ pub async fn handle_overlay_right_click(
     let img = img_opt.unwrap();
     let (img_w, img_h) = img.dimensions();
 
+    let logical_width = if meta.logical_width > 0 { meta.logical_width } else { img_w };
+    let logical_height = if meta.logical_height > 0 { meta.logical_height } else { img_h };
     let rel_x_logical = x - window_x;
     let rel_y_logical = y - window_y;
+    let scale_x = img_w as f32 / logical_width.max(1) as f32;
+    let scale_y = img_h as f32 / logical_height.max(1) as f32;
+    let rel_x = (rel_x_logical as f32 * scale_x).round() as i32;
+    let rel_y = (rel_y_logical as f32 * scale_y).round() as i32;
 
-    let scale_factor = if window_logical_width > 0 && window_logical_height > 0 {
-        let scale_x = img_w as f32 / window_logical_width as f32;
-        let scale_y = img_h as f32 / window_logical_height as f32;
-        (scale_x + scale_y) / 2.0
-    } else {
-        #[cfg(target_os = "macos")]
-        {
-            if img_w > 1920 { 2.0 } else { 1.0 }
-        }
-        #[cfg(not(target_os = "macos"))]
-        {
-            if img_w > 3000 { 1.5 } else { 1.0 }
-        }
-    };
-
-    let rel_x = (rel_x_logical as f32 * scale_factor) as i32;
-    let rel_y = (rel_y_logical as f32 * scale_factor) as i32;
-
-    log::debug!("[YOLO Click] Screen coords: ({}, {}), Window offset: ({}, {}), Window size: {}x{}, Logical relative: ({}, {}), Scale: {:.2}, Physical relative: ({}, {})",
-        x, y, window_x, window_y, window_logical_width, window_logical_height, rel_x_logical, rel_y_logical, scale_factor, rel_x, rel_y);
+    log::debug!("[YOLO Click] Screen=({}, {}), origin=({}, {}), logical={}x{}, image={}x{}, rel_logical=({}, {}), scale=({:.3},{:.3}), rel_image=({}, {})",
+        x, y, window_x, window_y, logical_width, logical_height, img_w, img_h, rel_x_logical, rel_y_logical, scale_x, scale_y, rel_x, rel_y);
     log::debug!("[DEBUG] Image dimensions: {}x{}, Total detections: {}", img_w, img_h, detections.len());
 
     for (i, d) in detections.iter().enumerate() {
@@ -256,8 +236,8 @@ pub async fn handle_detail_hotkey_click(
         return Ok(Some(value));
     }
 
-    // If cached YOLO result is stale/missed target, force one fresh scan and retry once.
-    let primary_is_none = matches!(&primary, Ok(None));
+    // Strict mode: detail popup is only triggered by YOLO-hit target under cursor.
+    // Do not fallback to ORB-only mouse recognition anymore.
     let mut primary_err = primary.err();
     let should_retry_with_rescan = matches!(
         &primary_err,
@@ -265,11 +245,11 @@ pub async fn handle_detail_hotkey_click(
             if e.contains("暂无YOLO截图")
                 || e.contains("YOLO结果为空")
                 || e.contains("Invalid crop size")
-    ) || primary_is_none;
+    );
 
     if should_retry_with_rescan {
         log::debug!("[Detail Hotkey] YOLO cache miss, triggering fresh scan and retrying click.");
-        match crate::services::commands::trigger_yolo_scan(app.clone(), true).await {
+        match crate::services::commands::trigger_yolo_scan(app.clone(), true, Some(true)).await {
             Ok(count) => log::debug!("[Detail Hotkey] Fresh YOLO scan done, detections={}", count),
             Err(e) => log::debug!("[Detail Hotkey] Fresh YOLO scan failed: {}", e),
         }
@@ -278,43 +258,18 @@ pub async fn handle_detail_hotkey_click(
         if let Ok(Some(value)) = retry {
             return Ok(Some(value));
         }
+        if let Ok(None) = retry {
+            return Ok(None);
+        }
         if primary_err.is_none() {
             primary_err = retry.err();
         }
     }
 
-    match crate::monster_recognition::recognize_card_at_mouse().await {
-        Ok(Some(raw)) => {
-            let first_id = raw
-                .as_array()
-                .and_then(|arr| arr.first())
-                .and_then(|v| v.get("id"))
-                .and_then(|v| v.as_str())
-                .map(|s| s.to_string());
-
-            if let Some(card_id) = first_id {
-                let db_state = app.state::<DbState>();
-                if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
-                    return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
-                }
-                return Err(format!("识别到卡牌 {}，但未在数据库中找到详情", card_id));
-            }
-            Err("ORB后备识别返回了空结果".to_string())
-        }
-        Ok(None) => {
-            if let Some(err) = primary_err {
-                Err(err)
-            } else {
-                Ok(None)
-            }
-        }
-        Err(e) => {
-            if let Some(err) = primary_err {
-                Err(format!("{err}; ORB后备识别失败: {e}"))
-            } else {
-                Err(e)
-            }
-        }
+    if let Some(err) = primary_err {
+        Err(err)
+    } else {
+        Ok(None)
     }
 }
 

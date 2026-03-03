@@ -143,11 +143,19 @@
   height: 22px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: brightness(0) saturate(100%) invert(95%) sepia(2%) saturate(0%) hue-rotate(9deg) brightness(104%) contrast(86%);
+  filter: none !important;
+  opacity: 0.95;
+}
+
+.sidebar-nav-btn:hover .sidebar-nav-icon,
+.sidebar-settings-btn:hover .sidebar-nav-icon {
+  filter: none !important;
+  opacity: 1;
 }
 
 .sidebar-nav-btn.active .sidebar-nav-icon {
-  filter: brightness(0) saturate(100%) invert(82%) sepia(26%) saturate(1321%) hue-rotate(350deg) brightness(101%) contrast(104%);
+  filter: none !important;
+  opacity: 1;
 }
 
 .sidebar-nav-label {

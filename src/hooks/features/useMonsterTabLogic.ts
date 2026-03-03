@@ -5,6 +5,7 @@ import type { MonsterData } from '../../types';
 import { getImg } from '../../utils/helpers';
 
 interface UseMonsterTabLogicOptions {
+  enabled?: boolean;
   activeTab: string;
   selectedDay: string;
   setSelectedDay: (day: string) => void;
@@ -15,6 +16,7 @@ interface UseMonsterTabLogicOptions {
 }
 
 export const useMonsterTabLogic = ({
+  enabled = true,
   activeTab,
   selectedDay,
   setSelectedDay,
@@ -28,6 +30,7 @@ export const useMonsterTabLogic = ({
   const [expandedMonsters, setExpandedMonsters] = useState<Set<string>>(new Set());
   const [isRecognizing, setIsRecognizing] = useState(false);
   const detailCacheRef = useRef<Map<string, any>>(new Map());
+  const processedDayCacheRef = useRef<Map<string, MonsterData[]>>(new Map());
 
   const getItemDetailById = useCallback(async (id: string | undefined) => {
     if (!id) return null;
@@ -37,6 +40,12 @@ export const useMonsterTabLogic = ({
       const detail = await invoke<any | null>('get_item_info', { id });
       if (detail) {
         detailCacheRef.current.set(id, detail);
+        if (detailCacheRef.current.size > 1200) {
+          const keys = [...detailCacheRef.current.keys()];
+          for (const key of keys.slice(0, 300)) {
+            detailCacheRef.current.delete(key);
+          }
+        }
       }
       return detail;
     } catch {
@@ -155,6 +164,19 @@ export const useMonsterTabLogic = ({
       targetDay = 'Day 1';
     }
 
+    const monsterCount = Object.keys(allMonsters).length;
+    if (monsterCount === 0) {
+      setManualMonsters([]);
+      return;
+    }
+
+    const cacheKey = `${monsterCount}::${targetDay}::${identifiedNames.join('|')}`;
+    const cached = processedDayCacheRef.current.get(cacheKey);
+    if (cached) {
+      setManualMonsters(cached);
+      return;
+    }
+
     const monstersOnDay = Object.values(allMonsters).filter(
       (m) =>
         m &&
@@ -172,14 +194,41 @@ export const useMonsterTabLogic = ({
     });
 
     const processed = await Promise.all(sorted.map(processMonsterImages));
-    setManualMonsters(processed as MonsterData[]);
+    const normalized = processed as MonsterData[];
+    processedDayCacheRef.current.set(cacheKey, normalized);
+    if (processedDayCacheRef.current.size > 8) {
+      const keys = [...processedDayCacheRef.current.keys()];
+      for (const key of keys.slice(0, keys.length - 6)) {
+        processedDayCacheRef.current.delete(key);
+      }
+    }
+    setManualMonsters(normalized);
   }, [allMonsters, identifiedNames, normalizeDay, processMonsterImages]);
 
   useEffect(() => {
+    if (!enabled) return;
     if (activeTab === 'monster') {
       void updateFilteredMonsters(selectedDay);
     }
-  }, [activeTab, selectedDay, allMonsters, identifiedNames, updateFilteredMonsters]);
+  }, [activeTab, selectedDay, allMonsters, enabled, identifiedNames, updateFilteredMonsters]);
+
+  useEffect(() => {
+    if (!enabled || activeTab !== 'monster') {
+      setManualMonsters([]);
+      setExpandedMonsters(new Set());
+      // Keep only a tiny warm cache to avoid growth when users frequently switch pages.
+      if (detailCacheRef.current.size > 160) {
+        const keys = [...detailCacheRef.current.keys()];
+        for (const key of keys.slice(0, keys.length - 100)) {
+          detailCacheRef.current.delete(key);
+        }
+      }
+    }
+  }, [activeTab, enabled]);
+
+  useEffect(() => {
+    processedDayCacheRef.current.clear();
+  }, [allMonsters, skillsArtMap]);
 
   const handleDayChange = useCallback(async (newDay: number) => {
     if (newDay < 1) return;
