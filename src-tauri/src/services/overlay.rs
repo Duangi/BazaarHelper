@@ -23,6 +23,29 @@ impl OverlayState {
     }
 }
 
+fn infer_card_size_by_ratio(aspect_ratio: f32) -> &'static str {
+    // Use nearest canonical ratio to reduce misclassification around thresholds.
+    // Small ~= 0.56 (1x2), Medium ~= 1.0 (2x2), Large ~= 1.5 (3x2)
+    let candidates = [("Small", 0.56_f32), ("Medium", 1.0_f32), ("Large", 1.5_f32)];
+    candidates
+        .iter()
+        .min_by(|a, b| {
+            let da = (aspect_ratio - a.1).abs();
+            let db = (aspect_ratio - b.1).abs();
+            da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
+        })
+        .map(|(name, _)| *name)
+        .unwrap_or("Medium")
+}
+
+fn prioritized_card_sizes(primary: &str) -> [&'static str; 3] {
+    match primary {
+        "Small" => ["Small", "Medium", "Large"],
+        "Large" => ["Large", "Medium", "Small"],
+        _ => ["Medium", "Small", "Large"],
+    }
+}
+
 #[tauri::command]
 pub fn update_overlay_bounds(bounds: Vec<BoundsRect>, state: State<'_, OverlayState>) {
     let mut bounds_state = state.0.lock().unwrap();
@@ -111,53 +134,79 @@ pub async fn handle_overlay_right_click(
         if det.class_id == 2 || det.class_id == 6 {
             let card_width = (det.x2 - det.x1) as f32;
             let card_height = (det.y2 - det.y1) as f32;
-            let aspect_ratio = card_width / card_height;
-
-            let card_size = if (0.85..=1.15).contains(&aspect_ratio) {
-                "Medium"
-            } else if aspect_ratio > 1.15 {
-                "Large"
+            let aspect_ratio = if card_height > 0.0 {
+                card_width / card_height
             } else {
-                "Small"
+                1.0
             };
+            let inferred_size = infer_card_size_by_ratio(aspect_ratio);
 
             log::debug!(
-                "[YOLO Click] Card dimensions: {}x{}, aspect_ratio: {:.2}, detected size: {}",
+                "[YOLO Click] Card dimensions: {}x{}, aspect_ratio: {:.2}, inferred size: {}",
                 card_width,
                 card_height,
                 aspect_ratio,
-                card_size
+                inferred_size
             );
 
-            let match_result = monster_recognition::match_card_by_size(&scene_desc, card_size);
-            match match_result {
-                Ok(Some(cards)) => {
-                    let card_list = cards.as_array().unwrap();
-                    if !card_list.is_empty() {
-                        let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
-                        log::debug!("[YOLO Click] Card matched: {}", card_id);
-                        let db_state = app.state::<DbState>();
-                        if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
-                            return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+            for card_size in prioritized_card_sizes(inferred_size) {
+                let match_result = monster_recognition::match_card_by_size(&scene_desc, card_size);
+                match match_result {
+                    Ok(Some(cards)) => {
+                        if let Some(card_list) = cards.as_array() {
+                            if !card_list.is_empty() {
+                                let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
+                                log::debug!("[YOLO Click] Card matched by {}: {}", card_size, card_id);
+                                let db_state = app.state::<DbState>();
+                                if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
+                                    return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+                                }
+                                log::debug!(
+                                    "[YOLO Click] Card {} not found in DB after {} match",
+                                    card_id,
+                                    card_size
+                                );
+                            }
                         }
-
-                        log::debug!("[YOLO Click] Card info not found in DB for id: {}", card_id);
-                        log::debug!("[YOLO Click] Checking if DB is loaded...");
-                        let items_db = db_state.items.read().unwrap();
+                    }
+                    Ok(None) => {
                         log::debug!(
-                            "[YOLO Click] DB has {} items, id_map has {} entries",
-                            items_db.list.len(),
-                            items_db.id_map.len()
+                            "[YOLO Click] No card descriptors matched in {} category",
+                            card_size
                         );
-                    } else {
-                        log::debug!("[YOLO Click] Card match returned empty list");
+                    }
+                    Err(e) => {
+                        log::debug!("[YOLO Click] Card matching error ({}): {}", card_size, e);
                     }
                 }
-                Ok(None) => log::debug!(
-                    "[YOLO Click] No card descriptors matched in {} category",
-                    card_size
-                ),
-                Err(e) => log::debug!("[YOLO Click] Card matching error: {}", e),
+            }
+
+            // Fallback ORB only when cursor is confirmed on a YOLO card box.
+            match crate::monster_recognition::recognize_card_at_mouse().await {
+                Ok(Some(raw)) => {
+                    let first_id = raw
+                        .as_array()
+                        .and_then(|arr| arr.first())
+                        .and_then(|v| v.get("id"))
+                        .and_then(|v| v.as_str())
+                        .map(|s| s.to_string());
+                    if let Some(card_id) = first_id {
+                        let db_state = app.state::<DbState>();
+                        if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
+                            log::debug!(
+                                "[YOLO Click] ORB fallback matched card under YOLO-hit: {}",
+                                card_id
+                            );
+                            return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
+                        }
+                    }
+                }
+                Ok(None) => {
+                    log::debug!("[YOLO Click] ORB fallback returned no result under YOLO-hit card.");
+                }
+                Err(e) => {
+                    log::debug!("[YOLO Click] ORB fallback error under YOLO-hit card: {}", e);
+                }
             }
         } else if det.class_id == 1 {
             let monster_icons: Vec<&YoloDetection> =

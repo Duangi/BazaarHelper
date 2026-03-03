@@ -32,6 +32,120 @@ pub fn save_window_geometry(window_label: String, x: Option<i32>, y: Option<i32>
 }
 
 #[tauri::command]
+pub fn restore_main_window_geometry(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
+    use tauri::Manager;
+    use tauri::{LogicalPosition, PhysicalPosition};
+
+    let state = crate::load_state();
+    let Some(x) = state.main_window_x else {
+        return Ok(serde_json::json!({ "applied": false, "reason": "missing_x" }));
+    };
+    let Some(y) = state.main_window_y else {
+        return Ok(serde_json::json!({ "applied": false, "reason": "missing_y" }));
+    };
+
+    let window = app
+        .get_webview_window("main")
+        .ok_or_else(|| "Main window not found".to_string())?;
+
+    let mut applied = false;
+    let mut method = "none";
+    let mut target_x = x;
+    let mut target_y = y;
+
+    if let Ok(monitors) = window.available_monitors() {
+        let win_size = window.outer_size().ok();
+        let win_w = win_size.as_ref().map(|s| s.width as i32).unwrap_or(600).max(120);
+        let win_h = win_size.as_ref().map(|s| s.height as i32).unwrap_or(850).max(120);
+
+        let selected = monitors
+            .iter()
+            .find(|m| {
+                let p = m.position();
+                let s = m.size();
+                x >= p.x && x < (p.x + s.width as i32) && y >= p.y && y < (p.y + s.height as i32)
+            })
+            .or_else(|| monitors.first());
+
+        if let Some(m) = selected {
+            let p = m.position();
+            let s = m.size();
+            let max_x = p.x + (s.width as i32) - win_w;
+            let max_y = p.y + (s.height as i32) - win_h;
+            target_x = x.clamp(p.x, max_x.max(p.x));
+            target_y = y.clamp(p.y, max_y.max(p.y));
+        }
+    }
+
+    if window
+        .set_position(LogicalPosition::new(target_x, target_y))
+        .is_ok()
+    {
+        applied = true;
+        method = "logical_clamped";
+    } else if window
+        .set_position(PhysicalPosition::new(target_x, target_y))
+        .is_ok()
+    {
+        applied = true;
+        method = "physical_clamped";
+    } else {
+        let scale = window.scale_factor().unwrap_or(1.0);
+        if scale > 0.0 {
+            let lx = (target_x as f64 / scale).round() as i32;
+            let ly = (target_y as f64 / scale).round() as i32;
+            if window
+                .set_position(LogicalPosition::new(lx, ly))
+                .is_ok()
+            {
+                applied = true;
+                method = "logical_div_scale";
+            } else {
+                let px = (target_x as f64 * scale).round() as i32;
+                let py = (target_y as f64 * scale).round() as i32;
+                if window
+                    .set_position(PhysicalPosition::new(px, py))
+                    .is_ok()
+                {
+                    applied = true;
+                    method = "physical_mul_scale";
+                }
+            }
+        }
+    }
+
+    if applied {
+        crate::platforms::window_style::enforce_overlay_traits(&window, "main");
+    }
+    log::info!(
+        "[Geometry] restore_main_window_geometry applied={} method={} saved=({}, {}) target=({}, {})",
+        applied,
+        method,
+        x,
+        y,
+        target_x,
+        target_y
+    );
+
+    let current = window.outer_position().ok();
+    Ok(serde_json::json!({
+        "applied": applied,
+        "method": method,
+        "saved_x": x,
+        "saved_y": y,
+        "target_x": target_x,
+        "target_y": target_y,
+        "current_x": current.as_ref().map(|p| p.x),
+        "current_y": current.as_ref().map(|p| p.y)
+    }))
+}
+
+#[tauri::command]
+pub fn mark_detail_popup_interaction() {
+    crate::core::detail_popup_state::mark_inside_interaction_now();
+}
+
+#[tauri::command]
 pub fn get_window_geometry(window_label: String) -> serde_json::Value {
     if window_label == "main" {
         let state = crate::load_state();
@@ -92,7 +206,7 @@ pub fn reset_window_geometry(app: tauri::AppHandle) -> Result<(), String> {
     let scale_factor = 1.0;
     let logical_width = (primary_monitor.width() as f64 / scale_factor) as i32;
     let target_x = primary_monitor.x() + logical_width - default_width;
-    let target_y = primary_monitor.y();
+    let target_y = primary_monitor.y() + crate::platforms::macos_screen::main_window_top_safe_inset_px();
 
     log::debug!(
         "[Geometry] Resetting to: x={}, y={}, w={}, h={}",
@@ -426,37 +540,57 @@ pub async fn show_detail_popup_at(
     let final_width = if saved_width < 100 { 480 } else { saved_width };
     let final_height = if saved_height < 100 { 700 } else { saved_height };
 
-    let (final_x, final_y) =
-        if let (Some(saved_x), Some(saved_y)) = (state.detail_popup_x, state.detail_popup_y) {
-            (saved_x, saved_y)
+    let monitors = window.available_monitors().map_err(|e| e.to_string())?;
+    let monitor_by_point = |px: i32, py: i32| {
+        monitors.iter().find(|m| {
+            let pos = m.position();
+            let size = m.size();
+            px >= pos.x && px < (pos.x + size.width as i32) && py >= pos.y && py < (pos.y + size.height as i32)
+        })
+    };
+
+    let clamp_into_monitor = |base_x: i32, base_y: i32, monitor: &tauri::Monitor| {
+        let pos = monitor.position();
+        let size = monitor.size();
+        let max_x = pos.x + size.width as i32 - final_width as i32;
+        let max_y = pos.y + size.height as i32 - final_height as i32;
+        let clamped_x = base_x.clamp(pos.x, max_x.max(pos.x));
+        let clamped_y = base_y.clamp(pos.y, max_y.max(pos.y));
+        (clamped_x, clamped_y)
+    };
+
+    let fallback_center = || {
+        if let Some(monitor) = monitor_by_point(x, y).or_else(|| monitors.first()) {
+            let pos = monitor.position();
+            let size = monitor.size();
+            let center_x = pos.x + (size.width as i32 / 2) - (final_width as i32 / 2);
+            let center_y = pos.y + (size.height as i32 / 2) - (final_height as i32 / 2);
+            clamp_into_monitor(center_x, center_y, monitor)
         } else {
-            let monitors = window.available_monitors().map_err(|e| e.to_string())?;
+            (x - 200, y - 300)
+        }
+    };
 
-            let target_monitor = monitors.iter().find(|m| {
-                let pos = m.position();
-                let size = m.size();
-                x >= pos.x && x < (pos.x + size.width as i32) && y >= pos.y && y < (pos.y + size.height as i32)
-            });
-
-            if let Some(monitor) = target_monitor {
-                let pos = monitor.position();
-                let size = monitor.size();
-                let center_x = pos.x + (size.width as i32 / 2) - (final_width as i32 / 2);
-                let center_y = pos.y + (size.height as i32 / 2) - (final_height as i32 / 2);
+    let (final_x, final_y) = if let (Some(saved_x), Some(saved_y)) = (state.detail_popup_x, state.detail_popup_y) {
+        // Validate saved geometry and keep it visible on any current monitor.
+        if let Some(monitor) = monitor_by_point(saved_x, saved_y)
+            .or_else(|| monitor_by_point(x, y))
+            .or_else(|| monitors.first())
+        {
+            let (clamped_x, clamped_y) = clamp_into_monitor(saved_x, saved_y, monitor);
+            if clamped_x != saved_x || clamped_y != saved_y {
                 log::debug!(
-                    "[Show Detail Popup] Mouse on monitor at ({}, {}), size {}x{}, centering at ({}, {})",
-                    pos.x,
-                    pos.y,
-                    size.width,
-                    size.height,
-                    center_x,
-                    center_y
+                    "[Show Detail Popup] Saved position out-of-bounds, clamped: ({}, {}) -> ({}, {})",
+                    saved_x, saved_y, clamped_x, clamped_y
                 );
-                (center_x, center_y)
-            } else {
-                (x - 200, y - 300)
             }
-        };
+            (clamped_x, clamped_y)
+        } else {
+            fallback_center()
+        }
+    } else {
+        fallback_center()
+    };
 
     log::debug!(
         "[Show Detail Popup] Using position: ({}, {}), size: {}x{}",
@@ -523,6 +657,36 @@ pub async fn show_detail_popup_at(
         Err(e) => log::debug!("[Show Detail Popup] Failed to emit event: {}", e),
     }
 
+    let display_name = match data_type.as_str() {
+        "item" => data
+            .get("name_cn")
+            .and_then(|v| v.as_str())
+            .or_else(|| data.get("name").and_then(|v| v.as_str()))
+            .unwrap_or("未知卡牌")
+            .to_string(),
+        "monster" => data
+            .get("name_zh")
+            .and_then(|v| v.as_str())
+            .or_else(|| data.get("name").and_then(|v| v.as_str()))
+            .unwrap_or("未知野怪")
+            .to_string(),
+        "event" => data
+            .get("Name")
+            .and_then(|v| v.as_str())
+            .or_else(|| data.get("Id").and_then(|v| v.as_str()))
+            .unwrap_or("未知事件")
+            .to_string(),
+        _ => String::new(),
+    };
+    let _ = app.emit(
+        "detail-popup-visibility",
+        serde_json::json!({
+            "visible": true,
+            "data_type": data_type,
+            "name": display_name,
+        }),
+    );
+
     log::debug!("[Show Detail Popup] Window label: {}", window.label());
 
     Ok(())
@@ -557,6 +721,12 @@ pub async fn hide_detail_popup(app: tauri::AppHandle) -> Result<(), String> {
         }
         let _ = window.emit("hide-detail-popup", ());
     }
+    let _ = app.emit(
+        "detail-popup-visibility",
+        serde_json::json!({
+            "visible": false
+        }),
+    );
     Ok(())
 }
 

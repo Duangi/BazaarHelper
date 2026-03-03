@@ -188,8 +188,8 @@ html, body, #root {
   position: fixed; top: 0; right: 0;
   background: rgba(41, 37, 33, 0.85); /* 还原酒馆褐色背景 */
   display: flex; flex-direction: column;
-  height: 100% !important; 
-  width: 100% !important;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
   pointer-events: auto;
   border: 1px solid transparent;
@@ -197,11 +197,19 @@ html, body, #root {
 }
 
 .overlay.expanded {
+  width: 100% !important;
+  height: 100% !important;
   border-radius: 0;
   box-shadow: none;
 }
 
 .overlay.collapsed {
+  width: 320px !important;
+  height: 54px !important;
+  max-width: 100vw;
+  max-height: 100vh;
+  top: 0;
+  right: 0;
   background: linear-gradient(180deg, rgba(22, 24, 28, 0.94), rgba(12, 14, 18, 0.94));
   border-radius: 999px;
   border-color: rgba(255, 255, 255, 0.1);

@@ -385,9 +385,31 @@ export default function DetailPopup() {
     const [contentScale, setContentScale] = useState(1.0);
     const [resizeMode, setResizeMode] = useState<string | null>(null);
     const resizeModeRef = useRef<string | null>(null);
-    const wasResizingRef = useRef(false);
     const preloadDoneRef = useRef(false);
     const preloadPromiseRef = useRef<Promise<void> | null>(null);
+
+    const startNativeResize = (direction: string) => {
+        const win = getCurrentWindow() as any;
+        const legacy = typeof win.startResizeDragging === 'function' ? win.startResizeDragging.bind(win) : null;
+        const modern = typeof win.startResizing === 'function' ? win.startResizing.bind(win) : null;
+        if (modern) {
+            void modern(direction).catch((e: any) => {
+                if (legacy) {
+                    void legacy(direction).catch((legacyErr: any) => {
+                        console.error('[DetailPopup] start resize failed:', legacyErr);
+                    });
+                } else {
+                    console.error('[DetailPopup] start resize failed:', e);
+                }
+            });
+            return;
+        }
+        if (legacy) {
+            void legacy(direction).catch((e: any) => {
+                console.error('[DetailPopup] start resize failed:', e);
+            });
+        }
+    };
     
     const ensurePreloadedResources = async () => {
         if (preloadDoneRef.current) return;
@@ -1475,20 +1497,18 @@ export default function DetailPopup() {
     return (
         <div 
             ref={containerRef}
+            onMouseDownCapture={() => {
+                void invoke('mark_detail_popup_interaction').catch(() => {});
+            }}
             onClick={(e) => {
-                // 点击背景关闭（但拖动/调整大小时不关闭）
-                if (!isDraggingRef.current && !resizeModeRef.current && !wasResizingRef.current &&
-                    (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container'))) {
-                    invoke("hide_detail_popup");
-                }
+                // Popup close is handled by global outside-click monitor in backend.
+                // Keep all in-popup clicks non-closing so drag/resize interactions are stable.
+                e.stopPropagation();
             }}
             onContextMenu={(e) => {
+                void invoke('mark_detail_popup_interaction').catch(() => {});
                 e.preventDefault();
-                // 右键点击背景也能关闭
-                if (!isDraggingRef.current && !resizeModeRef.current && !wasResizingRef.current &&
-                    (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('detail-popup-container'))) {
-                    invoke("hide_detail_popup");
-                }
+                e.stopPropagation();
             }}
             style={{
                 width: '100vw',
@@ -1557,40 +1577,46 @@ export default function DetailPopup() {
             {/* Native Resize Handles - Fixed zIndex and propagation */}
             <div 
                 title="Resize Top" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('North' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('North'); }} 
                 style={{ position: 'absolute', top: 0, left: 15, right: 15, height: '10px', cursor: 'n-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
             />
             <div 
                 title="Resize Bottom" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('South' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('South'); }} 
                 style={{ position: 'absolute', bottom: 0, left: 15, right: 30, height: '10px', cursor: 's-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
             />
             <div 
                 title="Resize Left" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('West' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('West'); }} 
                 style={{ position: 'absolute', top: 15, bottom: 15, left: 0, width: '10px', cursor: 'w-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
             />
             <div 
                 title="Resize Right" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('East' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('East'); }} 
                 style={{ position: 'absolute', top: 15, bottom: 30, right: 0, width: '10px', cursor: 'e-resize', zIndex: 9999, background: 'rgba(0,0,0,0)' }} 
             />
             
             {/* Corners */}
             <div 
                 title="Resize TopLeft" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('NorthWest' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('NorthWest'); }} 
                 style={{ position: 'absolute', top: 0, left: 0, width: '15px', height: '15px', cursor: 'nwse-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
             />
             <div 
                 title="Resize TopRight" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('NorthEast' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('NorthEast'); }} 
                 style={{ position: 'absolute', top: 0, right: 0, width: '15px', height: '15px', cursor: 'nesw-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
             />
             <div 
                 title="Resize BottomLeft" 
-                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); getCurrentWindow().startResizeDragging('SouthWest' as any); }} 
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('SouthWest'); }} 
                 style={{ position: 'absolute', bottom: 0, left: 0, width: '15px', height: '15px', cursor: 'nesw-resize', zIndex: 10000, background: 'rgba(0,0,0,0)' }} 
+            />
+
+            <div
+                title="Resize BottomRight"
+                onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startNativeResize('SouthEast'); }}
+                style={{ position: 'absolute', bottom: 0, right: 0, width: '18px', height: '18px', cursor: 'nwse-resize', zIndex: 10001, background: 'rgba(0,0,0,0)' }}
             />
             
             {/* Zoom Handle (Bottom Right) */}
@@ -1598,17 +1624,10 @@ export default function DetailPopup() {
                 onMouseDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setResizeMode('zoom');
-                    resizeModeRef.current = 'zoom';
-                    resizeStartRef.current = {
-                        x: e.clientX,
-                        y: e.clientY,
-                        width: contentScale, // Use width to store start scale
-                        height: 0
-                    };
+                    startNativeResize('SouthEast');
                 }}
                 onClick={(e) => e.stopPropagation()}
-                title="Drag up/down to Zoom"
+                title="Resize BottomRight"
                 style={{
                     position: 'absolute',
                     bottom: 0,
@@ -1616,7 +1635,7 @@ export default function DetailPopup() {
                     width: '24px',
                     height: '24px',
                     cursor: 'nwse-resize', 
-                    background: 'linear-gradient(135deg, transparent 0%, transparent 40%, #ffcc00 100%)',
+                    background: 'linear-gradient(135deg, transparent 0%, transparent 40%, rgba(255, 204, 0, 0.85) 100%)',
                     borderRadius: '0 0 8px 0',
                     zIndex: 1000,
                     display: 'flex',
@@ -1626,7 +1645,7 @@ export default function DetailPopup() {
                     paddingBottom: '3px'
                 }}
             >
-                <div style={{ transform: 'rotate(-45deg)', fontSize: '10px' }}>🔍</div>
+                <div style={{ transform: 'rotate(-45deg)', fontSize: '10px' }}>◢</div>
             </div>
         </div>
     );

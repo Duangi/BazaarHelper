@@ -128,14 +128,6 @@ pub fn spawn_focus_monitor(handle_focus: tauri::AppHandle) {
                     game_active,
                     app_active
                 );
-
-                if !should_be_visible {
-                    if let Some(window) = handle_focus.get_webview_window("detail-popup") {
-                        if window.is_visible().unwrap_or(false) {
-                            let _ = window.hide();
-                        }
-                    }
-                }
                 overlay_was_visible = should_be_visible;
             }
         }
@@ -156,6 +148,8 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             "[Hotkey Monitor] macOS fallback enabled: if right-click is swallowed by fullscreen game mode, press Q or E to trigger detail."
         );
         let device_state = DeviceState::new();
+        let mut last_left_click = false;
+        let mut last_right_click = false;
         let mut last_trigger_active = false;
         let mut heartbeat_tick: u32 = 0;
         let mut game_active_cached = false;
@@ -187,6 +181,8 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             let allow_hotkey_actions = game_active || detail_visible;
 
             if !game_active && !detail_visible {
+                last_left_click = false;
+                last_right_click = false;
                 last_trigger_active = false;
                 last_yolo_active = false;
                 last_detection_active = false;
@@ -205,7 +201,9 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             let left_click = {
                 #[cfg(target_os = "macos")]
                 {
-                    left_click_idx || macos_mouse_button_pressed(0) || macos_recent_mouse_down(0, 120.0)
+                    left_click_idx
+                        || macos_mouse_button_pressed(0)
+                        || macos_recent_mouse_down(0, crate::platforms::macos_screen::recent_mouse_down_window_ms())
                 }
                 #[cfg(not(target_os = "macos"))]
                 {
@@ -215,7 +213,9 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             let right_click = {
                 #[cfg(target_os = "macos")]
                 {
-                    right_click_idx || macos_mouse_button_pressed(1) || macos_recent_mouse_down(1, 120.0)
+                    right_click_idx
+                        || macos_mouse_button_pressed(1)
+                        || macos_recent_mouse_down(1, crate::platforms::macos_screen::recent_mouse_down_window_ms())
                 }
                 #[cfg(not(target_os = "macos"))]
                 {
@@ -228,7 +228,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
                     mouse.button_pressed.get(2).copied().unwrap_or(false)
                         || mouse.button_pressed.get(1).copied().unwrap_or(false)
                         || macos_mouse_button_pressed(2)
-                        || macos_recent_mouse_down(2, 120.0)
+                        || macos_recent_mouse_down(2, crate::platforms::macos_screen::recent_mouse_down_window_ms())
                 }
                 #[cfg(not(target_os = "macos"))]
                 {
@@ -237,8 +237,38 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
                 }
             };
 
-            // Keep detail-popup interactive: do not auto-hide on global mouse clicks.
-            // Closing is handled by explicit user actions (hotkey toggle / UI controls / focus rules).
+            if detail_visible && ((left_click && !last_left_click) || (right_click && !last_right_click)) {
+                let interacted_inside_recently = crate::core::detail_popup_state::is_inside_interaction_recent(450);
+
+                #[cfg(target_os = "macos")]
+                let should_hide = !interacted_inside_recently;
+
+                #[cfg(not(target_os = "macos"))]
+                let should_hide = if interacted_inside_recently {
+                    false
+                } else if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
+                    !crate::platforms::macos_screen::is_point_inside_window(&popup_window, mx, my)
+                } else {
+                    false
+                };
+
+                if should_hide {
+                    if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
+                        log::debug!(
+                            "[Mouse Monitor] Click detected outside detail-popup at ({}, {}), hiding.",
+                            mx,
+                            my
+                        );
+                        let _ = popup_window.emit("hide-detail-popup", ());
+                        let _ = handle_monitor.emit(
+                            "detail-popup-visibility",
+                            serde_json::json!({
+                                "visible": false
+                            }),
+                        );
+                    }
+                }
+            }
 
             let detail_code = crate::core::hotkey_state::get_cached_detail_hotkey().unwrap_or(2);
             let mut trigger_active = {
@@ -306,10 +336,11 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
 
             if detail_visible && trigger_active && !last_trigger_active {
-                if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
-                    log::debug!("[Hotkey Monitor] Custom hotkey pressed while popup open - hiding.");
-                    let _ = popup_window.emit("hide-detail-popup", ());
-                }
+                // Unified close policy:
+                // - only left/right outside-click closes popup (handled above)
+                // - while popup is visible, ignore trigger hotkey to avoid accidental hide/re-recognition
+                last_trigger_active = true;
+                continue;
             }
 
             if trigger_active && !last_trigger_active && allow_hotkey_actions {
@@ -505,6 +536,8 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
 
             last_trigger_active = trigger_active;
+            last_left_click = left_click;
+            last_right_click = right_click;
             last_yolo_active = yolo_active;
             last_detection_active = detection_active;
             last_card_active = card_active;

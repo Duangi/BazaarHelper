@@ -11,7 +11,14 @@ import {
 } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { getVersion } from '@tauri-apps/api/app';
-import { currentMonitor, getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
+import {
+  currentMonitor,
+  getCurrentWindow,
+  LogicalSize,
+  LogicalPosition,
+  PhysicalPosition,
+  PhysicalSize,
+} from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { check, type Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
@@ -32,6 +39,7 @@ import { useSearchPanelState } from './hooks/search/useSearchPanelState';
 import { useMatchHistory } from './hooks/sync/useMatchHistory';
 import { useMonstersBootstrap } from './hooks/sync/useMonstersBootstrap';
 import { useSyncDataPipeline } from './hooks/sync/useSyncDataPipeline';
+import { MAC_SCREEN_PROFILE } from './platforms/macos/screenProfile';
 import type { IslandStatusType, ItemData, MonsterData, SearchItemLite, SyncPayload, TabType, Toast } from './types';
 
 const TAB_LABELS: Record<TabType, string> = {
@@ -43,9 +51,9 @@ const TAB_LABELS: Record<TabType, string> = {
 };
 
 const STARTUP_NOTICE = [
-  'V2 骨架模式已启用。',
+  '集市小抄已启动。',
   '已迁移功能：历史战绩、野怪一览、手头物品。',
-  '正在逐步迁移剩余业务页面。',
+  '其余页面正在持续完善。',
 ].join('\n');
 
 const HistoryViewLazy = lazy(async () => ({
@@ -72,13 +80,16 @@ const VirtualSearchResultsLazy = lazy(async () => ({
   default: (await import('./components/search/VirtualSearchResults')).VirtualSearchResults,
 }));
 
-const COLLAPSED_WIDTH = 320;
-const COLLAPSED_HEIGHT = 54;
-const MIN_EXPANDED_WIDTH = 520;
-const MIN_EXPANDED_HEIGHT = 420;
-const DEFAULT_EXPANDED_WIDTH = 980;
-const DEFAULT_EXPANDED_HEIGHT = 780;
+const COLLAPSED_WIDTH = MAC_SCREEN_PROFILE.collapsed.width;
+const COLLAPSED_HEIGHT = MAC_SCREEN_PROFILE.collapsed.height;
+const MIN_EXPANDED_WIDTH = MAC_SCREEN_PROFILE.expanded.minWidth;
+const MIN_EXPANDED_HEIGHT = MAC_SCREEN_PROFILE.expanded.minHeight;
+const DEFAULT_EXPANDED_WIDTH = MAC_SCREEN_PROFILE.expanded.defaultWidth;
+const DEFAULT_EXPANDED_HEIGHT = MAC_SCREEN_PROFILE.expanded.defaultHeight;
+const STARTUP_WIDTH = MAC_SCREEN_PROFILE.startup.width;
+const STARTUP_HEIGHT = MAC_SCREEN_PROFILE.startup.height;
 const NON_DRAG_SELECTOR = 'button, input, textarea, select, a, [data-no-drag], .no-drag';
+const ISLAND_BASE_TEXT = '集市小抄运行中';
 
 const buildSearchSkeletonItem = (item: SearchItemLite): ItemData => ({
   uuid: item.uuid,
@@ -170,15 +181,16 @@ export default function AppV2() {
   const [, setExpandedWidth] = useState(DEFAULT_EXPANDED_WIDTH);
   const [, setExpandedHeight] = useState(DEFAULT_EXPANDED_HEIGHT);
   const [, setHasCustomPosition] = useState(false);
-  const [currentVersion, setCurrentVersion] = useState('...');
+  const [currentVersion, setCurrentVersion] = useState('1.6.0');
   const [updateStatus, setUpdateStatus] =
     useState<'none' | 'checking' | 'available' | 'downloading' | 'ready'>('none');
   const [updateAvailable, setUpdateAvailable] = useState<Update | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [announcement, setAnnouncement] = useState('');
-  const [islandStatusText, setIslandStatusText] = useState('集市小抄 V2 运行中');
-  const [islandStatusType, setIslandStatusType] = useState<IslandStatusType>('info');
-  const islandStatusTimerRef = useRef<number | null>(null);
+  const [islandStatusType, setIslandStatusType] = useState<IslandStatusType>(
+    enableYoloAuto ? 'success' : 'info',
+  );
+  const [islandPinnedName, setIslandPinnedName] = useState<string | null>(null);
   const readStoredExpandedSize = () => {
     const width = Number(localStorage.getItem('window-expanded-width')) || DEFAULT_EXPANDED_WIDTH;
     const height = Number(localStorage.getItem('window-expanded-height')) || DEFAULT_EXPANDED_HEIGHT;
@@ -186,6 +198,18 @@ export default function AppV2() {
   };
   const expandedSizeRef = useRef<{ width: number; height: number }>(readStoredExpandedSize());
   const isSwitchingRef = useRef(false);
+  const isDraggingWindowRef = useRef(false);
+  const dragGuardUntilRef = useRef(0);
+  const lastCollapsedAtRef = useRef(0);
+  const showVersionScreenRef = useRef(showVersionScreen);
+  const restoringMainLayoutRef = useRef(false);
+  const hasRestoredMainGeometryRef = useRef(false);
+  const moveSaveTimerRef = useRef<number | null>(null);
+  const resizeSaveTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    showVersionScreenRef.current = showVersionScreen;
+  }, [showVersionScreen]);
 
   const getMonitorLogicalBounds = useCallback(async () => {
     const monitor = await currentMonitor().catch(() => null);
@@ -198,8 +222,8 @@ export default function AppV2() {
     const logicalWidth = Math.floor(monitor.size.width / monitor.scaleFactor);
     const logicalHeight = Math.floor(monitor.size.height / monitor.scaleFactor);
     return {
-      maxWidth: Math.max(MIN_EXPANDED_WIDTH, logicalWidth - 40),
-      maxHeight: Math.max(MIN_EXPANDED_HEIGHT, logicalHeight - 60),
+      maxWidth: Math.max(MIN_EXPANDED_WIDTH, logicalWidth - MAC_SCREEN_PROFILE.monitorMargin.width),
+      maxHeight: Math.max(MIN_EXPANDED_HEIGHT, logicalHeight - MAC_SCREEN_PROFILE.monitorMargin.height),
     };
   }, []);
 
@@ -216,9 +240,53 @@ export default function AppV2() {
 
   const persistExpandedSize = useCallback((size: { width: number; height: number }) => {
     expandedSizeRef.current = size;
+    setExpandedWidth(size.width);
+    setExpandedHeight(size.height);
     localStorage.setItem('window-expanded-width', String(size.width));
     localStorage.setItem('window-expanded-height', String(size.height));
-  }, []);
+  }, [setExpandedHeight, setExpandedWidth]);
+
+  const ensureWindowLogicalSize = useCallback(
+    async (logicalWidth: number, logicalHeight: number): Promise<boolean> => {
+      const checkCloseEnough = async () => {
+        const [inner, scale] = await Promise.all([
+          appWindow.innerSize().catch(() => null),
+          appWindow.scaleFactor().catch(() => 1),
+        ]);
+        if (!inner) return false;
+        const currentLogicalWidth = inner.width / Math.max(1, scale);
+        const currentLogicalHeight = inner.height / Math.max(1, scale);
+        const diffW = Math.abs(currentLogicalWidth - logicalWidth);
+        const diffH = Math.abs(currentLogicalHeight - logicalHeight);
+        return diffW <= 8 && diffH <= 8;
+      };
+
+      try {
+        await appWindow.setSize(new LogicalSize(logicalWidth, logicalHeight));
+      } catch (error) {
+        console.warn('[AppV2] set logical size failed:', error);
+      }
+
+      if (await checkCloseEnough()) {
+        return true;
+      }
+
+      const scale = await appWindow.scaleFactor().catch(() => 1);
+      try {
+        await appWindow.setSize(
+          new PhysicalSize(
+            Math.max(1, Math.round(logicalWidth * scale)),
+            Math.max(1, Math.round(logicalHeight * scale)),
+          ),
+        );
+      } catch (error) {
+        console.warn('[AppV2] set physical size fallback failed:', error);
+      }
+
+      return checkCloseEnough();
+    },
+    [appWindow],
+  );
 
   useEffect(() => {
     // Clamp possibly-corrupted saved size once on mount.
@@ -227,6 +295,188 @@ export default function AppV2() {
       persistExpandedSize(clamped);
     })();
   }, [clampExpandedSize, persistExpandedSize]);
+
+  const centerStartupWindow = useCallback(async () => {
+    try {
+      await appWindow.setSize(new LogicalSize(STARTUP_WIDTH, STARTUP_HEIGHT));
+      await appWindow.center();
+      await appWindow.show();
+    } catch (error) {
+      console.warn('[AppV2] center startup window failed:', error);
+    }
+  }, [appWindow]);
+
+  const restoreMainWindowGeometry = useCallback(async () => {
+    if (restoringMainLayoutRef.current) return;
+    restoringMainLayoutRef.current = true;
+    try {
+      const geometry = await invoke<{
+        x?: number | null;
+        y?: number | null;
+        width?: number | null;
+        height?: number | null;
+      }>('get_window_geometry', { windowLabel: 'main' }).catch(() => null);
+
+      // Important: avoid immediate setSize during version-screen -> main transition on macOS.
+      // This transition can trigger WebView/NSPanel instability on some machines.
+      // We only restore position now; expanded size is stored as future target.
+      if (
+        geometry
+        && typeof geometry.width === 'number'
+        && typeof geometry.height === 'number'
+        && geometry.width > 100
+        && geometry.height > 100
+      ) {
+        const scale = await appWindow.scaleFactor().catch(() => 1);
+        const restoredLogical = await clampExpandedSize({
+          width: geometry.width / Math.max(1, scale),
+          height: geometry.height / Math.max(1, scale),
+        });
+        persistExpandedSize(restoredLogical);
+      } else {
+        const safe = await clampExpandedSize(expandedSizeRef.current);
+        persistExpandedSize(safe);
+      }
+
+      let targetX: number | null = null;
+      let targetY: number | null = null;
+      if (geometry && typeof geometry.x === 'number' && typeof geometry.y === 'number') {
+        targetX = geometry.x;
+        targetY = geometry.y;
+      } else {
+        const rawX = localStorage.getItem('plugin-pos-x');
+        const rawY = localStorage.getItem('plugin-pos-y');
+        if (rawX && rawY) {
+          const parsedX = Number.parseInt(rawX, 10);
+          const parsedY = Number.parseInt(rawY, 10);
+          if (Number.isFinite(parsedX) && Number.isFinite(parsedY)) {
+            targetX = parsedX;
+            targetY = parsedY;
+          }
+        }
+      }
+
+      let restoredByNative = false;
+      const nativeRestore = await invoke<{ applied?: boolean }>('restore_main_window_geometry').catch(() => null);
+      if (nativeRestore?.applied) {
+        restoredByNative = true;
+        setHasCustomPosition(true);
+      }
+
+      if (!restoredByNative && targetX != null && targetY != null) {
+        // Fallback for old clients/localStorage-only state.
+        try {
+          await appWindow.setPosition(new LogicalPosition(targetX, targetY));
+        } catch {
+          await appWindow.setPosition(new PhysicalPosition(targetX, targetY));
+        }
+        setHasCustomPosition(true);
+      }
+
+      await appWindow.show();
+    } catch (error) {
+      console.warn('[AppV2] restore main window geometry failed:', error);
+    } finally {
+      restoringMainLayoutRef.current = false;
+    }
+  }, [appWindow, clampExpandedSize, persistExpandedSize]);
+
+  useEffect(() => {
+    if (showVersionScreen) {
+      void centerStartupWindow();
+    }
+  }, [centerStartupWindow, showVersionScreen]);
+
+  useEffect(() => {
+    if (showVersionScreen) {
+      hasRestoredMainGeometryRef.current = false;
+      return undefined;
+    }
+    if (hasRestoredMainGeometryRef.current) {
+      return undefined;
+    }
+    hasRestoredMainGeometryRef.current = true;
+    const timer1 = window.setTimeout(() => {
+      void restoreMainWindowGeometry();
+    }, MAC_SCREEN_PROFILE.timing.restoreLayoutDelayMs);
+    // Re-apply once more to override potential late center/show operations from startup view.
+    const timer2 = window.setTimeout(() => {
+      void restoreMainWindowGeometry();
+    }, MAC_SCREEN_PROFILE.timing.restoreLayoutRetryDelayMs);
+    return () => {
+      window.clearTimeout(timer1);
+      window.clearTimeout(timer2);
+    };
+  }, [restoreMainWindowGeometry, showVersionScreen]);
+
+  useEffect(() => {
+    let unlistenMove: (() => void) | null = null;
+    let unlistenResize: (() => void) | null = null;
+
+    const setupListeners = async () => {
+      unlistenMove = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
+        if (showVersionScreenRef.current || restoringMainLayoutRef.current) return;
+        setHasCustomPosition(true);
+        localStorage.setItem('plugin-pos-x', String(event.payload.x));
+        localStorage.setItem('plugin-pos-y', String(event.payload.y));
+
+        if (moveSaveTimerRef.current) {
+          window.clearTimeout(moveSaveTimerRef.current);
+        }
+        moveSaveTimerRef.current = window.setTimeout(() => {
+          void invoke('save_window_geometry', {
+            windowLabel: 'main',
+            x: event.payload.x,
+            y: event.payload.y,
+          }).catch((error) => console.warn('[AppV2] save move geometry failed:', error));
+        }, MAC_SCREEN_PROFILE.timing.saveMoveDebounceMs);
+      });
+
+      unlistenResize = await appWindow.listen('tauri://resize', () => {
+        if (showVersionScreenRef.current || restoringMainLayoutRef.current || isCollapsed) return;
+        if (resizeSaveTimerRef.current) {
+          window.clearTimeout(resizeSaveTimerRef.current);
+        }
+        resizeSaveTimerRef.current = window.setTimeout(() => {
+          void (async () => {
+            try {
+              const [inner, scale] = await Promise.all([
+                appWindow.innerSize(),
+                appWindow.scaleFactor().catch(() => 1),
+              ]);
+              if (inner.width <= COLLAPSED_WIDTH + 30 || inner.height <= COLLAPSED_HEIGHT + 30) {
+                return;
+              }
+              const clamped = await clampExpandedSize({
+                width: inner.width / Math.max(1, scale),
+                height: inner.height / Math.max(1, scale),
+              });
+              persistExpandedSize(clamped);
+              await invoke('save_window_geometry', {
+                windowLabel: 'main',
+                width: inner.width,
+                height: inner.height,
+              });
+            } catch (error) {
+              console.warn('[AppV2] save resize geometry failed:', error);
+            }
+          })();
+        }, MAC_SCREEN_PROFILE.timing.saveResizeDebounceMs);
+      });
+    };
+
+    void setupListeners();
+    return () => {
+      if (unlistenMove) unlistenMove();
+      if (unlistenResize) unlistenResize();
+      if (moveSaveTimerRef.current) {
+        window.clearTimeout(moveSaveTimerRef.current);
+      }
+      if (resizeSaveTimerRef.current) {
+        window.clearTimeout(resizeSaveTimerRef.current);
+      }
+    };
+  }, [appWindow, clampExpandedSize, isCollapsed, persistExpandedSize]);
 
   const applyCollapsedState = useCallback(
     async (nextCollapsed: boolean) => {
@@ -252,21 +502,27 @@ export default function AppV2() {
             });
             persistExpandedSize(normalized);
           }
-          await appWindow.setSize(new LogicalSize(COLLAPSED_WIDTH, COLLAPSED_HEIGHT));
+          const resized = await ensureWindowLogicalSize(COLLAPSED_WIDTH, COLLAPSED_HEIGHT);
+          if (!resized) {
+            throw new Error('failed to apply collapsed window size');
+          }
+          lastCollapsedAtRef.current = Date.now();
         } else {
           const safe = await clampExpandedSize(expandedSizeRef.current);
           persistExpandedSize(safe);
-          await appWindow.setSize(new LogicalSize(safe.width, safe.height));
+          const resized = await ensureWindowLogicalSize(safe.width, safe.height);
+          if (!resized) {
+            throw new Error('failed to apply expanded window size');
+          }
         }
         setIsCollapsed(nextCollapsed);
       } catch (error) {
         console.error('[AppV2] collapse/expand resize failed:', error);
-        setIsCollapsed(nextCollapsed);
       } finally {
         isSwitchingRef.current = false;
       }
     },
-    [appWindow, clampExpandedSize, isCollapsed, persistExpandedSize],
+    [appWindow, clampExpandedSize, ensureWindowLogicalSize, isCollapsed, persistExpandedSize],
   );
 
   const handleOverlayMouseDown = useCallback(
@@ -275,17 +531,44 @@ export default function AppV2() {
       const target = event.target as HTMLElement | null;
       if (!target) return;
       if (target.closest(NON_DRAG_SELECTOR)) return;
+      const now = Date.now();
+      dragGuardUntilRef.current = now + 900;
+      isDraggingWindowRef.current = true;
       void appWindow.startDragging().catch((err) => {
+        isDraggingWindowRef.current = false;
         console.error('[AppV2] startDragging failed:', err);
       });
     },
     [appWindow],
   );
 
+  const handleOverlayMouseOutCapture = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (isCollapsed) return;
+      if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
+      if (event.relatedTarget) return;
+      void applyCollapsedState(true);
+    },
+    [applyCollapsedState, isCollapsed],
+  );
+
+  useEffect(() => {
+    const releaseDragging = () => {
+      isDraggingWindowRef.current = false;
+    };
+    window.addEventListener('mouseup', releaseDragging);
+    window.addEventListener('blur', releaseDragging);
+    return () => {
+      window.removeEventListener('mouseup', releaseDragging);
+      window.removeEventListener('blur', releaseDragging);
+    };
+  }, []);
+
   const panelTitle = useMemo(() => {
-    if (showSettings) return '系统设置（V2 空壳）';
-    return `${TAB_LABELS[activeTab]}（V2 空壳）`;
+    if (showSettings) return '系统设置';
+    return TAB_LABELS[activeTab];
   }, [activeTab, showSettings]);
+  const islandStatusText = islandPinnedName ? `当前识别: ${islandPinnedName}` : ISLAND_BASE_TEXT;
   const historyEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'history';
   const monsterEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'monster';
   const cardEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'card';
@@ -361,25 +644,54 @@ export default function AppV2() {
   const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
-  const updateIslandStatus = useCallback((message: string, type: IslandStatusType = 'info') => {
-    setIslandStatusText(message);
-    setIslandStatusType(type);
-    if (islandStatusTimerRef.current) {
-      window.clearTimeout(islandStatusTimerRef.current);
-    }
-    islandStatusTimerRef.current = window.setTimeout(() => {
-      setIslandStatusText('集市小抄 V2 运行中');
-      setIslandStatusType('info');
-      islandStatusTimerRef.current = null;
-    }, 6000);
-  }, []);
-  useEffect(() => {
-    return () => {
-      if (islandStatusTimerRef.current) {
-        window.clearTimeout(islandStatusTimerRef.current);
+  const updateIslandStatus = useCallback(
+    (message: string, type: IslandStatusType = 'info') => {
+      const text = (message || '').trim();
+      if (!text) return;
+
+      // Keep island text stable; YOLO scanning only updates the status dot.
+      if (text.startsWith('YOLO(自动):')) {
+        if (enableYoloAuto) {
+          setIslandStatusType('success');
+        }
+        return;
       }
-    };
-  }, []);
+      if (text.startsWith('YOLO(手动):')) {
+        if (text.includes('正在扫描')) {
+          setIslandStatusType('warning');
+        } else if (text.includes('扫描完成')) {
+          setIslandStatusType(text.includes('共 0') ? 'warning' : 'success');
+        }
+        return;
+      }
+
+      if (text.startsWith('卡牌详情:')) {
+        const raw = text.replace(/^卡牌详情:\s*/, '');
+        const name = raw.split('(')[0]?.trim() || '未知卡牌';
+        setIslandPinnedName(name);
+        setIslandStatusType('success');
+        return;
+      }
+
+      if (text.includes('详情识别失败')) {
+        setIslandStatusType('error');
+        return;
+      }
+      if (text.includes('未识别到详情目标')) {
+        setIslandStatusType(enableYoloAuto ? 'success' : 'info');
+        return;
+      }
+
+      setIslandStatusType(type);
+    },
+    [enableYoloAuto],
+  );
+
+  useEffect(() => {
+    if (!islandPinnedName) {
+      setIslandStatusType(enableYoloAuto ? 'success' : 'info');
+    }
+  }, [enableYoloAuto, islandPinnedName]);
   const { processSyncPayload } = useSyncDataPipeline({ setSyncData });
   const { pinnedItems, expandedItems, setExpandedItems, togglePin, toggleExpand, getSortedItems } =
     useItemCardState();
@@ -714,7 +1026,7 @@ export default function AppV2() {
       if (!message) return;
       const type = event.payload?.type ?? 'info';
       updateIslandStatus(message, type);
-      if (!isCollapsed) {
+      if (!isCollapsed && !message.startsWith('YOLO(') && !message.includes('正在识别详情')) {
         showToast(message, type as Toast['type']);
       }
     });
@@ -723,6 +1035,33 @@ export default function AppV2() {
       void unlistenPromise.then((fn) => fn()).catch(() => {});
     };
   }, [isCollapsed, showVersionScreen, showToast, updateIslandStatus]);
+
+  useEffect(() => {
+    if (showVersionScreen) return;
+    let mounted = true;
+    const unlistenPromise = listen<{ visible?: boolean; name?: string }>(
+      'detail-popup-visibility',
+      (event) => {
+        if (!mounted) return;
+        const visible = event.payload?.visible === true;
+        if (visible) {
+          const name = (event.payload?.name || '').trim();
+          if (name) {
+            setIslandPinnedName(name);
+            setIslandStatusType('success');
+          }
+          return;
+        }
+        setIslandPinnedName(null);
+        setIslandStatusType(enableYoloAuto ? 'success' : 'info');
+      },
+    );
+
+    return () => {
+      mounted = false;
+      void unlistenPromise.then((fn) => fn()).catch(() => {});
+    };
+  }, [enableYoloAuto, showVersionScreen]);
 
   useEffect(() => {
     if (showVersionScreen) return;
@@ -753,7 +1092,7 @@ export default function AppV2() {
       <VersionGateScreen
         fontSize={16}
         announcement={STARTUP_NOTICE}
-        currentVersion="2.0.0-v2-skeleton"
+        currentVersion={currentVersion}
         updateStatus="none"
         downloadProgress={0}
         onStartUpdateDownload={() => {}}
@@ -775,8 +1114,10 @@ export default function AppV2() {
         } as CSSProperties
       }
       onMouseDownCapture={handleOverlayMouseDown}
+      onMouseOutCapture={handleOverlayMouseOutCapture}
       onMouseLeave={() => {
         if (!isCollapsed) {
+          if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
           void applyCollapsedState(true);
         }
       }}
@@ -786,6 +1127,9 @@ export default function AppV2() {
         data-tauri-drag-region
         onMouseEnter={() => {
           if (isCollapsed) {
+            if (Date.now() - lastCollapsedAtRef.current < 220) {
+              return;
+            }
             void applyCollapsedState(false);
           }
         }}

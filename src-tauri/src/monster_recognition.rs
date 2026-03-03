@@ -1420,8 +1420,10 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
                  i + 1, best_name, max_matches, best_score * 100.0, start_slot.elapsed());
 
         // 保存调试图像
-        let slot_scene_path = format!("target/debug/monster_debug/slot_{}_scene_opencv.png", i + 1);
-        let _ = slice.save(&slot_scene_path);
+        if crate::load_state().debug_mode {
+            let slot_scene_path = format!("target/debug/monster_debug/slot_{}_scene_opencv.png", i + 1);
+            let _ = slice.save(&slot_scene_path);
+        }
 
         // 阈值判定：匹配数 >= 10 或 置信度 > 0.15
         if max_matches >= 10 || best_score > 0.15 {
@@ -1443,17 +1445,48 @@ pub fn recognize_monsters(day_filter: Option<String>) -> Result<Vec<MonsterRecog
 // --- Card Recognition ---
 
 pub fn save_debug_image(img: &DynamicImage, name: &str) {
-    // 自动保存到缓存目录下的 debug 文件夹
-    let cache_dir = std::env::var("APPDATA")
-        .map(|v| PathBuf::from(v).join("BazaarHelper"))
-        .unwrap_or_else(|_| PathBuf::from("target/debug"));
-        
-    let debug_dir = cache_dir.join("debug_images");
-    let _ = std::fs::create_dir_all(&debug_dir);
-    
-    let file_path = debug_dir.join(format!("{}_{}.png", chrono::Local::now().format("%H%M%S"), name));
-    let _ = img.save(&file_path);
-    println!("[DebugImage] 已保存截图至: {:?}", file_path);
+    // Debug image persistence is disabled in normal mode to avoid disk growth.
+    if !crate::load_state().debug_mode {
+        return;
+    }
+
+    let debug_dir = crate::user_data::app_data_root().join("debug_images");
+    if std::fs::create_dir_all(&debug_dir).is_err() {
+        return;
+    }
+
+    let file_path = debug_dir.join(format!(
+        "{}_{}.png",
+        chrono::Local::now().format("%Y%m%d_%H%M%S%.3f"),
+        name
+    ));
+    if img.save(&file_path).is_ok() {
+        println!("[DebugImage] 已保存截图至: {:?}", file_path);
+    }
+
+    // Keep only a bounded number of debug images.
+    const MAX_DEBUG_IMAGES: usize = 200;
+    if let Ok(entries) = std::fs::read_dir(&debug_dir) {
+        let mut files: Vec<_> = entries
+            .filter_map(Result::ok)
+            .filter_map(|e| {
+                let path = e.path();
+                let meta = e.metadata().ok()?;
+                if !meta.is_file() {
+                    return None;
+                }
+                let modified = meta.modified().ok()?;
+                Some((path, modified))
+            })
+            .collect();
+        if files.len() > MAX_DEBUG_IMAGES {
+            files.sort_by_key(|(_, mtime)| *mtime);
+            let remove_count = files.len().saturating_sub(MAX_DEBUG_IMAGES);
+            for (path, _) in files.into_iter().take(remove_count) {
+                let _ = std::fs::remove_file(path);
+            }
+        }
+    }
 }
 
 pub async fn preload_card_templates_async(resources_dir: PathBuf, cache_dir: PathBuf) -> Result<(), String> {

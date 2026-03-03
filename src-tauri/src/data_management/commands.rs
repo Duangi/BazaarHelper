@@ -584,6 +584,95 @@ pub fn get_search_thumbnail_paths(
     Ok(result)
 }
 
+#[derive(Debug, serde::Serialize)]
+pub struct ImageCacheCleanupReport {
+    pub removed_dirs: usize,
+    pub removed_files: usize,
+    pub removed_bytes: u64,
+    pub scanned_targets: Vec<String>,
+}
+
+fn collect_dir_file_stats(path: &std::path::Path) -> (usize, u64) {
+    let mut files = 0_usize;
+    let mut bytes = 0_u64;
+    if !path.exists() {
+        return (0, 0);
+    }
+    let mut stack = vec![path.to_path_buf()];
+    while let Some(dir) = stack.pop() {
+        if let Ok(entries) = std::fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let p = entry.path();
+                if let Ok(meta) = entry.metadata() {
+                    if meta.is_dir() {
+                        stack.push(p);
+                    } else if meta.is_file() {
+                        files += 1;
+                        bytes = bytes.saturating_add(meta.len());
+                    }
+                }
+            }
+        }
+    }
+    (files, bytes)
+}
+
+#[tauri::command]
+pub fn clear_generated_image_caches(app: tauri::AppHandle) -> Result<ImageCacheCleanupReport, String> {
+    let mut targets: Vec<PathBuf> = Vec::new();
+
+    if let Ok(dir) = app.path().app_cache_dir() {
+        targets.push(dir.join("search_thumbs"));
+    }
+    if let Ok(dir) = app.path().app_local_data_dir() {
+        targets.push(dir.join("search_thumbs"));
+    }
+
+    targets.push(crate::user_data::app_data_root().join("debug_images"));
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(appdata) = std::env::var("APPDATA") {
+            targets.push(PathBuf::from(appdata).join("BazaarHelper").join("debug_images"));
+        }
+    }
+    #[cfg(debug_assertions)]
+    {
+        targets.push(PathBuf::from("target").join("debug").join("monster_debug"));
+    }
+
+    let mut unique: Vec<PathBuf> = Vec::new();
+    for t in targets {
+        if !unique.iter().any(|x| x == &t) {
+            unique.push(t);
+        }
+    }
+
+    let mut removed_dirs = 0_usize;
+    let mut removed_files = 0_usize;
+    let mut removed_bytes = 0_u64;
+    let mut scanned_targets = Vec::new();
+
+    for dir in unique {
+        scanned_targets.push(dir.to_string_lossy().to_string());
+        if !dir.exists() {
+            continue;
+        }
+        let (files, bytes) = collect_dir_file_stats(&dir);
+        if std::fs::remove_dir_all(&dir).is_ok() {
+            removed_dirs += 1;
+            removed_files += files;
+            removed_bytes = removed_bytes.saturating_add(bytes);
+        }
+    }
+
+    Ok(ImageCacheCleanupReport {
+        removed_dirs,
+        removed_files,
+        removed_bytes,
+        scanned_targets,
+    })
+}
+
 #[tauri::command]
 pub async fn get_sync_state(state: State<'_, DbState>) -> Result<SyncPayload, String> {
     let p_state = crate::load_state();

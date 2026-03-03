@@ -287,6 +287,38 @@ function AppSettingsPanelImpl(props: AppSettingsPanelProps) {
 
             <div className="setting-item">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>图片缓存清理</label>
+                <button
+                  className="bulk-btn"
+                  style={{ padding: '4px 12px' }}
+                  onClick={async () => {
+                    try {
+                      const report = await invoke<{
+                        removed_dirs: number;
+                        removed_files: number;
+                        removed_bytes: number;
+                      }>('clear_generated_image_caches');
+                      const mb = report.removed_bytes / (1024 * 1024);
+                      showToast(
+                        `已清理 ${report.removed_files} 个文件（${mb.toFixed(2)} MB）`,
+                        'success',
+                      );
+                    } catch (e) {
+                      console.error('Failed to clear generated image caches:', e);
+                      showToast('清理失败，请查看日志', 'error');
+                    }
+                  }}
+                >
+                  清理缓存图片
+                </button>
+              </div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                清理搜索缩略图与调试截图缓存文件，避免长期堆积占用存储。
+              </div>
+            </div>
+
+            <div className="setting-item">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label>YOLO手动触发快捷键</label>
                 <button className="bulk-btn" style={{ padding: '2px 8px' }} onClick={(e) => { e.preventDefault(); setIsRecordingYoloHotkey(true); }}>
                   {isRecordingYoloHotkey ? '请按键...' : (yoloHotkey ? getHotkeyLabel(yoloHotkey) : '未设置')}

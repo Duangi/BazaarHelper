@@ -5282,7 +5282,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-app"
-version = "0.1.0"
+version = "1.6.0"
 dependencies = [
  "anyhow",
  "bincode",

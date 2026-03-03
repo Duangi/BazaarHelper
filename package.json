@@ -1,13 +1,15 @@
 {
     "name":  "tauri-app",
     "private":  true,
-    "version":  "1.5.4",
+    "version":  "1.6.0",
     "type":  "module",
     "scripts":  {
                     "dev":  "vite",
                     "build":  "tsc \u0026\u0026 vite build",
                     "preview":  "vite preview",
-                    "tauri":  "tauri"
+                    "tauri":  "tauri",
+                    "install:macos:app": "bash ./scripts/install_macos_app.sh",
+                    "build:install:macos": "bash ./scripts/build_and_install_macos.sh"
                 },
     "dependencies":  {
                          "@tauri-apps/api":  "^2",
