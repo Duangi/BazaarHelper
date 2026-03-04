@@ -502,13 +502,15 @@ pub fn debug_resource_paths(app: tauri::AppHandle) -> Result<serde_json::Value, 
 #[tauri::command]
 pub fn get_current_day(hours_per_day: Option<u32>, retro: Option<bool>) -> Result<u32, String> {
     let cached = crate::load_state();
-    if cached.day > 0 {
-        return Ok(cached.day);
-    }
+    let history_day = crate::user_data::infer_current_day_from_history()
+        .ok()
+        .flatten()
+        .unwrap_or(0);
 
     let _hours = hours_per_day.unwrap_or(6);
     let retro = retro.unwrap_or(false);
     let log_path = crate::data_management::log_paths::get_log_path();
+    let mut log_day = 0u32;
 
     if log_path.exists() {
         let mut file = File::open(&log_path).map_err(|e| e.to_string())?;
@@ -522,11 +524,18 @@ pub fn get_current_day(hours_per_day: Option<u32>, retro: Option<bool>) -> Resul
 
         let content = String::from_utf8_lossy(&buffer);
         if let Some(day) = crate::data_management::day_calc::calculate_day_from_log(&content, retro) {
-            return Ok(day);
+            log_day = day.max(0);
         }
     }
 
-    Ok(1)
+    let resolved = log_day.max(history_day).max(cached.day).max(1);
+    if resolved != cached.day {
+        let mut state = cached.clone();
+        state.day = resolved;
+        crate::save_state(&state);
+    }
+
+    Ok(resolved)
 }
 
 #[tauri::command]
@@ -1574,6 +1583,47 @@ fn history_screenshot_root_dir() -> PathBuf {
         .join("battle_screenshots")
 }
 
+fn history_time_token(raw: &str) -> String {
+    let digits: String = raw.chars().filter(|c| c.is_ascii_digit()).collect();
+    if digits.is_empty() {
+        "000000000".to_string()
+    } else {
+        digits
+    }
+}
+
+fn canonical_screenshot_path_for_battle(record: &HistoryMatchRecord, battle_day: u32) -> PathBuf {
+    let root = history_screenshot_root_dir();
+    let match_id = if record.match_id.trim().is_empty() {
+        build_history_match_id(record.start_time.trim())
+    } else {
+        record.match_id.trim().to_string()
+    };
+    let start_token = history_time_token(&record.start_time);
+    root.join(format!("start{}_{}", start_token, match_id))
+        .join(format!("pvp_day{:02}.png", battle_day.max(1)))
+}
+
+fn remap_battle_screenshots_strict(root: &mut HistoryRoot) {
+    for record in &mut root.matches {
+        let match_id = if record.match_id.trim().is_empty() {
+            build_history_match_id(record.start_time.trim())
+        } else {
+            record.match_id.trim().to_string()
+        };
+        let start_token = history_time_token(&record.start_time);
+        let match_folder = history_screenshot_root_dir().join(format!("start{}_{}", start_token, match_id));
+        for battle in &mut record.pvp_battles {
+            let canonical = match_folder.join(format!("pvp_day{:02}.png", battle.day.max(1)));
+            if canonical.exists() {
+                battle.screenshot = Some(canonical.to_string_lossy().to_string());
+            } else {
+                battle.screenshot = None;
+            }
+        }
+    }
+}
+
 fn parse_log_hms_seconds(raw: &str) -> Option<i32> {
     let time_part = raw
         .split_whitespace()
@@ -1620,6 +1670,18 @@ fn parse_capture_hms_seconds(path: &std::path::Path) -> Option<i32> {
 }
 
 fn parse_capture_day(path: &std::path::Path) -> Option<u32> {
+    for component in path.components() {
+        let token = component.as_os_str().to_string_lossy();
+        if let Some(day_token) = token.strip_prefix("day") {
+            let day_digits: String = day_token.chars().take_while(|c| c.is_ascii_digit()).collect();
+            if let Ok(day) = day_digits.parse::<u32>() {
+                if day > 0 {
+                    return Some(day);
+                }
+            }
+        }
+    }
+
     let stem = path.file_stem()?.to_string_lossy();
     for token in stem.split('_') {
         if let Some(day_token) = token.strip_prefix("day") {
@@ -1641,7 +1703,39 @@ fn collect_screenshot_candidates_by_date() -> HashMap<String, Vec<PathBuf>> {
         return map;
     }
 
+    fn collect_recursive(dir: &std::path::Path, out: &mut Vec<PathBuf>) {
+        let Ok(entries) = std::fs::read_dir(dir) else {
+            return;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_recursive(&path, out);
+                continue;
+            }
+            let is_image = path
+                .extension()
+                .and_then(|ext| ext.to_str())
+                .map(|ext| {
+                    ext.eq_ignore_ascii_case("png")
+                        || ext.eq_ignore_ascii_case("jpg")
+                        || ext.eq_ignore_ascii_case("jpeg")
+                })
+                .unwrap_or(false);
+            if is_image {
+                out.push(path);
+            }
+        }
+    }
+
+    let mut all_images: Vec<PathBuf> = Vec::new();
+    collect_recursive(&root, &mut all_images);
+    all_images.sort();
+
     let Ok(date_dirs) = std::fs::read_dir(root) else {
+        if !all_images.is_empty() {
+            map.insert("*".to_string(), all_images);
+        }
         return map;
     };
 
@@ -1674,6 +1768,11 @@ fn collect_screenshot_candidates_by_date() -> HashMap<String, Vec<PathBuf>> {
         }
     }
 
+    if !all_images.is_empty() {
+        map.entry("*".to_string())
+            .or_insert_with(|| all_images);
+    }
+
     map
 }
 
@@ -1687,6 +1786,7 @@ fn backfill_missing_battle_screenshots(root: &mut HistoryRoot) {
         .flat_map(|paths| paths.iter().cloned())
         .collect();
     all_candidates.sort();
+    all_candidates.dedup();
 
     // first pass: reserve already-assigned screenshots
     for record in &root.matches {
@@ -2457,6 +2557,10 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
             }
         }
 
+        if force && !record.is_finished {
+            continue;
+        }
+
         if let Some(date) = normalize_optional_text(&record.game_date) {
             if !record.start_time.trim().is_empty() {
                 first_seen_date_by_start
@@ -2548,7 +2652,7 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
         matches: merged.into_values().collect(),
     });
 
-    backfill_missing_battle_screenshots(&mut normalized);
+    remap_battle_screenshots_strict(&mut normalized);
 
     let value = serde_json::to_value(&normalized).map_err(|e| e.to_string())?;
     crate::user_data::save_match_history(&value)?;
@@ -2743,9 +2847,11 @@ pub async fn capture_battle_screenshot_manual(
     let battle_day = req.battle_day;
     let victory = req.victory;
     let duration = req.duration;
+    let match_start_for_capture = match_start_time.clone();
 
     let captured = tauri::async_runtime::spawn_blocking(move || {
         crate::data_management::log_monitor::capture_bazaar_round_screenshot(
+            &match_start_for_capture,
             battle_day,
             &battle_start_time,
             false,

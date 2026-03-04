@@ -85,7 +85,6 @@ interface MainContentSectionProps {
   loadMatchHistory: () => Promise<void>;
   selectedDay: string;
   setSelectedDay: React.Dispatch<React.SetStateAction<string>>;
-  handleDayChange: (day: number) => Promise<void>;
   isRecognizing: boolean;
   handleAutoRecognition: (day: number | null) => Promise<void>;
   showToast: (message: string, type?: Toast['type']) => void;
@@ -181,7 +180,6 @@ function MainContentSectionImpl(props: MainContentSectionProps) {
     loadMatchHistory,
     selectedDay,
     setSelectedDay,
-    handleDayChange,
     isRecognizing,
     handleAutoRecognition,
     showToast,
@@ -385,7 +383,6 @@ function MainContentSectionImpl(props: MainContentSectionProps) {
                 <MonsterTabViewLazy
                   selectedDay={selectedDay}
                   setSelectedDay={setSelectedDay}
-                  handleDayChange={handleDayChange}
                   isRecognizing={isRecognizing}
                   handleAutoRecognition={handleAutoRecognition}
                   showToast={showToast}

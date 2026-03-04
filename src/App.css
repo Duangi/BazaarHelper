@@ -1799,7 +1799,7 @@ html, body, #root {
 .update-screen {
   width: 100vw;
   height: 100vh;
-  background: #2b2621 !important;
+  background: transparent !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -1888,10 +1888,10 @@ html, body, #root {
   border: 1px solid rgba(255, 205, 25, 0.25);
   border-radius: 12px;
   padding: 28px;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   text-align: left;
   overflow-y: auto;
-  min-height: 300px;
+  min-height: 120px;
 }
 
 .bulletin-text {

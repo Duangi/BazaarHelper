@@ -89,8 +89,8 @@ const DEFAULT_EXPANDED_WIDTH = MAC_SCREEN_PROFILE.expanded.defaultWidth;
 const DEFAULT_EXPANDED_HEIGHT = MAC_SCREEN_PROFILE.expanded.defaultHeight;
 const STARTUP_WIDTH = MAC_SCREEN_PROFILE.startup.width;
 const STARTUP_HEIGHT = MAC_SCREEN_PROFILE.startup.height;
-const EDGE_COLLAPSE_TOLERANCE_PX = 22;
-const EDGE_COLLAPSE_DELAY_MS = 260;
+const EDGE_COLLAPSE_DELAY_MS = 240;
+const AUTO_COLLAPSE_TOP_EDGE_THRESHOLD = 18;
 const NON_DRAG_SELECTOR = 'button, input, textarea, select, a, [data-no-drag], .no-drag';
 const ISLAND_BASE_TEXT = '集市小抄运行中';
 const IS_WINDOWS = typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent || '');
@@ -132,7 +132,7 @@ export default function AppV2() {
   const [showProfile, setShowProfile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selectedDay, setSelectedDay] = useState('Day 1');
-  const [currentDay, setCurrentDay] = useState<number | null>(1);
+  const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [allMonsters, setAllMonsters] = useState<Record<string, MonsterData>>({});
   const [syncData, setSyncData] = useState<SyncPayload & { monster: any[] }>({
     hand_items: [],
@@ -197,6 +197,14 @@ export default function AppV2() {
   );
   const [islandPinnedName, setIslandPinnedName] = useState<string | null>(null);
   const [islandRuntimeText, setIslandRuntimeText] = useState<string>(ISLAND_BASE_TEXT);
+  const readStoredStartupSize = () => {
+    const width = Number(localStorage.getItem('startup-window-width')) || STARTUP_WIDTH;
+    const height = Number(localStorage.getItem('startup-window-height')) || STARTUP_HEIGHT;
+    return {
+      width: Math.max(360, Math.round(width)),
+      height: Math.max(420, Math.round(height)),
+    };
+  };
   const readStoredExpandedSize = () => {
     const width = Number(localStorage.getItem('window-expanded-width')) || DEFAULT_EXPANDED_WIDTH;
     const height = Number(localStorage.getItem('window-expanded-height')) || DEFAULT_EXPANDED_HEIGHT;
@@ -316,23 +324,14 @@ export default function AppV2() {
   const centerStartupWindow = useCallback(async () => {
     try {
       await disableWindowShadow();
-      const geometry = await invoke<{
-        width?: number | null;
-        height?: number | null;
-      }>('get_window_geometry', { windowLabel: 'main' }).catch(() => null);
       const monitor = await currentMonitor().catch(() => null);
+      const startupSize = readStoredStartupSize();
       if (monitor) {
         const scale = Math.max(1, monitor.scaleFactor || 1);
         const defaultWidth = Math.max(1, Math.round(STARTUP_WIDTH * scale));
         const defaultHeight = Math.max(1, Math.round(STARTUP_HEIGHT * scale));
-        const requestedWidth =
-          typeof geometry?.width === 'number' && geometry.width > 120
-            ? Math.round(geometry.width)
-            : defaultWidth;
-        const requestedHeight =
-          typeof geometry?.height === 'number' && geometry.height > 120
-            ? Math.round(geometry.height)
-            : defaultHeight;
+        const requestedWidth = Math.max(defaultWidth, Math.round(startupSize.width * scale));
+        const requestedHeight = Math.max(defaultHeight, Math.round(startupSize.height * scale));
         const targetWidth = Math.max(360, Math.min(monitor.size.width, requestedWidth));
         const targetHeight = Math.max(420, Math.min(monitor.size.height, requestedHeight));
         const targetX = monitor.position.x + Math.round((monitor.size.width - targetWidth) / 2);
@@ -342,7 +341,7 @@ export default function AppV2() {
         await appWindow.setSize(new PhysicalSize(targetWidth, targetHeight));
         await appWindow.setPosition(new PhysicalPosition(targetX, targetY));
       } else {
-        await appWindow.setSize(new LogicalSize(STARTUP_WIDTH, STARTUP_HEIGHT));
+        await appWindow.setSize(new LogicalSize(startupSize.width, startupSize.height));
         await appWindow.center();
       }
       await appWindow.show();
@@ -525,6 +524,11 @@ export default function AppV2() {
                 appWindow.innerSize(),
                 appWindow.scaleFactor().catch(() => 1),
               ]);
+              if (showVersionScreenRef.current) {
+                localStorage.setItem('startup-window-width', String(Math.round(inner.width / Math.max(1, scale))));
+                localStorage.setItem('startup-window-height', String(Math.round(inner.height / Math.max(1, scale))));
+                return;
+              }
               if (inner.width <= COLLAPSED_WIDTH + 30 || inner.height <= COLLAPSED_HEIGHT + 30) {
                 return;
               }
@@ -627,7 +631,7 @@ export default function AppV2() {
   }, []);
 
   const scheduleEdgeCollapseCheck = useCallback(
-    (screenX: number, screenY: number) => {
+    () => {
       if (collapseLeaveTimerRef.current) {
         window.clearTimeout(collapseLeaveTimerRef.current);
       }
@@ -636,32 +640,15 @@ export default function AppV2() {
           if (isCollapsed) return;
           if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
           if (shouldBlockAutoCollapse()) return;
-
-          const [position, size] = await Promise.all([
+          const [position, monitor] = await Promise.all([
             appWindow.outerPosition().catch(() => null),
-            appWindow.outerSize().catch(() => null),
+            currentMonitor().catch(() => null),
           ]);
-
-          if (!position || !size) {
-            await applyCollapsedState(true);
-            return;
-          }
-
-          const left = position.x - EDGE_COLLAPSE_TOLERANCE_PX;
-          const top = position.y - EDGE_COLLAPSE_TOLERANCE_PX;
-          const right = position.x + Number(size.width) + EDGE_COLLAPSE_TOLERANCE_PX;
-          const bottom = position.y + Number(size.height) + EDGE_COLLAPSE_TOLERANCE_PX;
-          const withinTolerance =
-            Number.isFinite(screenX)
-            && Number.isFinite(screenY)
-            && screenX >= left
-            && screenX <= right
-            && screenY >= top
-            && screenY <= bottom;
-
-          if (!withinTolerance) {
-            await applyCollapsedState(true);
-          }
+          if (!position || !monitor) return;
+          const monitorTop = Number(monitor.position.y);
+          const dockedToTop = position.y <= monitorTop + AUTO_COLLAPSE_TOP_EDGE_THRESHOLD;
+          if (!dockedToTop) return;
+          await applyCollapsedState(true);
         })();
       }, EDGE_COLLAPSE_DELAY_MS);
     },
@@ -691,7 +678,7 @@ export default function AppV2() {
       if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
       if (event.relatedTarget) return;
 
-      scheduleEdgeCollapseCheck(event.screenX, event.screenY);
+      scheduleEdgeCollapseCheck();
     },
     [isCollapsed, scheduleEdgeCollapseCheck],
   );
@@ -734,7 +721,6 @@ export default function AppV2() {
     expandedMonsters,
     isRecognizing,
     toggleMonsterExpand,
-    handleDayChange,
     handleAutoRecognition,
   } = useMonsterTabLogic({
     enabled: !showVersionScreen && !isCollapsed,
@@ -851,19 +837,75 @@ export default function AppV2() {
   useEffect(() => {
     if (showVersionScreen) return;
     let mounted = true;
-    const unlistenPromise = listen<number>('day-update', (event) => {
-      if (!mounted || islandPinnedName) return;
-      const day = Number(event.payload);
-      if (Number.isFinite(day) && day > 0) {
-        setIslandRuntimeText(`当前 Day ${day}`);
+
+    const applyResolvedDay = (value: number) => {
+      const resolved = Math.max(1, Number(value) || 1);
+      setCurrentDay(resolved);
+      setSelectedDay(resolved >= 10 ? 'Day 10+' : `Day ${resolved}`);
+    };
+
+    const fetchOngoingHistoryDay = async (): Promise<number> => {
+      try {
+        const payload = await invoke<{ matches?: Array<{ is_finished?: boolean; days?: number; pvp_battles?: Array<{ day?: number }> }> }>('get_match_history');
+        const matches = Array.isArray(payload?.matches) ? payload.matches : [];
+        let inferred = 0;
+        for (const m of matches) {
+          if (m?.is_finished) continue;
+          const days = Math.max(1, Number(m?.days || 0));
+          const maxBattleDay = Array.isArray(m?.pvp_battles)
+            ? m.pvp_battles.reduce((max, b) => Math.max(max, Number(b?.day || 0)), 0)
+            : 0;
+          inferred = Math.max(inferred, days, maxBattleDay + 1);
+        }
+        return inferred;
+      } catch {
+        return 0;
       }
+    };
+
+    void invoke<number>('get_current_day', { hours_per_day: 6, retro: true })
+      .then((d) => {
+        if (!mounted) return;
+        const incoming = Math.max(1, Number(d) || 1);
+        setCurrentDay((prev) => {
+          if (typeof prev === 'number' && Number.isFinite(prev) && prev > 0) {
+            return prev;
+          }
+          setSelectedDay(incoming >= 10 ? 'Day 10+' : `Day ${incoming}`);
+          return incoming;
+        });
+      })
+      .catch((error) => {
+        console.warn('[AppV2] get_current_day bootstrap failed:', error);
+      });
+
+    const unlistenPromise = listen<number>('day-update', (event) => {
+      if (!mounted) return;
+      const incoming = Math.max(1, Number(event.payload) || 1);
+      applyResolvedDay(incoming);
+
+      void (async () => {
+        if (!mounted) return;
+        const historyDay = await fetchOngoingHistoryDay();
+        const authoritative = Math.max(incoming, historyDay);
+        if (authoritative > incoming) {
+          applyResolvedDay(authoritative);
+        }
+      })();
     });
 
     return () => {
       mounted = false;
       void unlistenPromise.then((fn) => fn()).catch(() => {});
     };
-  }, [islandPinnedName, showVersionScreen]);
+  }, [showVersionScreen]);
+
+  useEffect(() => {
+    if (showVersionScreen || islandPinnedName) return;
+    if (typeof currentDay === 'number' && Number.isFinite(currentDay) && currentDay > 0) {
+      setIslandRuntimeText(`当前 Day ${currentDay}`);
+    }
+  }, [currentDay, islandPinnedName, showVersionScreen]);
   const { processSyncPayload } = useSyncDataPipeline({ setSyncData });
   const { pinnedItems, expandedItems, setExpandedItems, togglePin, toggleExpand, getSortedItems } =
     useItemCardState();
@@ -1192,6 +1234,20 @@ export default function AppV2() {
   useEffect(() => {
     if (showVersionScreen) return;
     let mounted = true;
+    const unlistenPromise = listen<void>('hotkey-collapse', () => {
+      if (!mounted) return;
+      void applyCollapsedState(!isCollapsed);
+    });
+
+    return () => {
+      mounted = false;
+      void unlistenPromise.then((fn) => fn()).catch(() => {});
+    };
+  }, [applyCollapsedState, isCollapsed, showVersionScreen]);
+
+  useEffect(() => {
+    if (showVersionScreen) return;
+    let mounted = true;
     const unlistenPromise = listen<{ message?: string; type?: IslandStatusType }>('island-status', (event) => {
       if (!mounted) return;
       const message = event.payload?.message;
@@ -1292,11 +1348,11 @@ export default function AppV2() {
           window.clearTimeout(collapseLeaveTimerRef.current);
         }
       }}
-      onMouseLeave={(event) => {
+      onMouseLeave={() => {
         if (!isCollapsed) {
           if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
 
-          scheduleEdgeCollapseCheck(event.screenX, event.screenY);
+          scheduleEdgeCollapseCheck();
         }
       }}
     >
@@ -1443,9 +1499,6 @@ export default function AppV2() {
                   <MonsterTabViewLazy
                     selectedDay={selectedDay}
                     setSelectedDay={setSelectedDay}
-                    handleDayChange={(day) => {
-                      void handleDayChange(day);
-                    }}
                     isRecognizing={isRecognizing}
                     handleAutoRecognition={handleAutoRecognition}
                     showToast={showToast}

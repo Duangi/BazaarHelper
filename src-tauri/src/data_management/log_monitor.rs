@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::fs::File;
 use std::hash::{DefaultHasher, Hash, Hasher};
-use std::io::{BufRead, BufReader, Seek, SeekFrom};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 
@@ -125,7 +125,35 @@ fn sanitize_log_time_token(raw: &str) -> String {
     }
 }
 
+fn infer_day_from_log_tail(path: &PathBuf, retro: bool) -> Option<u32> {
+    if !path.exists() {
+        return None;
+    }
+    let mut file = File::open(path).ok()?;
+    let metadata = file.metadata().ok()?;
+    let file_size = metadata.len();
+    let read_size = file_size.min(5_000_000) as usize;
+    let mut buffer = vec![0u8; read_size];
+    file.seek(SeekFrom::End(-(read_size as i64))).ok()?;
+    file.read_exact(&mut buffer).ok()?;
+    let content = String::from_utf8_lossy(&buffer);
+    crate::data_management::day_calc::calculate_day_from_log(&content, retro)
+}
+
+fn build_match_id_from_start_time(start_time: &str) -> String {
+    let mut hasher = DefaultHasher::new();
+    start_time.hash(&mut hasher);
+    format!("{:016x}", hasher.finish())
+}
+
+fn build_match_folder_name(match_start_time: &str) -> String {
+    let start_token = sanitize_log_time_token(match_start_time.trim());
+    let match_id = build_match_id_from_start_time(match_start_time.trim());
+    format!("start{}_{}", start_token, match_id)
+}
+
 pub fn capture_bazaar_round_screenshot(
+    match_start_time: &str,
     battle_day: u32,
     battle_start_time: &str,
     allow_monitor_fallback: bool,
@@ -197,17 +225,12 @@ pub fn capture_bazaar_round_screenshot(
             .join("battle_screenshots")
     };
 
-    let screenshot_dir = screenshot_root.join(Local::now().format("%Y-%m-%d").to_string());
+    let match_folder = build_match_folder_name(match_start_time);
+    let screenshot_dir = screenshot_root.join(match_folder);
     std::fs::create_dir_all(&screenshot_dir).map_err(|e| e.to_string())?;
 
-    let start_token = sanitize_log_time_token(battle_start_time);
-    let file_name = format!(
-        "battle_{}_day{:02}_start{}_cap{}.png",
-        Local::now().format("%Y-%m-%d"),
-        battle_day,
-        start_token,
-        Local::now().format("%H%M%S_%3f")
-    );
+    let _start_token = sanitize_log_time_token(battle_start_time);
+    let file_name = format!("pvp_day{:02}.png", battle_day.max(1));
     let full_path = screenshot_dir.join(file_name);
     image::DynamicImage::ImageRgba8(image)
         .save(&full_path)
@@ -510,7 +533,17 @@ pub fn spawn_log_monitor(
         let mut current_stash = state_init.current_stash;
         let mut hand_slot_to_iid: BTreeMap<u32, String> = BTreeMap::new();
         let mut iid_to_hand_slot: HashMap<String, u32> = HashMap::new();
-        let mut current_day = state_init.day;
+        let inferred_day = infer_day_from_log_tail(&log_path, true)
+            .or_else(|| infer_day_from_log_tail(&prev_path, true))
+            .unwrap_or(0);
+        let history_day = crate::user_data::infer_current_day_from_history()
+            .ok()
+            .flatten()
+            .unwrap_or(0);
+        let mut current_day = inferred_day
+            .max(history_day)
+            .max(state_init.day)
+            .max(1);
 
         let mut in_pvp = false;
         let mut is_sync = false;
@@ -527,7 +560,7 @@ pub fn spawn_log_monitor(
             current_hand.clear();
             current_stash.clear();
 
-            let files_to_process = vec![prev_path, log_path.clone()];
+            let files_to_process = vec![prev_path.clone(), log_path.clone()];
             for path in files_to_process {
                 if !path.exists() {
                     continue;
@@ -605,6 +638,19 @@ pub fn spawn_log_monitor(
                     }
                 }
             }
+
+            let inferred_day_post = infer_day_from_log_tail(&log_path, true)
+                .or_else(|| infer_day_from_log_tail(&prev_path, true))
+                .unwrap_or(0);
+            let history_day_post = crate::user_data::infer_current_day_from_history()
+                .ok()
+                .flatten()
+                .unwrap_or(0);
+            current_day = current_day
+                .max(inferred_day_post)
+                .max(history_day_post)
+                .max(state_init.day)
+                .max(1);
 
             prune_inst_to_temp(&mut inst_to_temp, &current_hand, &current_stash);
             save_state(&PersistentState {
@@ -822,11 +868,15 @@ pub fn spawn_log_monitor(
                                         let battle_start_for_task = battle_start.clone();
                                         let capture_delay_ms = crate::load_state().screenshot_capture_delay_ms.min(3000);
                                         std::thread::spawn(move || {
+                                            let canonical_match_start = crate::user_data::resolve_active_match_start_time(&match_start_for_task)
+                                                .unwrap_or_else(|_| match_start_for_task.clone());
+
                                             if capture_delay_ms > 0 {
                                                 std::thread::sleep(std::time::Duration::from_millis(capture_delay_ms));
                                             }
 
                                             let screenshot_path = match capture_bazaar_round_screenshot(
+                                                &canonical_match_start,
                                                 battle_day,
                                                 &battle_start_for_task,
                                                 true,
@@ -851,7 +901,7 @@ pub fn spawn_log_monitor(
                                             let enemy_lineup_cards_raw: Option<String> = None;
 
                                             if let Err(e) = crate::user_data::upsert_match_battle_snapshot(
-                                                &match_start_for_task,
+                                                &canonical_match_start,
                                                 battle_day,
                                                 &battle_start_for_task,
                                                 battle_victory,
@@ -864,7 +914,7 @@ pub fn spawn_log_monitor(
                                             } else {
                                                 log::info!(
                                                     "[RoundCapture] DB upsert ok: match_start={}, battle_day={}, battle_start={}",
-                                                    match_start_for_task,
+                                                    canonical_match_start,
                                                     battle_day,
                                                     battle_start_for_task
                                                 );

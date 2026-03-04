@@ -310,14 +310,20 @@
 }
 
 .history-round-shot {
-  width: 56px;
-  height: 34px;
+  width: 196px;
+  height: 110px;
   border-radius: 6px;
   border: 1px solid rgba(212, 175, 55, 0.45);
   background: rgba(0, 0, 0, 0.35);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
+}
+
+.history-round-shot-row {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 10px 2px;
 }
 
 .history-round-actions {

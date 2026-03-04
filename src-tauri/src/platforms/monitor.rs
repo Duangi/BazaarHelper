@@ -554,7 +554,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             } else {
                 false
             };
-            if collapse_active && !last_collapse_active && allow_hotkey_actions && !helper_window_active {
+            if collapse_active && !last_collapse_active {
                 log::debug!("[Global Hotkey] Collapse/Expand Trigger pressed!");
                 let h = handle_monitor.clone();
                 tauri::async_runtime::spawn(async move {

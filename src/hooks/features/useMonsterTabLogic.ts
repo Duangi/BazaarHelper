@@ -263,18 +263,6 @@ export const useMonsterTabLogic = ({
           return next;
         });
 
-        if (validNames.length > 0) {
-          const firstMonsterName = validNames[0];
-          const monster = allMonsters[firstMonsterName];
-          if (monster && monster.available && selectedDay !== monster.available) {
-            const normalizedAvailable = normalizeDay(monster.available);
-            setSelectedDay(normalizedAvailable);
-            const match = normalizedAvailable.match(/Day\s+(\d+)/);
-            if (match && match[1]) {
-              setCurrentDay(parseInt(match[1]));
-            }
-          }
-        }
       }
     } catch (e) {
       console.error('自动识别失败:', e);

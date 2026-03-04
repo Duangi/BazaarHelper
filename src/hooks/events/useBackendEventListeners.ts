@@ -127,11 +127,6 @@ export const useBackendEventListeners = ({
 
       await safeListen<number | null>('trigger-monster-recognition', (dayNum) => {
         console.log('收到自动识别触发事件, Day:', dayNum);
-        if (dayNum) {
-          const dayLabel = dayNum >= 10 ? 'Day 10+' : `Day ${dayNum}`;
-          setSelectedDay(dayLabel);
-          setCurrentDay(dayNum);
-        }
         setTimeout(() => {
           if (isMounted) void handleAutoRecognitionRef.current(dayNum);
         }, 500);
@@ -165,13 +160,11 @@ export const useBackendEventListeners = ({
       });
 
       await safeListen<{ day: number; monster_name: string }>('auto-jump-to-monster', (payload) => {
-        const { day, monster_name } = payload;
+        const { monster_name } = payload;
         const names = monster_name.includes('|') ? monster_name.split('|') : [monster_name];
 
         isResizing.current = false;
         setIsCollapsed(false);
-        setCurrentDay(day);
-        setSelectedDay(day >= 10 ? 'Day 10+' : `Day ${day}`);
         setIdentifiedNames(names);
         setExpandedMonsters((prev) => {
           const next = new Set(prev);
@@ -212,8 +205,13 @@ export const useBackendEventListeners = ({
       });
 
       await safeListen<number>('day-update', (d) => {
-        setCurrentDay(d);
-        setSelectedDay(d >= 10 ? 'Day 10+' : `Day ${d}`);
+        const incoming = Number(d) || 1;
+        setCurrentDay((prev) => {
+          const prevDay = typeof prev === 'number' && Number.isFinite(prev) ? prev : 0;
+          const resolvedDay = Math.max(prevDay, incoming, 1);
+          setSelectedDay(resolvedDay >= 10 ? 'Day 10+' : `Day ${resolvedDay}`);
+          return resolvedDay;
+        });
       });
 
       await safeListen<{ message: string; type?: IslandStatusType }>('island-status', (payload) => {

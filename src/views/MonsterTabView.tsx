@@ -11,7 +11,6 @@ interface LoadingState {
 interface MonsterTabViewProps {
   selectedDay: string;
   setSelectedDay: (day: string) => void;
-  handleDayChange: (day: number) => void;
   isRecognizing: boolean;
   handleAutoRecognition: (day: number | null) => Promise<void>;
   showToast: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
@@ -26,7 +25,6 @@ interface MonsterTabViewProps {
 export const MonsterTabView: React.FC<MonsterTabViewProps> = ({
   selectedDay,
   setSelectedDay,
-  handleDayChange,
   isRecognizing,
   handleAutoRecognition,
   showToast,
@@ -48,8 +46,6 @@ export const MonsterTabView: React.FC<MonsterTabViewProps> = ({
                 className={`day-tab ${selectedDay === d ? 'active' : ''}`}
                 onClick={() => {
                   setSelectedDay(d);
-                  const dayNum = parseInt(d.split(' ')[1]);
-                  handleDayChange(dayNum);
                 }}
               >
                 {d}
@@ -63,8 +59,6 @@ export const MonsterTabView: React.FC<MonsterTabViewProps> = ({
                 className={`day-tab ${selectedDay === d ? 'active' : ''}`}
                 onClick={() => {
                   setSelectedDay(d);
-                  const dayNum = d === 'Day 10+' ? 10 : parseInt(d.split(' ')[1]);
-                  handleDayChange(dayNum);
                 }}
               >
                 {d}

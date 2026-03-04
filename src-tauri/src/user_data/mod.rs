@@ -64,6 +64,35 @@ pub fn save_match_history(history: &serde_json::Value) -> Result<(), String> {
     save_match_history_to_db(&mut conn, history)
 }
 
+pub fn infer_current_day_from_history() -> Result<Option<u32>, String> {
+    ensure_user_data_files()?;
+    let conn = open_history_db()?;
+
+    let mut stmt = conn
+        .prepare(
+            "
+            SELECT m.days, COALESCE(MAX(b.day), 0) AS max_day
+            FROM matches m
+            LEFT JOIN battles b ON b.match_id = m.match_id
+            WHERE m.is_finished = 0
+            GROUP BY m.match_id, m.start_time, m.days
+            ORDER BY m.start_time DESC
+            LIMIT 1
+            ",
+        )
+        .map_err(|e| e.to_string())?;
+
+    let mut rows = stmt.query([]).map_err(|e| e.to_string())?;
+    let Some(row) = rows.next().map_err(|e| e.to_string())? else {
+        return Ok(None);
+    };
+
+    let days = row.get::<_, i64>(0).unwrap_or(1).max(1) as u32;
+    let max_day = row.get::<_, i64>(1).unwrap_or(0).max(0) as u32;
+    let inferred = days.max(max_day.saturating_add(1)).max(1);
+    Ok(Some(inferred))
+}
+
 fn open_history_db() -> Result<Connection, String> {
     let db_path = match_history_db_path();
     ensure_parent_dir(&db_path)?;
@@ -378,6 +407,34 @@ fn build_match_id_from_start_time(start_time: &str) -> String {
     let mut hasher = DefaultHasher::new();
     start_time.hash(&mut hasher);
     format!("{:016x}", hasher.finish())
+}
+
+pub fn resolve_active_match_start_time(default_start_time: &str) -> Result<String, String> {
+    ensure_user_data_files()?;
+    let conn = open_history_db()?;
+
+    let latest_unfinished = conn
+        .query_row(
+            "
+            SELECT start_time
+            FROM matches
+            WHERE is_finished = 0
+              AND start_time IS NOT NULL
+              AND TRIM(start_time) <> ''
+            ORDER BY updated_at DESC, start_time DESC
+            LIMIT 1
+            ",
+            [],
+            |row| row.get::<_, String>(0),
+        )
+        .ok();
+
+    let fallback = default_start_time.trim().to_string();
+    if fallback.is_empty() {
+        return Err("empty match_start_time".to_string());
+    }
+
+    Ok(latest_unfinished.unwrap_or(fallback))
 }
 
 pub fn upsert_match_battle_snapshot(

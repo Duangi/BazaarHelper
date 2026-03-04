@@ -57,10 +57,17 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   const [lineupThumbs, setLineupThumbs] = useState<Record<string, string>>({});
   const [analyzingBattles, setAnalyzingBattles] = useState<Set<string>>(new Set());
   const [capturingBattles, setCapturingBattles] = useState<Set<string>>(new Set());
+  const [screenshotVersions, setScreenshotVersions] = useState<Record<string, number>>({});
   const [analyzeProgress, setAnalyzeProgress] = useState<Record<string, { phase: string; done: number; total: number }>>({});
 
   const battleKeyOf = (record: MatchHistoryRecord, battle: { day: number; start_time?: string }) =>
     `${record.match_id}::${battle.day}::${battle.start_time || ''}`;
+
+  const screenshotSrcOf = (screenshotPath: string, battleKey: string) => {
+    const base = convertFileSrc(screenshotPath);
+    const version = screenshotVersions[battleKey] || 0;
+    return `${base}?v=${version}`;
+  };
 
   useEffect(() => {
     let disposed = false;
@@ -244,10 +251,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         {opened && (
           <div className="history-card-body">
             {sortedBattles.length === 0 && <div className="history-empty-row">无小局记录</div>}
-            {sortedBattles.map((battle, battleIdx) => (
+            {sortedBattles.map((battle, battleIdx) => {
+              const battleKey = battleKeyOf(record, battle);
+              return (
               <div key={`${record.match_id}-${battleIdx}`} className="history-round-block">
                 {(() => {
-                  const battleKey = battleKeyOf(record, battle);
                   const isAnalyzing = analyzingBattles.has(battleKey);
                   const isCapturing = capturingBattles.has(battleKey);
                   const hasScreenshot = Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0);
@@ -309,6 +317,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                                 duration: battle.duration ?? null,
                               },
                             });
+                            setScreenshotVersions((prev) => ({
+                              ...prev,
+                              [battleKey]: (prev[battleKey] || 0) + 1,
+                            }));
                             showToast('已重新截图（仅游戏窗口）', 'success');
                             onReload();
                           } catch (error) {
@@ -407,23 +419,24 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                         '无截图'
                       )}
                     </button>
-
-                    {battle.screenshot ? (
-                      <button
-                        className="history-round-shot"
-                        title="点击查看战斗截图"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setPreviewImage(convertFileSrc(battle.screenshot as string));
-                        }}
-                      >
-                        <img src={convertFileSrc(battle.screenshot)} alt={`Round ${battleIdx + 1} screenshot`} loading="lazy" />
-                      </button>
-                    ) : null}
                   </div>
                 </div>
                   );
                 })()}
+                {battle.screenshot ? (
+                  <div className="history-round-shot-row">
+                    <button
+                      className="history-round-shot"
+                      title="点击查看战斗截图"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setPreviewImage(screenshotSrcOf(battle.screenshot as string, battleKey));
+                      }}
+                    >
+                      <img src={screenshotSrcOf(battle.screenshot, battleKey)} alt={`Round ${battleIdx + 1} screenshot`} loading="lazy" />
+                    </button>
+                  </div>
+                ) : null}
                 {((battle.lineup_cards || []).length > 0 || (battle.enemy_lineup_cards || []).length > 0) ? (
                   <>
                     {(battle.enemy_lineup_cards || []).length > 0 ? (
@@ -472,7 +485,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                   </>
                 ) : null}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
