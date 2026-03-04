@@ -146,19 +146,27 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   const checkUploadedMatches = async (authorUserId: string, matchIds: string[]) => {
     const base = normalizeApiBase(uploadApiBase);
     if (!base) throw new Error('请先配置上传服务地址');
-    const response = await fetch(`${base}/api/game-records/check`, {
-      method: 'POST',
-      headers: buildAuthHeaders(),
-      body: JSON.stringify({ authorUserId, matchIds }),
-    });
-    const json = (await parseJsonSafe(response)) as CheckUploadedResponse | null;
-    if (!response.ok) {
-      throw new Error((json as any)?.error || `查重失败 (${response.status})`);
+    try {
+      const response = await fetch(`${base}/api/game-records/check`, {
+        method: 'POST',
+        headers: buildAuthHeaders(),
+        body: JSON.stringify({ authorUserId, matchIds }),
+      });
+      const json = (await parseJsonSafe(response)) as CheckUploadedResponse | null;
+      if (!response.ok) {
+        throw new Error((json as any)?.error || `查重失败 (${response.status} ${response.statusText})`);
+      }
+      return {
+        existingMatchIds: new Set((json?.existingMatchIds || []).map((x) => String(x || '').trim()).filter(Boolean)),
+        existingBattleKeys: new Set((json?.existingBattleKeys || []).map((x) => String(x || '').trim()).filter(Boolean)),
+      };
+    } catch (err: any) {
+      const msg = err?.message || '';
+      if (msg.includes('Failed to fetch')) {
+        throw new Error(`无法连接服务器 (${base})，请检查网络或地址配置`);
+      }
+      throw err;
     }
-    return {
-      existingMatchIds: new Set((json?.existingMatchIds || []).map((x) => String(x || '').trim()).filter(Boolean)),
-      existingBattleKeys: new Set((json?.existingBattleKeys || []).map((x) => String(x || '').trim()).filter(Boolean)),
-    };
   };
 
   const uploadMatchBattles = async (
@@ -840,13 +848,13 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   return (
     <div className="history-view">
       <div className="history-header">
-        <div>
-          <h2>历史战绩</h2>
-          <div className="history-summary">
-            小局战绩: {overall.wins} 胜 {overall.losses} 负 ({overall.total} 场)
+        <div className="history-title-row">
+          <div className="history-title-left">
+            <h2>历史战绩</h2>
+            <div className="history-summary">
+              小局战绩: {overall.wins} 胜 {overall.losses} 负 ({overall.total} 场)
+            </div>
           </div>
-        </div>
-        <div className="history-actions">
           <div className="history-delay-wrap" title="回合结束后延迟截图，避免战后动画遮挡">
             <span className="history-delay-label">延迟截图 {((captureDelayMs || 0) / 1000).toFixed(1)}s</span>
             <input
@@ -869,18 +877,25 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
               }}
             />
           </div>
-          <button className="bulk-btn" onClick={() => setBattleSortDesc((prev) => !prev)}>
-            {battleSortDesc ? '排序: 新→旧' : '排序: 旧→新'}
-          </button>
-          <button className="bulk-btn" onClick={handleConfigureUpload}>
-            上传配置
-          </button>
-          <button className="bulk-btn" disabled={bulkUploading} onClick={() => void handleUploadAllMatches()}>
-            {bulkUploading ? `上传中 ${bulkProgress.done}/${bulkProgress.total}` : '一键上传全部'}
-          </button>
-          <button className="bulk-btn" onClick={onReload}>
-            {isLoading ? '刷新中...' : '刷新'}
-          </button>
+        </div>
+        
+        <div className="history-toolbar">
+          <div className="history-actions-group">
+            <button className="bulk-btn" onClick={() => setBattleSortDesc((prev) => !prev)}>
+              {battleSortDesc ? '排序: 新→旧' : '排序: 旧→新'}
+            </button>
+            <button className="bulk-btn" onClick={onReload}>
+              {isLoading ? '刷新中...' : '刷新'}
+            </button>
+          </div>
+          <div className="history-actions-group">
+            <button className="bulk-btn secondary" onClick={handleConfigureUpload}>
+              配置上传
+            </button>
+            <button className="bulk-btn primary" disabled={bulkUploading} onClick={() => void handleUploadAllMatches()}>
+              {bulkUploading ? `上传中 ${bulkProgress.done}/${bulkProgress.total}` : '一键上传全部'}
+            </button>
+          </div>
         </div>
       </div>
 
