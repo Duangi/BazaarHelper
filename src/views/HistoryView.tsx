@@ -315,6 +315,9 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           throw new Error(`上传到 R2 失败 (${putRes.status})`);
         }
 
+        const totalWins = (record.pvp_battles || []).filter((b) => b.victory).length;
+        const totalLosses = Math.max(0, (record.pvp_battles || []).length - totalWins);
+
         const payload = {
           authorUserId: author.account_id,
           authorName: author.username,
@@ -332,6 +335,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
             is_finished: !!record.is_finished,
             match_victory: !!record.victory,
             match_days: getDisplayDay(record),
+            match_total_wins: totalWins,
+            match_total_losses: totalLosses,
             battle_start_time: entry.battle.start_time || '',
             duration: entry.battle.duration ?? null,
             lineup_cards: entry.battle.lineup_cards || [],
