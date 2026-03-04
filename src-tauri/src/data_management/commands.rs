@@ -1926,6 +1926,27 @@ fn normalize_optional_text(value: &Option<String>) -> Option<String> {
     })
 }
 
+fn normalize_conflicting_battle_days(battles: &mut Vec<HistoryBattleRecord>) {
+    if battles.len() < 2 {
+        return;
+    }
+
+    let mut seen_days: HashSet<u32> = HashSet::new();
+    let mut last_day: u32 = 0;
+    for battle in battles.iter_mut() {
+        let mut day = battle.day.max(1);
+        if day <= last_day || seen_days.contains(&day) {
+            day = last_day.saturating_add(1).max(1);
+            while seen_days.contains(&day) {
+                day = day.saturating_add(1);
+            }
+        }
+        battle.day = day;
+        seen_days.insert(day);
+        last_day = day;
+    }
+}
+
 fn merge_match_records(base: &mut HistoryMatchRecord, incoming: &HistoryMatchRecord) {
     if normalize_optional_text(&base.hero).is_none() && normalize_optional_text(&incoming.hero).is_some() {
         base.hero = normalize_optional_text(&incoming.hero);
@@ -1977,8 +1998,7 @@ fn merge_match_records(base: &mut HistoryMatchRecord, incoming: &HistoryMatchRec
         }
     }
 
-    base.pvp_battles
-        .sort_by(|a, b| (a.day, &a.start_time).cmp(&(b.day, &b.start_time)));
+    normalize_conflicting_battle_days(&mut base.pvp_battles);
     if base.pvp_battles.len() > MAX_PVP_BATTLES_PER_MATCH {
         let keep_from = base.pvp_battles.len() - MAX_PVP_BATTLES_PER_MATCH;
         base.pvp_battles.drain(0..keep_from);
@@ -2000,9 +2020,7 @@ fn normalize_history(mut root: HistoryRoot) -> HistoryRoot {
             record.days = record.days.max(1);
         }
 
-        record
-            .pvp_battles
-            .sort_by(|a, b| (a.day, &a.start_time).cmp(&(b.day, &b.start_time)));
+        normalize_conflicting_battle_days(&mut record.pvp_battles);
         if record.pvp_battles.len() > MAX_PVP_BATTLES_PER_MATCH {
             let keep_from = record.pvp_battles.len() - MAX_PVP_BATTLES_PER_MATCH;
             record.pvp_battles.drain(0..keep_from);
@@ -2048,7 +2066,28 @@ fn history_merge_restart_sessions(records: &mut Vec<HistoryMatchRecord>) {
     let mut idx = 0;
     while idx + 1 < records.len() {
         if !records[idx].is_finished {
-            let next = records.remove(idx + 1);
+            let mut next = records.remove(idx + 1);
+            let base_max_day = records[idx]
+                .pvp_battles
+                .iter()
+                .map(|b| b.day.max(1))
+                .max()
+                .unwrap_or(0);
+            let next_min_day = next
+                .pvp_battles
+                .iter()
+                .map(|b| b.day.max(1))
+                .min()
+                .unwrap_or(1);
+            if base_max_day > 0 && !next.pvp_battles.is_empty() {
+                let offset = base_max_day.saturating_add(1).saturating_sub(next_min_day);
+                if offset > 0 {
+                    for battle in &mut next.pvp_battles {
+                        battle.day = battle.day.max(1).saturating_add(offset);
+                    }
+                    next.days = next.days.saturating_add(offset);
+                }
+            }
             merge_match_records(&mut records[idx], &next);
         } else {
             idx += 1;
@@ -2367,7 +2406,17 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
     let today = history_today_date();
     let existing = crate::user_data::load_match_history()
         .unwrap_or_else(|_| serde_json::json!({ "matches": [] }));
-    let existing_root = serde_json::from_value::<HistoryRoot>(existing).unwrap_or_default();
+    let mut existing_root = serde_json::from_value::<HistoryRoot>(existing).unwrap_or_default();
+    let legacy_path = crate::user_data::match_history_path();
+    if legacy_path.exists() {
+        if let Ok(text) = std::fs::read_to_string(&legacy_path) {
+            if let Ok(legacy_root) = serde_json::from_str::<HistoryRoot>(&text) {
+                if !legacy_root.matches.is_empty() {
+                    existing_root.matches.extend(legacy_root.matches);
+                }
+            }
+        }
+    }
 
     let mut merged: HashMap<String, HistoryMatchRecord> = HashMap::new();
     let mut start_time_index: HashMap<String, String> = HashMap::new();
@@ -2421,16 +2470,14 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
             }
         }
 
-        if !force {
-            if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
-                record.game_date = Some(today.clone());
-            }
-            let key = history_record_key(&record);
-            start_time_index
-                .entry(record.start_time.clone())
-                .or_insert_with(|| key.clone());
-            merged.insert(key, record);
+        if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
+            record.game_date = Some(today.clone());
         }
+        let key = history_record_key(&record);
+        start_time_index
+            .entry(record.start_time.clone())
+            .or_insert_with(|| key.clone());
+        merged.insert(key, record);
     }
 
     for mut record in parsed.matches {

@@ -436,7 +436,7 @@ pub fn upsert_match_battle_snapshot(
                 screenshot = COALESCE(?4, screenshot),
                 lineup_json = COALESCE(?5, lineup_json),
                 enemy_lineup_json = COALESCE(?6, enemy_lineup_json)
-            WHERE match_id = ?7 AND day = ?8
+            WHERE match_id = ?7 AND day = ?8 AND start_time = ?9 AND victory = ?10
             ",
             params![
                 battle_start_time,
@@ -447,9 +447,52 @@ pub fn upsert_match_battle_snapshot(
                 enemy_lineup_cards_json,
                 &match_id,
                 battle_day as i64,
+                battle_start_time,
+                if victory { 1_i64 } else { 0_i64 },
             ],
         )
         .map_err(|e| e.to_string())?;
+
+    let updated = if updated == 0 {
+        let day_rows = tx
+            .query_row(
+                "SELECT COUNT(1) FROM battles WHERE match_id = ?1 AND day = ?2",
+                params![&match_id, battle_day as i64],
+                |row| row.get::<_, i64>(0),
+            )
+            .unwrap_or(0);
+
+        if day_rows == 1 {
+            tx.execute(
+                "
+                UPDATE battles
+                SET
+                    start_time = COALESCE(NULLIF(?1, ''), start_time),
+                    victory = ?2,
+                    duration = COALESCE(?3, duration),
+                    screenshot = COALESCE(?4, screenshot),
+                    lineup_json = COALESCE(?5, lineup_json),
+                    enemy_lineup_json = COALESCE(?6, enemy_lineup_json)
+                WHERE match_id = ?7 AND day = ?8
+                ",
+                params![
+                    battle_start_time,
+                    if victory { 1_i64 } else { 0_i64 },
+                    duration,
+                    screenshot,
+                    lineup_cards_json,
+                    enemy_lineup_cards_json,
+                    &match_id,
+                    battle_day as i64,
+                ],
+            )
+            .map_err(|e| e.to_string())?
+        } else {
+            0
+        }
+    } else {
+        updated
+    };
 
     if updated == 0 {
         let battle_order = tx
