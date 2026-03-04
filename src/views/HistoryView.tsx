@@ -247,7 +247,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     if (!base) throw new Error('请先配置上传服务地址');
 
     const localBattles = (record.pvp_battles || [])
-      .filter((battle) => Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0))
       .map((battle) => ({
         battle,
         key: buildBattleKey(
@@ -282,37 +281,41 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
 
       try {
         const screenshotPath = String(entry.battle.screenshot || '').trim();
-        const localRes = await fetch(convertFileSrc(screenshotPath));
-        if (!localRes.ok) throw new Error(`读取本地截图失败: ${localRes.status}`);
-        const sourceBlob = await localRes.blob();
-        const blob = await convertImageBlobToWebp(sourceBlob, 0.8);
-        const safeStart = String(entry.battle.start_time || 'unknown').replace(/[^\d]/g, '').slice(0, 14) || 'unknown';
-        const fileName = `${record.match_id}-d${entry.battle.day}-${entry.battle.victory ? 'win' : 'lose'}-${safeStart}.webp`;
-        const authorFolder = sanitizeUploadFolderName(author.username || author.account_id || 'anonymous');
+        let uploadedScreenshotUrl = '';
+        if (screenshotPath) {
+          const localRes = await fetch(convertFileSrc(screenshotPath));
+          if (!localRes.ok) throw new Error(`读取本地截图失败: ${localRes.status}`);
+          const sourceBlob = await localRes.blob();
+          const blob = await convertImageBlobToWebp(sourceBlob, 0.8);
+          const safeStart = String(entry.battle.start_time || 'unknown').replace(/[^\d]/g, '').slice(0, 14) || 'unknown';
+          const fileName = `${record.match_id}-d${entry.battle.day}-${entry.battle.victory ? 'win' : 'lose'}-${safeStart}.webp`;
+          const authorFolder = sanitizeUploadFolderName(author.username || author.account_id || 'anonymous');
 
-        const presignRes = await fetch(`${base}/api/r2/presign`, {
-          method: 'POST',
-          headers: buildAuthHeaders(),
-          body: JSON.stringify({
-            fileName,
-            contentType: 'image/webp',
-            folder: `match-records/${authorFolder}`,
-          }),
-        });
-        const presignJson = await parseJsonSafe(presignRes);
-        if (!presignRes.ok || !presignJson?.uploadUrl || !presignJson?.publicUrl) {
-          throw new Error((presignJson as any)?.error || `获取上传签名失败 (${presignRes.status})`);
-        }
+          const presignRes = await fetch(`${base}/api/r2/presign`, {
+            method: 'POST',
+            headers: buildAuthHeaders(),
+            body: JSON.stringify({
+              fileName,
+              contentType: 'image/webp',
+              folder: `match-records/${authorFolder}`,
+            }),
+          });
+          const presignJson = await parseJsonSafe(presignRes);
+          if (!presignRes.ok || !presignJson?.uploadUrl || !presignJson?.publicUrl) {
+            throw new Error((presignJson as any)?.error || `获取上传签名失败 (${presignRes.status})`);
+          }
 
-        const putRes = await fetch(String(presignJson.uploadUrl), {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'image/webp',
-          },
-          body: blob,
-        });
-        if (!putRes.ok) {
-          throw new Error(`上传到 R2 失败 (${putRes.status})`);
+          const putRes = await fetch(String(presignJson.uploadUrl), {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'image/webp',
+            },
+            body: blob,
+          });
+          if (!putRes.ok) {
+            throw new Error(`上传到 R2 失败 (${putRes.status})`);
+          }
+          uploadedScreenshotUrl = String(presignJson.publicUrl || '');
         }
 
         const totalWins = (record.pvp_battles || []).filter((b) => b.victory).length;
@@ -324,7 +327,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           playedOn: record.game_date || new Date().toISOString().slice(0, 10),
           result: entry.battle.victory ? 'win' : 'lose',
           dayIndex: Number(entry.battle.day || 1),
-          screenshotUrl: String(presignJson.publicUrl),
+          screenshotUrl: uploadedScreenshotUrl,
           note: '',
           meta: {
             match_id: record.match_id,
@@ -388,7 +391,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
       const author = await ensureIdentity();
       const check = await checkUploadedMatches(author.account_id, [record.match_id]);
       const localKeys = (record.pvp_battles || [])
-        .filter((battle) => Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0))
         .map((battle) => buildBattleKey(record.match_id, Number(battle.day || 0), String(battle.start_time || ''), battle.victory ? 'win' : 'lose'));
       if (localKeys.length > 0 && localKeys.every((k) => check.existingBattleKeys.has(k))) {
         showToast('该对局已上传，无需重复上传', 'info');
