@@ -30,7 +30,7 @@ export const useAppLifecycleEffects = (options: any) => {
   });
 
   useWindowMoveResizeListeners({
-    enabled: appRuntimeEnabled,
+    enabled: true,
     showVersionScreen: options.showVersionScreen,
     isCollapsed: options.isCollapsed,
     setHasCustomPosition: options.setHasCustomPosition,

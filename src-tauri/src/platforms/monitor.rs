@@ -4,6 +4,33 @@ use std::time::Duration;
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use tauri::{Emitter, Manager};
 
+#[cfg(target_os = "windows")]
+fn is_helper_window_foreground(handle: &tauri::AppHandle) -> bool {
+    unsafe {
+        use windows::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
+        let fg_hwnd = GetForegroundWindow().0;
+        if fg_hwnd.is_null() {
+            return false;
+        }
+
+        for label in ["main", "detail-popup", "monster-calibration"] {
+            if let Some(win) = handle.get_webview_window(label) {
+                if let Ok(hwnd) = win.hwnd() {
+                    if hwnd.0 as isize == fg_hwnd as isize {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    false
+}
+
+#[cfg(not(target_os = "windows"))]
+fn is_helper_window_foreground(_handle: &tauri::AppHandle) -> bool {
+    false
+}
+
 #[cfg(target_os = "macos")]
 use objc::{class, msg_send, sel, sel_impl};
 #[cfg(target_os = "macos")]
@@ -179,6 +206,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
             let game_active = game_active_cached;
             let allow_hotkey_actions = game_active || detail_visible;
+            let helper_window_active = is_helper_window_foreground(&handle_monitor);
 
             if !game_active && !detail_visible {
                 last_left_click = false;
@@ -526,7 +554,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             } else {
                 false
             };
-            if collapse_active && !last_collapse_active && allow_hotkey_actions {
+            if collapse_active && !last_collapse_active && allow_hotkey_actions && !helper_window_active {
                 log::debug!("[Global Hotkey] Collapse/Expand Trigger pressed!");
                 let h = handle_monitor.clone();
                 tauri::async_runtime::spawn(async move {

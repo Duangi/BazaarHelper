@@ -54,6 +54,7 @@ ndarray = "0.15"
 device_query = "4.0.1"
 tauri-plugin-single-instance = "2.3.7"
 sysinfo = "0.33"
+rusqlite = { version = "0.32", features = ["bundled"] }
 
 # Windows 特定依赖
 [target.'cfg(target_os = "windows")'.dependencies]

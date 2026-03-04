@@ -116,8 +116,14 @@ pub fn apply_main_window_style(window: &tauri::WebviewWindow) {
 
             let current_style = GetWindowLongW(handle, GWL_STYLE) as u32;
             let mut new_style =
-                current_style & !(WS_CAPTION.0 | WS_SYSMENU.0 | WS_MINIMIZEBOX.0 | WS_MAXIMIZEBOX.0);
-            new_style |= WS_POPUP.0 | WS_THICKFRAME.0;
+                current_style & !(WS_CAPTION.0
+                    | WS_SYSMENU.0
+                    | WS_MINIMIZEBOX.0
+                    | WS_MAXIMIZEBOX.0
+                    | WS_THICKFRAME.0
+                    | WS_BORDER.0
+                    | WS_DLGFRAME.0);
+            new_style |= WS_POPUP.0 | WS_VISIBLE.0 | WS_CLIPSIBLINGS.0 | WS_CLIPCHILDREN.0;
             SetWindowLongW(handle, GWL_STYLE, new_style as i32);
 
             let current_ex_style = GetWindowLongW(handle, GWL_EXSTYLE) as u32;

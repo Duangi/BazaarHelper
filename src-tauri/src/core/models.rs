@@ -67,6 +67,8 @@ pub struct PersistentState {
     pub macos_prompted_accessibility: bool,
     #[serde(default)]
     pub macos_prompted_screen_recording: bool,
+    #[serde(default)]
+    pub screenshot_capture_delay_ms: u64,
 }
 
 // 跨平台虚拟键常量
@@ -99,6 +101,7 @@ impl Default for PersistentState {
             enable_game_log_monitor: true,
             macos_prompted_accessibility: false,
             macos_prompted_screen_recording: false,
+            screenshot_capture_delay_ms: 0,
         }
     }
 }

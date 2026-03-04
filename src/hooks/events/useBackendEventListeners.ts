@@ -143,6 +143,23 @@ export const useBackendEventListeners = ({
       });
 
       await safeListen<void>('hotkey-collapse', () => {
+        const active = document.activeElement as HTMLElement | null;
+        const tag = active?.tagName?.toLowerCase();
+        const imeComposing = document.body.getAttribute('data-ime-composing') === '1';
+        const inputFocusLock = document.body.getAttribute('data-input-focus-lock') === '1';
+        const noCollapseUntil = Number(document.body.getAttribute('data-no-collapse-until') || '0');
+        const withinNoCollapseWindow = Number.isFinite(noCollapseUntil) && Date.now() < noCollapseUntil;
+        const isTyping = Boolean(
+          active
+          && (
+            tag === 'input'
+            || tag === 'textarea'
+            || active.isContentEditable
+          ),
+        );
+        if (isTyping || imeComposing || inputFocusLock || withinNoCollapseWindow) {
+          return;
+        }
         isResizing.current = false;
         setIsCollapsed((prev) => !prev);
       });

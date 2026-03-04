@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
 interface SearchQueryState {
@@ -58,6 +58,75 @@ const SearchFiltersPanelImpl: React.FC<SearchFiltersPanelProps> = ({
   setIsResizingFilter,
   isResizingFilter,
 }) => {
+  const isComposingRef = useRef(false);
+  const unlockTimerRef = useRef<number | null>(null);
+
+  const pushNoCollapseGrace = (ms = 700) => {
+    document.body.setAttribute('data-no-collapse-until', String(Date.now() + ms));
+  };
+
+  const clearUnlockTimer = () => {
+    if (unlockTimerRef.current !== null) {
+      window.clearTimeout(unlockTimerRef.current);
+      unlockTimerRef.current = null;
+    }
+  };
+
+  const scheduleUnlockCollapseByInput = (ms = 280) => {
+    clearUnlockTimer();
+    unlockTimerRef.current = window.setTimeout(() => {
+      unlockTimerRef.current = null;
+      document.body.removeAttribute('data-input-focus-lock');
+      document.body.removeAttribute('data-search-input-active');
+      if (!isComposingRef.current) {
+        document.body.removeAttribute('data-ime-composing');
+      }
+      setIsInputFocused(false);
+    }, ms);
+  };
+
+  const lockCollapseByInput = () => {
+    clearUnlockTimer();
+    document.body.setAttribute('data-input-focus-lock', '1');
+    document.body.setAttribute('data-search-input-active', '1');
+    setIsInputFocused(true);
+    pushNoCollapseGrace(900);
+  };
+
+  const unlockCollapseByInput = () => {
+    clearUnlockTimer();
+    document.body.removeAttribute('data-input-focus-lock');
+    document.body.removeAttribute('data-search-input-active');
+    document.body.removeAttribute('data-ime-composing');
+    setIsInputFocused(false);
+  };
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      const stillInTyping = Boolean(
+        target.closest('input, textarea, [contenteditable="true"], .search-input'),
+      );
+      if (stillInTyping) {
+        lockCollapseByInput();
+        return;
+      }
+      unlockCollapseByInput();
+    };
+
+    document.addEventListener('mousedown', onPointerDown, true);
+
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown, true);
+      clearUnlockTimer();
+      document.body.removeAttribute('data-ime-composing');
+      document.body.removeAttribute('data-search-input-active');
+      document.body.removeAttribute('data-no-collapse-until');
+      document.body.removeAttribute('data-input-focus-lock');
+    };
+  }, []);
+
   return (
     <div className="search-box-container" data-no-drag style={{
       zIndex: 10,
@@ -141,12 +210,60 @@ const SearchFiltersPanelImpl: React.FC<SearchFiltersPanelProps> = ({
                 placeholder="搜索名称 / 描述..."
                 value={searchQuery.keyword}
                 onChange={(e) => setSearchQuery({ ...searchQuery, keyword: e.target.value })}
+                onInput={() => {
+                  pushNoCollapseGrace(900);
+                }}
+                onKeyDown={() => {
+                  pushNoCollapseGrace(900);
+                }}
                 onFocus={() => {
-                  setIsInputFocused(true);
+                  lockCollapseByInput();
+                  pushNoCollapseGrace(1200);
                   invoke('set_overlay_ignore_cursor', { ignore: false }).catch(() => {});
                 }}
                 onBlur={() => {
-                  setIsInputFocused(false);
+                  window.setTimeout(() => {
+                    pushNoCollapseGrace(900);
+                    if (isComposingRef.current || document.body.getAttribute('data-ime-composing') === '1') {
+                      lockCollapseByInput();
+                      return;
+                    }
+                    const active = document.activeElement as HTMLElement | null;
+                    const tag = active?.tagName?.toLowerCase();
+                    const stillTyping = Boolean(
+                      active
+                      && (tag === 'input' || tag === 'textarea' || active.isContentEditable),
+                    );
+                    if (stillTyping) {
+                      lockCollapseByInput();
+                    } else {
+                      scheduleUnlockCollapseByInput(260);
+                    }
+                  }, 120);
+                }}
+                onCompositionStart={() => {
+                  isComposingRef.current = true;
+                  document.body.setAttribute('data-ime-composing', '1');
+                  lockCollapseByInput();
+                  pushNoCollapseGrace(1400);
+                }}
+                onCompositionEnd={() => {
+                  isComposingRef.current = false;
+                  document.body.removeAttribute('data-ime-composing');
+                  lockCollapseByInput();
+                  pushNoCollapseGrace(1200);
+
+                  window.setTimeout(() => {
+                    const active = document.activeElement as HTMLElement | null;
+                    const tag = active?.tagName?.toLowerCase();
+                    const stillTyping = Boolean(
+                      active
+                      && (tag === 'input' || tag === 'textarea' || active.isContentEditable),
+                    );
+                    if (!stillTyping) {
+                      scheduleUnlockCollapseByInput(260);
+                    }
+                  }, 120);
                 }}
                 style={{
                   flex: 1,

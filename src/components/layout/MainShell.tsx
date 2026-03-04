@@ -7,6 +7,7 @@ import './MainShell.css';
 interface MainShellProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  onOpenProfile?: () => void;
   onOpenSettings: () => void;
   children: React.ReactNode;
 }
@@ -14,6 +15,7 @@ interface MainShellProps {
 export const MainShell: React.FC<MainShellProps> = ({
   activeTab,
   onTabChange,
+  onOpenProfile,
   onOpenSettings,
   children,
 }) => {
@@ -22,6 +24,7 @@ export const MainShell: React.FC<MainShellProps> = ({
       <SidebarNav
         activeTab={activeTab}
         onTabChange={onTabChange}
+        onOpenProfile={onOpenProfile}
         onOpenSettings={onOpenSettings}
       />
       <div className="main-panel">{children}</div>

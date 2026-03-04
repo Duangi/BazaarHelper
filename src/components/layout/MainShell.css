@@ -172,3 +172,32 @@
 .sidebar-settings-btn {
   margin-top: auto;
 }
+
+.sidebar-bottom-actions {
+  width: 100%;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-profile-btn {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
+}
+
+.sidebar-profile-btn:hover {
+  background: rgba(255, 205, 25, 0.09);
+  border-color: rgba(255, 205, 25, 0.25);
+  color: #f1d477;
+}

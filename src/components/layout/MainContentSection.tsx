@@ -378,7 +378,7 @@ function MainContentSectionImpl(props: MainContentSectionProps) {
           <div className="items" ref={wrapRef}>
             {activeTab === 'history' ? (
               <React.Suspense fallback={<div className="empty-tip">加载历史中...</div>}>
-                <HistoryViewLazy records={matchHistory} isLoading={isLoadingHistory} onReload={loadMatchHistory} />
+                <HistoryViewLazy records={matchHistory} isLoading={isLoadingHistory} onReload={loadMatchHistory} showToast={showToast} />
               </React.Suspense>
             ) : activeTab === 'monster' ? (
               <React.Suspense fallback={<div className="empty-tip">加载野怪页面...</div>}>

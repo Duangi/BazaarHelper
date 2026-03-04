@@ -2349,6 +2349,184 @@ pub fn match_card_by_size(scene_desc: &Mat, size: &str) -> Result<Option<serde_j
     Ok(None)
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VisualLineupCard {
+    pub template_id: String,
+    pub x_center: i32,
+    pub size: String,
+}
+
+fn infer_visual_card_size(aspect_ratio: f32) -> &'static str {
+    let candidates = [("Small", 0.56_f32), ("Medium", 1.0_f32), ("Large", 1.5_f32)];
+    candidates
+        .iter()
+        .min_by(|a, b| {
+            let da = (aspect_ratio - a.1).abs();
+            let db = (aspect_ratio - b.1).abs();
+            da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
+        })
+        .map(|(name, _)| *name)
+        .unwrap_or("Medium")
+}
+
+fn prioritized_visual_card_sizes(primary: &str) -> [&'static str; 3] {
+    match primary {
+        "Small" => ["Small", "Medium", "Large"],
+        "Large" => ["Large", "Medium", "Small"],
+        _ => ["Medium", "Small", "Large"],
+    }
+}
+
+fn normalize_visual_size(size: &str) -> String {
+    match size {
+        "Small" => "small".to_string(),
+        "Large" => "large".to_string(),
+        _ => "medium".to_string(),
+    }
+}
+
+fn parse_top_card_id(value: &serde_json::Value) -> Option<String> {
+    value
+        .as_array()
+        .and_then(|arr| arr.first())
+        .and_then(|v| v.get("id"))
+        .and_then(|v| v.as_str())
+        .map(|s| s.to_string())
+}
+
+fn dedupe_visual_lineup(mut cards: Vec<VisualLineupCard>) -> Vec<VisualLineupCard> {
+    cards.sort_by_key(|c| c.x_center);
+    let mut output: Vec<VisualLineupCard> = Vec::new();
+    for card in cards {
+        if let Some(last) = output.last() {
+            if (card.x_center - last.x_center).abs() <= 10 && card.template_id == last.template_id {
+                continue;
+            }
+        }
+        output.push(card);
+    }
+    output
+}
+
+pub fn extract_lineups_from_battle_file(
+    screenshot_path: &str,
+    model_path: &PathBuf,
+    use_gpu: bool,
+) -> Result<(Vec<VisualLineupCard>, Vec<VisualLineupCard>), String> {
+    let image = image::open(screenshot_path).map_err(|e| e.to_string())?;
+    extract_lineups_from_battle_image(&image, model_path, use_gpu)
+}
+
+pub fn extract_lineups_from_battle_file_with_progress<F>(
+    screenshot_path: &str,
+    model_path: &PathBuf,
+    use_gpu: bool,
+    progress: F,
+) -> Result<(Vec<VisualLineupCard>, Vec<VisualLineupCard>), String>
+where
+    F: FnMut(usize, usize),
+{
+    let image = image::open(screenshot_path).map_err(|e| e.to_string())?;
+    extract_lineups_from_battle_image_with_progress(&image, model_path, use_gpu, progress)
+}
+
+pub fn extract_lineups_from_battle_image(
+    img: &DynamicImage,
+    model_path: &PathBuf,
+    use_gpu: bool,
+) -> Result<(Vec<VisualLineupCard>, Vec<VisualLineupCard>), String> {
+    extract_lineups_from_battle_image_with_progress(img, model_path, use_gpu, |_, _| {})
+}
+
+pub fn extract_lineups_from_battle_image_with_progress<F>(
+    img: &DynamicImage,
+    model_path: &PathBuf,
+    use_gpu: bool,
+    mut progress: F,
+) -> Result<(Vec<VisualLineupCard>, Vec<VisualLineupCard>), String>
+where
+    F: FnMut(usize, usize),
+{
+    let detections = run_yolo_inference(img, model_path, use_gpu)?;
+    let (_, img_h) = img.dimensions();
+    let split_y = (img_h as i32) / 2;
+
+    let mut self_cards: Vec<VisualLineupCard> = Vec::new();
+    let mut enemy_cards: Vec<VisualLineupCard> = Vec::new();
+
+    let candidate_boxes: Vec<(i32, i32, i32, i32)> = detections
+        .into_iter()
+        .filter(|det| det.class_id == 2 || det.class_id == 6)
+        .map(|det| {
+            let x1 = det.x1.max(0);
+            let y1 = det.y1.max(0);
+            let x2 = det.x2.max(x1 + 1);
+            let y2 = det.y2.max(y1 + 1);
+            (x1, y1, x2, y2)
+        })
+        .filter(|(x1, y1, x2, y2)| {
+            let width = (x2 - x1) as u32;
+            let height = (y2 - y1) as u32;
+            width >= 12 && height >= 12
+        })
+        .collect();
+
+    let total = candidate_boxes.len();
+    progress(0, total);
+
+    for (idx, (x1, y1, x2, y2)) in candidate_boxes.into_iter().enumerate() {
+        let width = (x2 - x1) as u32;
+        let height = (y2 - y1) as u32;
+
+        let crop = img.crop_imm(x1 as u32, y1 as u32, width, height);
+        let scene_desc = match extract_features_from_dynamic_image(&crop, 600) {
+            Ok(desc) if !desc.empty() => desc,
+            _ => {
+                progress(idx + 1, total);
+                continue;
+            }
+        };
+
+        let ratio = width as f32 / (height as f32).max(1.0);
+        let inferred_size = infer_visual_card_size(ratio);
+
+        let mut matched_id: Option<String> = None;
+        let mut matched_size = inferred_size.to_string();
+        for size in prioritized_visual_card_sizes(inferred_size) {
+            if let Ok(Some(res)) = match_card_by_size(&scene_desc, size) {
+                if let Some(id) = parse_top_card_id(&res) {
+                    matched_id = Some(id);
+                    matched_size = size.to_string();
+                    break;
+                }
+            }
+        }
+
+        let Some(template_id) = matched_id else {
+            progress(idx + 1, total);
+            continue;
+        };
+
+        let center_y = (y1 + y2) / 2;
+        let center_x = (x1 + x2) / 2;
+        let card = VisualLineupCard {
+            template_id,
+            x_center: center_x,
+            size: normalize_visual_size(&matched_size),
+        };
+
+        if center_y >= split_y {
+            self_cards.push(card);
+        } else {
+            enemy_cards.push(card);
+        }
+
+        progress(idx + 1, total);
+    }
+
+    Ok((dedupe_visual_lineup(self_cards), dedupe_visual_lineup(enemy_cards)))
+}
+
 #[tauri::command]
 pub async fn recognize_monster_at_mouse() -> Result<Option<String>, String> {
     // 1. 设置识别标志 (防止窗口隐藏)

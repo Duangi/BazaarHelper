@@ -1799,7 +1799,7 @@ html, body, #root {
 .update-screen {
   width: 100vw;
   height: 100vh;
-  background: transparent !important;
+  background: #2b2621 !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -1816,21 +1816,22 @@ html, body, #root {
   text-align: center;
   padding: 36px;
   background: #2b2621;
-  border-radius: 16px;
+  border-radius: 18px;
   border: 3px solid var(--c-golden);
   /* 彻底移除 box-shadow，防止在某些 Windows 缩放或透明模式下产生黑色方块/残影 */
   box-shadow: none !important;
-  width: 95%;
-  max-width: 560px;
-  height: auto;
-  min-height: 500px;
-  max-height: 96vh;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  margin: auto;
+  margin: 0;
   position: relative;
   z-index: 100;
+  overflow: hidden;
 }
 
 .update-topbar {

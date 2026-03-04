@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::fs::File;
 use std::hash::{DefaultHasher, Hash, Hasher};
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
@@ -9,9 +9,169 @@ use chrono::Local;
 use image::GenericImageView;
 use regex::Regex;
 use sysinfo::{Pid, ProcessesToUpdate, System};
-use tauri::{Manager, State};
+use tauri::{Emitter, Manager, State};
 
 use crate::{DbState, ItemData, SyncPayload};
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GameIdentityInfo {
+    pub username: String,
+    pub account_id: String,
+    pub steam_id: Option<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GeneratedLoginKey {
+    pub key: String,
+    pub username: String,
+    pub account_id: String,
+}
+
+fn bazaar_log_paths() -> Vec<PathBuf> {
+    let mut paths = Vec::new();
+    #[cfg(target_os = "windows")]
+    {
+        let home = std::env::var("USERPROFILE").unwrap_or_default();
+        if !home.is_empty() {
+            let root = PathBuf::from(home)
+                .join("AppData")
+                .join("LocalLow")
+                .join("Tempo Storm")
+                .join("The Bazaar");
+            paths.push(root.join("Player.log"));
+            paths.push(root.join("Player-prev.log"));
+        }
+    }
+    #[cfg(target_os = "macos")]
+    {
+        let home = std::env::var("HOME").unwrap_or_default();
+        if !home.is_empty() {
+            let root = PathBuf::from(home)
+                .join("Library")
+                .join("Logs")
+                .join("Tempo Storm")
+                .join("The Bazaar");
+            paths.push(root.join("Player.log"));
+            paths.push(root.join("Player-prev.log"));
+        }
+    }
+    paths
+}
+
+fn latest_game_identity_from_logs() -> Option<GameIdentityInfo> {
+    let re_profile = Regex::new(r"Username:\s*(?P<username>.+?)\s*-\s*AccountId:\s*(?P<account>[0-9a-fA-F-]{8,})").ok()?;
+    let re_socket = Regex::new(r"AccountId:\s*\[(?P<account>[0-9a-fA-F-]{8,})\]").ok()?;
+    let re_steam = Regex::new(r"ID:\s*(?P<steam>\d{8,})").ok()?;
+
+    let mut username: Option<String> = None;
+    let mut account_id: Option<String> = None;
+    let mut steam_id: Option<String> = None;
+
+    for path in bazaar_log_paths() {
+        if !path.exists() {
+            continue;
+        }
+        let Ok(file) = File::open(&path) else {
+            continue;
+        };
+        let reader = BufReader::new(file);
+        for line in reader.lines().map_while(Result::ok) {
+            if let Some(cap) = re_profile.captures(&line) {
+                if let Some(v) = cap.name("username") {
+                    let s = v.as_str().trim();
+                    if !s.is_empty() {
+                        username = Some(s.to_string());
+                    }
+                }
+                if let Some(v) = cap.name("account") {
+                    let s = v.as_str().trim();
+                    if !s.is_empty() {
+                        account_id = Some(s.to_string());
+                    }
+                }
+            }
+            if let Some(cap) = re_socket.captures(&line) {
+                if let Some(v) = cap.name("account") {
+                    let s = v.as_str().trim();
+                    if !s.is_empty() {
+                        account_id = Some(s.to_string());
+                    }
+                }
+            }
+            if let Some(cap) = re_steam.captures(&line) {
+                if let Some(v) = cap.name("steam") {
+                    let s = v.as_str().trim();
+                    if !s.is_empty() {
+                        steam_id = Some(s.to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    let account = account_id?;
+    let user = username.unwrap_or_else(|| "Unknown".to_string());
+    Some(GameIdentityInfo {
+        username: user,
+        account_id: account,
+        steam_id,
+    })
+}
+
+fn to_hex(bytes: &[u8]) -> String {
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for b in bytes {
+        out.push_str(&format!("{:02x}", b));
+    }
+    out
+}
+
+fn obfuscate_login_payload(raw: &str) -> String {
+    let secret = b"BazaarHelper@LoginKey:v1";
+    let mut buf = Vec::with_capacity(raw.len());
+    for (idx, byte) in raw.as_bytes().iter().enumerate() {
+        let mask = secret[idx % secret.len()] ^ ((idx as u8).wrapping_mul(31));
+        buf.push(byte ^ mask);
+    }
+    to_hex(&buf)
+}
+
+fn checksum16(input: &str) -> String {
+    let mut hasher = DefaultHasher::new();
+    ("bh.login.v1", input).hash(&mut hasher);
+    format!("{:016x}", hasher.finish())
+}
+
+#[tauri::command]
+pub fn get_game_identity() -> Result<GameIdentityInfo, String> {
+    latest_game_identity_from_logs().ok_or_else(|| "无法在日志中读取到账号信息，请先进入游戏主界面再试".to_string())
+}
+
+#[tauri::command]
+pub fn generate_game_login_key() -> Result<GeneratedLoginKey, String> {
+    let identity = latest_game_identity_from_logs()
+        .ok_or_else(|| "无法在日志中读取到账号信息，请先进入游戏主界面再试".to_string())?;
+
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let payload = format!(
+        "v1|{}|{}|{}",
+        identity.username.trim(),
+        identity.account_id.trim(),
+        ts
+    );
+    let encrypted = obfuscate_login_payload(&payload);
+    let sign = checksum16(&encrypted);
+    let key = format!("bh1.{}.{}", encrypted, sign);
+
+    Ok(GeneratedLoginKey {
+        key,
+        username: identity.username,
+        account_id: identity.account_id,
+    })
+}
 
 #[derive(Debug, serde::Deserialize)]
 pub struct SearchQuery {
@@ -1215,12 +1375,27 @@ pub fn set_game_log_monitor_runtime(enabled: bool) -> Result<bool, String> {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+struct HistoryBattleLineupCard {
+    instance_id: String,
+    template_id: String,
+    name_cn: String,
+    name_en: String,
+    image: Option<String>,
+    #[serde(default)]
+    size: Option<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct HistoryBattleRecord {
     day: u32,
     start_time: String,
     victory: bool,
     duration: Option<f64>,
     screenshot: Option<String>,
+    #[serde(default)]
+    lineup_cards: Vec<HistoryBattleLineupCard>,
+    #[serde(default)]
+    enemy_lineup_cards: Vec<HistoryBattleLineupCard>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -1242,6 +1417,39 @@ struct HistoryRoot {
     matches: Vec<HistoryMatchRecord>,
 }
 
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct ManualBattleLineupAnalyzeRequest {
+    #[serde(default)]
+    match_id: Option<String>,
+    match_start_time: String,
+    battle_day: u32,
+    battle_start_time: String,
+    victory: bool,
+    duration: Option<f64>,
+    screenshot_path: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ManualBattleLineupAnalyzeResult {
+    self_count: usize,
+    enemy_count: usize,
+    screenshot_path: String,
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct ManualBattleScreenshotRequest {
+    match_start_time: String,
+    battle_day: u32,
+    battle_start_time: String,
+    victory: bool,
+    duration: Option<f64>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ManualBattleScreenshotResult {
+    screenshot_path: String,
+}
+
 const HISTORY_SCAN_MAX_BYTES: u64 = 6_000_000;
 const MAX_HISTORY_MATCHES: usize = 120;
 const MAX_PVP_BATTLES_PER_MATCH: usize = 40;
@@ -1260,6 +1468,47 @@ struct LogSignature {
 }
 
 static LAST_HISTORY_LOG_SIGNATURE: OnceLock<Mutex<Option<LogSignature>>> = OnceLock::new();
+
+fn parse_socket_index_from_target(target: &str) -> Option<u32> {
+    if !(target.contains("PlayerSocket") || target.contains("Hand")) {
+        return None;
+    }
+    let digits_rev: String = target
+        .chars()
+        .rev()
+        .take_while(|c| c.is_ascii_digit())
+        .collect();
+    if digits_rev.is_empty() {
+        return None;
+    }
+    digits_rev.chars().rev().collect::<String>().parse::<u32>().ok()
+}
+
+fn remove_hand_slot_mapping(
+    iid: &str,
+    hand_slot_to_iid: &mut BTreeMap<u32, String>,
+    iid_to_hand_slot: &mut HashMap<String, u32>,
+) {
+    if let Some(slot) = iid_to_hand_slot.remove(iid) {
+        if hand_slot_to_iid.get(&slot).map(|v| v == iid).unwrap_or(false) {
+            hand_slot_to_iid.remove(&slot);
+        }
+    }
+}
+
+fn set_hand_slot_mapping(
+    iid: &str,
+    slot: u32,
+    hand_slot_to_iid: &mut BTreeMap<u32, String>,
+    iid_to_hand_slot: &mut HashMap<String, u32>,
+) {
+    if let Some(prev_slot) = iid_to_hand_slot.insert(iid.to_string(), slot) {
+        if prev_slot != slot && hand_slot_to_iid.get(&prev_slot).map(|v| v == iid).unwrap_or(false) {
+            hand_slot_to_iid.remove(&prev_slot);
+        }
+    }
+    hand_slot_to_iid.insert(slot, iid.to_string());
+}
 
 fn build_history_log_signature(paths: &[PathBuf]) -> LogSignature {
     let mut entries: Vec<LogFileStamp> = paths
@@ -1315,6 +1564,338 @@ fn history_today_date() -> String {
     Local::now().format("%Y-%m-%d").to_string()
 }
 
+fn history_screenshot_root_dir() -> PathBuf {
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    manifest_dir
+        .parent()
+        .map(|p| p.to_path_buf())
+        .filter(|p| p.exists())
+        .unwrap_or_else(crate::user_data::app_data_root)
+        .join("battle_screenshots")
+}
+
+fn parse_log_hms_seconds(raw: &str) -> Option<i32> {
+    let time_part = raw
+        .split_whitespace()
+        .last()
+        .unwrap_or(raw)
+        .split('.')
+        .next()
+        .unwrap_or(raw);
+    let mut parts = time_part.split(':');
+    let h = parts.next()?.parse::<i32>().ok()?;
+    let m = parts.next()?.parse::<i32>().ok()?;
+    let s = parts.next()?.parse::<i32>().ok()?;
+    Some(h * 3600 + m * 60 + s)
+}
+
+fn parse_capture_hms_seconds(path: &std::path::Path) -> Option<i32> {
+    let stem = path.file_stem()?.to_string_lossy();
+    let stem_ref = stem.as_ref();
+
+    for token in stem_ref.split('_') {
+        let candidate = token.strip_prefix("cap").unwrap_or(token);
+        if candidate.len() < 6 || !candidate.chars().take(6).all(|c| c.is_ascii_digit()) {
+            continue;
+        }
+        let h = candidate[0..2].parse::<i32>().ok()?;
+        let m = candidate[2..4].parse::<i32>().ok()?;
+        let s = candidate[4..6].parse::<i32>().ok()?;
+        if (0..24).contains(&h) && (0..60).contains(&m) && (0..60).contains(&s) {
+            return Some(h * 3600 + m * 60 + s);
+        }
+    }
+
+    let token = stem_ref.strip_prefix("battle_")?.split('_').next()?;
+    if token.len() >= 6 && token.chars().take(6).all(|c| c.is_ascii_digit()) {
+        let h = token[0..2].parse::<i32>().ok()?;
+        let m = token[2..4].parse::<i32>().ok()?;
+        let s = token[4..6].parse::<i32>().ok()?;
+        if (0..24).contains(&h) && (0..60).contains(&m) && (0..60).contains(&s) {
+            return Some(h * 3600 + m * 60 + s);
+        }
+    }
+
+    None
+}
+
+fn parse_capture_day(path: &std::path::Path) -> Option<u32> {
+    let stem = path.file_stem()?.to_string_lossy();
+    for token in stem.split('_') {
+        if let Some(day_token) = token.strip_prefix("day") {
+            let day_digits: String = day_token.chars().take_while(|c| c.is_ascii_digit()).collect();
+            if let Ok(day) = day_digits.parse::<u32>() {
+                if day > 0 {
+                    return Some(day);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn collect_screenshot_candidates_by_date() -> HashMap<String, Vec<PathBuf>> {
+    let mut map = HashMap::new();
+    let root = history_screenshot_root_dir();
+    if !root.exists() {
+        return map;
+    }
+
+    let Ok(date_dirs) = std::fs::read_dir(root) else {
+        return map;
+    };
+
+    for date_entry in date_dirs.flatten() {
+        let date_path = date_entry.path();
+        if !date_path.is_dir() {
+            continue;
+        }
+        let Some(date_name) = date_path.file_name().map(|n| n.to_string_lossy().to_string()) else {
+            continue;
+        };
+
+        let Ok(files) = std::fs::read_dir(&date_path) else {
+            continue;
+        };
+        let mut shots: Vec<PathBuf> = files
+            .flatten()
+            .map(|entry| entry.path())
+            .filter(|p| {
+                p.extension()
+                    .and_then(|ext| ext.to_str())
+                    .map(|ext| ext.eq_ignore_ascii_case("png") || ext.eq_ignore_ascii_case("jpg") || ext.eq_ignore_ascii_case("jpeg"))
+                    .unwrap_or(false)
+            })
+            .collect();
+
+        shots.sort();
+        if !shots.is_empty() {
+            map.insert(date_name, shots);
+        }
+    }
+
+    map
+}
+
+fn backfill_missing_battle_screenshots(root: &mut HistoryRoot) {
+    let mut candidates_by_date = collect_screenshot_candidates_by_date();
+    let mut used_by_date: HashMap<String, HashSet<String>> = HashMap::new();
+    let mut used_global: HashSet<String> = HashSet::new();
+
+    let mut all_candidates: Vec<PathBuf> = candidates_by_date
+        .values()
+        .flat_map(|paths| paths.iter().cloned())
+        .collect();
+    all_candidates.sort();
+
+    // first pass: reserve already-assigned screenshots
+    for record in &root.matches {
+        let Some(date) = record.game_date.clone() else {
+            continue;
+        };
+        let used = used_by_date.entry(date).or_default();
+        for battle in &record.pvp_battles {
+            if let Some(path) = battle.screenshot.as_ref() {
+                if !path.trim().is_empty() {
+                    used.insert(path.clone());
+                    used_global.insert(path.clone());
+                }
+            }
+        }
+    }
+
+    for record in &mut root.matches {
+        let date = record.game_date.clone().unwrap_or_default();
+        let mut local_candidates: Vec<PathBuf> = date
+            .is_empty()
+            .then(Vec::new)
+            .unwrap_or_else(|| candidates_by_date.get(&date).cloned().unwrap_or_default());
+
+        let used = used_by_date.entry(date.clone()).or_default();
+
+        for battle in &mut record.pvp_battles {
+            if battle.screenshot.as_ref().map(|s| !s.trim().is_empty()).unwrap_or(false) {
+                continue;
+            }
+
+            let battle_ts = parse_log_hms_seconds(&battle.start_time);
+            let battle_day = battle.day.max(1);
+            let mut best_idx: Option<usize> = None;
+            let mut best_day_penalty = i32::MAX;
+            let mut best_score = i32::MAX;
+
+            for (idx, path) in local_candidates.iter().enumerate() {
+                let path_str = path.to_string_lossy().to_string();
+                if used.contains(&path_str) {
+                    continue;
+                }
+
+                let day_penalty = if parse_capture_day(path) == Some(battle_day) { 0 } else { 1 };
+
+                let score = match (battle_ts, parse_capture_hms_seconds(path)) {
+                    (Some(bt), Some(st)) => (st - bt).abs(),
+                    _ => 999_999,
+                };
+
+                if day_penalty < best_day_penalty || (day_penalty == best_day_penalty && score < best_score) {
+                    best_day_penalty = day_penalty;
+                    best_score = score;
+                    best_idx = Some(idx);
+                    if day_penalty == 0 && score <= 1 {
+                        break;
+                    }
+                }
+            }
+
+            if let Some(idx) = best_idx {
+                let path_str = local_candidates[idx].to_string_lossy().to_string();
+                battle.screenshot = Some(path_str.clone());
+                used.insert(path_str);
+                used_global.insert(local_candidates[idx].to_string_lossy().to_string());
+                continue;
+            }
+
+            // fallback: if date-based matching has no candidates (or all are used),
+            // try all historical screenshots to handle date drift in log parsing
+            let mut fallback_best: Option<String> = None;
+            let mut fallback_day_penalty = i32::MAX;
+            let mut fallback_score = i32::MAX;
+
+            for path in &all_candidates {
+                let path_str = path.to_string_lossy().to_string();
+                if used_global.contains(&path_str) {
+                    continue;
+                }
+
+                let day_penalty = if parse_capture_day(path) == Some(battle_day) { 0 } else { 1 };
+                let score = match (battle_ts, parse_capture_hms_seconds(path)) {
+                    (Some(bt), Some(st)) => (st - bt).abs(),
+                    _ => 999_999,
+                };
+
+                if day_penalty < fallback_day_penalty || (day_penalty == fallback_day_penalty && score < fallback_score) {
+                    fallback_day_penalty = day_penalty;
+                    fallback_score = score;
+                    fallback_best = Some(path_str.clone());
+                    if day_penalty == 0 && score <= 1 {
+                        break;
+                    }
+                }
+            }
+
+            if let Some(path_str) = fallback_best {
+                battle.screenshot = Some(path_str.clone());
+                used.insert(path_str.clone());
+                used_global.insert(path_str);
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+struct HistoryCardMeta {
+    name_cn: String,
+    name_en: String,
+    size: Option<String>,
+}
+
+fn load_history_card_meta_map() -> HashMap<String, HistoryCardMeta> {
+    let mut map = HashMap::new();
+    let resources_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources");
+    for file_name in ["items_db.json", "skills_db.json"] {
+        let path = resources_root.join(file_name);
+        if !path.exists() {
+            continue;
+        }
+        let Ok(text) = std::fs::read_to_string(&path) else {
+            continue;
+        };
+        let Ok(value) = serde_json::from_str::<serde_json::Value>(&text) else {
+            continue;
+        };
+        let Some(list) = value.as_array() else {
+            continue;
+        };
+        for item in list {
+            let id = item.get("id").and_then(|v| v.as_str()).unwrap_or_default().trim();
+            if id.is_empty() {
+                continue;
+            }
+            let name_cn = item
+                .get("name_cn")
+                .and_then(|v| v.as_str())
+                .unwrap_or(id)
+                .to_string();
+            let name_en = item
+                .get("name_en")
+                .and_then(|v| v.as_str())
+                .unwrap_or(id)
+                .to_string();
+            let size = item.get("size").and_then(|v| v.as_str()).map(|s| s.to_string());
+            map.entry(id.to_string()).or_insert(HistoryCardMeta { name_cn, name_en, size });
+        }
+    }
+    map
+}
+
+fn history_build_lineup_from_visual(
+    cards: &[crate::monster_recognition::VisualLineupCard],
+    meta_map: &HashMap<String, HistoryCardMeta>,
+) -> Vec<HistoryBattleLineupCard> {
+    cards
+        .iter()
+        .map(|card| {
+            let meta = meta_map.get(&card.template_id);
+            HistoryBattleLineupCard {
+                instance_id: String::new(),
+                template_id: card.template_id.clone(),
+                name_cn: meta
+                    .map(|m| m.name_cn.clone())
+                    .unwrap_or_else(|| card.template_id.clone()),
+                name_en: meta
+                    .map(|m| m.name_en.clone())
+                    .unwrap_or_else(|| card.template_id.clone()),
+                image: None,
+                size: meta
+                    .and_then(|m| m.size.clone())
+                    .or_else(|| Some(card.size.clone())),
+            }
+        })
+        .collect()
+}
+
+fn backfill_visual_lineups_from_screenshots(root: &mut HistoryRoot) {
+    let model_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("resources")
+        .join("models")
+        .join("best.onnx");
+    if !model_path.exists() {
+        return;
+    }
+
+    let card_meta_map = load_history_card_meta_map();
+
+    for record in &mut root.matches {
+        for battle in &mut record.pvp_battles {
+            let Some(screenshot_path) = battle.screenshot.as_ref().filter(|s| !s.trim().is_empty()) else {
+                continue;
+            };
+
+            let visual = crate::monster_recognition::extract_lineups_from_battle_file(screenshot_path, &model_path, true)
+                .or_else(|_| crate::monster_recognition::extract_lineups_from_battle_file(screenshot_path, &model_path, false));
+
+            if let Ok((self_cards, enemy_cards)) = visual {
+                if !self_cards.is_empty() {
+                    battle.lineup_cards = history_build_lineup_from_visual(&self_cards, &card_meta_map);
+                }
+                if !enemy_cards.is_empty() {
+                    battle.enemy_lineup_cards = history_build_lineup_from_visual(&enemy_cards, &card_meta_map);
+                }
+            }
+        }
+    }
+}
+
 fn history_match_sort_key(record: &HistoryMatchRecord) -> String {
     format!(
         "{} {}",
@@ -1367,13 +1948,31 @@ fn merge_match_records(base: &mut HistoryMatchRecord, incoming: &HistoryMatchRec
     }
     base.is_finished = base.is_finished || incoming.is_finished;
 
-    let mut seen = HashSet::new();
-    for b in &base.pvp_battles {
-        seen.insert(format!("{}:{}:{}", b.day, b.start_time, b.victory));
+    let mut index_by_key: HashMap<String, usize> = HashMap::new();
+    for (idx, b) in base.pvp_battles.iter().enumerate() {
+        index_by_key.insert(format!("{}:{}:{}", b.day, b.start_time, b.victory), idx);
     }
+
     for b in &incoming.pvp_battles {
         let key = format!("{}:{}:{}", b.day, b.start_time, b.victory);
-        if seen.insert(key) {
+        if let Some(&existing_idx) = index_by_key.get(&key) {
+            let existing = &mut base.pvp_battles[existing_idx];
+            if existing.duration.is_none() && b.duration.is_some() {
+                existing.duration = b.duration;
+            }
+            if existing.screenshot.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true)
+                && b.screenshot.as_ref().map(|s| !s.trim().is_empty()).unwrap_or(false)
+            {
+                existing.screenshot = b.screenshot.clone();
+            }
+            if !b.lineup_cards.is_empty() {
+                existing.lineup_cards = b.lineup_cards.clone();
+            }
+            if !b.enemy_lineup_cards.is_empty() {
+                existing.enemy_lineup_cards = b.enemy_lineup_cards.clone();
+            }
+        } else {
+            index_by_key.insert(key, base.pvp_battles.len());
             base.pvp_battles.push(b.clone());
         }
     }
@@ -1418,7 +2017,13 @@ fn normalize_history(mut root: HistoryRoot) -> HistoryRoot {
     }
 
     let mut matches: Vec<HistoryMatchRecord> = merged_map.into_values().collect();
-    matches.sort_by(|a, b| history_match_sort_key(b).cmp(&history_match_sort_key(a)));
+    matches.sort_by(|a, b| {
+        match (a.is_finished, b.is_finished) {
+            (false, true) => std::cmp::Ordering::Less,
+            (true, false) => std::cmp::Ordering::Greater,
+            _ => history_match_sort_key(b).cmp(&history_match_sort_key(a)),
+        }
+    });
     if matches.len() > MAX_HISTORY_MATCHES {
         matches.truncate(MAX_HISTORY_MATCHES);
     }
@@ -1455,10 +2060,27 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
     let re_hero = Regex::new(r"Hero: \[(?P<hero>[^\]]+)\]").unwrap();
     let re_state_change = Regex::new(r"State changed from \[.*?\] to \[(?P<state>[^\]]+)\]").unwrap();
     let re_combat_duration = Regex::new(r"Combat simulation completed in (?P<dur>[\d\.]+)s").unwrap();
+    let re_purchase = Regex::new(r"Card Purchased: InstanceId:\s*(?P<iid>[^ ]+)\s*-\s*TemplateId\s*(?P<tid>[^ ]+)(?:.*Target:(?P<tgt>[^ ]+))?(?:.*Section(?P<sec>[^ ]+))?").unwrap();
+    let re_id = Regex::new(r"ID: \[(?P<id>[^\]]+)\]").unwrap();
+    let re_tid = Regex::new(r"TemplateId: \[(?P<tid>[^\]]+)\]").unwrap();
+    let re_owner = Regex::new(r"- Owner: \[(?P<val>[^\]]+)\]").unwrap();
+    let re_section = Regex::new(r"- Section: \[(?P<val>[^\]]+)\]").unwrap();
+    let re_item_id = Regex::new(r"itm_[A-Za-z0-9_-]+").unwrap();
+    let re_sold = Regex::new(r"Sold Card\s+(?P<iid>itm_[^ ]+)").unwrap();
+    let re_removed = Regex::new(r"Successfully removed item\s+(?P<iid>itm_[^ ]+)").unwrap();
+    let re_moved_to = Regex::new(r"Successfully moved card\s+(?P<iid>itm_[^ ]+)\s+to\s+(?P<tgt>[^ ]+)").unwrap();
 
     let mut records: Vec<HistoryMatchRecord> = Vec::new();
     let mut active_idx: Option<usize> = None;
     let mut in_pvp = false;
+    let mut is_sync = false;
+    let mut last_iid = String::new();
+    let mut cur_owner = String::new();
+    let mut inst_to_temp: HashMap<String, String> = HashMap::new();
+    let mut current_hand: HashSet<String> = HashSet::new();
+    let mut current_stash: HashSet<String> = HashSet::new();
+    let mut hand_slot_to_iid: BTreeMap<u32, String> = BTreeMap::new();
+    let mut iid_to_hand_slot: HashMap<String, u32> = HashMap::new();
     let mut last_pvp_start: Option<String> = None;
     let mut last_pvp_duration: Option<f64> = None;
     let mut recent_lines: VecDeque<String> = VecDeque::with_capacity(6);
@@ -1497,6 +2119,14 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
                     || trimmed.contains("[GameInstance] Starting new run...")
                 {
                     in_pvp = false;
+                    is_sync = false;
+                    last_iid.clear();
+                    cur_owner.clear();
+                    inst_to_temp.clear();
+                    current_hand.clear();
+                    current_stash.clear();
+                    hand_slot_to_iid.clear();
+                    iid_to_hand_slot.clear();
                     last_pvp_start = None;
                     last_pvp_duration = None;
 
@@ -1521,6 +2151,116 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
                     });
                     active_idx = records.len().checked_sub(1);
                     continue;
+                }
+
+                if let Some(cap) = re_purchase.captures(trimmed) {
+                    let iid = cap["iid"].to_string();
+                    let tid = cap["tid"].to_string();
+                    inst_to_temp.insert(iid.clone(), tid);
+
+                    let mut section = cap.name("sec").map(|s| s.as_str().to_string());
+                    let target = cap.name("tgt").map(|t| t.as_str());
+                    if section.as_deref().unwrap_or("").is_empty() {
+                        if let Some(tgt) = target {
+                            if tgt.contains("PlayerStorageSocket") {
+                                section = Some("Stash".to_string());
+                            } else if tgt.contains("PlayerSocket") {
+                                section = Some("Player".to_string());
+                            }
+                        }
+                    }
+                    if let Some(sec) = section {
+                        if sec == "Player" || sec == "Hand" {
+                            current_hand.insert(iid.clone());
+                            current_stash.remove(&iid);
+                            if let Some(tgt) = target {
+                                if let Some(slot) = parse_socket_index_from_target(tgt) {
+                                    set_hand_slot_mapping(&iid, slot, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                                }
+                            }
+                        } else if sec == "Stash" || sec == "Storage" || sec == "PlayerStorage" {
+                            current_stash.insert(iid.clone());
+                            current_hand.remove(&iid);
+                            remove_hand_slot_mapping(&iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                        }
+                    }
+                }
+
+                if let Some(cap) = re_moved_to.captures(trimmed) {
+                    let iid = cap["iid"].to_string();
+                    let tgt = &cap["tgt"];
+                    if tgt.contains("StorageSocket") {
+                        current_stash.insert(iid.clone());
+                        current_hand.remove(&iid);
+                        remove_hand_slot_mapping(&iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                    } else if tgt.contains("Socket") {
+                        current_hand.insert(iid.clone());
+                        current_stash.remove(&iid);
+                        if let Some(slot) = parse_socket_index_from_target(tgt) {
+                            set_hand_slot_mapping(&iid, slot, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                        }
+                    }
+                }
+
+                if let Some(cap) = re_sold.captures(trimmed) {
+                    let iid = cap["iid"].to_string();
+                    current_hand.remove(&iid);
+                    current_stash.remove(&iid);
+                    remove_hand_slot_mapping(&iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                }
+                if let Some(cap) = re_removed.captures(trimmed) {
+                    let iid = cap["iid"].to_string();
+                    current_hand.remove(&iid);
+                    current_stash.remove(&iid);
+                    remove_hand_slot_mapping(&iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                }
+                if trimmed.contains("Cards Disposed:") {
+                    for mat in re_item_id.find_iter(trimmed) {
+                        let iid = mat.as_str().to_string();
+                        current_hand.remove(&iid);
+                        current_stash.remove(&iid);
+                        remove_hand_slot_mapping(&iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                    }
+                }
+
+                if trimmed.contains("Cards Spawned:")
+                    || trimmed.contains("Cards Dealt:")
+                    || trimmed.contains("NetMessageGameStateSync")
+                    || trimmed.contains("Successfully moved card to:")
+                {
+                    is_sync = true;
+                }
+
+                if is_sync {
+                    if let Some(cap) = re_id.captures(trimmed) {
+                        last_iid = cap["id"].to_string();
+                    } else if let Some(cap) = re_tid.captures(trimmed) {
+                        if !last_iid.is_empty() {
+                            inst_to_temp.insert(last_iid.clone(), cap["tid"].to_string());
+                        }
+                    } else if let Some(cap) = re_owner.captures(trimmed) {
+                        cur_owner = cap["val"].to_string();
+                    } else if let Some(cap) = re_section.captures(trimmed) {
+                        if !last_iid.is_empty() && cur_owner.as_str() == "Player" && last_iid.starts_with("itm_") {
+                            let sec_val = &cap["val"];
+                            if sec_val == "Hand" || sec_val == "Player" {
+                                current_hand.insert(last_iid.clone());
+                                current_stash.remove(&last_iid);
+                            } else if sec_val == "Stash" || sec_val == "Storage" || sec_val == "PlayerStorage" {
+                                current_stash.insert(last_iid.clone());
+                                current_hand.remove(&last_iid);
+                                remove_hand_slot_mapping(&last_iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                            } else {
+                                current_hand.remove(&last_iid);
+                                current_stash.remove(&last_iid);
+                                remove_hand_slot_mapping(&last_iid, &mut hand_slot_to_iid, &mut iid_to_hand_slot);
+                            }
+                        }
+                        last_iid.clear();
+                        cur_owner.clear();
+                    } else if trimmed.contains("Finished processing") {
+                        is_sync = false;
+                    }
                 }
 
                 let Some(idx) = active_idx else {
@@ -1572,6 +2312,8 @@ fn parse_history_from_logs(paths: &[PathBuf]) -> HistoryRoot {
                                         victory: battle_victory,
                                         duration: last_pvp_duration,
                                         screenshot: None,
+                                        lineup_cards: Vec::new(),
+                                        enemy_lineup_cards: Vec::new(),
                                     });
                                     records[idx].days = records[idx].days.saturating_add(1);
                                 }
@@ -1629,9 +2371,57 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
 
     let mut merged: HashMap<String, HistoryMatchRecord> = HashMap::new();
     let mut start_time_index: HashMap<String, String> = HashMap::new();
+    let mut first_seen_date_by_start: HashMap<String, String> = HashMap::new();
+    let mut first_seen_date_by_match_id: HashMap<String, String> = HashMap::new();
+    let mut existing_battle_screenshots: HashMap<(String, u32), String> = HashMap::new();
+    let mut existing_battle_lineups: HashMap<(String, u32), Vec<HistoryBattleLineupCard>> = HashMap::new();
+    let mut existing_enemy_battle_lineups: HashMap<(String, u32), Vec<HistoryBattleLineupCard>> = HashMap::new();
 
-    if !force {
-        for mut record in existing_root.matches {
+    for mut record in existing_root.matches {
+        for battle in &record.pvp_battles {
+            if let Some(path) = battle.screenshot.as_ref().filter(|s| !s.trim().is_empty()) {
+                existing_battle_screenshots.insert(
+                    (
+                        record.match_id.clone(),
+                        battle.day,
+                    ),
+                    path.clone(),
+                );
+            }
+            if !battle.lineup_cards.is_empty() {
+                existing_battle_lineups.insert(
+                    (
+                        record.match_id.clone(),
+                        battle.day,
+                    ),
+                    battle.lineup_cards.clone(),
+                );
+            }
+            if !battle.enemy_lineup_cards.is_empty() {
+                existing_enemy_battle_lineups.insert(
+                    (
+                        record.match_id.clone(),
+                        battle.day,
+                    ),
+                    battle.enemy_lineup_cards.clone(),
+                );
+            }
+        }
+
+        if let Some(date) = normalize_optional_text(&record.game_date) {
+            if !record.start_time.trim().is_empty() {
+                first_seen_date_by_start
+                    .entry(record.start_time.clone())
+                    .or_insert_with(|| date.clone());
+            }
+            if !record.match_id.trim().is_empty() {
+                first_seen_date_by_match_id
+                    .entry(record.match_id.clone())
+                    .or_insert(date);
+            }
+        }
+
+        if !force {
             if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
                 record.game_date = Some(today.clone());
             }
@@ -1641,18 +2431,49 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
                 .or_insert_with(|| key.clone());
             merged.insert(key, record);
         }
-    } else {
-        // Force rebuild keeps only parsed matches, but still uses existing records to preserve
-        // "first seen date" when the same start_time appears again.
-        for record in existing_root.matches {
-            let key = history_record_key(&record);
-            start_time_index
-                .entry(record.start_time.clone())
-                .or_insert(key);
-        }
     }
 
     for mut record in parsed.matches {
+        for battle in &mut record.pvp_battles {
+            if battle
+                .screenshot
+                .as_ref()
+                .map(|s| s.trim().is_empty())
+                .unwrap_or(true)
+            {
+                if let Some(path) = existing_battle_screenshots.get(&(
+                    record.match_id.clone(),
+                    battle.day,
+                )) {
+                    battle.screenshot = Some(path.clone());
+                }
+            }
+            if battle.lineup_cards.is_empty() {
+                if let Some(lineup) = existing_battle_lineups.get(&(
+                    record.match_id.clone(),
+                    battle.day,
+                )) {
+                    battle.lineup_cards = lineup.clone();
+                }
+            }
+            if battle.enemy_lineup_cards.is_empty() {
+                if let Some(lineup) = existing_enemy_battle_lineups.get(&(
+                    record.match_id.clone(),
+                    battle.day,
+                )) {
+                    battle.enemy_lineup_cards = lineup.clone();
+                }
+            }
+        }
+
+        if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
+            if let Some(existing_date) = first_seen_date_by_match_id
+                .get(&record.match_id)
+                .or_else(|| first_seen_date_by_start.get(&record.start_time))
+            {
+                record.game_date = Some(existing_date.clone());
+            }
+        }
         if record.game_date.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true) {
             record.game_date = Some(today.clone());
         }
@@ -1676,9 +2497,11 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
         merged.insert(key, record);
     }
 
-    let normalized = normalize_history(HistoryRoot {
+    let mut normalized = normalize_history(HistoryRoot {
         matches: merged.into_values().collect(),
     });
+
+    backfill_missing_battle_screenshots(&mut normalized);
 
     let value = serde_json::to_value(&normalized).map_err(|e| e.to_string())?;
     crate::user_data::save_match_history(&value)?;
@@ -1689,6 +2512,229 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
     }
 
     Ok(value)
+}
+
+#[tauri::command]
+pub async fn analyze_battle_lineup_from_screenshot(
+    app: tauri::AppHandle,
+    req: ManualBattleLineupAnalyzeRequest,
+) -> Result<ManualBattleLineupAnalyzeResult, String> {
+    let model_path = app
+        .path()
+        .resource_dir()
+        .ok()
+        .map(|p| p.join("resources").join("models").join("best.onnx"))
+        .filter(|p| p.exists())
+        .or_else(|| {
+            let local = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("resources")
+                .join("models")
+                .join("best.onnx");
+            if local.exists() { Some(local) } else { None }
+        })
+        .ok_or_else(|| "missing model file: resources/models/best.onnx".to_string())?;
+
+    let screenshot_path = req.screenshot_path.trim().to_string();
+    if screenshot_path.is_empty() {
+        return Err("empty screenshot_path".to_string());
+    }
+    if !PathBuf::from(&screenshot_path).exists() {
+        return Err(format!("screenshot file not found: {}", screenshot_path));
+    }
+
+    let match_start_time = req.match_start_time.trim().to_string();
+    let match_id = req.match_id.clone().unwrap_or_default();
+    let battle_start_time = req.battle_start_time.trim().to_string();
+    if match_start_time.is_empty() || battle_start_time.is_empty() {
+        return Err("empty match_start_time or battle_start_time".to_string());
+    }
+
+    let battle_day = req.battle_day;
+    let victory = req.victory;
+    let duration = req.duration;
+    let event_start_time = battle_start_time.clone();
+    let event_match_id = match_id.clone();
+
+    let _ = app.emit(
+        "manual-lineup-progress",
+        serde_json::json!({
+            "match_id": event_match_id,
+            "battle_day": battle_day,
+            "battle_start_time": event_start_time,
+            "phase": "yolo",
+            "done": 0,
+            "total": 1
+        }),
+    );
+
+    let app_for_task = app.clone();
+
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        let card_meta_map = load_history_card_meta_map();
+        let _ = app_for_task.emit(
+            "manual-lineup-progress",
+            serde_json::json!({
+                "match_id": match_id,
+                "battle_day": battle_day,
+                "battle_start_time": battle_start_time,
+                "phase": "yolo",
+                "done": 1,
+                "total": 1
+            }),
+        );
+
+        let visual = crate::monster_recognition::extract_lineups_from_battle_file_with_progress(
+            &screenshot_path,
+            &model_path,
+            true,
+            |done, total| {
+                let _ = app_for_task.emit(
+                    "manual-lineup-progress",
+                    serde_json::json!({
+                        "match_id": match_id,
+                        "battle_day": battle_day,
+                        "battle_start_time": battle_start_time,
+                        "phase": "matching",
+                        "done": done,
+                        "total": total
+                    }),
+                );
+            },
+        )
+        .or_else(|_| {
+            crate::monster_recognition::extract_lineups_from_battle_file_with_progress(
+                &screenshot_path,
+                &model_path,
+                false,
+                |done, total| {
+                    let _ = app_for_task.emit(
+                        "manual-lineup-progress",
+                        serde_json::json!({
+                            "match_id": match_id,
+                            "battle_day": battle_day,
+                            "battle_start_time": battle_start_time,
+                            "phase": "matching",
+                            "done": done,
+                            "total": total
+                        }),
+                    );
+                },
+            )
+        })?;
+
+        let (self_cards, enemy_cards) = visual;
+        let self_lineup = history_build_lineup_from_visual(&self_cards, &card_meta_map);
+        let enemy_lineup = history_build_lineup_from_visual(&enemy_cards, &card_meta_map);
+
+        let self_json = if self_lineup.is_empty() {
+            None
+        } else {
+            serde_json::to_string(&self_lineup).ok()
+        };
+        let enemy_json = if enemy_lineup.is_empty() {
+            None
+        } else {
+            serde_json::to_string(&enemy_lineup).ok()
+        };
+
+        crate::user_data::upsert_match_battle_snapshot(
+            &match_start_time,
+            battle_day,
+            &battle_start_time,
+            victory,
+            duration,
+            Some(&screenshot_path),
+            self_json.as_deref(),
+            enemy_json.as_deref(),
+        )?;
+
+        Ok::<ManualBattleLineupAnalyzeResult, String>(ManualBattleLineupAnalyzeResult {
+            self_count: self_lineup.len(),
+            enemy_count: enemy_lineup.len(),
+            screenshot_path,
+        })
+    })
+    .await
+    .map_err(|e| e.to_string())??;
+
+    let _ = app.emit(
+        "match-history-updated",
+        serde_json::json!({
+            "day": battle_day,
+            "start_time": event_start_time,
+            "has_screenshot": true,
+            "manual_analyze": true
+        }),
+    );
+
+    let _ = app.emit(
+        "manual-lineup-progress",
+        serde_json::json!({
+            "match_id": event_match_id,
+            "battle_day": battle_day,
+            "battle_start_time": event_start_time,
+            "phase": "done",
+            "done": 1,
+            "total": 1
+        }),
+    );
+
+    Ok(result)
+}
+
+#[tauri::command]
+pub async fn capture_battle_screenshot_manual(
+    app: tauri::AppHandle,
+    req: ManualBattleScreenshotRequest,
+) -> Result<ManualBattleScreenshotResult, String> {
+    let match_start_time = req.match_start_time.trim().to_string();
+    let battle_start_time = req.battle_start_time.trim().to_string();
+    if match_start_time.is_empty() || battle_start_time.is_empty() {
+        return Err("empty match_start_time or battle_start_time".to_string());
+    }
+
+    let battle_day = req.battle_day;
+    let victory = req.victory;
+    let duration = req.duration;
+
+    let captured = tauri::async_runtime::spawn_blocking(move || {
+        crate::data_management::log_monitor::capture_bazaar_round_screenshot(
+            battle_day,
+            &battle_start_time,
+            false,
+        )
+    })
+    .await
+    .map_err(|e| e.to_string())??;
+
+    let Some(path) = captured else {
+        return Err("未检测到游戏窗口，无法执行仅游戏窗口截图。请先切回《The Bazaar》后重试。".to_string());
+    };
+
+    let screenshot_path = path.to_string_lossy().to_string();
+
+    crate::user_data::upsert_match_battle_snapshot(
+        &match_start_time,
+        battle_day,
+        &req.battle_start_time,
+        victory,
+        duration,
+        Some(&screenshot_path),
+        None,
+        None,
+    )?;
+
+    let _ = app.emit(
+        "match-history-updated",
+        serde_json::json!({
+            "day": battle_day,
+            "start_time": req.battle_start_time,
+            "has_screenshot": true,
+            "manual_screenshot": true
+        }),
+    );
+
+    Ok(ManualBattleScreenshotResult { screenshot_path })
 }
 
 fn first_existing(paths: &[PathBuf]) -> PathBuf {

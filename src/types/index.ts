@@ -97,6 +97,22 @@ export interface MatchBattleRecord {
   victory: boolean;
   duration?: number | null;
   screenshot?: string | null;
+  lineup_cards?: Array<{
+    instance_id: string;
+    template_id: string;
+    name_cn: string;
+    name_en: string;
+    image?: string | null;
+    size?: string | null;
+  }>;
+  enemy_lineup_cards?: Array<{
+    instance_id: string | null;
+    template_id: string;
+    name_cn: string;
+    name_en: string;
+    image?: string | null;
+    size?: string | null;
+  }>;
 }
 
 export interface MatchHistoryRecord {

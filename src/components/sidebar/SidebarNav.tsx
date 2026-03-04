@@ -1,18 +1,21 @@
 import React from 'react';
 import type { TabType } from '../../types';
 
+import iconHistory from '../../assets/icons/sidebar/history.svg';
 import iconSetting from '../../assets/icons/sidebar/setting.svg';
 import { SIDEBAR_NAV_ITEMS } from './sidebarConfig';
 
 interface SidebarNavProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  onOpenProfile?: () => void;
   onOpenSettings: () => void;
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({
   activeTab,
   onTabChange,
+  onOpenProfile,
   onOpenSettings,
 }) => {
   return (
@@ -37,10 +40,18 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
           ))}
         </div>
 
-        <button className="sidebar-settings-btn" onClick={onOpenSettings} title="系统设置">
-          <img src={iconSetting} alt="" className="sidebar-nav-icon" />
-          <span className="sidebar-nav-label">系统设置</span>
-        </button>
+        <div className="sidebar-bottom-actions">
+          {onOpenProfile ? (
+            <button className="sidebar-profile-btn" onClick={onOpenProfile} title="个人页面">
+              <img src={iconHistory} alt="" className="sidebar-nav-icon" />
+              <span className="sidebar-nav-label">个人页面</span>
+            </button>
+          ) : null}
+          <button className="sidebar-settings-btn" onClick={onOpenSettings} title="系统设置">
+            <img src={iconSetting} alt="" className="sidebar-nav-icon" />
+            <span className="sidebar-nav-label">系统设置</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

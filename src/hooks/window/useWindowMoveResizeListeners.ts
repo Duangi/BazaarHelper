@@ -94,7 +94,6 @@ export const useWindowMoveResizeListeners = ({
           return;
         }
         if (!isInitialized.current) return;
-        if (showVersionScreenRef.current) return;
 
         isResizing.current = true;
         lastUserResize.current = Date.now();
@@ -106,9 +105,14 @@ export const useWindowMoveResizeListeners = ({
           const logicalHeight = Math.round(size.height / factor);
 
           if (logicalWidth > 150 && logicalHeight > 150) {
-            expandedWidthRef.current = logicalWidth;
-            if (!isCollapsedRef.current) {
-              expandedHeightRef.current = logicalHeight;
+            if (showVersionScreenRef.current) {
+              localStorage.setItem('startup-width', logicalWidth.toString());
+              localStorage.setItem('startup-height', logicalHeight.toString());
+            } else {
+              expandedWidthRef.current = logicalWidth;
+              if (!isCollapsedRef.current) {
+                expandedHeightRef.current = logicalHeight;
+              }
             }
 
             if (saveSizeTimer.current) clearTimeout(saveSizeTimer.current);
@@ -121,14 +125,19 @@ export const useWindowMoveResizeListeners = ({
                 height: Math.round(size.height),
               }).catch(console.error);
 
-              localStorage.setItem('plugin-width', logicalWidth.toString());
-              if (!isCollapsedRef.current) {
-                localStorage.setItem('plugin-height', logicalHeight.toString());
+              if (showVersionScreenRef.current) {
+                localStorage.setItem('startup-width', logicalWidth.toString());
+                localStorage.setItem('startup-height', logicalHeight.toString());
+              } else {
+                localStorage.setItem('plugin-width', logicalWidth.toString());
+                if (!isCollapsedRef.current) {
+                  localStorage.setItem('plugin-height', logicalHeight.toString());
+                }
               }
               setTimeout(() => {
                 isResizing.current = false;
               }, 500);
-            }, 2000);
+            }, showVersionScreenRef.current ? 400 : 2000);
           }
         } catch (e) {
           console.error('[Resize] Failed to get window size:', e);

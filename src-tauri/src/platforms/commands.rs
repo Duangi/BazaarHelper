@@ -78,12 +78,6 @@ pub fn restore_main_window_geometry(app: tauri::AppHandle) -> Result<serde_json:
     }
 
     if window
-        .set_position(LogicalPosition::new(target_x, target_y))
-        .is_ok()
-    {
-        applied = true;
-        method = "logical_clamped";
-    } else if window
         .set_position(PhysicalPosition::new(target_x, target_y))
         .is_ok()
     {
@@ -109,6 +103,12 @@ pub fn restore_main_window_geometry(app: tauri::AppHandle) -> Result<serde_json:
                 {
                     applied = true;
                     method = "physical_mul_scale";
+                } else if window
+                    .set_position(LogicalPosition::new(target_x, target_y))
+                    .is_ok()
+                {
+                    applied = true;
+                    method = "logical_clamped_fallback";
                 }
             }
         }

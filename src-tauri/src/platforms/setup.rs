@@ -13,7 +13,11 @@ pub fn setup_app_shell(app: &mut tauri::App) -> Result<(), Box<dyn std::error::E
     if let Some(window) = app.get_webview_window("main") {
         crate::platforms::window_style::apply_main_window_style(&window);
         let _ = window.remove_menu();
+        #[cfg(not(target_os = "windows"))]
         let _ = window.show();
+        #[cfg(target_os = "windows")]
+        let _ = window.hide();
+        #[cfg(not(target_os = "windows"))]
         let _ = window.set_focus();
         crate::platforms::window_style::enforce_overlay_traits(&window, "main");
 

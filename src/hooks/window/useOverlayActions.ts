@@ -84,7 +84,19 @@ export const useOverlayActions = ({
 
   const handleOverlayMouseLeave = useCallback(
     (_e: MouseEvent<HTMLDivElement>) => {
-      if (isInputFocused || isCollapsed) return;
+      const imeComposing = document.body.getAttribute('data-ime-composing') === '1';
+      const searchInputActive = document.body.getAttribute('data-search-input-active') === '1';
+      const inputFocusLock = document.body.getAttribute('data-input-focus-lock') === '1';
+      const noCollapseUntil = Number(document.body.getAttribute('data-no-collapse-until') || '0');
+      const withinNoCollapseWindow = Number.isFinite(noCollapseUntil) && Date.now() < noCollapseUntil;
+      const active = document.activeElement as HTMLElement | null;
+      const tag = active?.tagName?.toLowerCase();
+      const isTypingElement = Boolean(
+        active
+        && (tag === 'input' || tag === 'textarea' || active.isContentEditable),
+      );
+
+      if (isInputFocused || isCollapsed || imeComposing || searchInputActive || inputFocusLock || withinNoCollapseWindow || isTypingElement) return;
 
       void (async () => {
         try {

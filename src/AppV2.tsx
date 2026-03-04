@@ -27,6 +27,7 @@ import { MainShell } from './components/layout/MainShell';
 import { ToastLayer } from './components/layout/ToastLayer';
 import { VersionGateScreen } from './components/settings/VersionGateScreen';
 import { AppSettingsPanel } from './components/settings/AppSettingsPanel';
+import { ProfilePanel } from './components/settings/ProfilePanel';
 import { useCardRecognition } from './hooks/features/useCardRecognition';
 import { useDayTabSelection } from './hooks/features/useDayTabSelection';
 import { useItemCardState } from './hooks/features/useItemCardState';
@@ -88,8 +89,11 @@ const DEFAULT_EXPANDED_WIDTH = MAC_SCREEN_PROFILE.expanded.defaultWidth;
 const DEFAULT_EXPANDED_HEIGHT = MAC_SCREEN_PROFILE.expanded.defaultHeight;
 const STARTUP_WIDTH = MAC_SCREEN_PROFILE.startup.width;
 const STARTUP_HEIGHT = MAC_SCREEN_PROFILE.startup.height;
+const EDGE_COLLAPSE_TOLERANCE_PX = 22;
+const EDGE_COLLAPSE_DELAY_MS = 260;
 const NON_DRAG_SELECTOR = 'button, input, textarea, select, a, [data-no-drag], .no-drag';
 const ISLAND_BASE_TEXT = '集市小抄运行中';
+const IS_WINDOWS = typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent || '');
 
 const buildSearchSkeletonItem = (item: SearchItemLite): ItemData => ({
   uuid: item.uuid,
@@ -125,6 +129,7 @@ export default function AppV2() {
   const [showVersionScreen, setShowVersionScreen] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('history');
   const [showSettings, setShowSettings] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selectedDay, setSelectedDay] = useState('Day 1');
   const [currentDay, setCurrentDay] = useState<number | null>(1);
@@ -191,6 +196,7 @@ export default function AppV2() {
     enableYoloAuto ? 'success' : 'info',
   );
   const [islandPinnedName, setIslandPinnedName] = useState<string | null>(null);
+  const [islandRuntimeText, setIslandRuntimeText] = useState<string>(ISLAND_BASE_TEXT);
   const readStoredExpandedSize = () => {
     const width = Number(localStorage.getItem('window-expanded-width')) || DEFAULT_EXPANDED_WIDTH;
     const height = Number(localStorage.getItem('window-expanded-height')) || DEFAULT_EXPANDED_HEIGHT;
@@ -206,6 +212,17 @@ export default function AppV2() {
   const hasRestoredMainGeometryRef = useRef(false);
   const moveSaveTimerRef = useRef<number | null>(null);
   const resizeSaveTimerRef = useRef<number | null>(null);
+  const collapseLeaveTimerRef = useRef<number | null>(null);
+
+  const disableWindowShadow = useCallback(async () => {
+    try {
+      if (typeof (appWindow as any).setShadow === 'function') {
+        await (appWindow as any).setShadow(false);
+      }
+    } catch (error) {
+      console.warn('[AppV2] disable shadow failed:', error);
+    }
+  }, [appWindow]);
 
   useEffect(() => {
     showVersionScreenRef.current = showVersionScreen;
@@ -298,13 +315,41 @@ export default function AppV2() {
 
   const centerStartupWindow = useCallback(async () => {
     try {
-      await appWindow.setSize(new LogicalSize(STARTUP_WIDTH, STARTUP_HEIGHT));
-      await appWindow.center();
+      await disableWindowShadow();
+      const geometry = await invoke<{
+        width?: number | null;
+        height?: number | null;
+      }>('get_window_geometry', { windowLabel: 'main' }).catch(() => null);
+      const monitor = await currentMonitor().catch(() => null);
+      if (monitor) {
+        const scale = Math.max(1, monitor.scaleFactor || 1);
+        const defaultWidth = Math.max(1, Math.round(STARTUP_WIDTH * scale));
+        const defaultHeight = Math.max(1, Math.round(STARTUP_HEIGHT * scale));
+        const requestedWidth =
+          typeof geometry?.width === 'number' && geometry.width > 120
+            ? Math.round(geometry.width)
+            : defaultWidth;
+        const requestedHeight =
+          typeof geometry?.height === 'number' && geometry.height > 120
+            ? Math.round(geometry.height)
+            : defaultHeight;
+        const targetWidth = Math.max(360, Math.min(monitor.size.width, requestedWidth));
+        const targetHeight = Math.max(420, Math.min(monitor.size.height, requestedHeight));
+        const targetX = monitor.position.x + Math.round((monitor.size.width - targetWidth) / 2);
+        const targetY = monitor.position.y + Math.round((monitor.size.height - targetHeight) / 2);
+
+        await appWindow.hide().catch(() => {});
+        await appWindow.setSize(new PhysicalSize(targetWidth, targetHeight));
+        await appWindow.setPosition(new PhysicalPosition(targetX, targetY));
+      } else {
+        await appWindow.setSize(new LogicalSize(STARTUP_WIDTH, STARTUP_HEIGHT));
+        await appWindow.center();
+      }
       await appWindow.show();
     } catch (error) {
       console.warn('[AppV2] center startup window failed:', error);
     }
-  }, [appWindow]);
+  }, [appWindow, disableWindowShadow]);
 
   const restoreMainWindowGeometry = useCallback(async () => {
     if (restoringMainLayoutRef.current) return;
@@ -338,23 +383,10 @@ export default function AppV2() {
         persistExpandedSize(safe);
       }
 
-      let targetX: number | null = null;
-      let targetY: number | null = null;
-      if (geometry && typeof geometry.x === 'number' && typeof geometry.y === 'number') {
-        targetX = geometry.x;
-        targetY = geometry.y;
-      } else {
-        const rawX = localStorage.getItem('plugin-pos-x');
-        const rawY = localStorage.getItem('plugin-pos-y');
-        if (rawX && rawY) {
-          const parsedX = Number.parseInt(rawX, 10);
-          const parsedY = Number.parseInt(rawY, 10);
-          if (Number.isFinite(parsedX) && Number.isFinite(parsedY)) {
-            targetX = parsedX;
-            targetY = parsedY;
-          }
-        }
-      }
+      const hasSavedGeometry =
+        !!geometry && typeof geometry.x === 'number' && typeof geometry.y === 'number';
+      const targetX = hasSavedGeometry ? geometry!.x! : null;
+      const targetY = hasSavedGeometry ? geometry!.y! : null;
 
       let restoredByNative = false;
       const nativeRestore = await invoke<{ applied?: boolean }>('restore_main_window_geometry').catch(() => null);
@@ -364,28 +396,68 @@ export default function AppV2() {
       }
 
       if (!restoredByNative && targetX != null && targetY != null) {
-        // Fallback for old clients/localStorage-only state.
+        // Fallback: keep physical-coordinate path first to avoid DPI mismatch.
         try {
-          await appWindow.setPosition(new LogicalPosition(targetX, targetY));
-        } catch {
           await appWindow.setPosition(new PhysicalPosition(targetX, targetY));
+        } catch {
+          await appWindow.setPosition(new LogicalPosition(targetX, targetY));
         }
         setHasCustomPosition(true);
       }
 
+      await disableWindowShadow();
       await appWindow.show();
     } catch (error) {
       console.warn('[AppV2] restore main window geometry failed:', error);
     } finally {
       restoringMainLayoutRef.current = false;
     }
-  }, [appWindow, clampExpandedSize, persistExpandedSize]);
+  }, [appWindow, clampExpandedSize, disableWindowShadow, persistExpandedSize]);
 
   useEffect(() => {
     if (showVersionScreen) {
       void centerStartupWindow();
     }
   }, [centerStartupWindow, showVersionScreen]);
+
+  useEffect(() => {
+    if (showVersionScreen) {
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        await disableWindowShadow();
+        if (isCollapsed) {
+          await ensureWindowLogicalSize(COLLAPSED_WIDTH, COLLAPSED_HEIGHT);
+        } else {
+          const safe = await clampExpandedSize(expandedSizeRef.current);
+          if (!cancelled) {
+            persistExpandedSize(safe);
+            await ensureWindowLogicalSize(safe.width, safe.height);
+          }
+        }
+        if (!cancelled) {
+          await appWindow.show();
+        }
+      } catch (error) {
+        console.warn('[AppV2] sync layout after state switch failed:', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    appWindow,
+    clampExpandedSize,
+    disableWindowShadow,
+    ensureWindowLogicalSize,
+    isCollapsed,
+    persistExpandedSize,
+    showVersionScreen,
+  ]);
 
   useEffect(() => {
     if (showVersionScreen) {
@@ -396,13 +468,15 @@ export default function AppV2() {
       return undefined;
     }
     hasRestoredMainGeometryRef.current = true;
+    const restoreDelay = IS_WINDOWS ? 0 : MAC_SCREEN_PROFILE.timing.restoreLayoutDelayMs;
+    const retryDelay = IS_WINDOWS ? 180 : MAC_SCREEN_PROFILE.timing.restoreLayoutRetryDelayMs;
     const timer1 = window.setTimeout(() => {
       void restoreMainWindowGeometry();
-    }, MAC_SCREEN_PROFILE.timing.restoreLayoutDelayMs);
+    }, restoreDelay);
     // Re-apply once more to override potential late center/show operations from startup view.
     const timer2 = window.setTimeout(() => {
       void restoreMainWindowGeometry();
-    }, MAC_SCREEN_PROFILE.timing.restoreLayoutRetryDelayMs);
+    }, retryDelay);
     return () => {
       window.clearTimeout(timer1);
       window.clearTimeout(timer2);
@@ -414,26 +488,33 @@ export default function AppV2() {
     let unlistenResize: (() => void) | null = null;
 
     const setupListeners = async () => {
-      unlistenMove = await appWindow.listen<{ x: number; y: number }>('tauri://move', (event) => {
+      unlistenMove = await appWindow.listen<{ x: number; y: number }>('tauri://move', () => {
         if (showVersionScreenRef.current || restoringMainLayoutRef.current) return;
         setHasCustomPosition(true);
-        localStorage.setItem('plugin-pos-x', String(event.payload.x));
-        localStorage.setItem('plugin-pos-y', String(event.payload.y));
 
         if (moveSaveTimerRef.current) {
           window.clearTimeout(moveSaveTimerRef.current);
         }
         moveSaveTimerRef.current = window.setTimeout(() => {
-          void invoke('save_window_geometry', {
-            windowLabel: 'main',
-            x: event.payload.x,
-            y: event.payload.y,
-          }).catch((error) => console.warn('[AppV2] save move geometry failed:', error));
+          void (async () => {
+            try {
+              const position = await appWindow.outerPosition();
+              localStorage.setItem('plugin-pos-x', String(position.x));
+              localStorage.setItem('plugin-pos-y', String(position.y));
+              await invoke('save_window_geometry', {
+                windowLabel: 'main',
+                x: position.x,
+                y: position.y,
+              });
+            } catch (error) {
+              console.warn('[AppV2] save move geometry failed:', error);
+            }
+          })();
         }, MAC_SCREEN_PROFILE.timing.saveMoveDebounceMs);
       });
 
       unlistenResize = await appWindow.listen('tauri://resize', () => {
-        if (showVersionScreenRef.current || restoringMainLayoutRef.current || isCollapsed) return;
+        if (restoringMainLayoutRef.current || (isCollapsed && !showVersionScreenRef.current)) return;
         if (resizeSaveTimerRef.current) {
           window.clearTimeout(resizeSaveTimerRef.current);
         }
@@ -451,7 +532,9 @@ export default function AppV2() {
                 width: inner.width / Math.max(1, scale),
                 height: inner.height / Math.max(1, scale),
               });
-              persistExpandedSize(clamped);
+              if (!showVersionScreenRef.current) {
+                persistExpandedSize(clamped);
+              }
               await invoke('save_window_geometry', {
                 windowLabel: 'main',
                 width: inner.width,
@@ -474,6 +557,9 @@ export default function AppV2() {
       }
       if (resizeSaveTimerRef.current) {
         window.clearTimeout(resizeSaveTimerRef.current);
+      }
+      if (collapseLeaveTimerRef.current) {
+        window.clearTimeout(collapseLeaveTimerRef.current);
       }
     };
   }, [appWindow, clampExpandedSize, isCollapsed, persistExpandedSize]);
@@ -525,6 +611,63 @@ export default function AppV2() {
     [appWindow, clampExpandedSize, ensureWindowLogicalSize, isCollapsed, persistExpandedSize],
   );
 
+  const shouldBlockAutoCollapse = useCallback(() => {
+    const imeComposing = document.body.getAttribute('data-ime-composing') === '1';
+    const searchInputActive = document.body.getAttribute('data-search-input-active') === '1';
+    const inputFocusLock = document.body.getAttribute('data-input-focus-lock') === '1';
+    const noCollapseUntil = Number(document.body.getAttribute('data-no-collapse-until') || '0');
+    const withinNoCollapseWindow = Number.isFinite(noCollapseUntil) && Date.now() < noCollapseUntil;
+    const active = document.activeElement as HTMLElement | null;
+    const tag = active?.tagName?.toLowerCase();
+    const isTypingElement = Boolean(
+      active
+      && (tag === 'input' || tag === 'textarea' || active.isContentEditable),
+    );
+    return imeComposing || searchInputActive || inputFocusLock || withinNoCollapseWindow || isTypingElement;
+  }, []);
+
+  const scheduleEdgeCollapseCheck = useCallback(
+    (screenX: number, screenY: number) => {
+      if (collapseLeaveTimerRef.current) {
+        window.clearTimeout(collapseLeaveTimerRef.current);
+      }
+      collapseLeaveTimerRef.current = window.setTimeout(() => {
+        void (async () => {
+          if (isCollapsed) return;
+          if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
+          if (shouldBlockAutoCollapse()) return;
+
+          const [position, size] = await Promise.all([
+            appWindow.outerPosition().catch(() => null),
+            appWindow.outerSize().catch(() => null),
+          ]);
+
+          if (!position || !size) {
+            await applyCollapsedState(true);
+            return;
+          }
+
+          const left = position.x - EDGE_COLLAPSE_TOLERANCE_PX;
+          const top = position.y - EDGE_COLLAPSE_TOLERANCE_PX;
+          const right = position.x + Number(size.width) + EDGE_COLLAPSE_TOLERANCE_PX;
+          const bottom = position.y + Number(size.height) + EDGE_COLLAPSE_TOLERANCE_PX;
+          const withinTolerance =
+            Number.isFinite(screenX)
+            && Number.isFinite(screenY)
+            && screenX >= left
+            && screenX <= right
+            && screenY >= top
+            && screenY <= bottom;
+
+          if (!withinTolerance) {
+            await applyCollapsedState(true);
+          }
+        })();
+      }, EDGE_COLLAPSE_DELAY_MS);
+    },
+    [appWindow, applyCollapsedState, isCollapsed, shouldBlockAutoCollapse],
+  );
+
   const handleOverlayMouseDown = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
       if (event.button !== 0) return;
@@ -547,9 +690,10 @@ export default function AppV2() {
       if (isCollapsed) return;
       if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
       if (event.relatedTarget) return;
-      void applyCollapsedState(true);
+
+      scheduleEdgeCollapseCheck(event.screenX, event.screenY);
     },
-    [applyCollapsedState, isCollapsed],
+    [isCollapsed, scheduleEdgeCollapseCheck],
   );
 
   useEffect(() => {
@@ -568,7 +712,7 @@ export default function AppV2() {
     if (showSettings) return '系统设置';
     return TAB_LABELS[activeTab];
   }, [activeTab, showSettings]);
-  const islandStatusText = islandPinnedName ? `当前识别: ${islandPinnedName}` : ISLAND_BASE_TEXT;
+  const islandStatusText = islandPinnedName ? `当前识别: ${islandPinnedName}` : islandRuntimeText;
   const historyEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'history';
   const monsterEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'monster';
   const cardEnabled = !showVersionScreen && !isCollapsed && !showSettings && activeTab === 'card';
@@ -673,6 +817,17 @@ export default function AppV2() {
         return;
       }
 
+      if (text.startsWith('本回合战斗时长约') || text.startsWith('本回合战斗结束')) {
+        const sec = text.match(/([\d.]+)s/);
+        if (sec?.[1]) {
+          setIslandRuntimeText(`本次战斗 ${sec[1]}s`);
+        } else {
+          setIslandRuntimeText('本次战斗已结束');
+        }
+        setIslandStatusType('success');
+        return;
+      }
+
       if (text.includes('详情识别失败')) {
         setIslandStatusType('error');
         return;
@@ -692,6 +847,23 @@ export default function AppV2() {
       setIslandStatusType(enableYoloAuto ? 'success' : 'info');
     }
   }, [enableYoloAuto, islandPinnedName]);
+
+  useEffect(() => {
+    if (showVersionScreen) return;
+    let mounted = true;
+    const unlistenPromise = listen<number>('day-update', (event) => {
+      if (!mounted || islandPinnedName) return;
+      const day = Number(event.payload);
+      if (Number.isFinite(day) && day > 0) {
+        setIslandRuntimeText(`当前 Day ${day}`);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      void unlistenPromise.then((fn) => fn()).catch(() => {});
+    };
+  }, [islandPinnedName, showVersionScreen]);
   const { processSyncPayload } = useSyncDataPipeline({ setSyncData });
   const { pinnedItems, expandedItems, setExpandedItems, togglePin, toggleExpand, getSortedItems } =
     useItemCardState();
@@ -1115,10 +1287,16 @@ export default function AppV2() {
       }
       onMouseDownCapture={handleOverlayMouseDown}
       onMouseOutCapture={handleOverlayMouseOutCapture}
-      onMouseLeave={() => {
+      onMouseEnter={() => {
+        if (collapseLeaveTimerRef.current) {
+          window.clearTimeout(collapseLeaveTimerRef.current);
+        }
+      }}
+      onMouseLeave={(event) => {
         if (!isCollapsed) {
           if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
-          void applyCollapsedState(true);
+
+          scheduleEdgeCollapseCheck(event.screenX, event.screenY);
         }
       }}
     >
@@ -1145,11 +1323,19 @@ export default function AppV2() {
           activeTab={activeTab}
           onTabChange={(tab) => {
             setShowSettings(false);
+            setShowProfile(false);
             setActiveTab(tab);
           }}
-          onOpenSettings={() => setShowSettings(true)}
+          onOpenProfile={() => {
+            setShowSettings(false);
+            setShowProfile(true);
+          }}
+          onOpenSettings={() => {
+            setShowProfile(false);
+            setShowSettings(true);
+          }}
         >
-          {!showSettings && searchEnabled ? (
+          {!showSettings && !showProfile && searchEnabled ? (
             <Suspense fallback={null}>
               <SearchFiltersPanelLazy
                 isSearchFilterCollapsed={isSearchFilterCollapsed}
@@ -1234,11 +1420,19 @@ export default function AppV2() {
                   announcement={announcement}
                   sponsorIcons={sponsorIcons}
                 />
+              ) : showProfile ? (
+                <ProfilePanel
+                  visible
+                  inline
+                  onClose={() => setShowProfile(false)}
+                  showToast={showToast}
+                />
               ) : historyEnabled ? (
                 <Suspense fallback={<div className="empty-tip">加载历史战绩中...</div>}>
                   <HistoryViewLazy
                     records={matchHistory}
                     isLoading={isLoadingHistory}
+                    showToast={showToast}
                     onReload={() => {
                       void loadMatchHistory();
                     }}

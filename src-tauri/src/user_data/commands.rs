@@ -2,3 +2,18 @@
 pub fn get_match_history() -> Result<serde_json::Value, String> {
     super::load_match_history()
 }
+
+#[tauri::command]
+pub fn get_screenshot_capture_delay_ms() -> Result<u64, String> {
+    let state = crate::load_state();
+    Ok(state.screenshot_capture_delay_ms.min(3000))
+}
+
+#[tauri::command]
+pub fn set_screenshot_capture_delay_ms(delay_ms: u64) -> Result<u64, String> {
+    let mut state = crate::load_state();
+    let clamped = delay_ms.min(3000);
+    state.screenshot_capture_delay_ms = clamped;
+    crate::save_state(&state);
+    Ok(clamped)
+}

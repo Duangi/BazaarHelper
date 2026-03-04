@@ -147,8 +147,10 @@ export const useWindowLayoutSync = ({
       let targetY = 0;
 
       if (showVersionScreen) {
-        targetW = 600;
-        targetH = 850;
+        const startupW = Number(localStorage.getItem('startup-width'));
+        const startupH = Number(localStorage.getItem('startup-height'));
+        targetW = Math.round(Math.min(Math.max(Number.isFinite(startupW) ? startupW : 600, 420), pWidth - 20));
+        targetH = Math.round(Math.min(Math.max(Number.isFinite(startupH) ? startupH : 850, 360), pHeight - 20));
         // Startup/version gate should always appear centered, independent from
         // the saved in-game overlay position.
         targetX = Math.round(pX + (pWidth - targetW) / 2);
