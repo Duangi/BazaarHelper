@@ -59,11 +59,24 @@ const formatDate = (raw?: string) => {
   return trimmed;
 };
 
-const DEFAULT_UPLOAD_API_BASE = 'https://duang.work';
+const DEFAULT_UPLOAD_API_BASE = 'https://www.duang.work';
 const UPLOAD_API_BASE_KEY = 'community-upload-api-base';
 const UPLOAD_PLUGIN_KEY = 'community-upload-plugin-key';
 
-const normalizeApiBase = (raw: string) => raw.trim().replace(/\/+$/, '');
+const normalizeApiBase = (raw: string) => {
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  try {
+    const url = new URL(withProtocol);
+    if (url.hostname === 'duang.work') {
+      url.hostname = 'www.duang.work';
+    }
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return withProtocol.replace(/\/+$/, '');
+  }
+};
 
 const parseJsonSafe = async (response: Response) => {
   const text = await response.text();
@@ -373,7 +386,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   };
 
   const handleConfigureUpload = () => {
-    const nextBase = window.prompt('上传服务地址（例如 https://duang.work）', uploadApiBase);
+    const nextBase = window.prompt('上传服务地址（例如 https://www.duang.work）', uploadApiBase);
     if (nextBase === null) return;
     const normalized = normalizeApiBase(nextBase);
     if (!normalized) {
