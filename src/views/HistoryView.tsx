@@ -684,7 +684,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           <div className="history-card-right">
             <span className="history-score">{wins} 胜 - {losses} 负</span>
             <div className="history-battle-flow">
-              {flowBattles.slice(0, 15).map((battle, battleIdx) => (
+              {flowBattles.map((battle, battleIdx) => (
                 <span
                   key={`${record.match_id}-flow-${battleIdx}`}
                   className={`history-flow-dot ${battle.victory ? 'win' : 'loss'}`}
@@ -693,9 +693,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                   {battle.victory ? '✓' : '✗'}
                 </span>
               ))}
-              {flowBattles.length > 15 && (
-                <span className="history-flow-more">+{flowBattles.length - 15}</span>
-              )}
             </div>
             <span className="history-arrow">{opened ? '▴' : '▾'}</span>
           </div>
