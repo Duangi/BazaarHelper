@@ -22,6 +22,14 @@ interface CheckUploadedResponse {
   existingBattleKeys?: string[];
 }
 
+interface MatchUploadProgress {
+  done: number;
+  total: number;
+  uploaded: number;
+  skipped: number;
+  failed: number;
+}
+
 const HERO_AVATAR_MAP: Record<string, string> = {
   pygmalien: '/images/heroes/pygmalien.webp',
   jules: '/images/heroes/jules.webp',
@@ -88,6 +96,52 @@ const parseJsonSafe = async (response: Response) => {
   }
 };
 
+const loadImageFromBlob = (blob: Blob): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const blobUrl = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(blobUrl);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(blobUrl);
+      reject(new Error('图片解码失败'));
+    };
+    img.src = blobUrl;
+  });
+
+const convertImageBlobToWebp = async (blob: Blob, quality = 0.8): Promise<Blob> => {
+  if (!blob.type.startsWith('image/')) return blob;
+  try {
+    const img = await loadImageFromBlob(blob);
+    const width = Math.max(1, img.naturalWidth || img.width || 1);
+    const height = Math.max(1, img.naturalHeight || img.height || 1);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return blob;
+    ctx.drawImage(img, 0, 0, width, height);
+    const webpBlob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((b) => resolve(b), 'image/webp', quality);
+    });
+    return webpBlob || blob;
+  } catch {
+    return blob;
+  }
+};
+
+const sanitizeUploadFolderName = (raw: string): string => {
+  const text = String(raw || '')
+    .trim()
+    .replace(/\s+/g, '_')
+    .replace(/[^a-zA-Z0-9_\-\u4e00-\u9fa5]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 40);
+  return text || 'anonymous';
+};
+
 const buildBattleKey = (matchId: string, day: number, startTime: string, result: 'win' | 'lose') =>
   `${matchId}::${day}::${startTime || ''}::${result}`;
 
@@ -119,6 +173,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     return (localStorage.getItem(UPLOAD_PLUGIN_KEY) || '').trim();
   });
   const [uploadingMatches, setUploadingMatches] = useState<Set<string>>(new Set());
+  const [uploadProgressByMatch, setUploadProgressByMatch] = useState<Record<string, MatchUploadProgress>>({});
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
   const [identity, setIdentity] = useState<GameIdentityInfo | null>(null);
@@ -186,6 +241,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     record: MatchHistoryRecord,
     author: GameIdentityInfo,
     knownExistingBattleKeys?: Set<string>,
+    onProgress?: (progress: MatchUploadProgress) => void,
   ): Promise<{ uploaded: number; skipped: number; failed: number }> => {
     const base = normalizeApiBase(uploadApiBase);
     if (!base) throw new Error('请先配置上传服务地址');
@@ -206,10 +262,21 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     let uploaded = 0;
     let skipped = 0;
     let failed = 0;
+    let done = 0;
+    const total = localBattles.length;
+
+    const emitProgress = () => {
+      if (!onProgress) return;
+      onProgress({ done, total, uploaded, skipped, failed });
+    };
+
+    emitProgress();
 
     for (const entry of localBattles) {
       if (existingKeys.has(entry.key)) {
         skipped += 1;
+        done += 1;
+        emitProgress();
         continue;
       }
 
@@ -217,19 +284,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         const screenshotPath = String(entry.battle.screenshot || '').trim();
         const localRes = await fetch(convertFileSrc(screenshotPath));
         if (!localRes.ok) throw new Error(`读取本地截图失败: ${localRes.status}`);
-        const blob = await localRes.blob();
-        const extRaw = screenshotPath.split('.').pop() || 'webp';
-        const ext = extRaw.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'webp';
+        const sourceBlob = await localRes.blob();
+        const blob = await convertImageBlobToWebp(sourceBlob, 0.8);
         const safeStart = String(entry.battle.start_time || 'unknown').replace(/[^\d]/g, '').slice(0, 14) || 'unknown';
-        const fileName = `${record.match_id}-d${entry.battle.day}-${entry.battle.victory ? 'win' : 'lose'}-${safeStart}.${ext}`;
+        const fileName = `${record.match_id}-d${entry.battle.day}-${entry.battle.victory ? 'win' : 'lose'}-${safeStart}.webp`;
+        const authorFolder = sanitizeUploadFolderName(author.username || author.account_id || 'anonymous');
 
         const presignRes = await fetch(`${base}/api/r2/presign`, {
           method: 'POST',
           headers: buildAuthHeaders(),
           body: JSON.stringify({
             fileName,
-            contentType: blob.type || 'image/webp',
-            folder: 'match-records',
+            contentType: 'image/webp',
+            folder: `match-records/${authorFolder}`,
           }),
         });
         const presignJson = await parseJsonSafe(presignRes);
@@ -240,7 +307,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         const putRes = await fetch(String(presignJson.uploadUrl), {
           method: 'PUT',
           headers: {
-            'Content-Type': blob.type || 'image/webp',
+            'Content-Type': 'image/webp',
           },
           body: blob,
         });
@@ -289,8 +356,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
 
         uploaded += 1;
         existingKeys.add(entry.key);
+        done += 1;
+        emitProgress();
       } catch (error: any) {
         failed += 1;
+        done += 1;
+        emitProgress();
         console.warn('[HistoryUpload] upload battle failed:', error);
       }
     }
@@ -304,6 +375,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
       return;
     }
     setUploadingMatches((prev) => new Set(prev).add(record.match_id));
+    setUploadProgressByMatch((prev) => ({
+      ...prev,
+      [record.match_id]: { done: 0, total: 0, uploaded: 0, skipped: 0, failed: 0 },
+    }));
     try {
       const author = await ensureIdentity();
       const check = await checkUploadedMatches(author.account_id, [record.match_id]);
@@ -314,7 +389,9 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         showToast('该对局已上传，无需重复上传', 'info');
         return;
       }
-      const result = await uploadMatchBattles(record, author, check.existingBattleKeys);
+      const result = await uploadMatchBattles(record, author, check.existingBattleKeys, (progress) => {
+        setUploadProgressByMatch((prev) => ({ ...prev, [record.match_id]: progress }));
+      });
       if (result.uploaded > 0) {
         showToast(`上传完成：新增 ${result.uploaded}，跳过 ${result.skipped}，失败 ${result.failed}`, result.failed > 0 ? 'warning' : 'success');
       } else if (result.failed > 0) {
@@ -329,6 +406,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
       setUploadingMatches((prev) => {
         const next = new Set(prev);
         next.delete(record.match_id);
+        return next;
+      });
+      setUploadProgressByMatch((prev) => {
+        const next = { ...prev };
+        delete next[record.match_id];
         return next;
       });
     }
@@ -356,13 +438,24 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         const record = uploadTargets[idx];
         const matchId = String(record.match_id || '').trim();
         setUploadingMatches((prev) => new Set(prev).add(matchId));
-        const result = await uploadMatchBattles(record, author, mutableExisting);
+        setUploadProgressByMatch((prev) => ({
+          ...prev,
+          [matchId]: { done: 0, total: 0, uploaded: 0, skipped: 0, failed: 0 },
+        }));
+        const result = await uploadMatchBattles(record, author, mutableExisting, (progress) => {
+          setUploadProgressByMatch((prev) => ({ ...prev, [matchId]: progress }));
+        });
         totalUploaded += result.uploaded;
         totalSkipped += result.skipped;
         totalFailed += result.failed;
         setUploadingMatches((prev) => {
           const next = new Set(prev);
           next.delete(matchId);
+          return next;
+        });
+        setUploadProgressByMatch((prev) => {
+          const next = { ...prev };
+          delete next[matchId];
           return next;
         });
         setBulkProgress({ done: idx + 1, total: matchIds.length });
@@ -382,6 +475,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
       setBulkUploading(false);
       setBulkProgress({ done: 0, total: 0 });
       setUploadingMatches(new Set());
+      setUploadProgressByMatch({});
     }
   };
 
@@ -538,6 +632,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     const statusText = record.victory ? '胜利' : record.is_finished ? '失败' : '进行中';
     const latestBattleDay = sortedBattles.reduce((max, b) => Math.max(max, Number(b.day) || 0), 0);
     const isLatestDateRecord = !!latestGameDate && formatDate(record.game_date) === latestGameDate;
+    const uploadProgress = uploadProgressByMatch[record.match_id];
+    const uploading = uploadingMatches.has(record.match_id);
+    const uploadPercent = uploadProgress && uploadProgress.total > 0
+      ? Math.round((uploadProgress.done / uploadProgress.total) * 100)
+      : 0;
 
     return (
       <div key={record.match_id || `${idx}`} className={`history-card ${opened ? 'expanded' : ''}`}>
@@ -586,12 +685,22 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
               <button
                 className="bulk-btn"
                 style={{ padding: '4px 10px', fontSize: 12 }}
-                disabled={uploadingMatches.has(record.match_id) || bulkUploading}
+                disabled={uploading || bulkUploading}
                 onClick={() => void handleUploadSingleMatch(record)}
               >
-                {uploadingMatches.has(record.match_id) ? '上传中...' : '上传本局'}
+                {uploading ? `上传中 ${uploadProgress?.done || 0}/${uploadProgress?.total || 0}` : '上传本局'}
               </button>
             </div>
+            {uploading && uploadProgress && (
+              <div className="history-upload-progress">
+                <div className="history-upload-progress-track">
+                  <div className="history-upload-progress-fill" style={{ width: `${uploadPercent}%` }} />
+                </div>
+                <div className="history-upload-progress-text">
+                  {uploadPercent}% · 成功 {uploadProgress.uploaded} / 跳过 {uploadProgress.skipped} / 失败 {uploadProgress.failed}
+                </div>
+              </div>
+            )}
             {sortedBattles.length === 0 && <div className="history-empty-row">无小局记录</div>}
             {sortedBattles.map((battle, battleIdx) => {
               const battleKey = battleKeyOf(record, battle);
