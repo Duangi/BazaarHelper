@@ -263,6 +263,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     let failed = 0;
     let done = 0;
     const total = localBattles.length;
+    const totalWins = (record.pvp_battles || []).filter((b) => b.victory).length;
+    const totalLosses = Math.max(0, (record.pvp_battles || []).length - totalWins);
+    const matchFlow = [...(record.pvp_battles || [])]
+      .sort((a, b) => {
+        const dayDelta = (Number(a.day) || 0) - (Number(b.day) || 0);
+        if (dayDelta !== 0) return dayDelta;
+        return String(a.start_time || '').localeCompare(String(b.start_time || ''));
+      })
+      .map((battle) => ({
+        day: Number(battle.day || 0),
+        result: battle.victory ? 'win' : 'lose',
+      }))
+      .filter((x) => x.day > 0);
 
     const emitProgress = () => {
       if (!onProgress) return;
@@ -318,9 +331,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           uploadedScreenshotUrl = String(presignJson.publicUrl || '');
         }
 
-        const totalWins = (record.pvp_battles || []).filter((b) => b.victory).length;
-        const totalLosses = Math.max(0, (record.pvp_battles || []).length - totalWins);
-
         const payload = {
           authorUserId: author.account_id,
           authorName: author.username,
@@ -340,6 +350,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
             match_days: getDisplayDay(record),
             match_total_wins: totalWins,
             match_total_losses: totalLosses,
+            match_flow: matchFlow,
             battle_start_time: entry.battle.start_time || '',
             duration: entry.battle.duration ?? null,
             lineup_cards: entry.battle.lineup_cards || [],
@@ -631,6 +642,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   const renderRecordCard = (record: MatchHistoryRecord, idx: number, total: number) => {
     const wins = (record.pvp_battles || []).filter((b) => b.victory).length;
     const losses = (record.pvp_battles || []).length - wins;
+    const flowBattles = [...(record.pvp_battles || [])].sort((a, b) => {
+      const dayDelta = (Number(a.day) || 0) - (Number(b.day) || 0);
+      if (dayDelta !== 0) return dayDelta;
+      return String(a.start_time || '').localeCompare(String(b.start_time || ''));
+    });
     const sortedBattles = [...(record.pvp_battles || [])].sort((a, b) =>
       battleSortDesc ? b.day - a.day : a.day - b.day,
     );
@@ -668,7 +684,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           <div className="history-card-right">
             <span className="history-score">{wins} 胜 - {losses} 负</span>
             <div className="history-battle-flow">
-              {sortedBattles.slice(0, 15).map((battle, battleIdx) => (
+              {flowBattles.slice(0, 15).map((battle, battleIdx) => (
                 <span
                   key={`${record.match_id}-flow-${battleIdx}`}
                   className={`history-flow-dot ${battle.victory ? 'win' : 'loss'}`}
@@ -677,8 +693,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                   {battle.victory ? '✓' : '✗'}
                 </span>
               ))}
-              {(record.pvp_battles || []).length > 15 && (
-                <span className="history-flow-more">+{(record.pvp_battles || []).length - 15}</span>
+              {flowBattles.length > 15 && (
+                <span className="history-flow-more">+{flowBattles.length - 15}</span>
               )}
             </div>
             <span className="history-arrow">{opened ? '▴' : '▾'}</span>
