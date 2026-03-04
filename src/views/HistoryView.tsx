@@ -12,6 +12,16 @@ interface HistoryViewProps {
   showToast: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
+interface GameIdentityInfo {
+  username: string;
+  account_id: string;
+}
+
+interface CheckUploadedResponse {
+  existingMatchIds?: string[];
+  existingBattleKeys?: string[];
+}
+
 const HERO_AVATAR_MAP: Record<string, string> = {
   pygmalien: '/images/heroes/pygmalien.webp',
   jules: '/images/heroes/jules.webp',
@@ -49,6 +59,33 @@ const formatDate = (raw?: string) => {
   return trimmed;
 };
 
+const DEFAULT_UPLOAD_API_BASE = 'https://duang.work';
+const UPLOAD_API_BASE_KEY = 'community-upload-api-base';
+const UPLOAD_PLUGIN_KEY = 'community-upload-plugin-key';
+
+const normalizeApiBase = (raw: string) => raw.trim().replace(/\/+$/, '');
+
+const parseJsonSafe = async (response: Response) => {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+};
+
+const buildBattleKey = (matchId: string, day: number, startTime: string, result: 'win' | 'lose') =>
+  `${matchId}::${day}::${startTime || ''}::${result}`;
+
+const getDisplayDay = (record: MatchHistoryRecord): number => {
+  const maxBattleDay = (record.pvp_battles || []).reduce((max, b) => Math.max(max, Number(b.day) || 0), 0);
+  const fallbackDay = Math.max(1, Number(record.days) || 1);
+  if (maxBattleDay <= 0) return fallbackDay;
+  if (record.is_finished) return maxBattleDay;
+  return Math.max(maxBattleDay + 1, fallbackDay);
+};
+
 export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, onReload, showToast }) => {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -59,6 +96,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   const [capturingBattles, setCapturingBattles] = useState<Set<string>>(new Set());
   const [screenshotVersions, setScreenshotVersions] = useState<Record<string, number>>({});
   const [analyzeProgress, setAnalyzeProgress] = useState<Record<string, { phase: string; done: number; total: number }>>({});
+  const [uploadApiBase, setUploadApiBase] = useState<string>(() => {
+    if (typeof window === 'undefined') return DEFAULT_UPLOAD_API_BASE;
+    const saved = localStorage.getItem(UPLOAD_API_BASE_KEY) || DEFAULT_UPLOAD_API_BASE;
+    return normalizeApiBase(saved) || DEFAULT_UPLOAD_API_BASE;
+  });
+  const [uploadPluginKey, setUploadPluginKey] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    return (localStorage.getItem(UPLOAD_PLUGIN_KEY) || '').trim();
+  });
+  const [uploadingMatches, setUploadingMatches] = useState<Set<string>>(new Set());
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+  const [identity, setIdentity] = useState<GameIdentityInfo | null>(null);
 
   const battleKeyOf = (record: MatchHistoryRecord, battle: { day: number; start_time?: string }) =>
     `${record.match_id}::${battle.day}::${battle.start_time || ''}`;
@@ -67,6 +117,266 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     const base = convertFileSrc(screenshotPath);
     const version = screenshotVersions[battleKey] || 0;
     return `${base}?v=${version}`;
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(UPLOAD_API_BASE_KEY, uploadApiBase);
+  }, [uploadApiBase]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(UPLOAD_PLUGIN_KEY, uploadPluginKey);
+  }, [uploadPluginKey]);
+
+  const ensureIdentity = async (): Promise<GameIdentityInfo> => {
+    if (identity?.account_id && identity?.username) return identity;
+    const info = await invoke<GameIdentityInfo>('get_game_identity');
+    setIdentity(info);
+    return info;
+  };
+
+  const buildAuthHeaders = () => {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    const token = uploadPluginKey.trim();
+    if (token) headers['x-plugin-key'] = token;
+    return headers;
+  };
+
+  const checkUploadedMatches = async (authorUserId: string, matchIds: string[]) => {
+    const base = normalizeApiBase(uploadApiBase);
+    if (!base) throw new Error('请先配置上传服务地址');
+    const response = await fetch(`${base}/api/game-records/check`, {
+      method: 'POST',
+      headers: buildAuthHeaders(),
+      body: JSON.stringify({ authorUserId, matchIds }),
+    });
+    const json = (await parseJsonSafe(response)) as CheckUploadedResponse | null;
+    if (!response.ok) {
+      throw new Error((json as any)?.error || `查重失败 (${response.status})`);
+    }
+    return {
+      existingMatchIds: new Set((json?.existingMatchIds || []).map((x) => String(x || '').trim()).filter(Boolean)),
+      existingBattleKeys: new Set((json?.existingBattleKeys || []).map((x) => String(x || '').trim()).filter(Boolean)),
+    };
+  };
+
+  const uploadMatchBattles = async (
+    record: MatchHistoryRecord,
+    author: GameIdentityInfo,
+    knownExistingBattleKeys?: Set<string>,
+  ): Promise<{ uploaded: number; skipped: number; failed: number }> => {
+    const base = normalizeApiBase(uploadApiBase);
+    if (!base) throw new Error('请先配置上传服务地址');
+
+    const localBattles = (record.pvp_battles || [])
+      .filter((battle) => Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0))
+      .map((battle) => ({
+        battle,
+        key: buildBattleKey(
+          record.match_id,
+          Number(battle.day || 0),
+          String(battle.start_time || ''),
+          battle.victory ? 'win' : 'lose',
+        ),
+      }));
+
+    const existingKeys = knownExistingBattleKeys || new Set<string>();
+    let uploaded = 0;
+    let skipped = 0;
+    let failed = 0;
+
+    for (const entry of localBattles) {
+      if (existingKeys.has(entry.key)) {
+        skipped += 1;
+        continue;
+      }
+
+      try {
+        const screenshotPath = String(entry.battle.screenshot || '').trim();
+        const localRes = await fetch(convertFileSrc(screenshotPath));
+        if (!localRes.ok) throw new Error(`读取本地截图失败: ${localRes.status}`);
+        const blob = await localRes.blob();
+        const extRaw = screenshotPath.split('.').pop() || 'webp';
+        const ext = extRaw.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'webp';
+        const safeStart = String(entry.battle.start_time || 'unknown').replace(/[^\d]/g, '').slice(0, 14) || 'unknown';
+        const fileName = `${record.match_id}-d${entry.battle.day}-${entry.battle.victory ? 'win' : 'lose'}-${safeStart}.${ext}`;
+
+        const presignRes = await fetch(`${base}/api/r2/presign`, {
+          method: 'POST',
+          headers: buildAuthHeaders(),
+          body: JSON.stringify({
+            fileName,
+            contentType: blob.type || 'image/webp',
+            folder: 'match-records',
+          }),
+        });
+        const presignJson = await parseJsonSafe(presignRes);
+        if (!presignRes.ok || !presignJson?.uploadUrl || !presignJson?.publicUrl) {
+          throw new Error((presignJson as any)?.error || `获取上传签名失败 (${presignRes.status})`);
+        }
+
+        const putRes = await fetch(String(presignJson.uploadUrl), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': blob.type || 'image/webp',
+          },
+          body: blob,
+        });
+        if (!putRes.ok) {
+          throw new Error(`上传到 R2 失败 (${putRes.status})`);
+        }
+
+        const payload = {
+          authorUserId: author.account_id,
+          authorName: author.username,
+          playedOn: record.game_date || new Date().toISOString().slice(0, 10),
+          result: entry.battle.victory ? 'win' : 'lose',
+          dayIndex: Number(entry.battle.day || 1),
+          screenshotUrl: String(presignJson.publicUrl),
+          note: '',
+          meta: {
+            match_id: record.match_id,
+            hero: record.hero || '',
+            start_time: record.start_time || '',
+            end_time: record.end_time || '',
+            game_date: record.game_date || '',
+            is_finished: !!record.is_finished,
+            match_victory: !!record.victory,
+            match_days: getDisplayDay(record),
+            battle_start_time: entry.battle.start_time || '',
+            duration: entry.battle.duration ?? null,
+            lineup_cards: entry.battle.lineup_cards || [],
+            enemy_lineup_cards: entry.battle.enemy_lineup_cards || [],
+          },
+        };
+
+        const saveRes = await fetch(`${base}/api/game-records`, {
+          method: 'POST',
+          headers: buildAuthHeaders(),
+          body: JSON.stringify(payload),
+        });
+        const saveJson = await parseJsonSafe(saveRes);
+        if (!saveRes.ok) {
+          throw new Error((saveJson as any)?.error || `写入战绩失败 (${saveRes.status})`);
+        }
+        if ((saveJson as any)?.duplicated) {
+          skipped += 1;
+          existingKeys.add(entry.key);
+          continue;
+        }
+
+        uploaded += 1;
+        existingKeys.add(entry.key);
+      } catch (error: any) {
+        failed += 1;
+        console.warn('[HistoryUpload] upload battle failed:', error);
+      }
+    }
+
+    return { uploaded, skipped, failed }
+  };
+
+  const handleUploadSingleMatch = async (record: MatchHistoryRecord) => {
+    if (!record?.match_id) {
+      showToast('缺少 match_id，无法上传该局', 'error');
+      return;
+    }
+    setUploadingMatches((prev) => new Set(prev).add(record.match_id));
+    try {
+      const author = await ensureIdentity();
+      const check = await checkUploadedMatches(author.account_id, [record.match_id]);
+      const localKeys = (record.pvp_battles || [])
+        .filter((battle) => Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0))
+        .map((battle) => buildBattleKey(record.match_id, Number(battle.day || 0), String(battle.start_time || ''), battle.victory ? 'win' : 'lose'));
+      if (localKeys.length > 0 && localKeys.every((k) => check.existingBattleKeys.has(k))) {
+        showToast('该对局已上传，无需重复上传', 'info');
+        return;
+      }
+      const result = await uploadMatchBattles(record, author, check.existingBattleKeys);
+      if (result.uploaded > 0) {
+        showToast(`上传完成：新增 ${result.uploaded}，跳过 ${result.skipped}，失败 ${result.failed}`, result.failed > 0 ? 'warning' : 'success');
+      } else if (result.failed > 0) {
+        showToast(`上传失败：失败 ${result.failed}，请检查服务配置`, 'error');
+      } else {
+        showToast('该对局已上传，无需重复上传', 'info');
+      }
+    } catch (error: any) {
+      const message = typeof error === 'string' ? error : (error?.message || '未知错误');
+      showToast(`上传失败：${message}`, 'error');
+    } finally {
+      setUploadingMatches((prev) => {
+        const next = new Set(prev);
+        next.delete(record.match_id);
+        return next;
+      });
+    }
+  };
+
+  const handleUploadAllMatches = async () => {
+    if (bulkUploading) return;
+    const uploadTargets = records.filter((r) => String(r.match_id || '').trim().length > 0);
+    const matchIds = uploadTargets.map((r) => String(r.match_id || '').trim());
+    if (matchIds.length === 0) {
+      showToast('暂无可上传的对局', 'warning');
+      return;
+    }
+    setBulkUploading(true);
+    setBulkProgress({ done: 0, total: matchIds.length });
+    try {
+      const author = await ensureIdentity();
+      const check = await checkUploadedMatches(author.account_id, matchIds);
+      const mutableExisting = new Set(check.existingBattleKeys);
+      let totalUploaded = 0;
+      let totalSkipped = 0;
+      let totalFailed = 0;
+
+      for (let idx = 0; idx < uploadTargets.length; idx += 1) {
+        const record = uploadTargets[idx];
+        const matchId = String(record.match_id || '').trim();
+        setUploadingMatches((prev) => new Set(prev).add(matchId));
+        const result = await uploadMatchBattles(record, author, mutableExisting);
+        totalUploaded += result.uploaded;
+        totalSkipped += result.skipped;
+        totalFailed += result.failed;
+        setUploadingMatches((prev) => {
+          const next = new Set(prev);
+          next.delete(matchId);
+          return next;
+        });
+        setBulkProgress({ done: idx + 1, total: matchIds.length });
+      }
+
+      if (totalUploaded > 0) {
+        showToast(`批量上传完成：新增 ${totalUploaded}，跳过 ${totalSkipped}，失败 ${totalFailed}`, totalFailed > 0 ? 'warning' : 'success');
+      } else if (totalFailed > 0) {
+        showToast(`批量上传失败：失败 ${totalFailed}`, 'error');
+      } else {
+        showToast('全部对局均已上传，无需重复上传', 'info');
+      }
+    } catch (error: any) {
+      const message = typeof error === 'string' ? error : (error?.message || '未知错误');
+      showToast(`批量上传失败：${message}`, 'error');
+    } finally {
+      setBulkUploading(false);
+      setBulkProgress({ done: 0, total: 0 });
+      setUploadingMatches(new Set());
+    }
+  };
+
+  const handleConfigureUpload = () => {
+    const nextBase = window.prompt('上传服务地址（例如 https://duang.work）', uploadApiBase);
+    if (nextBase === null) return;
+    const normalized = normalizeApiBase(nextBase);
+    if (!normalized) {
+      showToast('上传服务地址不能为空', 'warning');
+      return;
+    }
+    const nextKey = window.prompt('插件密钥（可空）', uploadPluginKey);
+    if (nextKey === null) return;
+    setUploadApiBase(normalized);
+    setUploadPluginKey(nextKey.trim());
+    showToast('上传配置已保存', 'success');
   };
 
   useEffect(() => {
@@ -224,7 +534,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                 {statusText} ({wins}胜) · #{total - idx}
               </div>
               <div className="history-sub">
-                {record.hero || 'Unknown'} · {formatDate(record.game_date)} {formatTime(record.start_time)} · Day {record.days}
+                {record.hero || 'Unknown'} · {formatDate(record.game_date)} {formatTime(record.start_time)} · Day {getDisplayDay(record)}
               </div>
             </div>
           </div>
@@ -250,6 +560,17 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
 
         {opened && (
           <div className="history-card-body">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <span style={{ color: '#8f8f8f', fontSize: 12 }}>MatchId: {record.match_id}</span>
+              <button
+                className="bulk-btn"
+                style={{ padding: '4px 10px', fontSize: 12 }}
+                disabled={uploadingMatches.has(record.match_id) || bulkUploading}
+                onClick={() => void handleUploadSingleMatch(record)}
+              >
+                {uploadingMatches.has(record.match_id) ? '上传中...' : '上传本局'}
+              </button>
+            </div>
             {sortedBattles.length === 0 && <div className="history-empty-row">无小局记录</div>}
             {sortedBattles.map((battle, battleIdx) => {
               const battleKey = battleKeyOf(record, battle);
@@ -550,6 +871,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
           </div>
           <button className="bulk-btn" onClick={() => setBattleSortDesc((prev) => !prev)}>
             {battleSortDesc ? '排序: 新→旧' : '排序: 旧→新'}
+          </button>
+          <button className="bulk-btn" onClick={handleConfigureUpload}>
+            上传配置
+          </button>
+          <button className="bulk-btn" disabled={bulkUploading} onClick={() => void handleUploadAllMatches()}>
+            {bulkUploading ? `上传中 ${bulkProgress.done}/${bulkProgress.total}` : '一键上传全部'}
           </button>
           <button className="bulk-btn" onClick={onReload}>
             {isLoading ? '刷新中...' : '刷新'}
