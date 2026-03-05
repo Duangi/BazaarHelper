@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjdXTVluQ1FVeWhrN0VoNjJaUFFJNXovMGorSTYybFl6SkZBclkvRnZKNWRETTlBNWRaMUtXMm11SXFXbWpvSjZTVHFFQ2ZjcUQxdENSZm9VNG40N1FJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNTM4NjAwCWZpbGU6QmF6YWFySGVscGVyXzEuNS40X3g2NC1zZXR1cC5leGUKQVRQd2ExcjdvL25vS2ROOXJKT0NRZHFLWWtGdXFiU3ZTUlpuQ0FsNGJUL1U2L0JBY2JiOWZhNHNCR3BVd2FkTlJnM0ZDV244U2NINHRSaVRsekh6QUE9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.5.4/BazaarHelper_1.5.4_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjVBRUV5RDZQSjVPblF6YjFrMjM1eEtMaHE1cnI1MUFMRVBCNllnbjQxSEFHalNsbjhQb29nUXFad0tXWUVGcnRQMkFGckZtRkg3NEZWNUtHQTBYU3drPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNjgzMDg2CWZpbGU6QmF6YWFySGVscGVyXzEuNi4wX3g2NC1zZXR1cC5leGUKR2JmYVlHTDkwSmlkQVhpOGFpdG94ck5XMm9KRU4rcXpqdDBKTmo0VEp4cW5sUjhVNFY0YzZkY05yK0U1K3pmREYvME9JOC94bDduTDJ1WG50NklkQXc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.6.0/BazaarHelper_1.6.0_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-03-03T11:50:00Z",
-    "version":  "1.5.4",
-    "notes":  "🎉 v1.5.4 1.更新了卡牌没有被动和任务的bug。2.新增右下角的复位功能，如果找不到插件可以用。3.修复了鼠标操作插件之后，游戏焦点被抢夺的问题。4.另外，阵容网站duang.work已经上线，欢迎编辑上传你的想法！"
+    "pub_date":  "2026-03-05T03:58:06Z",
+    "version":  "1.6.0",
+    "notes":  "🎉 v1.6.0 1.新增了历史战绩功能 2.支持上传到网站"
 }

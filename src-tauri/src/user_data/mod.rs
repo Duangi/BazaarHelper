@@ -437,6 +437,53 @@ pub fn resolve_active_match_start_time(default_start_time: &str) -> Result<Strin
     Ok(latest_unfinished.unwrap_or(fallback))
 }
 
+pub fn infer_battle_day_for_match_start(
+    match_start_time: &str,
+    battle_start_time: &str,
+) -> Result<u32, String> {
+    ensure_user_data_files()?;
+    let conn = open_history_db()?;
+
+    let match_start = match_start_time.trim();
+    if match_start.is_empty() {
+        return Ok(1);
+    }
+    let match_id = build_match_id_from_start_time(match_start);
+    let battle_start = battle_start_time.trim();
+
+    if !battle_start.is_empty() {
+        let existing_day = conn
+            .query_row(
+                "
+                SELECT day
+                FROM battles
+                WHERE match_id = ?1 AND start_time = ?2
+                ORDER BY id DESC
+                LIMIT 1
+                ",
+                params![&match_id, battle_start],
+                |row| row.get::<_, i64>(0),
+            )
+            .ok()
+            .unwrap_or(0);
+        if existing_day > 0 {
+            return Ok(existing_day as u32);
+        }
+    }
+
+    let max_day = conn
+        .query_row(
+            "SELECT COALESCE(MAX(day), 0) FROM battles WHERE match_id = ?1",
+            params![&match_id],
+            |row| row.get::<_, i64>(0),
+        )
+        .ok()
+        .unwrap_or(0)
+        .max(0) as u32;
+
+    Ok(max_day.saturating_add(1).max(1))
+}
+
 pub fn upsert_match_battle_snapshot(
     match_start_time: &str,
     battle_day: u32,

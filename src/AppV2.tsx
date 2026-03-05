@@ -900,12 +900,6 @@ export default function AppV2() {
     };
   }, [showVersionScreen]);
 
-  useEffect(() => {
-    if (showVersionScreen || islandPinnedName) return;
-    if (typeof currentDay === 'number' && Number.isFinite(currentDay) && currentDay > 0) {
-      setIslandRuntimeText(`当前 Day ${currentDay}`);
-    }
-  }, [currentDay, islandPinnedName, showVersionScreen]);
   const { processSyncPayload } = useSyncDataPipeline({ setSyncData });
   const { pinnedItems, expandedItems, setExpandedItems, togglePin, toggleExpand, getSortedItems } =
     useItemCardState();

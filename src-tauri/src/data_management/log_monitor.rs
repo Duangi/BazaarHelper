@@ -826,10 +826,10 @@ pub fn spawn_log_monitor(
                                         let match_start = current_match_start_time
                                             .clone()
                                             .unwrap_or_else(|| battle_start.clone());
-                                        let battle_day = current_day.max(1);
+                                        let battle_day_hint = current_day.max(1);
                                         let battle_victory = detect_pvp_victory(&recent_lines);
                                         let duration = last_pvp_duration;
-                                        let round_key = format!("{}|{}|{}", match_start, battle_day, battle_start);
+                                        let round_key = format!("{}|{}", match_start, battle_start);
 
                                         if last_captured_round_key.as_ref() == Some(&round_key) {
                                             log::debug!(
@@ -841,9 +841,9 @@ pub fn spawn_log_monitor(
                                         last_captured_round_key = Some(round_key);
 
                                         log::info!(
-                                            "[RoundCapture] Replay trigger accepted: match_start={}, battle_day={}, battle_start={}, victory={}, duration={:?}",
+                                            "[RoundCapture] Replay trigger accepted: match_start={}, battle_day_hint={}, battle_start={}, victory={}, duration={:?}",
                                             match_start,
-                                            battle_day,
+                                            battle_day_hint,
                                             battle_start,
                                             battle_victory,
                                             duration
@@ -870,6 +870,11 @@ pub fn spawn_log_monitor(
                                         std::thread::spawn(move || {
                                             let canonical_match_start = crate::user_data::resolve_active_match_start_time(&match_start_for_task)
                                                 .unwrap_or_else(|_| match_start_for_task.clone());
+                                            let battle_day = crate::user_data::infer_battle_day_for_match_start(
+                                                &canonical_match_start,
+                                                &battle_start_for_task,
+                                            )
+                                            .unwrap_or(battle_day_hint.max(1));
 
                                             if capture_delay_ms > 0 {
                                                 std::thread::sleep(std::time::Duration::from_millis(capture_delay_ms));

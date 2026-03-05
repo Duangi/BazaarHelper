@@ -1,9 +1,9 @@
 ﻿# --- 配置区 ---
-$NEW_VERSION = "1.5.4"  # <--- 版本号
+$NEW_VERSION = "1.6.0"  # <--- 版本号
 
 # 【新增】这里写你想对用户说的话（支持换行 \n）
 # 比如：这次更新了巨龟数据！\n如果不小心是花钱买的，快去退款买杯奶茶！
-$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 1.更新了卡牌没有被动和任务的bug。2.新增右下角的复位功能，如果找不到插件可以用。3.修复了鼠标操作插件之后，游戏焦点被抢夺的问题。4.另外，阵容网站duang.work已经上线，欢迎编辑上传你的想法！"
+$ANNOUNCEMENT_TEXT = "🎉 v$NEW_VERSION 1.新增了历史战绩功能 2.支持上传到网站"
 
 $GITHUB_USER = "Duangi"
 $REPO_NAME = "BazaarHelper"

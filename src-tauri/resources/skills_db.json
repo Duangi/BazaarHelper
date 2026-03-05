@@ -10,7 +10,7 @@
     "available_tiers": "Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "",
+    "hidden_tags": "HeatedReference",
     "art_key": "Icon_Skill_ThirdDegreeBurns.png",
     "card_pack_id": "",
     "spawning": "",
@@ -81,7 +81,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_HonedStrike.png",
@@ -196,7 +196,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Pygmalien / 皮格马利翁",
+    "heroes": "Dooley / 杜利 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "Charge / 充能 | BurnRef / 灼烧引用 | ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_Incinerate.png",
@@ -242,7 +242,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_LeftEyeDominant.png",
@@ -311,7 +311,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | Crit / 暴击",
     "art_key": "Icon_Skill_TracerFire.png",
@@ -326,6 +326,29 @@
     ]
   },
   {
+    "id": "8b583fac-46a1-4531-8026-efd57232571a",
+    "name_en": "Extended Rage",
+    "name_cn": "持久怒火",
+    "description_en": "You are Enraged for 1 second longer. [Total Duration: ]",
+    "description_cn": "你的暴怒持续时间延长1秒。[总持续时间：]",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference",
+    "art_key": "Icon_Skill_KAR_ExtendedRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You are Enraged for 1 second longer. [Total Duration: ]",
+        "cn": "你的暴怒持续时间延长1秒。[总持续时间：]"
+      }
+    ]
+  },
+  {
     "id": "b76e0b9a-481c-4128-9ed3-a290f3b21b4f",
     "name_en": "Peaceful Eye",
     "name_cn": "宁静之眼",
@@ -334,7 +357,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_PeacefulEye.png",
@@ -414,6 +437,29 @@
       {
         "en": "Your leftmost Ammo Weapon has double damage and +1 Max Ammo.",
         "cn": "最左侧的弹药武器伤害翻倍，最大弹药量+1。"
+      }
+    ]
+  },
+  {
+    "id": "bd3d7760-478f-4bc0-893f-1398cc29490e",
+    "name_en": "Hallucinations",
+    "name_cn": "幻觉",
+    "description_en": "When you Enrage, Enchant 1/2 non-enchanted item(s) for the fight.",
+    "description_cn": "当你进入暴怒状态时，为1/2件未附魔的物品附魔（限本场战斗）。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference",
+    "art_key": "Icon_Skill_KAR_Friend",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, Enchant 1/2 non-enchanted item(s) for the fight.",
+        "cn": "当你进入暴怒状态时，为1/2件未附魔的物品附魔（限本场战斗）。"
       }
     ]
   },
@@ -536,8 +582,8 @@
     "id": "f1c3b934-254a-459f-9078-023edbcfcb03",
     "name_en": "Healthy Hoarder",
     "name_cn": "养生囤积狂",
-    "description_en": "You have +75/175/275 Max Health for each Non-Weapon item you have. [75/175/275]",
-    "description_cn": "每拥有一件非武器物品，就+75/175/275最大生命值。[75/175/275]",
+    "description_en": "You have +50/100/150 Max Health for each Non-Weapon item you have. [50/100/150]",
+    "description_cn": "每拥有一件非武器物品，就+50/100/150最大生命值。[50/100/150]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -550,8 +596,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "You have +75/175/275 Max Health for each Non-Weapon item you have. [75/175/275]",
-        "cn": "每拥有一件非武器物品，就+75/175/275最大生命值。[75/175/275]"
+        "en": "You have +50/100/150 Max Health for each Non-Weapon item you have. [50/100/150]",
+        "cn": "每拥有一件非武器物品，就+50/100/150最大生命值。[50/100/150]"
       }
     ]
   },
@@ -612,7 +658,7 @@
     "available_tiers": "Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "Cooldown / 冷却",
+    "hidden_tags": "Cooldown / 冷却 | HeatedReference",
     "art_key": "Icon_Skill_JUL_RoilingBoil",
     "card_pack_id": "",
     "spawning": "",
@@ -651,11 +697,11 @@
     "id": "d8e7fa0a-9127-4a11-a84e-d479a011a92d",
     "name_en": "Improvised Poison",
     "name_cn": "临时毒物",
-    "description_en": "When you Crit, your Poison items gain 1/2/3 Poison for the fight.",
-    "description_cn": "造成暴击时，剧毒物品的剧毒提高1/2/3（限本场战斗）。",
+    "description_en": "When you Crit, your Poison items gain 2/4 Poison for the fight.",
+    "description_cn": "造成暴击时，剧毒物品的剧毒提高2/4（限本场战斗）。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Vanessa / 凡妮莎 | Mak / 马克",
     "tags": "",
     "hidden_tags": "PoisonRef / 剧毒引用 | CritRef / 暴击引用",
@@ -665,8 +711,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Crit, your Poison items gain 1/2/3 Poison for the fight.",
-        "cn": "造成暴击时，剧毒物品的剧毒提高1/2/3（限本场战斗）。"
+        "en": "When you Crit, your Poison items gain 2/4 Poison for the fight.",
+        "cn": "造成暴击时，剧毒物品的剧毒提高2/4（限本场战斗）。"
       }
     ]
   },
@@ -679,7 +725,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_ImprovisedWeaponry.png",
@@ -697,8 +743,8 @@
     "id": "5f63004e-26dd-460d-b359-38a84ffa66c1",
     "name_en": "Protein Powder",
     "name_cn": "蛋白粉",
-    "description_en": "When you buy Food, gain 20/30/40/50 Max Health.",
-    "description_cn": "购买食物时，最大生命值提高20/30/40/50。",
+    "description_en": "When you buy Food, gain 10/20/30/40 Max Health.",
+    "description_cn": "购买食物时，最大生命值提高10/20/30/40。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -711,8 +757,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you buy Food, gain 20/30/40/50 Max Health.",
-        "cn": "购买食物时，最大生命值提高20/30/40/50。"
+        "en": "When you buy Food, gain 10/20/30/40 Max Health.",
+        "cn": "购买食物时，最大生命值提高10/20/30/40。"
       }
     ]
   },
@@ -720,12 +766,12 @@
     "id": "71433809-d05a-4544-9959-aff20ae5db93",
     "name_en": "Iron Sharpens Iron",
     "name_cn": "锋铁共鸣",
-    "description_en": "Your leftmost Weapon has +3 Damage. When you buy a Weapon, this gains +3/4/5 damage bonus.",
-    "description_cn": "最左侧武器+3伤害。购买武器时，这一伤害加成再提高+3/4/5。",
+    "description_en": "Your leftmost Weapon has +8 Damage. When you buy a Weapon, this gains +1/2/3 damage bonus.",
+    "description_cn": "最左侧武器+8伤害。购买武器时，这一伤害加成再提高+1/2/3。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Dooley / 杜利 | Stelle / 斯黛拉 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_IronSharpensIron.png",
@@ -734,8 +780,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost Weapon has +3 Damage. When you buy a Weapon, this gains +3/4/5 damage bonus.",
-        "cn": "最左侧武器+3伤害。购买武器时，这一伤害加成再提高+3/4/5。"
+        "en": "Your leftmost Weapon has +8 Damage. When you buy a Weapon, this gains +1/2/3 damage bonus.",
+        "cn": "最左侧武器+8伤害。购买武器时，这一伤害加成再提高+1/2/3。"
       }
     ]
   },
@@ -794,7 +840,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Health / 生命值 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Swole.png",
@@ -835,12 +881,12 @@
     "id": "1e8293e9-c60f-464a-9d44-21e766978edc",
     "name_en": "Improvised Burn",
     "name_cn": "临时灼烧",
-    "description_en": "When you Crit, your Burn items gain 1/2/3 Burn for the fight.",
-    "description_cn": "造成暴击时，灼烧物品的灼烧提高1/2/3（限本场战斗）。",
+    "description_en": "When you Crit, your Burn items gain 2/4 Burn for the fight.",
+    "description_cn": "造成暴击时，灼烧物品的灼烧提高2/4（限本场战斗）。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_ImprovisedBurn.png",
@@ -849,8 +895,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Crit, your Burn items gain 1/2/3 Burn for the fight.",
-        "cn": "造成暴击时，灼烧物品的灼烧提高1/2/3（限本场战斗）。"
+        "en": "When you Crit, your Burn items gain 2/4 Burn for the fight.",
+        "cn": "造成暴击时，灼烧物品的灼烧提高2/4（限本场战斗）。"
       }
     ]
   },
@@ -970,6 +1016,29 @@
     ]
   },
   {
+    "id": "b057acef-d26e-4c99-b9a4-8af34b00710a",
+    "name_en": "Slippery Fella",
+    "name_cn": "滑溜家伙",
+    "description_en": "Your Slowed items have their Cooldown reduced by 5/10/15%.",
+    "description_cn": "己方被减速的物品冷却时间缩短5/10/15%。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Cooldown / 冷却 | SlowRef / 减速引用",
+    "art_key": "Icon_Skills_MON_WorryWart.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your Slowed items have their Cooldown reduced by 5/10/15%.",
+        "cn": "己方被减速的物品冷却时间缩短5/10/15%。"
+      }
+    ]
+  },
+  {
     "id": "338b9fbe-0131-4d89-8661-13aa2dd0c9a1",
     "name_en": "Submerged",
     "name_cn": "潜水",
@@ -1028,7 +1097,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Burn / 灼烧",
     "art_key": "Icon_Skill_GreaseFire.png",
@@ -1045,13 +1114,13 @@
   {
     "id": "c3f674a0-4025-45e1-b611-bf70fd6f279c",
     "name_en": "Lifting",
-    "name_cn": "举重",
+    "name_cn": "",
     "description_en": "Your Weapons have +1 Damage. When you buy a Weapon, this gains +1/2/3 Damage bonus.",
-    "description_cn": "武器+1伤害。购买武器时，这一伤害加成再提高+1/2/3。",
+    "description_cn": "[未翻译]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Jules / 朱尔斯 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Lifting.png",
@@ -1061,7 +1130,7 @@
     "descriptions": [
       {
         "en": "Your Weapons have +1 Damage. When you buy a Weapon, this gains +1/2/3 Damage bonus.",
-        "cn": "武器+1伤害。购买武器时，这一伤害加成再提高+1/2/3。"
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -1099,7 +1168,7 @@
     "available_tiers": "Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "Cooldown / 冷却",
+    "hidden_tags": "Cooldown / 冷却 | ChilledReference",
     "art_key": "Icon_Skill_JUL_FlashFreeze",
     "card_pack_id": "",
     "spawning": "",
@@ -1137,14 +1206,14 @@
   {
     "id": "1d0b3080-14a8-41c5-9449-9b48f46d4726",
     "name_en": "Makeshift Plate",
-    "name_cn": "简易餐盘",
-    "description_en": "When you use a non-Shield item, your Shield items gain +2/4/6 Shield for the fight.",
-    "description_cn": "使用非护盾物品时，护盾物品的护盾提高+2/4/6（限本场战斗）。",
+    "name_cn": "简易板甲",
+    "description_en": "Your Shield items have +10/20/30 Shield for each Tool item you have. [10/20/30]",
+    "description_cn": "你拥有的每件工具物品使己方护盾物品+10/20/30护盾。[10/20/30]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
-    "tags": "",
+    "heroes": "Jules / 朱尔斯 | Karnok | Stelle / 斯黛拉 | Dooley / 杜利",
+    "tags": "Tool / 工具",
     "hidden_tags": "ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_MakeshiftPlate.png",
     "card_pack_id": "",
@@ -1152,8 +1221,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use a non-Shield item, your Shield items gain +2/4/6 Shield for the fight.",
-        "cn": "使用非护盾物品时，护盾物品的护盾提高+2/4/6（限本场战斗）。"
+        "en": "Your Shield items have +10/20/30 Shield for each Tool item you have. [10/20/30]",
+        "cn": "你拥有的每件工具物品使己方护盾物品+10/20/30护盾。[10/20/30]"
       }
     ]
   },
@@ -1212,7 +1281,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "Burn / 灼烧",
     "art_key": "Icon_Skill_FirstFlames.png",
@@ -1276,11 +1345,11 @@
     "id": "760fd7aa-fce6-4779-818e-99ba51274010",
     "name_en": "Like Clockwork",
     "name_cn": "有条不紊",
-    "description_en": "Your leftmost item is a Tech.",
-    "description_cn": "最左侧物品视为科技。",
+    "description_en": "Your leftmost item is a Tech and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品视为科技，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Dooley / 杜利",
     "tags": "Tech / 科技",
     "hidden_tags": "",
@@ -1290,8 +1359,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is a Tech.",
-        "cn": "最左侧物品视为科技。"
+        "en": "Your leftmost item is a Tech and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品视为科技，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -1377,7 +1446,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Charge / 充能 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_Alacrity.png",
@@ -1395,12 +1464,12 @@
     "id": "c5ce101a-3af2-49ce-bcc9-42481355c58e",
     "name_en": "Follow-Up Care",
     "name_cn": "跟进疗护",
-    "description_en": "Your rightmost Heal item has +20/35/50/65 Heal.",
-    "description_cn": "最右侧的治疗物品+20/35/50/65治疗量。",
+    "description_en": "Your rightmost Heal item has +20/40/60/80 Heal.",
+    "description_cn": "最右侧的治疗物品+20/40/60/80治疗量。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用",
     "art_key": "Icon_Skill_FollowUpCare.png",
@@ -1409,8 +1478,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your rightmost Heal item has +20/35/50/65 Heal.",
-        "cn": "最右侧的治疗物品+20/35/50/65治疗量。"
+        "en": "Your rightmost Heal item has +20/40/60/80 Heal.",
+        "cn": "最右侧的治疗物品+20/40/60/80治疗量。"
       }
     ]
   },
@@ -1492,7 +1561,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_BigGuns.png",
@@ -1538,7 +1607,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Health / 生命值",
     "art_key": "Icon_Skill_LargeAppetites.png",
@@ -1556,11 +1625,11 @@
     "id": "d675442d-7d59-4f13-9209-6e1a4ae7a1fc",
     "name_en": "Burning Rage",
     "name_cn": "灼烧狂怒",
-    "description_en": "When you Burn, your Weapons gain +5/10/15/20 Damage for the fight.",
-    "description_cn": "触发灼烧时，己方武器伤害提高+5/10/15/20（限本场战斗）。",
+    "description_en": "When you Burn, your Weapons gain +10/15/20 Damage for the fight.",
+    "description_cn": "触发灼烧时，己方武器伤害提高+10/15/20（限本场战斗）。",
     "size": "Medium / 中型",
-    "starting_tier": "Bronze / 青铜",
-    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Common / 通用",
     "tags": "Weapon / 武器",
     "hidden_tags": "BurnRef / 灼烧引用 | DamageRef / 伤害引用",
@@ -1570,8 +1639,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Burn, your Weapons gain +5/10/15/20 Damage for the fight.",
-        "cn": "触发灼烧时，己方武器伤害提高+5/10/15/20（限本场战斗）。"
+        "en": "When you Burn, your Weapons gain +10/15/20 Damage for the fight.",
+        "cn": "触发灼烧时，己方武器伤害提高+10/15/20（限本场战斗）。"
       }
     ]
   },
@@ -1584,7 +1653,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "SlowRef / 减速引用 | Crit / 暴击",
     "art_key": "Icon_Skill_SlowedTargets.png",
@@ -1607,7 +1676,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯",
+    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Karnok | Stelle / 斯黛拉",
     "tags": "",
     "hidden_tags": "SlowRef / 减速引用 | Freeze / 冻结",
     "art_key": "Icon_Skill_CreepingChill.png",
@@ -1625,12 +1694,12 @@
     "id": "1c40716a-d125-4deb-8ada-8b177c5ff071",
     "name_en": "Brawler",
     "name_cn": "斗士",
-    "description_en": "You have +75/175/275 Max Health for each Weapon you have. [75/175/275]",
-    "description_cn": "每拥有一件武器，就+75/175/275最大生命值。[75/175/275]",
+    "description_en": "You have +50/100/150 Max Health for each Weapon you have. [50/100/150]",
+    "description_cn": "每拥有一件武器，就+50/100/150最大生命值。[50/100/150]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Health / 生命值",
     "art_key": "Icon_Skill_Brawler.png",
@@ -1639,8 +1708,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "You have +75/175/275 Max Health for each Weapon you have. [75/175/275]",
-        "cn": "每拥有一件武器，就+75/175/275最大生命值。[75/175/275]"
+        "en": "You have +50/100/150 Max Health for each Weapon you have. [50/100/150]",
+        "cn": "每拥有一件武器，就+50/100/150最大生命值。[50/100/150]"
       }
     ]
   },
@@ -1693,23 +1762,23 @@
   {
     "id": "7919e8b0-d749-4c13-892e-bc794c8cf06e",
     "name_en": "Heat Shield",
-    "name_cn": "",
-    "description_en": "When you Burn with an item, Shield equal to 0 times that item's Burn.",
-    "description_cn": "[未翻译]",
+    "name_cn": "热能护盾",
+    "description_en": "Your Burn items have +2/3/4 Burn for each Shield item you have. [2/3/4]",
+    "description_cn": "你拥有的每件护盾物品使己方灼烧物品+2/3/4灼烧。[2/3/4]",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
-    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Jules / 朱尔斯 | Karnok | Stelle / 斯黛拉 | Dooley / 杜利",
     "tags": "",
-    "hidden_tags": "BurnRef / 灼烧引用 | Shield / 护盾",
+    "hidden_tags": "BurnRef / 灼烧引用 | ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_HeatShield.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Burn with an item, Shield equal to 0 times that item's Burn.",
-        "cn": "[未翻译]"
+        "en": "Your Burn items have +2/3/4 Burn for each Shield item you have. [2/3/4]",
+        "cn": "你拥有的每件护盾物品使己方灼烧物品+2/3/4灼烧。[2/3/4]"
       }
     ]
   },
@@ -1733,6 +1802,29 @@
       {
         "en": "When you Slow, Freeze, Poison or Burn with an item, a Regen item gains 1/2 Regen for the fight.",
         "cn": "使用物品触发减速、冻结、剧毒或灼烧时，一件物品的生命再生量提高1/2（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "ae3221fe-ea77-44c8-9a32-e20d456bcc28",
+    "name_en": "Piercing Temper",
+    "name_cn": "穿刺之怒",
+    "description_en": "While you are Enraged, your Weapons have +20/40/60/80 Damage.",
+    "description_cn": "暴怒期间，己方武器+20/40/60/80伤害。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "RageReference",
+    "art_key": "Icon_Skill_KAR_PiercingTemper",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your Weapons have +20/40/60/80 Damage.",
+        "cn": "暴怒期间，己方武器+20/40/60/80伤害。"
       }
     ]
   },
@@ -1768,7 +1860,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用 | Charge / 充能",
     "art_key": "Icon_Skill_DOO_NumberOneStunner.png",
@@ -1779,6 +1871,29 @@
       {
         "en": "The first 4/8 times you Shield each fight, Charge an item 1 second(s).",
         "cn": "每场战斗前4/8次触发护盾时，为一件物品充能1秒。"
+      }
+    ]
+  },
+  {
+    "id": "00e1526a-0eb6-49af-93fd-e5e4aea5f05a",
+    "name_en": "Shortened Rage",
+    "name_cn": "缩短暴怒",
+    "description_en": "You are Enraged for 1 second shorter. [Total Duration: ]",
+    "description_cn": "你的暴怒持续时间缩短1秒。[总持续时间：]",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference",
+    "art_key": "Icon_Skill_KAR_ReduceRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "You are Enraged for 1 second shorter. [Total Duration: ]",
+        "cn": "你的暴怒持续时间缩短1秒。[总持续时间：]"
       }
     ]
   },
@@ -1802,6 +1917,29 @@
       {
         "en": "When you Poison, gain 2/4 Regen for the fight.",
         "cn": "触发剧毒时，生命再生量提高2/4（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "a6e2c525-9247-42d1-b28c-abf868f4ecdc",
+    "name_en": "Tranquil Purge",
+    "name_cn": "宁息净化",
+    "description_en": "When you stop being Enraged, Cleanse half your Burn and Poison.",
+    "description_cn": "当你脱离暴怒状态时，净化一半的灼烧和剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference",
+    "art_key": "Icon_Skill_KAR_TranquilPurge",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you stop being Enraged, Cleanse half your Burn and Poison.",
+        "cn": "当你脱离暴怒状态时，净化一半的灼烧和剧毒。"
       }
     ]
   },
@@ -2006,7 +2144,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Mak / 马克 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Lifesteal / 生命偷取 | Crit / 暴击",
     "art_key": "Icon_Skill_QualityOverQuantity.png",
@@ -2236,7 +2374,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Mak / 马克 | Vanessa / 凡妮莎 | Jules / 朱尔斯",
+    "heroes": "Dooley / 杜利 | Mak / 马克 | Vanessa / 凡妮莎 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "SlowRef / 减速引用 | Charge / 充能",
     "art_key": "Icon_Skill_RightyTighty.png",
@@ -2297,6 +2435,29 @@
     ]
   },
   {
+    "id": "4c6d6a91-cc1b-4d40-8ff6-d2c8bbe40c81",
+    "name_en": "Calming Vitality",
+    "name_cn": "宁息活力",
+    "description_en": "When you stop being Enraged, Heal for 15/30% of your Max Health.",
+    "description_cn": "当你脱离暴怒状态时，治疗15/30%最大生命值。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Heal / 治疗 | Health / 生命值",
+    "art_key": "Icon_Skill_KAR_CalmingVitality",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you stop being Enraged, Heal for 15/30% of your Max Health.",
+        "cn": "当你脱离暴怒状态时，治疗15/30%最大生命值。"
+      }
+    ]
+  },
+  {
     "id": "ae686d2c-fce1-401a-8c65-f34fedcce740",
     "name_en": "Line Cook",
     "name_cn": "炉头厨师",
@@ -2320,6 +2481,29 @@
     ]
   },
   {
+    "id": "f1633971-bfe8-470e-bb29-111495163cf2",
+    "name_en": "Frontier Living",
+    "name_cn": "边境生活",
+    "description_en": "At the start of each day, get a Rage item.",
+    "description_cn": "每天开始时，获得一件怒火物品。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "",
+    "art_key": "Icon_Skills_MON_FrontierLiving",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "At the start of each day, get a Rage item.",
+        "cn": "每天开始时，获得一件怒火物品。"
+      }
+    ]
+  },
+  {
     "id": "a6cc6854-91aa-4a30-9936-33db1cf16119",
     "name_en": "Firepower",
     "name_cn": "火力强化",
@@ -2339,6 +2523,29 @@
       {
         "en": "When you use a Core, adjacent Weapons gain 10/20/30 Damage for the fight.",
         "cn": "使用核心时，相邻武器伤害提高10/20/30（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "d92e6936-ec9e-4b5a-b5f7-d63d0d969503",
+    "name_en": "Initial Rage",
+    "name_cn": "初始怒火",
+    "description_en": "While you are Enraged, your leftmost item has its cooldown reduced by 1 second(s).",
+    "description_cn": "暴怒状态下，己方最左侧物品冷却时间缩短1秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Cooldown / 冷却",
+    "art_key": "Icon_Skill_KAR_FinalRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your leftmost item has its cooldown reduced by 1 second(s).",
+        "cn": "暴怒状态下，己方最左侧物品冷却时间缩短1秒。"
       }
     ]
   },
@@ -2374,7 +2581,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "Charge / 充能 | HealRef / 治疗引用 | SlowRef / 减速引用 | RegenRef / 再生引用",
     "art_key": "Icon_Skill_TraumaKit.png",
@@ -2510,9 +2717,9 @@
   {
     "id": "bb534d6b-4e7e-4f77-950f-8a27e4eb038e",
     "name_en": "Cherished Keepsake",
-    "name_cn": "珍藏宝物",
+    "name_cn": "",
     "description_en": "Your leftmost item is a Relic",
-    "description_cn": "最左侧物品视为遗物",
+    "description_cn": "[未翻译]",
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
@@ -2526,7 +2733,7 @@
     "descriptions": [
       {
         "en": "Your leftmost item is a Relic",
-        "cn": "最左侧物品视为遗物"
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -2550,6 +2757,29 @@
       {
         "en": "The first 1/2 times one of your items is destroyed each fight, repair it.",
         "cn": "每场战斗中，己方物品前1/2次被摧毁时将其修复。"
+      }
+    ]
+  },
+  {
+    "id": "12e6e9ac-040b-4b58-96dd-08a56722fb45",
+    "name_en": "Honed In",
+    "name_cn": "磨砺精进",
+    "description_en": "When you use a Weapon, give your Leftmost Weapon +5/10 damage for the fight.",
+    "description_cn": "当你使用武器时，己方最左侧的武器+5/10伤害（限本场战斗）。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skills_MON_Anaconda.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you use a Weapon, give your Leftmost Weapon +5/10 damage for the fight.",
+        "cn": "当你使用武器时，己方最左侧的武器+5/10伤害（限本场战斗）。"
       }
     ]
   },
@@ -2626,11 +2856,11 @@
     "id": "6f64c35a-0005-4cbd-8734-867e7a2b5248",
     "name_en": "Master Diver",
     "name_cn": "潜水大师",
-    "description_en": "Your leftmost item is Aquatic.",
-    "description_cn": "最左侧物品视为水系。",
+    "description_en": "Your leftmost item is Aquatic and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品视为水系，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Vanessa / 凡妮莎",
     "tags": "Aquatic / 水生",
     "hidden_tags": "",
@@ -2640,8 +2870,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is Aquatic.",
-        "cn": "最左侧物品视为水系。"
+        "en": "Your leftmost item is Aquatic and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品视为水系，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -2876,14 +3106,37 @@
     ]
   },
   {
+    "id": "90341289-583b-431b-a044-36cad1047ff1",
+    "name_en": "Frenzy Cache",
+    "name_cn": "狂乱储备",
+    "description_en": "When you Enrage, Reload  item(s).",
+    "description_cn": "当你进入暴怒状态时，装填件物品。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Ammo / 弹药",
+    "art_key": "Icon_Skill_KAR_FrenzyCache",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, Reload  item(s).",
+        "cn": "当你进入暴怒状态时，装填件物品。"
+      }
+    ]
+  },
+  {
     "id": "d2a0ff45-b7bc-4a3a-9deb-8a7f9ef802f9",
     "name_en": "Pure Imagination",
     "name_cn": "纯粹想象",
-    "description_en": "Your rightmost item is a Toy.",
-    "description_cn": "最右侧的物品视为玩具。",
+    "description_en": "Your leftmost item is a Toy and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品视为玩具，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Pygmalien / 皮格马利翁",
     "tags": "Toy / 玩具",
     "hidden_tags": "",
@@ -2893,8 +3146,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your rightmost item is a Toy.",
-        "cn": "最右侧的物品视为玩具。"
+        "en": "Your leftmost item is a Toy and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品视为玩具，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -2902,12 +3155,12 @@
     "id": "fbbfbef7-8fe4-4ac0-81fa-09afb59e0fcc",
     "name_en": "Strength",
     "name_cn": "力量",
-    "description_en": "Your Weapons deal +10/15/20/25 Damage.",
-    "description_cn": "武器造成+10/15/20/25伤害。",
+    "description_en": "Your Weapons deal +5/10/15/20 Damage.",
+    "description_cn": "武器造成+5/10/15/20伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Strenght.png",
@@ -2916,8 +3169,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Weapons deal +10/15/20/25 Damage.",
-        "cn": "武器造成+10/15/20/25伤害。"
+        "en": "Your Weapons deal +5/10/15/20 Damage.",
+        "cn": "武器造成+5/10/15/20伤害。"
       }
     ]
   },
@@ -2948,8 +3201,8 @@
     "id": "a59bc243-7c8b-447a-8ab7-968f662b1c50",
     "name_en": "Waters of Infinity",
     "name_cn": "无尽水源",
-    "description_en": "You have +10/20/40 Regen for each non-Weapon item you have. [0]",
-    "description_cn": "每拥有一件非武器物品，就+10/20/40生命再生量。[0]",
+    "description_en": "You have +10/20/30 Regen for each non-Weapon item you have. [0]",
+    "description_cn": "每拥有一件非武器物品，就+10/20/30生命再生量。[0]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -2962,8 +3215,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "You have +10/20/40 Regen for each non-Weapon item you have. [0]",
-        "cn": "每拥有一件非武器物品，就+10/20/40生命再生量。[0]"
+        "en": "You have +10/20/30 Regen for each non-Weapon item you have. [0]",
+        "cn": "每拥有一件非武器物品，就+10/20/30生命再生量。[0]"
       }
     ]
   },
@@ -2994,8 +3247,8 @@
     "id": "08b801ea-e721-42a9-82e3-56ff3892c49c",
     "name_en": "Deadly Waters",
     "name_cn": "致命水域",
-    "description_en": "Your Aquatic Weapons deal +20/25/30/35 Damage.",
-    "description_cn": "水系武器造成+20/25/30/35伤害。",
+    "description_en": "Your Aquatic Weapons deal +10/20/30/40 Damage.",
+    "description_cn": "水系武器造成+10/20/30/40伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -3008,8 +3261,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Aquatic Weapons deal +20/25/30/35 Damage.",
-        "cn": "水系武器造成+20/25/30/35伤害。"
+        "en": "Your Aquatic Weapons deal +10/20/30/40 Damage.",
+        "cn": "水系武器造成+10/20/30/40伤害。"
       }
     ]
   },
@@ -3022,7 +3275,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Charge / 充能 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_MixedMessage.png",
@@ -3045,7 +3298,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎",
+    "heroes": "Vanessa / 凡妮莎 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击 | AmmoRef / 弹药引用",
     "art_key": "Icon_Skill_VAN_PartingShot.png",
@@ -3109,12 +3362,12 @@
     "id": "2b081d19-8f82-44fd-b6d2-0daeaf97a85e",
     "name_en": "Frontline Logistics",
     "name_cn": "前线勤务",
-    "description_en": "When you use an Ammo item, your Weapons gain +2/4/6 Damage for the fight.",
-    "description_cn": "使用弹药物品时，己方武器伤害提高+2/4/6（限本场战斗）。",
+    "description_en": "When you use an Ammo item, your Weapons gain +3/6/9 Damage for the fight.",
+    "description_cn": "使用弹药物品时，己方武器伤害提高+3/6/9（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎",
+    "heroes": "Vanessa / 凡妮莎 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "AmmoRef / 弹药引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_FrontlineLogistics",
@@ -3123,8 +3376,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use an Ammo item, your Weapons gain +2/4/6 Damage for the fight.",
-        "cn": "使用弹药物品时，己方武器伤害提高+2/4/6（限本场战斗）。"
+        "en": "When you use an Ammo item, your Weapons gain +3/6/9 Damage for the fight.",
+        "cn": "使用弹药物品时，己方武器伤害提高+3/6/9（限本场战斗）。"
       }
     ]
   },
@@ -3137,7 +3390,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Haste / 加速",
     "art_key": "Icon_Skill_STE_LeftyLoosey.png",
@@ -3183,7 +3436,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用 | Haste / 加速",
     "art_key": "Icon_Skill_QuickHeal.png",
@@ -3252,7 +3505,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Haste / 加速",
     "art_key": "Icon_Skill_ToolsOFTheTrade.png",
@@ -3267,16 +3520,43 @@
     ]
   },
   {
-    "id": "0eb35f18-3c03-4ea6-9af4-b7345bce1e3c",
-    "name_en": "Beautiful Friendship",
-    "name_cn": "美好友谊",
-    "description_en": "When you use a Friend, your Weapons gain 3/6/9 Damage for the fight.",
-    "description_cn": "使用伙伴时，己方武器伤害提高3/6/9（限本场战斗）。",
+    "id": "bf0d7a30-b5e0-4d55-841d-76c113eae2b2",
+    "name_en": "Feeding Frenzy",
+    "name_cn": "暴食狂潮",
+    "description_en": "When you use a Food, gain  Rage. | When you Enrage, Haste your Food 1/2/3 seconds.",
+    "description_cn": "当你使用食物时，获得怒火。 | 当你进入暴怒状态时，加速己方食物1/2/3秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎",
-    "tags": "Friend / 伙伴 | Weapon / 武器",
+    "heroes": "Common / 通用",
+    "tags": "Food / 食物",
+    "hidden_tags": "Haste / 加速 | Rage",
+    "art_key": "Icon_Skills_MON_WildBoar.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you use a Food, gain  Rage.",
+        "cn": "当你使用食物时，获得怒火。"
+      },
+      {
+        "en": "When you Enrage, Haste your Food 1/2/3 seconds.",
+        "cn": "当你进入暴怒状态时，加速己方食物1/2/3秒。"
+      }
+    ]
+  },
+  {
+    "id": "0eb35f18-3c03-4ea6-9af4-b7345bce1e3c",
+    "name_en": "Beautiful Friendship",
+    "name_cn": "美好友谊",
+    "description_en": "Your Weapons have +10/15/20 Damage for each Friend item you have.",
+    "description_cn": "拥有一件朋友物品，你的武器每便获得+10/15/20伤害。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Karnok",
+    "tags": "Friend / 伙伴",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_DOO_BeautifulFriendship.png",
     "card_pack_id": "",
@@ -3284,8 +3564,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use a Friend, your Weapons gain 3/6/9 Damage for the fight.",
-        "cn": "使用伙伴时，己方武器伤害提高3/6/9（限本场战斗）。"
+        "en": "Your Weapons have +10/15/20 Damage for each Friend item you have.",
+        "cn": "拥有一件朋友物品，你的武器每便获得+10/15/20伤害。"
       }
     ]
   },
@@ -3367,7 +3647,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Mak / 马克 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Mak / 马克 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "EconomyRef / 经济引用",
     "art_key": "Icon_Skill_CaptainsDue.png",
@@ -3390,7 +3670,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "ShieldRef / 护盾引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_DefensiveWeapons.png",
@@ -3477,12 +3757,12 @@
     "id": "b7b9f86e-689d-44ec-889d-026e8d45081c",
     "name_en": "Frontal Shielding",
     "name_cn": "前向护盾",
-    "description_en": "Your leftmost Shield item has +20/30/40/50 Shield.",
-    "description_cn": "最左侧的护盾物品+20/30/40/50护盾。",
+    "description_en": "Your leftmost Shield item has +10/20/30/40 Shield.",
+    "description_cn": "最左侧的护盾物品+10/20/30/40护盾。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_FrontalShielding.png",
@@ -3491,8 +3771,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost Shield item has +20/30/40/50 Shield.",
-        "cn": "最左侧的护盾物品+20/30/40/50护盾。"
+        "en": "Your leftmost Shield item has +10/20/30/40 Shield.",
+        "cn": "最左侧的护盾物品+10/20/30/40护盾。"
       }
     ]
   },
@@ -3545,9 +3825,9 @@
   {
     "id": "ef12c160-99ce-4171-a7ba-7fccaaafa239",
     "name_en": "First Strike",
-    "name_cn": "先发制人",
+    "name_cn": "",
     "description_en": "Your items have +75/100% Crit Chance. | When you use an item, all your items lose 10% Crit Chance for the fight.",
-    "description_cn": "己方物品+75/100%暴击率。 | 使用一件物品时，所有己方物品的暴击率降低10%（限本场战斗）。",
+    "description_cn": "己方物品+75/100%暴击率。 | [未翻译]",
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
@@ -3565,16 +3845,16 @@
       },
       {
         "en": "When you use an item, all your items lose 10% Crit Chance for the fight.",
-        "cn": "使用一件物品时，所有己方物品的暴击率降低10%（限本场战斗）。"
+        "cn": "[未翻译]"
       }
     ]
   },
   {
     "id": "a98aea6f-c1ee-4986-b6a1-7e6a5529199a",
-    "name_en": "Primal Rage",
-    "name_cn": "原始狂怒",
-    "description_en": "Your leftmost Weapon is a Relic and your Dinosaur and Relic Weapons deal +10/15/20/25 Damage.",
-    "description_cn": "最左侧武器视为遗物，恐龙和遗物武器造成+10/15/20/25伤害。",
+    "name_en": "Primal Energy",
+    "name_cn": "原始能量",
+    "description_en": "Your leftmost Weapon is a Relic and your Dinosaur and Relic Weapons deal +5/10/15/20 Damage.",
+    "description_cn": "最左侧武器视为遗物，恐龙和遗物武器造成+5/10/15/20伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -3587,8 +3867,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost Weapon is a Relic and your Dinosaur and Relic Weapons deal +10/15/20/25 Damage.",
-        "cn": "最左侧武器视为遗物，恐龙和遗物武器造成+10/15/20/25伤害。"
+        "en": "Your leftmost Weapon is a Relic and your Dinosaur and Relic Weapons deal +5/10/15/20 Damage.",
+        "cn": "最左侧武器视为遗物，恐龙和遗物武器造成+5/10/15/20伤害。"
       }
     ]
   },
@@ -3642,12 +3922,12 @@
     "id": "976d7de6-8191-44c4-8270-2ebc47775fe8",
     "name_en": "Rear Shielding",
     "name_cn": "后方防御",
-    "description_en": "Your rightmost Shield item has +20/30/40/50 Shield.",
-    "description_cn": "最右侧的护盾物品+20/30/40/50护盾。",
+    "description_en": "Your rightmost Shield item has +10/20/30/40 Shield.",
+    "description_cn": "最右侧的护盾物品+10/20/30/40护盾。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_RearShielding.png",
@@ -3656,8 +3936,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your rightmost Shield item has +20/30/40/50 Shield.",
-        "cn": "最右侧的护盾物品+20/30/40/50护盾。"
+        "en": "Your rightmost Shield item has +10/20/30/40 Shield.",
+        "cn": "最右侧的护盾物品+10/20/30/40护盾。"
       }
     ]
   },
@@ -3831,7 +4111,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用 | Crit / 暴击",
     "art_key": "Icon_Skill_CriticalAid.png",
@@ -3918,11 +4198,11 @@
     "id": "e8d23247-5164-4096-a4cc-db5bb2a5277d",
     "name_en": "I Would Eat That",
     "name_cn": "到碗里来",
-    "description_en": "Your leftmost item is a Food.",
-    "description_cn": "最左侧物品视为食物。",
+    "description_en": "Your leftmost item is a Food and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品视为食物，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "Food / 食物",
     "hidden_tags": "",
@@ -3932,8 +4212,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is a Food.",
-        "cn": "最左侧物品视为食物。"
+        "en": "Your leftmost item is a Food and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品视为食物，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -4033,7 +4313,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用 | Crit / 暴击",
     "art_key": "Icon_Skill_CritialProtector.png",
@@ -4212,12 +4492,12 @@
     "id": "1fb47cc1-c38f-4240-8f7f-04a78222f5e7",
     "name_en": "Toxicity",
     "name_cn": "毒势",
-    "description_en": "When you Poison, your Weapons gain 3/6/9 Damage for the fight.",
-    "description_cn": "触发剧毒时，己方武器伤害提高3/6/9（限本场战斗）。",
+    "description_en": "When you Poison, your Weapons gain 2/4/6 Damage for the fight.",
+    "description_cn": "触发剧毒时，己方武器伤害提高2/4/6（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Dooley / 杜利 | Karnok",
     "tags": "",
     "hidden_tags": "DamageRef / 伤害引用 | PoisonRef / 剧毒引用",
     "art_key": "Icon_Skill_Toxic.png",
@@ -4226,8 +4506,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Poison, your Weapons gain 3/6/9 Damage for the fight.",
-        "cn": "触发剧毒时，己方武器伤害提高3/6/9（限本场战斗）。"
+        "en": "When you Poison, your Weapons gain 2/4/6 Damage for the fight.",
+        "cn": "触发剧毒时，己方武器伤害提高2/4/6（限本场战斗）。"
       }
     ]
   },
@@ -4331,12 +4611,12 @@
     "id": "25c63d19-8254-47f8-acc9-519ee5a69e1f",
     "name_en": "Left-Handed",
     "name_cn": "左撇子",
-    "description_en": "Your leftmost Weapon deals +20/30/40/50 Damage.",
-    "description_cn": "最左侧武器造成+20/30/40/50伤害。",
+    "description_en": "Your leftmost Weapon deals +10/20/30/40 Damage.",
+    "description_cn": "最左侧武器造成+10/20/30/40伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_LeftHanded.png",
@@ -4345,8 +4625,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost Weapon deals +20/30/40/50 Damage.",
-        "cn": "最左侧武器造成+20/30/40/50伤害。"
+        "en": "Your leftmost Weapon deals +10/20/30/40 Damage.",
+        "cn": "最左侧武器造成+10/20/30/40伤害。"
       }
     ]
   },
@@ -4382,7 +4662,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用 | Level",
     "art_key": "Icon_Skill_HeavyMettle.png",
@@ -4416,6 +4696,29 @@
       {
         "en": "When you gain Regen, a Burn item gains +1/2/3 Burn for the fight.",
         "cn": "提高生命再生时，一件灼烧物品的灼烧提高+1/2/3（限本场战斗）。"
+      }
+    ]
+  },
+  {
+    "id": "4e5bc2ed-7d12-444a-9547-5b92db6c7618",
+    "name_en": "Ferocious Bite",
+    "name_cn": "凶猛撕咬",
+    "description_en": "Your slowest weapon has +Damage equal to its Crit Chance",
+    "description_cn": "己方最慢的武器+伤害，等量于其暴击率",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用 | CritRef / 暴击引用",
+    "art_key": "Icon_Skills_MON_Wolverine.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your slowest weapon has +Damage equal to its Crit Chance",
+        "cn": "己方最慢的武器+伤害，等量于其暴击率"
       }
     ]
   },
@@ -4462,6 +4765,29 @@
       {
         "en": "Your highest Poison item has +2/4/6/8 Poison.",
         "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "13282f20-bc0e-400f-9c2f-13faf6abe13a",
+    "name_en": "Burning Temper",
+    "name_cn": "火爆之怒",
+    "description_en": "While you are Enraged, your Burn items have +5/10/15/20 Burn.",
+    "description_cn": "暴怒期间，己方灼烧物品+5/10/15/20灼烧。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "BurnRef / 灼烧引用 | RageReference",
+    "art_key": "Icon_Skill_KAR_BurningTemper",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your Burn items have +5/10/15/20 Burn.",
+        "cn": "暴怒期间，己方灼烧物品+5/10/15/20灼烧。"
       }
     ]
   },
@@ -4542,11 +4868,11 @@
     "id": "b7edb810-2ead-4e1c-965d-d787eacc6fd3",
     "name_en": "Shatter",
     "name_cn": "冰碎",
-    "description_en": "When you Freeze, your Weapons gain +15/20 Damage for the fight.",
-    "description_cn": "触发冻结时，己方武器伤害提高+15/20（限本场战斗）。",
+    "description_en": "When you Freeze, your Weapons gain +5/10/15 Damage for the fight.",
+    "description_cn": "触发冻结时，己方武器伤害提高+5/10/15（限本场战斗）。",
     "size": "Medium / 中型",
-    "starting_tier": "Gold / 黄金",
-    "available_tiers": "Gold/Diamond",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
     "tags": "Weapon / 武器",
     "hidden_tags": "FreezeRef / 冻结引用 | DamageRef / 伤害引用",
@@ -4556,8 +4882,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Freeze, your Weapons gain +15/20 Damage for the fight.",
-        "cn": "触发冻结时，己方武器伤害提高+15/20（限本场战斗）。"
+        "en": "When you Freeze, your Weapons gain +5/10/15 Damage for the fight.",
+        "cn": "触发冻结时，己方武器伤害提高+5/10/15（限本场战斗）。"
       }
     ]
   },
@@ -4570,7 +4896,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Vanessa / 凡妮莎",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Vanessa / 凡妮莎 | Karnok",
     "tags": "",
     "hidden_tags": "",
     "art_key": "Icon_Skill_DesperateFreeze.png",
@@ -4611,12 +4937,12 @@
     "id": "13989ad3-2122-4d86-a323-bb90fda8360b",
     "name_en": "Bloodhound",
     "name_cn": "寻血猎犬",
-    "description_en": "The first time an enemy falls below half Health each fight, Charge your items 2/3/4 second(s).",
-    "description_cn": "每场战斗敌方生命值首次降至一半时，为你的物品充能2/3/4秒。",
+    "description_en": "The first time an enemy falls below half Health each fight, Charge your items 1/2/3 second(s).",
+    "description_cn": "每场战斗敌方生命值首次降至一半时，为你的物品充能1/2/3秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎",
+    "heroes": "Vanessa / 凡妮莎 | Karnok",
     "tags": "",
     "hidden_tags": "Charge / 充能",
     "art_key": "Icon_Skill_Bloodhound.png",
@@ -4625,8 +4951,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time an enemy falls below half Health each fight, Charge your items 2/3/4 second(s).",
-        "cn": "每场战斗敌方生命值首次降至一半时，为你的物品充能2/3/4秒。"
+        "en": "The first time an enemy falls below half Health each fight, Charge your items 1/2/3 second(s).",
+        "cn": "每场战斗敌方生命值首次降至一半时，为你的物品充能1/2/3秒。"
       }
     ]
   },
@@ -4662,7 +4988,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Jules / 朱尔斯 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用 | RegenRef / 再生引用 | Crit / 暴击",
     "art_key": "Icon_Skill_MedicalTraining.png",
@@ -4680,8 +5006,8 @@
     "id": "8a9a98fe-b1bd-4da7-8233-dffd3845aa45",
     "name_en": "Dumpster Diving",
     "name_cn": "垃圾桶寻宝",
-    "description_en": "At the start of each day, get a Potion.",
-    "description_cn": "每天开始时，获得一瓶药水。",
+    "description_en": "At the start of each day, get a Potion from any Hero.",
+    "description_cn": "每天开始时，获得一瓶来自任意英雄的药水。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -4694,8 +5020,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "At the start of each day, get a Potion.",
-        "cn": "每天开始时，获得一瓶药水。"
+        "en": "At the start of each day, get a Potion from any Hero.",
+        "cn": "每天开始时，获得一瓶来自任意英雄的药水。"
       }
     ]
   },
@@ -4726,12 +5052,12 @@
     "id": "0045d15e-ac74-436f-a200-eeedab7baf90",
     "name_en": "Backroom Dealings",
     "name_cn": "幕后交易",
-    "description_en": "When you visit a Merchant, gain 25/50/75 Max Health.",
-    "description_cn": "拜访商人时，最大生命值提高25/50/75。",
+    "description_en": "When you visit a Merchant, gain 10/20/30/40 Max Health.",
+    "description_cn": "拜访商人时，最大生命值提高10/20/30/40。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Health / 生命值",
     "art_key": "Icon_Skill_Backroom.png",
@@ -4740,8 +5066,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you visit a Merchant, gain 25/50/75 Max Health.",
-        "cn": "拜访商人时，最大生命值提高25/50/75。"
+        "en": "When you visit a Merchant, gain 10/20/30/40 Max Health.",
+        "cn": "拜访商人时，最大生命值提高10/20/30/40。"
       }
     ]
   },
@@ -4800,7 +5126,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用 | RegenRef / 再生引用 | Health / 生命值",
     "art_key": "Icon_Skill_ConcentratedHealing.png",
@@ -4849,7 +5175,7 @@
     "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Jules / 朱尔斯",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
-    "art_key": "Icon_Skill_HeavyFirepower.png",
+    "art_key": "Icon_Skill_HeavyWeaponry.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
@@ -4869,7 +5195,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Dooley / 杜利 | Karnok",
     "tags": "",
     "hidden_tags": "PoisonRef / 剧毒引用 | BurnRef / 灼烧引用",
     "art_key": "Icon_Skill_ToxicFlame.png",
@@ -4892,7 +5218,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_DeadlyEye.png",
@@ -4915,7 +5241,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Karnok",
     "tags": "Friend / 伙伴",
     "hidden_tags": "ShieldRef / 护盾引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_BalancedFriendship.png",
@@ -5045,15 +5371,38 @@
     ]
   },
   {
+    "id": "522e0f7e-67f6-4646-ba1d-f51c3b40d8e1",
+    "name_en": "Lone Charge",
+    "name_cn": "孤独冲锋",
+    "description_en": "When you Enrage, deal Damage equal to 50/100% of the Shield of your highest Shield item.",
+    "description_cn": "当你进入暴怒状态时，造成伤害，等量于己方护盾最高的物品护盾值的50/100%。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "ShieldRef / 护盾引用 | RageReference",
+    "art_key": "Icon_Skills_MON_Unibou.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, deal Damage equal to 50/100% of the Shield of your highest Shield item.",
+        "cn": "当你进入暴怒状态时，造成伤害，等量于己方护盾最高的物品护盾值的50/100%。"
+      }
+    ]
+  },
+  {
     "id": "d1505b87-551f-4786-818c-3c441f920d7b",
     "name_en": "Re-Tooled",
     "name_cn": "工具重铸",
     "description_en": "Your leftmost Tool has +1 Multicast.",
-    "description_cn": "最左侧的工具+1多重触发。",
+    "description_cn": "最左侧的工具+1多重释放。",
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "",
     "art_key": "Icon_Skill_Re-Tooled.png",
@@ -5063,7 +5412,7 @@
     "descriptions": [
       {
         "en": "Your leftmost Tool has +1 Multicast.",
-        "cn": "最左侧的工具+1多重触发。"
+        "cn": "最左侧的工具+1多重释放。"
       }
     ]
   },
@@ -5071,11 +5420,11 @@
     "id": "31e244c7-e013-4e6c-a51c-4f0ca8d10472",
     "name_en": "Strong Arm",
     "name_cn": "强健手臂",
-    "description_en": "Your Weapons have + Damage equal to 1/2/3/4 times your Income. [1/2/3/4]",
-    "description_cn": "武器 + 伤害，增幅等于收入的1/2/3/4倍。[1/2/3/4]",
+    "description_en": "Your Weapons have + Damage equal to 1/2/3 times your Income. [1/2/3]",
+    "description_cn": "武器 + 伤害，增幅等于收入的1/2/3倍。[1/2/3]",
     "size": "Medium / 中型",
-    "starting_tier": "Bronze / 青铜",
-    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Pygmalien / 皮格马利翁",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用 | EconomyRef / 经济引用",
@@ -5085,8 +5434,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Weapons have + Damage equal to 1/2/3/4 times your Income. [1/2/3/4]",
-        "cn": "武器 + 伤害，增幅等于收入的1/2/3/4倍。[1/2/3/4]"
+        "en": "Your Weapons have + Damage equal to 1/2/3 times your Income. [1/2/3]",
+        "cn": "武器 + 伤害，增幅等于收入的1/2/3倍。[1/2/3]"
       }
     ]
   },
@@ -5145,7 +5494,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "Weapon / 武器 | Tool / 工具",
     "hidden_tags": "",
     "art_key": "Icon_Skill_JUL_PlowsharestoSwords",
@@ -5209,12 +5558,12 @@
     "id": "560a532c-73f4-4edd-b197-0127e2ca4cc9",
     "name_en": "Arms Dealer",
     "name_cn": "军火商",
-    "description_en": "When you buy a Weapon, gain 20/30/40/50 Max Health.",
-    "description_cn": "购买武器时，最大生命值提高20/30/40/50。",
+    "description_en": "When you buy a Weapon, gain 10/20/30/40 Max Health.",
+    "description_cn": "购买武器时，最大生命值提高10/20/30/40。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Health / 生命值",
     "art_key": "Icon_Skill_ArmsDealer.png",
@@ -5223,8 +5572,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you buy a Weapon, gain 20/30/40/50 Max Health.",
-        "cn": "购买武器时，最大生命值提高20/30/40/50。"
+        "en": "When you buy a Weapon, gain 10/20/30/40 Max Health.",
+        "cn": "购买武器时，最大生命值提高10/20/30/40。"
       }
     ]
   },
@@ -5329,7 +5678,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Freeze / 冻结",
     "art_key": "Icon_Skill_InitialChill.png",
@@ -5416,11 +5765,11 @@
     "id": "9a8aedfe-6b97-4db9-8676-c774292637ee",
     "name_en": "Titanium Casing",
     "name_cn": "钛制外壳",
-    "description_en": "When you use a Core, your Shield items gain 15/30 Shield for the fight.",
-    "description_cn": "使用核心时，护盾物品的护盾提高15/30（限本场战斗）。",
+    "description_en": "When you use a Core, your Shield items gain 5/10/15 Shield for the fight.",
+    "description_cn": "使用核心时，护盾物品的护盾提高5/10/15（限本场战斗）。",
     "size": "Medium / 中型",
-    "starting_tier": "Gold / 黄金",
-    "available_tiers": "Gold/Diamond",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Dooley / 杜利",
     "tags": "Core / 核心",
     "hidden_tags": "ShieldRef / 护盾引用",
@@ -5430,8 +5779,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use a Core, your Shield items gain 15/30 Shield for the fight.",
-        "cn": "使用核心时，护盾物品的护盾提高15/30（限本场战斗）。"
+        "en": "When you use a Core, your Shield items gain 5/10/15 Shield for the fight.",
+        "cn": "使用核心时，护盾物品的护盾提高5/10/15（限本场战斗）。"
       }
     ]
   },
@@ -5439,12 +5788,12 @@
     "id": "18c6637b-14c7-4311-b853-e3fd74c613eb",
     "name_en": "Right-Handed",
     "name_cn": "右撇子",
-    "description_en": "Your rightmost Weapon has +20/30/40/50 Damage.",
-    "description_cn": "最右侧的武器+20/30/40/50伤害。",
+    "description_en": "Your rightmost Weapon has +10/20/30/40 Damage.",
+    "description_cn": "最右侧的武器+10/20/30/40伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_RightHanded.png",
@@ -5453,8 +5802,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your rightmost Weapon has +20/30/40/50 Damage.",
-        "cn": "最右侧的武器+20/30/40/50伤害。"
+        "en": "Your rightmost Weapon has +10/20/30/40 Damage.",
+        "cn": "最右侧的武器+10/20/30/40伤害。"
       }
     ]
   },
@@ -5605,7 +5954,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_KeenEye.png",
@@ -5628,7 +5977,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | Haste / 加速",
     "art_key": "Icon_Skill_QuickIgnition.png",
@@ -5739,6 +6088,29 @@
     ]
   },
   {
+    "id": "c7fa34d4-3e26-4471-a7a4-7919fdc86aab",
+    "name_en": "Adrenaline Rush",
+    "name_cn": "肾上腺素涌动",
+    "description_en": "When you Enrage, Charge your Weapons 1/2 second(s).",
+    "description_cn": "当你进入暴怒状态时，充能己方武器1/2秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "RageReference | Charge / 充能",
+    "art_key": "Icon_Skill_KAR_AdrenalineRush",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, Charge your Weapons 1/2 second(s).",
+        "cn": "当你进入暴怒状态时，充能己方武器1/2秒。"
+      }
+    ]
+  },
+  {
     "id": "7b3c06c6-75d2-4c80-b4c5-01ec3c7479d5",
     "name_en": "Hot Meal",
     "name_cn": "热乎饭菜",
@@ -5749,7 +6121,7 @@
     "available_tiers": "Silver/Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "Burn / 灼烧",
+    "hidden_tags": "Burn / 灼烧 | HeatedReference",
     "art_key": "Icon_Skill_JUL_HotMeal",
     "card_pack_id": "",
     "spawning": "",
@@ -5788,11 +6160,11 @@
     "id": "57a19498-4525-4f15-9aa2-d0b21cf20d73",
     "name_en": "Party Like it's 011111001111",
     "name_cn": "011111001111末日狂欢",
-    "description_en": "Your leftmost item is a Friend",
-    "description_cn": "最左侧物品视为伙伴",
+    "description_en": "Your leftmost item is a Friend and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品变为伙伴，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Dooley / 杜利",
     "tags": "Core / 核心 | Tech / 科技 | Friend / 伙伴",
     "hidden_tags": "",
@@ -5802,8 +6174,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is a Friend",
-        "cn": "最左侧物品视为伙伴"
+        "en": "Your leftmost item is a Friend and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品变为伙伴，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -5839,7 +6211,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Mak / 马克 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Mak / 马克 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用",
     "art_key": "Icon_Skill_Fiery.png",
@@ -5925,23 +6297,27 @@
   {
     "id": "3865bde8-45b8-49d6-8945-0453c24251a9",
     "name_en": "Sharpshooter",
-    "name_cn": "",
-    "description_en": "Your Ammo items have +3/6/9/12% Crit Chance.",
-    "description_cn": "[未翻译]",
+    "name_cn": "神射手",
+    "description_en": "Your leftmost and rightmost Weapons have +10% Crit Chance. | If you only have one Weapon, it deals double Crit Damage.",
+    "description_cn": "己方最左侧和最右侧的武器+10%暴击率。 | 如果你只有一件武器，它造成双倍暴击伤害。",
     "size": "Medium / 中型",
-    "starting_tier": "Bronze / 青铜",
-    "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克",
-    "tags": "",
-    "hidden_tags": "AmmoRef / 弹药引用 | Crit / 暴击",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用 | Crit / 暴击",
     "art_key": "Icon_Skill_Sharpshooter.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Ammo items have +3/6/9/12% Crit Chance.",
-        "cn": "[未翻译]"
+        "en": "Your leftmost and rightmost Weapons have +10% Crit Chance.",
+        "cn": "己方最左侧和最右侧的武器+10%暴击率。"
+      },
+      {
+        "en": "If you only have one Weapon, it deals double Crit Damage.",
+        "cn": "如果你只有一件武器，它造成双倍暴击伤害。"
       }
     ]
   },
@@ -5992,29 +6368,6 @@
     ]
   },
   {
-    "id": "786299fc-450a-4a81-9838-d468143cf514",
-    "name_en": "On the Prowl",
-    "name_cn": "",
-    "description_en": "When you win a fight, gain 1 strength.",
-    "description_cn": "[未翻译]",
-    "size": "Medium / 中型",
-    "starting_tier": "Bronze / 青铜",
-    "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Common / 通用",
-    "tags": "",
-    "hidden_tags": "DamageRef / 伤害引用",
-    "art_key": "Icon_Skill_MON_TurnOutYourPockets_03.png",
-    "card_pack_id": "",
-    "spawning": "",
-    "multicast": 0,
-    "descriptions": [
-      {
-        "en": "When you win a fight, gain 1 strength.",
-        "cn": "[未翻译]"
-      }
-    ]
-  },
-  {
     "id": "5de1aaae-adb9-48a4-81fc-aff714956656",
     "name_en": "Pyromania",
     "name_cn": "纵火狂",
@@ -6034,6 +6387,29 @@
       {
         "en": "When you use a Large item, Burn 10/20/30.",
         "cn": "使用大型物品时，造成10/20/30灼烧。"
+      }
+    ]
+  },
+  {
+    "id": "786299fc-450a-4a81-9838-d468143cf514",
+    "name_en": "On the Prowl",
+    "name_cn": "",
+    "description_en": "When you win a fight, gain 1 strength.",
+    "description_cn": "[未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "DamageRef / 伤害引用",
+    "art_key": "Icon_Skill_MON_TurnOutYourPockets_03.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you win a fight, gain 1 strength.",
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -6091,8 +6467,8 @@
     "id": "d53d5ba0-b087-42a2-9523-2a44d9001e07",
     "name_en": "Inexorable",
     "name_cn": "势不可挡",
-    "description_en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/4/6% Crit Chance bonus.",
-    "description_cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/4/6%。",
+    "description_en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/3/4% Crit Chance bonus.",
+    "description_cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/3/4%。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -6105,21 +6481,21 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/4/6% Crit Chance bonus.",
-        "cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/4/6%。"
+        "en": "Your items have +2% Crit Chance. When you start a fight, this gains +2/3/4% Crit Chance bonus.",
+        "cn": "己方物品+2%暴击率。每次开始战斗时，这一暴击率加成提高+2/3/4%。"
       }
     ]
   },
   {
     "id": "6a332b72-d300-486b-9659-1ca83e064ed2",
     "name_en": "Staying Power",
-    "name_cn": "持久之力",
+    "name_cn": "",
     "description_en": "When you use a Weapon or Tool, your Heal items gain +4/8/12 Heal for the fight.",
-    "description_cn": "使用武器或工具时，治疗物品的治疗量提高+4/8/12（限本场战斗）。",
+    "description_cn": "[未翻译]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Heal / 治疗",
     "art_key": "Icon_Skill_StayingPower.png",
@@ -6129,7 +6505,7 @@
     "descriptions": [
       {
         "en": "When you use a Weapon or Tool, your Heal items gain +4/8/12 Heal for the fight.",
-        "cn": "使用武器或工具时，治疗物品的治疗量提高+4/8/12（限本场战斗）。"
+        "cn": "[未翻译]"
       }
     ]
   },
@@ -6160,12 +6536,12 @@
     "id": "9ff2cb3f-99dd-425b-b44f-14a1d0271f56",
     "name_en": "Stop That!",
     "name_cn": "让我缓缓！",
-    "description_en": "The first time you fall below half Health each fight, Slow  items for 2 second(s).",
-    "description_cn": "每场战斗己方生命值首次降至一半时，减速件物品2秒。",
+    "description_en": "The first time you fall below half Health each fight, Slow all enemy items for 1/2/3 second(s).",
+    "description_cn": "每场战斗中你首次生命值降至一半以下时，减速所有敌方物品1/2/3秒。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Slow / 减速",
     "art_key": "Icon_Skill_StopThat.png",
@@ -6174,8 +6550,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "The first time you fall below half Health each fight, Slow  items for 2 second(s).",
-        "cn": "每场战斗己方生命值首次降至一半时，减速件物品2秒。"
+        "en": "The first time you fall below half Health each fight, Slow all enemy items for 1/2/3 second(s).",
+        "cn": "每场战斗中你首次生命值降至一半以下时，减速所有敌方物品1/2/3秒。"
       }
     ]
   },
@@ -6226,16 +6602,39 @@
     ]
   },
   {
+    "id": "feac268f-c3aa-442b-8b14-ba9026156133",
+    "name_en": "Feral Alliance",
+    "name_cn": "野性联盟",
+    "description_en": "When you Enrage, Charge your Friends 1/2 second(s).",
+    "description_cn": "当你进入暴怒状态时，为己方伙伴充能1/2秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "Friend / 伙伴",
+    "hidden_tags": "RageReference | Charge / 充能",
+    "art_key": "Icon_Skill_KAR_FeralAlliance",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, Charge your Friends 1/2 second(s).",
+        "cn": "当你进入暴怒状态时，为己方伙伴充能1/2秒。"
+      }
+    ]
+  },
+  {
     "id": "b48957e5-7a9e-4959-9116-5b18c3cceb72",
     "name_en": "Pack Infiltrator",
     "name_cn": "打入恐龙群",
-    "description_en": "Your leftmost item is a Dinosaur and your Dinosaurs have +5/10/15% Crit Chance.",
-    "description_cn": "最左侧物品视为恐龙，恐龙暴击率+5/10/15%。",
+    "description_en": "Your leftmost item is a Dinosaur and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品变为恐龙，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Dooley / 杜利",
-    "tags": "Relic / 神器",
+    "tags": "Dinosaur / 恐龙 | Friend / 伙伴",
     "hidden_tags": "",
     "art_key": "Icon_Skill_DOO_PackInfiltrator",
     "card_pack_id": "",
@@ -6243,8 +6642,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is a Dinosaur and your Dinosaurs have +5/10/15% Crit Chance.",
-        "cn": "最左侧物品视为恐龙，恐龙暴击率+5/10/15%。"
+        "en": "Your leftmost item is a Dinosaur and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品变为恐龙，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -6318,6 +6717,37 @@
     ]
   },
   {
+    "id": "0beccea0-bb9b-444b-b063-bf6aeadaddc8",
+    "name_en": "Inspired Rage",
+    "name_cn": "灵感怒火",
+    "description_en": "When you use a Small item, gain 3 Rage. | When you use a Medium item, gain 6 Rage. | When you use a Large item, gain 9 Rage.",
+    "description_cn": "当你使用小型物品时，获得3怒火。 | 当你使用中型物品时，获得6怒火。 | 当你使用大型物品时，获得9怒火。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Rage",
+    "art_key": "Icon_Skill_KAR_KarnoksRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you use a Small item, gain 3 Rage.",
+        "cn": "当你使用小型物品时，获得3怒火。"
+      },
+      {
+        "en": "When you use a Medium item, gain 6 Rage.",
+        "cn": "当你使用中型物品时，获得6怒火。"
+      },
+      {
+        "en": "When you use a Large item, gain 9 Rage.",
+        "cn": "当你使用大型物品时，获得9怒火。"
+      }
+    ]
+  },
+  {
     "id": "2c4b4d14-19db-4d75-9fb6-a377d9ca9882",
     "name_en": "Chilling Touch",
     "name_cn": "寒霜之触",
@@ -6341,16 +6771,43 @@
     ]
   },
   {
+    "id": "8612baa6-4d55-430e-9f40-6db1e5dfe8ff",
+    "name_en": "Beast Unleashed",
+    "name_cn": "暴走之兽",
+    "description_en": "Your leftmost weapon has +Damage equal to its Crit Chance. | Your rightmost weapon has +Damage equal to your Rage.",
+    "description_cn": "己方最左侧的武器+伤害，增幅等于其暴击率。 | 己方最右侧的武器+伤害，增幅等于你的怒火。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Common / 通用",
+    "tags": "Weapon / 武器",
+    "hidden_tags": "DamageRef / 伤害引用 | CritRef / 暴击引用 | RageReference",
+    "art_key": "Icon_Skills_MON_Unleashed",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "Your leftmost weapon has +Damage equal to its Crit Chance.",
+        "cn": "己方最左侧的武器+伤害，增幅等于其暴击率。"
+      },
+      {
+        "en": "Your rightmost weapon has +Damage equal to your Rage.",
+        "cn": "己方最右侧的武器+伤害，增幅等于你的怒火。"
+      }
+    ]
+  },
+  {
     "id": "8725f216-28b4-494b-87a1-c7f12c461927",
     "name_en": "Special Exhibit",
     "name_cn": "特殊展品",
-    "description_en": "Your rightmost item is a Relic and your Relics have +5/10/15% Crit Chance.",
-    "description_cn": "最右侧物品视为遗物，遗物暴击率+5/10/15%。",
+    "description_en": "Your leftmost item is a Relic and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品视为遗物，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利",
-    "tags": "Dinosaur / 恐龙",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Dooley / 杜利 | Mak / 马克 | Karnok",
+    "tags": "Relic / 神器",
     "hidden_tags": "",
     "art_key": "Icon_Skill_DOO_Retrofit",
     "card_pack_id": "",
@@ -6358,8 +6815,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your rightmost item is a Relic and your Relics have +5/10/15% Crit Chance.",
-        "cn": "最右侧物品视为遗物，遗物暴击率+5/10/15%。"
+        "en": "Your leftmost item is a Relic and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品视为遗物，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -6372,7 +6829,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用",
     "art_key": "Icon_Skill_FinalFlame.png",
@@ -6441,7 +6898,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Burn / 灼烧",
     "art_key": "Icon_Skill_HotSpot.png",
@@ -6487,7 +6944,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "",
     "art_key": "Icon_Skill_Lethargy.png",
@@ -6498,6 +6955,29 @@
       {
         "en": "All item Cooldowns are increased by 1000/2000/3000 second(s).",
         "cn": "所有物品的冷却时间延长1000/2000/3000秒。"
+      }
+    ]
+  },
+  {
+    "id": "03533207-fccd-4363-a873-d324c91cabf1",
+    "name_en": "Final Rage",
+    "name_cn": "终极怒火",
+    "description_en": "While you are Enraged, your rightmost item has its cooldown reduced by 1 second(s).",
+    "description_cn": "暴怒期间，己方最右侧物品冷却时间缩短1秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Cooldown / 冷却",
+    "art_key": "Icon_Skill_KAR_InitialRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your rightmost item has its cooldown reduced by 1 second(s).",
+        "cn": "暴怒期间，己方最右侧物品冷却时间缩短1秒。"
       }
     ]
   },
@@ -6533,7 +7013,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Cooldown / 冷却",
     "art_key": "Icon_Skill_Nimble.png",
@@ -6579,7 +7059,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Mak / 马克 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Charge / 充能 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Conditioning.png",
@@ -6625,7 +7105,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Haste / 加速",
     "art_key": "Icon_Skill_CaptainsCharge.png",
@@ -6671,7 +7151,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "SlowRef / 减速引用 | Charge / 充能",
     "art_key": "Icon_Skill_TemporalStrike.png",
@@ -6717,7 +7197,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_FlashyMechanic.png",
@@ -6778,6 +7258,29 @@
     ]
   },
   {
+    "id": "56cf21ff-db2c-4f49-af5f-cf9a01508e6f",
+    "name_en": "Burst of Rage",
+    "name_cn": "怒火爆发",
+    "description_en": "The first time you fall below half health each fight, gain  Rage.",
+    "description_cn": "每场战斗中首次生命值降至一半以下时，获得怒火。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "Rage | Charge / 充能",
+    "art_key": "Icon_Skill_KAR_BurstofRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time you fall below half health each fight, gain  Rage.",
+        "cn": "每场战斗中首次生命值降至一半以下时，获得怒火。"
+      }
+    ]
+  },
+  {
     "id": "8d51073a-d237-4be1-bc6e-440eaec106c5",
     "name_en": "Bombing Run",
     "name_cn": "轰炸行动",
@@ -6834,7 +7337,7 @@
     "available_tiers": "Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "Regen / 再生",
+    "hidden_tags": "Regen / 再生 | ChilledReference",
     "art_key": "Icon_Skill_VAN_RefreshingTreats",
     "card_pack_id": "",
     "spawning": "",
@@ -6850,12 +7353,12 @@
     "id": "292f58c0-409b-4de7-a8d2-099a8629aa5e",
     "name_en": "Toughness",
     "name_cn": "坚固",
-    "description_en": "Your Shield items have +10/15/20/25 Shield.",
-    "description_cn": "护盾物品+10/15/20/25护盾。",
+    "description_en": "Your Shield items have +5/10/15/20 Shield.",
+    "description_cn": "护盾物品+5/10/15/20护盾。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_Toughness.png",
@@ -6864,8 +7367,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Shield items have +10/15/20/25 Shield.",
-        "cn": "护盾物品+10/15/20/25护盾。"
+        "en": "Your Shield items have +5/10/15/20 Shield.",
+        "cn": "护盾物品+5/10/15/20护盾。"
       }
     ]
   },
@@ -7031,11 +7534,57 @@
     ]
   },
   {
+    "id": "0d915f3f-3025-4e7b-abf5-e3f9119c9ecc",
+    "name_en": "Blind Fury",
+    "name_cn": "盲目狂怒",
+    "description_en": "While you are Enraged, your Rage gain items have their cooldowns reduced by 1 second.",
+    "description_cn": "暴怒期间，己方产生怒火的物品冷却时间缩短1秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Cooldown / 冷却",
+    "art_key": "Icon_Skill_KAR_BlindFury",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your Rage gain items have their cooldowns reduced by 1 second.",
+        "cn": "暴怒期间，己方产生怒火的物品冷却时间缩短1秒。"
+      }
+    ]
+  },
+  {
+    "id": "38eb79ab-a415-4a8b-ab61-5a7370397b59",
+    "name_en": "Still Focus",
+    "name_cn": "静心凝神",
+    "description_en": "When you stop being Enraged, Charge your non-Weapons 1/2 second(s).",
+    "description_cn": "当你退出暴怒状态时，为己方非武器物品充能1/2秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Charge / 充能",
+    "art_key": "Icon_Skill_KAR_StillFocus",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you stop being Enraged, Charge your non-Weapons 1/2 second(s).",
+        "cn": "当你退出暴怒状态时，为己方非武器物品充能1/2秒。"
+      }
+    ]
+  },
+  {
     "id": "ed63ead8-5ba3-4972-b547-b1791484fccf",
     "name_en": "Farm to Table",
     "name_cn": "农田直供",
-    "description_en": "You have +75/175/275 Max Health for each Tool you have. [75/175/275]",
-    "description_cn": "每拥有一件工具，就+75/175/275最大生命值。[75/175/275]",
+    "description_en": "You have +50/100/150 Max Health for each Tool you have. [50/100/150]",
+    "description_cn": "每拥有一件工具，就+50/100/150最大生命值。[50/100/150]",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -7048,31 +7597,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "You have +75/175/275 Max Health for each Tool you have. [75/175/275]",
-        "cn": "每拥有一件工具，就+75/175/275最大生命值。[75/175/275]"
-      }
-    ]
-  },
-  {
-    "id": "dfe40f90-61de-46dc-b807-0da587140e9d",
-    "name_en": "Ambush",
-    "name_cn": "伏击",
-    "description_en": "At the start of each fight, deal Damage equal to 10/20/30% of an enemy's Max Health.",
-    "description_cn": "每场战斗开始时，造成伤害，等量于一位敌人最大生命值的10/20/30%。",
-    "size": "Medium / 中型",
-    "starting_tier": "Silver / 白银",
-    "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Common / 通用",
-    "tags": "",
-    "hidden_tags": "Damage / 伤害",
-    "art_key": "Icon_Skill_MON_Ambush.png",
-    "card_pack_id": "",
-    "spawning": "",
-    "multicast": 0,
-    "descriptions": [
-      {
-        "en": "At the start of each fight, deal Damage equal to 10/20/30% of an enemy's Max Health.",
-        "cn": "每场战斗开始时，造成伤害，等量于一位敌人最大生命值的10/20/30%。"
+        "en": "You have +50/100/150 Max Health for each Tool you have. [50/100/150]",
+        "cn": "每拥有一件工具，就+50/100/150最大生命值。[50/100/150]"
       }
     ]
   },
@@ -7100,11 +7626,34 @@
     ]
   },
   {
+    "id": "dfe40f90-61de-46dc-b807-0da587140e9d",
+    "name_en": "Ambush",
+    "name_cn": "伏击",
+    "description_en": "At the start of each fight, deal Damage equal to 10/20/30% of an enemy's Max Health.",
+    "description_cn": "每场战斗开始时，造成伤害，等量于一位敌人最大生命值的10/20/30%。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Common / 通用",
+    "tags": "",
+    "hidden_tags": "Damage / 伤害",
+    "art_key": "Icon_Skill_MON_Ambush.png",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "At the start of each fight, deal Damage equal to 10/20/30% of an enemy's Max Health.",
+        "cn": "每场战斗开始时，造成伤害，等量于一位敌人最大生命值的10/20/30%。"
+      }
+    ]
+  },
+  {
     "id": "6640af95-3999-43b2-b32d-fae5caf0b8cc",
     "name_en": "Brewmaster",
     "name_cn": "酿造大师",
     "description_en": "At the start of each fight, a Potion gains +1 Multicast for the fight.",
-    "description_cn": "每场战斗开始时，一件药水+1多重触发（限本场战斗）。",
+    "description_cn": "每场战斗开始时，一件药水+1多重释放（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
@@ -7118,7 +7667,7 @@
     "descriptions": [
       {
         "en": "At the start of each fight, a Potion gains +1 Multicast for the fight.",
-        "cn": "每场战斗开始时，一件药水+1多重触发（限本场战斗）。"
+        "cn": "每场战斗开始时，一件药水+1多重释放（限本场战斗）。"
       }
     ]
   },
@@ -7177,7 +7726,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_RightEyeDominant.png",
@@ -7223,7 +7772,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Jules / 朱尔斯 | Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_BuildingCrescendo.png",
@@ -7399,15 +7948,38 @@
     ]
   },
   {
+    "id": "c751b1b8-7128-4e06-8974-de5abca47634",
+    "name_en": "Castle Doctrine",
+    "name_cn": "城堡准则",
+    "description_en": "The first time any item is used each fight, for each Property you have, gain  Rage.",
+    "description_cn": "每场战斗中首次使用任意物品时，你拥有的每件地产使你获得怒火。",
+    "size": "Medium / 中型",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "Property / 地产",
+    "hidden_tags": "Flying / 飞行 | RageReference",
+    "art_key": "Icon_Skill_KAR_CastleDoctrine",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "The first time any item is used each fight, for each Property you have, gain  Rage.",
+        "cn": "每场战斗中首次使用任意物品时，你拥有的每件地产使你获得怒火。"
+      }
+    ]
+  },
+  {
     "id": "f0955884-1ea7-4cac-ad73-c30798d3642c",
     "name_en": "Sharp Corners",
     "name_cn": "锐利棱角",
-    "description_en": "When you Shield, your Weapons gain 3/6/9 Damage for the fight.",
-    "description_cn": "触发护盾时，己方武器伤害提高3/6/9（限本场战斗）。",
+    "description_en": "When you Shield, your Weapons gain +2/4/6 Damage for the fight.",
+    "description_cn": "触发护盾时，己方武器伤害提高 +2/4/6（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "ShieldRef / 护盾引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_SharpCorners.png",
@@ -7416,8 +7988,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you Shield, your Weapons gain 3/6/9 Damage for the fight.",
-        "cn": "触发护盾时，己方武器伤害提高3/6/9（限本场战斗）。"
+        "en": "When you Shield, your Weapons gain +2/4/6 Damage for the fight.",
+        "cn": "触发护盾时，己方武器伤害提高 +2/4/6（限本场战斗）。"
       }
     ]
   },
@@ -7453,7 +8025,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Health / 生命值 | Heal / 治疗",
     "art_key": "Icon_Skill_Hearty.png",
@@ -7499,7 +8071,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Karnok | Jules / 朱尔斯",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用 | HasteRef / 加速引用",
     "art_key": "Icon_Skill_FinesseWeapon.png",
@@ -7522,7 +8094,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用",
     "art_key": "Icon_Skill_Conflagration.png",
@@ -7606,6 +8178,37 @@
     ]
   },
   {
+    "id": "1ac7830c-8506-4e7f-a1b6-8ba302f6a8fe",
+    "name_en": "Karnok's Rage",
+    "name_cn": "卡诺克之怒",
+    "description_en": "When you use a Small item, gain 4 Rage. | When you use a Medium item, gain 8 Rage. | When you use a Large item, gain 12 Rage.",
+    "description_cn": "当你使用小型物品时，获得4怒火。 | 当你使用中型物品时，获得8怒火。 | 当你使用大型物品时，获得12怒火。",
+    "size": "Medium / 中型",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "Rage",
+    "art_key": "Icon_Skill_KAR_KarnoksRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you use a Small item, gain 4 Rage.",
+        "cn": "当你使用小型物品时，获得4怒火。"
+      },
+      {
+        "en": "When you use a Medium item, gain 8 Rage.",
+        "cn": "当你使用中型物品时，获得8怒火。"
+      },
+      {
+        "en": "When you use a Large item, gain 12 Rage.",
+        "cn": "当你使用大型物品时，获得12怒火。"
+      }
+    ]
+  },
+  {
     "id": "158c1575-71c6-406c-82c9-f4435d9b37ca",
     "name_en": "Emergency Shield",
     "name_cn": "应急护盾",
@@ -7614,7 +8217,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "Shield / 护盾",
     "art_key": "Icon_Skill_ThickShield.png",
@@ -7648,6 +8251,29 @@
       {
         "en": "The first time you use a Large item each fight, adjacent Poison items gain 4/6/8 Poison for the fight.",
         "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
+    "id": "e33eeb99-4414-4187-80bc-5b62f81a3e2d",
+    "name_en": "Peak Rage",
+    "name_cn": "怒火巅峰",
+    "description_en": "While you are Enraged, your items have +20/30/40/50% Crit Chance.",
+    "description_cn": "暴怒期间，己方物品暴击率+20/30/40/50%。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Crit / 暴击",
+    "art_key": "Icon_Skill_KAR_PeakRage",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your items have +20/30/40/50% Crit Chance.",
+        "cn": "暴怒期间，己方物品暴击率+20/30/40/50%。"
       }
     ]
   },
@@ -7752,7 +8378,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Stelle / 斯黛拉",
+    "heroes": "Pygmalien / 皮格马利翁 | Mak / 马克 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Cooldown / 冷却",
     "art_key": "Icon_Skill_LongStride.png",
@@ -7798,7 +8424,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Ammo / 弹药",
     "art_key": "Icon_Skill_Gunner.png",
@@ -7821,7 +8447,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克 | Vanessa / 凡妮莎 | Jules / 朱尔斯",
+    "heroes": "Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克 | Vanessa / 凡妮莎 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "HasteRef / 加速引用 | Crit / 暴击",
     "art_key": "Icon_Skill_StaticAcceleration.png",
@@ -7890,7 +8516,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_BigNumbers.png",
@@ -7977,12 +8603,12 @@
     "id": "2aabac27-fb64-44df-96f5-b1dac0b23b1c",
     "name_en": "Hardened Shield",
     "name_cn": "强化护盾",
-    "description_en": "When an enemy uses a Weapon, your Shield items gain 10/20 Shield for the fight.",
-    "description_cn": "敌人使用武器时，护盾物品的护盾值提高10/20（限本场战斗）。",
+    "description_en": "Your Shield items have +10/20/30 Shield for each Weapon your enemy has. [10/20/30]",
+    "description_cn": "敌人每拥有一件武器，己方护盾物品+10/20/30护盾。[10/20/30]",
     "size": "Medium / 中型",
-    "starting_tier": "Gold / 黄金",
-    "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Karnok | Vanessa / 凡妮莎",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用",
     "art_key": "Icon_Skill_HardenedShield.png",
@@ -7991,8 +8617,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When an enemy uses a Weapon, your Shield items gain 10/20 Shield for the fight.",
-        "cn": "敌人使用武器时，护盾物品的护盾值提高10/20（限本场战斗）。"
+        "en": "Your Shield items have +10/20/30 Shield for each Weapon your enemy has. [10/20/30]",
+        "cn": "敌人每拥有一件武器，己方护盾物品+10/20/30护盾。[10/20/30]"
       }
     ]
   },
@@ -8115,12 +8741,12 @@
     "id": "4e2e23aa-a3d1-46b0-9d59-c06fb64bea2f",
     "name_en": "First Responder",
     "name_cn": "急救包",
-    "description_en": "Your leftmost Heal item has +20/35/50/65 Heal.",
-    "description_cn": "最左侧的治疗物品+20/35/50/65治疗量。",
+    "description_en": "Your leftmost Heal item has +20/40/60/80 Heal.",
+    "description_cn": "最左侧的治疗物品+20/40/60/80治疗量。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用",
     "art_key": "Icon_Skill_FirstResponder.png",
@@ -8129,8 +8755,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost Heal item has +20/35/50/65 Heal.",
-        "cn": "最左侧的治疗物品+20/35/50/65治疗量。"
+        "en": "Your leftmost Heal item has +20/40/60/80 Heal.",
+        "cn": "最左侧的治疗物品+20/40/60/80治疗量。"
       }
     ]
   },
@@ -8143,7 +8769,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Ammo / 弹药 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_FlashyReload.png",
@@ -8235,7 +8861,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "HealRef / 治疗引用",
     "art_key": "Icon_Skill_HealingPower.png",
@@ -8419,7 +9045,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | Cooldown / 冷却",
     "art_key": "Icon_Skill_LivingFlame.png",
@@ -8442,7 +9068,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁",
+    "heroes": "Dooley / 杜利 | Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用 | Freeze / 冻结",
     "art_key": "Icon_Skill_Frostfire.png",
@@ -8488,7 +9114,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "Burn / 灼烧",
     "art_key": "Icon_Skill_EmergencyBurn.png",
@@ -8511,7 +9137,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Heal / 治疗 | HealthRef / 生命值引用",
     "art_key": "Icon_Skill_SecondWind.png",
@@ -8557,7 +9183,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Charge / 充能 | HealRef / 治疗引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_HealingWeapon.png",
@@ -8672,7 +9298,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Diamond / 钻石",
     "available_tiers": "Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "Cooldown / 冷却 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_KnifeTricks.png",
@@ -8718,7 +9344,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Haste / 加速",
     "art_key": "Icon_Skill_STE_WorkinHard.png",
@@ -8764,7 +9390,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Vanessa / 凡妮莎 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "heroes": "Pygmalien / 皮格马利翁 | Dooley / 杜利 | Vanessa / 凡妮莎 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用 | Cooldown / 冷却",
     "art_key": "Icon_Skill_QuickDefenses.png",
@@ -8848,6 +9474,33 @@
     ]
   },
   {
+    "id": "38b71a62-71d4-40df-83b8-f4a1f92df539",
+    "name_en": "Monster Tracker",
+    "name_cn": "",
+    "description_en": "When you defeat a Gold-tier or higher Monster, get a Loot item. | Your Loot items have +1 value.",
+    "description_cn": "[未翻译] | [未翻译]",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "EconomyRef / 经济引用",
+    "art_key": "Icon_Skill_KAR_MonsterTracker",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you defeat a Gold-tier or higher Monster, get a Loot item.",
+        "cn": "[未翻译]"
+      },
+      {
+        "en": "Your Loot items have +1 value.",
+        "cn": "[未翻译]"
+      }
+    ]
+  },
+  {
     "id": "d52f6759-3ab5-46f4-87d1-bc719634c0d8",
     "name_en": "Ice Bullets",
     "name_cn": "寒冰子弹",
@@ -8857,7 +9510,7 @@
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
     "heroes": "Vanessa / 凡妮莎",
-    "tags": "Weapon / 武器",
+    "tags": "",
     "hidden_tags": "FreezeRef / 冻结引用 | Ammo / 弹药 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_BulletTime.png",
     "card_pack_id": "",
@@ -8895,24 +9548,28 @@
   },
   {
     "id": "015bc348-773e-4009-87ff-231452431bba",
-    "name_en": "Heavy Weaponry",
-    "name_cn": "",
-    "description_en": "Your Large Weapons deal +12/36/72/120 Damage.",
-    "description_cn": "[未翻译]",
+    "name_en": "Ice Smasher",
+    "name_cn": "碎冰者",
+    "description_en": "Your leftmost item is affected by Freeze for half as long. | If you have exactly one Weapon, all your items are affected by Freeze for half as long instead.",
+    "description_cn": "你最左侧的物品受到冻结的持续时间减半。 | 如果你只有一件武器，则改为己方所有物品受到冻结的持续时间减半。",
     "size": "Medium / 中型",
-    "starting_tier": "Bronze / 青铜",
-    "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁",
+    "starting_tier": "Diamond / 钻石",
+    "available_tiers": "Diamond",
+    "heroes": "Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
-    "art_key": "Icon_Skill_HeavyWeaponry.png",
+    "art_key": "Icon_Skill_HeavyFirepower.png",
     "card_pack_id": "",
     "spawning": "",
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Large Weapons deal +12/36/72/120 Damage.",
-        "cn": "[未翻译]"
+        "en": "Your leftmost item is affected by Freeze for half as long.",
+        "cn": "你最左侧的物品受到冻结的持续时间减半。"
+      },
+      {
+        "en": "If you have exactly one Weapon, all your items are affected by Freeze for half as long instead.",
+        "cn": "如果你只有一件武器，则改为己方所有物品受到冻结的持续时间减半。"
       }
     ]
   },
@@ -8971,7 +9628,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Dooley / 杜利 | Mak / 马克 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Tempering.png",
@@ -9040,7 +9697,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Jules / 朱尔斯 | Karnok",
     "tags": "Tool / 工具",
     "hidden_tags": "Slow / 减速",
     "art_key": "Icon_Skill_Sabotage.png",
@@ -9127,11 +9784,11 @@
     "id": "464e7a29-ef42-4242-9adc-9e99b9299a58",
     "name_en": "It's a Drone",
     "name_cn": "这就是无人机",
-    "description_en": "Your leftmost item is a Drone.",
-    "description_cn": "最左侧物品视为无人机。",
+    "description_en": "Your leftmost item is a Drone and has its cooldown reduced by 3/6%.",
+    "description_cn": "你最左侧的物品变为无人机，且冷却时间缩短3/6%。",
     "size": "Medium / 中型",
-    "starting_tier": "Diamond / 钻石",
-    "available_tiers": "Diamond",
+    "starting_tier": "Gold / 黄金",
+    "available_tiers": "Gold/Diamond",
     "heroes": "Stelle / 斯黛拉",
     "tags": "Drone",
     "hidden_tags": "",
@@ -9141,8 +9798,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your leftmost item is a Drone.",
-        "cn": "最左侧物品视为无人机。"
+        "en": "Your leftmost item is a Drone and has its cooldown reduced by 3/6%.",
+        "cn": "你最左侧的物品变为无人机，且冷却时间缩短3/6%。"
       }
     ]
   },
@@ -9155,7 +9812,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉",
+    "heroes": "Dooley / 杜利 | Jules / 朱尔斯 | Vanessa / 凡妮莎 | Mak / 马克 | Pygmalien / 皮格马利翁 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "Slow / 减速",
     "art_key": "Icon_Skill_NetLauncher.png",
@@ -9196,12 +9853,12 @@
     "id": "c7261fd4-ef40-4091-abb2-dcf5694ae2ac",
     "name_en": "Endurance",
     "name_cn": "坚韧不拔",
-    "description_en": "When you use a Weapon, your Heal items gain +5/10/15 Heal for the fight.",
-    "description_cn": "使用武器时，治疗物品的治疗量提高+5/10/15（限本场战斗）。",
+    "description_en": "When you use a Weapon, your Heal items gain +3/6/9 Heal for the fight.",
+    "description_cn": "使用武器时，治疗物品的治疗量提高+3/6/9（限本场战斗）。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁",
+    "heroes": "Pygmalien / 皮格马利翁 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "HealRef / 治疗引用 | DamageRef / 伤害引用",
     "art_key": "Icon_Skill_Endurance.png",
@@ -9210,8 +9867,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "When you use a Weapon, your Heal items gain +5/10/15 Heal for the fight.",
-        "cn": "使用武器时，治疗物品的治疗量提高+5/10/15（限本场战斗）。"
+        "en": "When you use a Weapon, your Heal items gain +3/6/9 Heal for the fight.",
+        "cn": "使用武器时，治疗物品的治疗量提高+3/6/9（限本场战斗）。"
       }
     ]
   },
@@ -9224,7 +9881,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克 | Jules / 朱尔斯",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Stelle / 斯黛拉 | Mak / 马克 | Jules / 朱尔斯 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "DamageRef / 伤害引用 | SlowRef / 减速引用",
     "art_key": "Icon_Skill_SlowandSteady.png",
@@ -9316,7 +9973,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "PoisonRef / 剧毒引用",
     "art_key": "Icon_Skill_InitialDose.png",
@@ -9403,8 +10060,8 @@
     "id": "0e790e41-203a-4b07-8a06-352a2070588d",
     "name_en": "War Chef",
     "name_cn": "战地厨师",
-    "description_en": "Your Weapons have +10/20/30 damage for each Food item you have.",
-    "description_cn": "每拥有一件食物物品，己方武器就+10/20/30伤害。",
+    "description_en": "Your Weapons have +10/15/20 damage for each Food item you have.",
+    "description_cn": "每拥有一件食物物品，己方武器就+10/15/20伤害。",
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
@@ -9417,8 +10074,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Weapons have +10/20/30 damage for each Food item you have.",
-        "cn": "每拥有一件食物物品，己方武器就+10/20/30伤害。"
+        "en": "Your Weapons have +10/15/20 damage for each Food item you have.",
+        "cn": "每拥有一件食物物品，己方武器就+10/15/20伤害。"
       }
     ]
   },
@@ -9619,7 +10276,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Pygmalien / 皮格马利翁 | Karnok",
     "tags": "",
     "hidden_tags": "BurnRef / 灼烧引用",
     "art_key": "Icon_Skill_FireStarter.png",
@@ -9680,6 +10337,29 @@
     ]
   },
   {
+    "id": "8816d65b-eb4e-41e7-830e-42a0e35a1e2d",
+    "name_en": "Swift Temper",
+    "name_cn": "迅捷之怒",
+    "description_en": "When you Enrage, Haste your items 1/2/3 second(s).",
+    "description_cn": "当你进入暴怒状态时，加速己方物品1/2/3秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Silver / 白银",
+    "available_tiers": "Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | Haste / 加速",
+    "art_key": "Icon_Skill_KAR_SwiftTemper",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage, Haste your items 1/2/3 second(s).",
+        "cn": "当你进入暴怒状态时，加速己方物品1/2/3秒。"
+      }
+    ]
+  },
+  {
     "id": "7a301c09-3e32-473a-ba6c-89097657a400",
     "name_en": "Flanking Criticals",
     "name_cn": "侧翼暴击",
@@ -9688,7 +10368,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_FlankingCriticals.png",
@@ -9713,7 +10393,7 @@
     "available_tiers": "Gold/Diamond",
     "heroes": "Jules / 朱尔斯",
     "tags": "",
-    "hidden_tags": "Cooldown / 冷却",
+    "hidden_tags": "Charge / 充能 | HeatedReference",
     "art_key": "Icon_Skill_JUL_QuickBite",
     "card_pack_id": "",
     "spawning": "",
@@ -9895,7 +10575,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎",
+    "heroes": "Mak / 马克 | Dooley / 杜利 | Vanessa / 凡妮莎 | Karnok",
     "tags": "Weapon / 武器",
     "hidden_tags": "PoisonRef / 剧毒引用",
     "art_key": "Icon_Skill_ExoticHerbs.png",
@@ -9918,7 +10598,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Gold / 黄金",
     "available_tiers": "Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利",
+    "heroes": "Vanessa / 凡妮莎 | Mak / 马克 | Jules / 朱尔斯 | Dooley / 杜利 | Karnok | Stelle / 斯黛拉",
     "tags": "",
     "hidden_tags": "Charge / 充能 | BurnRef / 灼烧引用 | SlowRef / 减速引用",
     "art_key": "Icon_Skill_SlowBurn.png",
@@ -10010,7 +10690,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "PoisonRef / 剧毒引用 | Crit / 暴击",
     "art_key": "Icon_Skill_ExposingToxins.png",
@@ -10071,6 +10751,52 @@
     ]
   },
   {
+    "id": "94ea5d25-10a1-4383-81b7-285cb7f26314",
+    "name_en": "Blight Temper",
+    "name_cn": "荒疫之怒",
+    "description_en": "While you are Enraged, your Poison items have +5/10/15/20 Poison.",
+    "description_cn": "暴怒期间，己方剧毒物品+5/10/15/20剧毒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "RageReference | PoisonRef / 剧毒引用",
+    "art_key": "Icon_Skill_KAR_BlightTemper",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "While you are Enraged, your Poison items have +5/10/15/20 Poison.",
+        "cn": "暴怒期间，己方剧毒物品+5/10/15/20剧毒。"
+      }
+    ]
+  },
+  {
+    "id": "ee9a5e52-4fe9-4999-9329-6aafe24a129e",
+    "name_en": "Death from Above",
+    "name_cn": "死从天降",
+    "description_en": "When you Enrage,  of your items start Flying, then Charge your Flying items 1 second.",
+    "description_cn": "当你进入暴怒状态时，件己方物品开始飞行，然后为己方飞行物品充能1秒。",
+    "size": "Medium / 中型",
+    "starting_tier": "Bronze / 青铜",
+    "available_tiers": "Bronze/Silver/Gold/Diamond",
+    "heroes": "Karnok",
+    "tags": "",
+    "hidden_tags": "Flying / 飞行 | RageReference",
+    "art_key": "Icon_Skill_KAR_DeathfromAbove",
+    "card_pack_id": "",
+    "spawning": "",
+    "multicast": 0,
+    "descriptions": [
+      {
+        "en": "When you Enrage,  of your items start Flying, then Charge your Flying items 1 second.",
+        "cn": "当你进入暴怒状态时，件己方物品开始飞行，然后为己方飞行物品充能1秒。"
+      }
+    ]
+  },
+  {
     "id": "42a245de-4281-40d1-ad98-7a79b471aefe",
     "name_en": "Berserker",
     "name_cn": "狂战士",
@@ -10125,7 +10851,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克",
+    "heroes": "Vanessa / 凡妮莎 | Pygmalien / 皮格马利翁 | Jules / 朱尔斯 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Haste / 加速",
     "art_key": "Icon_Skill_BoldUnderPressure.png",
@@ -10143,8 +10869,8 @@
     "id": "5fca38e0-2144-422d-b9bd-85a3cd443215",
     "name_en": "Expert Pilot",
     "name_cn": "专家飞行员",
-    "description_en": "Your Vehicles and Drones have +15/30/45/60 Damage and Shield.",
-    "description_cn": "载具和无人机+15/30/45/60伤害和护盾。",
+    "description_en": "Your Vehicles and Drones have +10/20/30/40 Damage and Shield.",
+    "description_cn": "载具和无人机+10/20/30/40伤害和护盾。",
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
@@ -10157,8 +10883,8 @@
     "multicast": 0,
     "descriptions": [
       {
-        "en": "Your Vehicles and Drones have +15/30/45/60 Damage and Shield.",
-        "cn": "载具和无人机+15/30/45/60伤害和护盾。"
+        "en": "Your Vehicles and Drones have +10/20/30/40 Damage and Shield.",
+        "cn": "载具和无人机+10/20/30/40伤害和护盾。"
       }
     ]
   },
@@ -10171,7 +10897,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Silver / 白银",
     "available_tiers": "Silver/Gold/Diamond",
-    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉",
+    "heroes": "Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Karnok",
     "tags": "",
     "hidden_tags": "ShieldRef / 护盾引用 | CritRef / 暴击引用",
     "art_key": "Icon_Skill_ImprovisedProtection.png",
@@ -10309,7 +11035,7 @@
     "size": "Medium / 中型",
     "starting_tier": "Bronze / 青铜",
     "available_tiers": "Bronze/Silver/Gold/Diamond",
-    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克",
+    "heroes": "Pygmalien / 皮格马利翁 | Vanessa / 凡妮莎 | Dooley / 杜利 | Jules / 朱尔斯 | Stelle / 斯黛拉 | Mak / 马克 | Karnok",
     "tags": "",
     "hidden_tags": "Crit / 暴击",
     "art_key": "Icon_Skill_ArtillerySpotter.png",
