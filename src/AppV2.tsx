@@ -51,11 +51,8 @@ const TAB_LABELS: Record<TabType, string> = {
   search: '百科搜索',
 };
 
-const STARTUP_NOTICE = [
-  '集市小抄已启动。',
-  '已迁移功能：历史战绩、野怪一览、手头物品。',
-  '其余页面正在持续完善。',
-].join('\n');
+const STARTUP_FIXED_NOTICE =
+  '🧠 脑子是用来构筑的，数据交给小抄记。\n\n💡 这只是个免费的记牌小工具，又不是考研资料，谁要是敢收你的费，请反手给他一个大逼兜！👊\n\n🍖 本小抄由 B站@这是李Duang啊 免费发放，付费获取的同学请立刻退款买排骨吃！';
 
 const HistoryViewLazy = lazy(async () => ({
   default: (await import('./views/HistoryView')).HistoryView,
@@ -1195,10 +1192,15 @@ export default function AppV2() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!mounted) return;
-        setAnnouncement(typeof data?.notes === 'string' ? data.notes : '');
+        const remoteNotes = typeof data?.notes === 'string' ? data.notes.trim() : '';
+        if (remoteNotes) {
+          setAnnouncement(`${remoteNotes}\n\n------------------\n\n${STARTUP_FIXED_NOTICE}`);
+        } else {
+          setAnnouncement(STARTUP_FIXED_NOTICE);
+        }
       })
       .catch(() => {
-        if (mounted) setAnnouncement('');
+        if (mounted) setAnnouncement(STARTUP_FIXED_NOTICE);
       });
 
     return () => {
@@ -1344,7 +1346,7 @@ export default function AppV2() {
     return (
       <VersionGateScreen
         fontSize={16}
-        announcement={STARTUP_NOTICE}
+        announcement={announcement}
         currentVersion={currentVersion}
         updateStatus="none"
         downloadProgress={0}
