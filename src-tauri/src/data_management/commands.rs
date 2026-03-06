@@ -1574,13 +1574,7 @@ fn history_today_date() -> String {
 }
 
 fn history_screenshot_root_dir() -> PathBuf {
-    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    manifest_dir
-        .parent()
-        .map(|p| p.to_path_buf())
-        .filter(|p| p.exists())
-        .unwrap_or_else(crate::user_data::app_data_root)
-        .join("battle_screenshots")
+    crate::user_data::battle_screenshots_dir()
 }
 
 fn history_time_token(raw: &str) -> String {
@@ -1604,6 +1598,133 @@ fn canonical_screenshot_path_for_battle(record: &HistoryMatchRecord, battle_day:
         .join(format!("pvp_day{:02}.png", battle_day.max(1)))
 }
 
+fn parse_hms_token_to_millis(token: &str) -> Option<i64> {
+    let digits: String = token.chars().filter(|c| c.is_ascii_digit()).collect();
+    if digits.len() < 6 {
+        return None;
+    }
+    let h = digits.get(0..2)?.parse::<i64>().ok()?;
+    let m = digits.get(2..4)?.parse::<i64>().ok()?;
+    let s = digits.get(4..6)?.parse::<i64>().ok()?;
+    if !(0..24).contains(&h) || !(0..60).contains(&m) || !(0..60).contains(&s) {
+        return None;
+    }
+    let ms = if digits.len() >= 9 {
+        digits.get(6..9).and_then(|v| v.parse::<i64>().ok()).unwrap_or(0)
+    } else {
+        0
+    };
+    Some(((h * 3600 + m * 60 + s) * 1000) + ms)
+}
+
+fn parse_start_folder_token_millis(folder_name: &str) -> Option<i64> {
+    let rest = folder_name.strip_prefix("start")?;
+    let token = rest.split('_').next().unwrap_or_default();
+    parse_hms_token_to_millis(token)
+}
+
+fn migrate_legacy_split_screenshots(
+    root: &std::path::Path,
+    canonical_folder_name: &str,
+    canonical_folder: &std::path::Path,
+    canonical_start_token: &str,
+) {
+    let Some(canonical_ms) = parse_hms_token_to_millis(canonical_start_token) else {
+        return;
+    };
+
+    let mut candidates: Vec<(i64, PathBuf, String)> = Vec::new();
+    let Ok(entries) = std::fs::read_dir(root) else {
+        return;
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if !path.is_dir() {
+            continue;
+        }
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name == canonical_folder_name {
+            continue;
+        }
+        let Some(folder_ms) = parse_start_folder_token_millis(&name) else {
+            continue;
+        };
+        let diff = (folder_ms - canonical_ms).abs();
+        // Same run split by timestamp drift is usually within a few seconds.
+        if diff <= 30_000 {
+            candidates.push((diff, path, name));
+        }
+    }
+
+    candidates.sort_by_key(|(diff, _, _)| *diff);
+    let Some((_, legacy_dir, legacy_name)) = candidates.first().cloned() else {
+        return;
+    };
+
+    let mut moved = 0usize;
+    let mut ensured_canonical_dir = false;
+    let Ok(files) = std::fs::read_dir(&legacy_dir) else {
+        return;
+    };
+    for file_entry in files.flatten() {
+        let src = file_entry.path();
+        if !src.is_file() {
+            continue;
+        }
+        let Some(file_name) = src.file_name().map(|v| v.to_string_lossy().to_string()) else {
+            continue;
+        };
+        if !file_name.starts_with("pvp_day") {
+            continue;
+        }
+        let ext_ok = src
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .map(|ext| ext.eq_ignore_ascii_case("png"))
+            .unwrap_or(false);
+        if !ext_ok {
+            continue;
+        }
+        let dest = canonical_folder.join(&file_name);
+        if dest.exists() {
+            continue;
+        }
+        if !ensured_canonical_dir {
+            let _ = std::fs::create_dir_all(canonical_folder);
+            ensured_canonical_dir = true;
+        }
+        let moved_ok = if std::fs::rename(&src, &dest).is_ok() {
+            true
+        } else if std::fs::copy(&src, &dest).is_ok() {
+            let _ = std::fs::remove_file(&src);
+            true
+        } else {
+            false
+        };
+        if moved_ok {
+            moved += 1;
+        }
+    }
+
+    if moved > 0 {
+        log::info!(
+            "[History] Migrated {} screenshot(s) from split folder {} -> {}",
+            moved,
+            legacy_name,
+            canonical_folder_name
+        );
+    }
+
+    let is_empty = std::fs::read_dir(&legacy_dir)
+        .ok()
+        .map(|mut it| it.next().is_none())
+        .unwrap_or(false);
+    if is_empty {
+        let _ = std::fs::remove_dir(&legacy_dir);
+    }
+}
+
 fn remap_battle_screenshots_strict(root: &mut HistoryRoot) {
     for record in &mut root.matches {
         let match_id = if record.match_id.trim().is_empty() {
@@ -1612,7 +1733,23 @@ fn remap_battle_screenshots_strict(root: &mut HistoryRoot) {
             record.match_id.trim().to_string()
         };
         let start_token = history_time_token(&record.start_time);
-        let match_folder = history_screenshot_root_dir().join(format!("start{}_{}", start_token, match_id));
+        let screenshot_root = history_screenshot_root_dir();
+        let canonical_folder_name = format!("start{}_{}", start_token, match_id);
+        let match_folder = screenshot_root.join(&canonical_folder_name);
+
+        let has_missing = record
+            .pvp_battles
+            .iter()
+            .any(|battle| !match_folder.join(format!("pvp_day{:02}.png", battle.day.max(1))).exists());
+        if has_missing {
+            migrate_legacy_split_screenshots(
+                &screenshot_root,
+                &canonical_folder_name,
+                &match_folder,
+                &start_token,
+            );
+        }
+
         for battle in &mut record.pvp_battles {
             let canonical = match_folder.join(format!("pvp_day{:02}.png", battle.day.max(1)));
             if canonical.exists() {
@@ -2047,6 +2184,61 @@ fn normalize_conflicting_battle_days(battles: &mut Vec<HistoryBattleRecord>) {
     }
 }
 
+fn history_battle_identity_key(battle: &HistoryBattleRecord) -> String {
+    let start = battle.start_time.trim();
+    if !start.is_empty() {
+        return format!("start:{}", start);
+    }
+    format!("legacy:{}:{}", battle.day.max(1), battle.victory)
+}
+
+fn merge_battle_record(base: &mut HistoryBattleRecord, incoming: &HistoryBattleRecord) {
+    let incoming_day = incoming.day.max(1);
+    let base_day = base.day.max(1);
+    base.day = base_day.min(incoming_day).max(1);
+    base.victory = incoming.victory;
+
+    if base.duration.is_none() || incoming.duration.is_some() {
+        base.duration = incoming.duration;
+    }
+    if incoming
+        .screenshot
+        .as_ref()
+        .map(|s| !s.trim().is_empty())
+        .unwrap_or(false)
+    {
+        base.screenshot = incoming.screenshot.clone();
+    }
+    if !incoming.lineup_cards.is_empty() {
+        base.lineup_cards = incoming.lineup_cards.clone();
+    }
+    if !incoming.enemy_lineup_cards.is_empty() {
+        base.enemy_lineup_cards = incoming.enemy_lineup_cards.clone();
+    }
+}
+
+fn dedupe_battles_by_start_time(battles: &mut Vec<HistoryBattleRecord>) {
+    if battles.len() < 2 {
+        return;
+    }
+
+    let mut merged: Vec<HistoryBattleRecord> = Vec::with_capacity(battles.len());
+    let mut index_by_key: HashMap<String, usize> = HashMap::new();
+
+    for battle in battles.drain(..) {
+        let key = history_battle_identity_key(&battle);
+        if let Some(&idx) = index_by_key.get(&key) {
+            let existing = &mut merged[idx];
+            merge_battle_record(existing, &battle);
+        } else {
+            index_by_key.insert(key, merged.len());
+            merged.push(battle);
+        }
+    }
+
+    *battles = merged;
+}
+
 fn merge_match_records(base: &mut HistoryMatchRecord, incoming: &HistoryMatchRecord) {
     if normalize_optional_text(&base.hero).is_none() && normalize_optional_text(&incoming.hero).is_some() {
         base.hero = normalize_optional_text(&incoming.hero);
@@ -2069,35 +2261,25 @@ fn merge_match_records(base: &mut HistoryMatchRecord, incoming: &HistoryMatchRec
     }
     base.is_finished = base.is_finished || incoming.is_finished;
 
+    dedupe_battles_by_start_time(&mut base.pvp_battles);
+
     let mut index_by_key: HashMap<String, usize> = HashMap::new();
     for (idx, b) in base.pvp_battles.iter().enumerate() {
-        index_by_key.insert(format!("{}:{}:{}", b.day, b.start_time, b.victory), idx);
+        index_by_key.insert(history_battle_identity_key(b), idx);
     }
 
     for b in &incoming.pvp_battles {
-        let key = format!("{}:{}:{}", b.day, b.start_time, b.victory);
+        let key = history_battle_identity_key(b);
         if let Some(&existing_idx) = index_by_key.get(&key) {
             let existing = &mut base.pvp_battles[existing_idx];
-            if existing.duration.is_none() && b.duration.is_some() {
-                existing.duration = b.duration;
-            }
-            if existing.screenshot.as_ref().map(|s| s.trim().is_empty()).unwrap_or(true)
-                && b.screenshot.as_ref().map(|s| !s.trim().is_empty()).unwrap_or(false)
-            {
-                existing.screenshot = b.screenshot.clone();
-            }
-            if !b.lineup_cards.is_empty() {
-                existing.lineup_cards = b.lineup_cards.clone();
-            }
-            if !b.enemy_lineup_cards.is_empty() {
-                existing.enemy_lineup_cards = b.enemy_lineup_cards.clone();
-            }
+            merge_battle_record(existing, b);
         } else {
             index_by_key.insert(key, base.pvp_battles.len());
             base.pvp_battles.push(b.clone());
         }
     }
 
+    dedupe_battles_by_start_time(&mut base.pvp_battles);
     normalize_conflicting_battle_days(&mut base.pvp_battles);
     if base.pvp_battles.len() > MAX_PVP_BATTLES_PER_MATCH {
         let keep_from = base.pvp_battles.len() - MAX_PVP_BATTLES_PER_MATCH;
@@ -2110,6 +2292,7 @@ fn normalize_history(mut root: HistoryRoot) -> HistoryRoot {
 
     for mut record in root.matches.drain(..) {
         record.hero = normalize_optional_text(&record.hero);
+        dedupe_battles_by_start_time(&mut record.pvp_battles);
         if record.days == 0 {
             record.days = 1;
         }
@@ -2153,9 +2336,9 @@ fn history_detect_pvp_victory(recent_lines: &VecDeque<String>) -> bool {
     recent_lines
         .iter()
         .rev()
-        .nth(3)
-        .map(|line| line.contains("All exit tasks completed"))
-        .unwrap_or(false)
+        .skip(1)
+        .take(5)
+        .any(|line| line.contains("All exit tasks completed"))
 }
 
 fn history_merge_restart_sessions(records: &mut Vec<HistoryMatchRecord>) {
@@ -2631,13 +2814,21 @@ pub fn rebuild_match_history(force: Option<bool>) -> Result<serde_json::Value, S
 
         let key = history_record_key(&record);
         if let Some(existing_rec) = merged.get_mut(&key) {
-            merge_match_records(existing_rec, &record);
+            if force {
+                *existing_rec = record;
+            } else {
+                merge_match_records(existing_rec, &record);
+            }
             continue;
         }
 
         if let Some(existing_key) = start_time_index.get(&record.start_time).cloned() {
             if let Some(existing_rec) = merged.get_mut(&existing_key) {
-                merge_match_records(existing_rec, &record);
+                if force {
+                    *existing_rec = record;
+                } else {
+                    merge_match_records(existing_rec, &record);
+                }
                 continue;
             }
         }

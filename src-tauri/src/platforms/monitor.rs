@@ -208,7 +208,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             let allow_hotkey_actions = game_active || detail_visible;
             let helper_window_active = is_helper_window_foreground(&handle_monitor);
 
-            if !game_active && !detail_visible {
+            if !game_active && !detail_visible && !helper_window_active {
                 last_left_click = false;
                 last_right_click = false;
                 last_trigger_active = false;

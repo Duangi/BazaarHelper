@@ -32,14 +32,22 @@ export const useResourceCatalog = (enabled = true): ResourceCatalogState => {
       ];
 
       const icons: Record<string, string> = {};
-      for (const name of iconNames) {
-        try {
-          const url = await resolveResourceUrl(`assets/gui/${name}.webp`);
-          icons[name] = url;
-        } catch (error) {
-          console.error(`Failed to load icon ${name}:`, error);
-        }
-      }
+      const iconPairs = await Promise.all(
+        iconNames.map(async (name) => {
+          try {
+            const url = await resolveResourceUrl(`assets/gui/${name}.webp`);
+            return [name, url] as const;
+          } catch (error) {
+            console.error(`Failed to load icon ${name}:`, error);
+            return null;
+          }
+        }),
+      );
+      iconPairs.forEach((pair) => {
+        if (!pair) return;
+        const [name, url] = pair;
+        icons[name] = url;
+      });
       setHiddenTagIcons(icons);
 
       try {

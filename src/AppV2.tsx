@@ -89,8 +89,8 @@ const DEFAULT_EXPANDED_WIDTH = MAC_SCREEN_PROFILE.expanded.defaultWidth;
 const DEFAULT_EXPANDED_HEIGHT = MAC_SCREEN_PROFILE.expanded.defaultHeight;
 const STARTUP_WIDTH = MAC_SCREEN_PROFILE.startup.width;
 const STARTUP_HEIGHT = MAC_SCREEN_PROFILE.startup.height;
-const EDGE_COLLAPSE_DELAY_MS = 240;
-const AUTO_COLLAPSE_TOP_EDGE_THRESHOLD = 18;
+const EDGE_COLLAPSE_DELAY_MS = 120;
+const AUTO_COLLAPSE_TOP_EDGE_THRESHOLD = 36;
 const NON_DRAG_SELECTOR = 'button, input, textarea, select, a, [data-no-drag], .no-drag';
 const ISLAND_BASE_TEXT = '集市小抄运行中';
 const IS_WINDOWS = typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent || '');
@@ -221,6 +221,7 @@ export default function AppV2() {
   const moveSaveTimerRef = useRef<number | null>(null);
   const resizeSaveTimerRef = useRef<number | null>(null);
   const collapseLeaveTimerRef = useRef<number | null>(null);
+  const focusRestoreAtRef = useRef(0);
 
   const disableWindowShadow = useCallback(async () => {
     try {
@@ -655,6 +656,19 @@ export default function AppV2() {
     [appWindow, applyCollapsedState, isCollapsed, shouldBlockAutoCollapse],
   );
 
+  const restoreGameFocusIfNeeded = useCallback(() => {
+    if (shouldBlockAutoCollapse()) return;
+    const now = Date.now();
+    if (now - focusRestoreAtRef.current < 220) return;
+    focusRestoreAtRef.current = now;
+
+    void (async () => {
+      const shouldRestore = await invoke<boolean>('was_last_foreground_game').catch(() => true);
+      if (!shouldRestore) return;
+      await invoke('restore_game_focus').catch(() => {});
+    })();
+  }, [shouldBlockAutoCollapse]);
+
   const handleOverlayMouseDown = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
       if (event.button !== 0) return;
@@ -662,7 +676,7 @@ export default function AppV2() {
       if (!target) return;
       if (target.closest(NON_DRAG_SELECTOR)) return;
       const now = Date.now();
-      dragGuardUntilRef.current = now + 900;
+      dragGuardUntilRef.current = now + 320;
       isDraggingWindowRef.current = true;
       void appWindow.startDragging().catch((err) => {
         isDraggingWindowRef.current = false;
@@ -676,11 +690,13 @@ export default function AppV2() {
     (event: MouseEvent<HTMLDivElement>) => {
       if (isCollapsed) return;
       if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
+      if (shouldBlockAutoCollapse()) return;
       if (event.relatedTarget) return;
 
       scheduleEdgeCollapseCheck();
+      restoreGameFocusIfNeeded();
     },
-    [isCollapsed, scheduleEdgeCollapseCheck],
+    [isCollapsed, restoreGameFocusIfNeeded, scheduleEdgeCollapseCheck, shouldBlockAutoCollapse],
   );
 
   useEffect(() => {
@@ -1214,6 +1230,18 @@ export default function AppV2() {
 
   useEffect(() => {
     if (showVersionScreen) return;
+    const timer = window.setTimeout(() => {
+      void import('./components/search/SearchFiltersPanel');
+      void import('./components/search/VirtualSearchResults');
+    }, 1200);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [showVersionScreen]);
+
+  useEffect(() => {
+    if (showVersionScreen) return;
     let mounted = true;
     const unlistenPromise = listen<void>('hotkey-card', () => {
       if (!mounted) return;
@@ -1345,8 +1373,10 @@ export default function AppV2() {
       onMouseLeave={() => {
         if (!isCollapsed) {
           if (isDraggingWindowRef.current || Date.now() < dragGuardUntilRef.current) return;
+          if (shouldBlockAutoCollapse()) return;
 
           scheduleEdgeCollapseCheck();
+          restoreGameFocusIfNeeded();
         }
       }}
     >

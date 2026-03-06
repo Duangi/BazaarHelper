@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjVBRUV5RDZQSjVPblF6YjFrMjM1eEtMaHE1cnI1MUFMRVBCNllnbjQxSEFHalNsbjhQb29nUXFad0tXWUVGcnRQMkFGckZtRkg3NEZWNUtHQTBYU3drPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNjgzMDg2CWZpbGU6QmF6YWFySGVscGVyXzEuNi4wX3g2NC1zZXR1cC5leGUKR2JmYVlHTDkwSmlkQVhpOGFpdG94ck5XMm9KRU4rcXpqdDBKTmo0VEp4cW5sUjhVNFY0YzZkY05yK0U1K3pmREYvME9JOC94bDduTDJ1WG50NklkQXc9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.6.0/BazaarHelper_1.6.0_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjRFZVpoaEZCdHBZcThKdlF5UFRCK01DUE1HTTgzREdHVXVhNHI3azdlMmJNQjlWd1ZXMElURmhoMFdIc2tnQzFJUFV0dmVFbWhWekxmVU5rcG1pZ1FNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNzA4NzE0CWZpbGU6QmF6YWFySGVscGVyXzEuNi4xX3g2NC1zZXR1cC5leGUKbldCTE4rQWZ6QWswNmJrQ21VUXZ2QVdaZjk3eHJTSFVsbUlhMUw0ZHovUVV4QUpOV0dUZnU3WFRERTBCVFNhN1FCYjlqUGNrVDM3cG5qNlg5VXhKQlE9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.6.1/BazaarHelper_1.6.1_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-03-05T03:58:06Z",
-    "version":  "1.6.0",
-    "notes":  "🎉 v1.6.0 1.新增了历史战绩功能 2.支持上传到网站"
+    "pub_date":  "2026-03-05T11:05:14Z",
+    "version":  "1.6.1",
+    "notes":  "🎉 v1.6.1 1.新增了历史战绩功能 2.支持上传到网站"
 }

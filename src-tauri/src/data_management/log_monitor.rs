@@ -214,16 +214,7 @@ pub fn capture_bazaar_round_screenshot(
         );
         picked.capture_image().map_err(|e| e.to_string())?
     };
-    let screenshot_root = {
-        let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        let workspace_root = manifest_dir
-            .parent()
-            .map(|p| p.to_path_buf())
-            .filter(|p| p.exists());
-        workspace_root
-            .unwrap_or_else(crate::user_data::app_data_root)
-            .join("battle_screenshots")
-    };
+    let screenshot_root = crate::user_data::battle_screenshots_dir();
 
     let match_folder = build_match_folder_name(match_start_time);
     let screenshot_dir = screenshot_root.join(match_folder);

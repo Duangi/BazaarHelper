@@ -354,6 +354,7 @@ const SearchFiltersPanelImpl: React.FC<SearchFiltersPanelProps> = ({
                   { val: 'Mak', label: '马克', avatar: '/images/heroes/mak.webp' },
                   { val: 'Dooley', label: '多利', avatar: '/images/heroes/dooley.webp' },
                   { val: 'Stelle', label: '斯黛尔', avatar: '/images/heroes/stelle.webp' },
+                  { val: 'Karnok', label: 'K', avatar: '' },
                 ].map((opt) => (
                   <button
                     key={opt.val}
