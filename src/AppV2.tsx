@@ -91,9 +91,11 @@ const STARTUP_WIDTH = MAC_SCREEN_PROFILE.startup.width;
 const STARTUP_HEIGHT = MAC_SCREEN_PROFILE.startup.height;
 const EDGE_COLLAPSE_DELAY_MS = 120;
 const AUTO_COLLAPSE_TOP_EDGE_THRESHOLD = 36;
+const AUTO_COLLAPSE_TOP_EDGE_THRESHOLD_MAC = 96;
 const NON_DRAG_SELECTOR = 'button, input, textarea, select, a, [data-no-drag], .no-drag';
 const ISLAND_BASE_TEXT = '集市小抄运行中';
 const IS_WINDOWS = typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent || '');
+const IS_MAC = typeof navigator !== 'undefined' && /macintosh|mac os x|macos/i.test(navigator.userAgent || '');
 
 const buildSearchSkeletonItem = (item: SearchItemLite): ItemData => ({
   uuid: item.uuid,
@@ -647,7 +649,8 @@ export default function AppV2() {
           ]);
           if (!position || !monitor) return;
           const monitorTop = Number(monitor.position.y);
-          const dockedToTop = position.y <= monitorTop + AUTO_COLLAPSE_TOP_EDGE_THRESHOLD;
+          const topThreshold = IS_MAC ? AUTO_COLLAPSE_TOP_EDGE_THRESHOLD_MAC : AUTO_COLLAPSE_TOP_EDGE_THRESHOLD;
+          const dockedToTop = position.y <= monitorTop + topThreshold;
           if (!dockedToTop) return;
           await applyCollapsedState(true);
         })();

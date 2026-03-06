@@ -1,4 +1,7 @@
-use device_query::{DeviceQuery, DeviceState, MouseState};
+use device_query::{DeviceState, MouseState};
+
+#[cfg(not(target_os = "windows"))]
+use device_query::DeviceQuery;
 
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
@@ -46,6 +49,8 @@ fn macos_mouse_button_pressed(key_code: i32) -> Option<bool> {
 pub fn is_key_pressed(key_code: i32, device_state: &DeviceState, mouse_state: &MouseState) -> bool {
     #[cfg(target_os = "windows")]
     {
+        let _ = device_state;
+        let _ = mouse_state;
         unsafe { (GetAsyncKeyState(key_code) as i16) < 0 }
     }
 

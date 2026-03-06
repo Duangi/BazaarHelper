@@ -93,6 +93,7 @@ fn reapply_macos_overlay_traits(handle: &tauri::AppHandle) {
 pub fn spawn_focus_monitor(handle_focus: tauri::AppHandle) {
     std::thread::spawn(move || {
         let mut overlay_was_visible = false;
+        #[cfg(target_os = "macos")]
         let mut macos_guard_tick: u32 = 0;
 
         loop {
@@ -299,6 +300,7 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
 
             let detail_code = crate::core::hotkey_state::get_cached_detail_hotkey().unwrap_or(2);
+            #[cfg(target_os = "macos")]
             let mut trigger_active = {
                 #[cfg(target_os = "macos")]
                 {
@@ -313,6 +315,11 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
                 {
                     crate::core::hotkey_state::is_key_pressed(detail_code, &device_state, &mouse)
                 }
+            };
+
+            #[cfg(not(target_os = "macos"))]
+            let trigger_active = {
+                crate::core::hotkey_state::is_key_pressed(detail_code, &device_state, &mouse)
             };
 
             #[cfg(target_os = "macos")]

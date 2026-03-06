@@ -1586,6 +1586,7 @@ fn history_time_token(raw: &str) -> String {
     }
 }
 
+#[allow(dead_code)]
 fn canonical_screenshot_path_for_battle(record: &HistoryMatchRecord, battle_day: u32) -> PathBuf {
     let root = history_screenshot_root_dir();
     let match_id = if record.match_id.trim().is_empty() {
@@ -1761,6 +1762,7 @@ fn remap_battle_screenshots_strict(root: &mut HistoryRoot) {
     }
 }
 
+#[allow(dead_code)]
 fn parse_log_hms_seconds(raw: &str) -> Option<i32> {
     let time_part = raw
         .split_whitespace()
@@ -1776,6 +1778,7 @@ fn parse_log_hms_seconds(raw: &str) -> Option<i32> {
     Some(h * 3600 + m * 60 + s)
 }
 
+#[allow(dead_code)]
 fn parse_capture_hms_seconds(path: &std::path::Path) -> Option<i32> {
     let stem = path.file_stem()?.to_string_lossy();
     let stem_ref = stem.as_ref();
@@ -1806,6 +1809,7 @@ fn parse_capture_hms_seconds(path: &std::path::Path) -> Option<i32> {
     None
 }
 
+#[allow(dead_code)]
 fn parse_capture_day(path: &std::path::Path) -> Option<u32> {
     for component in path.components() {
         let token = component.as_os_str().to_string_lossy();
@@ -1833,6 +1837,7 @@ fn parse_capture_day(path: &std::path::Path) -> Option<u32> {
     None
 }
 
+#[allow(dead_code)]
 fn collect_screenshot_candidates_by_date() -> HashMap<String, Vec<PathBuf>> {
     let mut map = HashMap::new();
     let root = history_screenshot_root_dir();
@@ -1913,8 +1918,9 @@ fn collect_screenshot_candidates_by_date() -> HashMap<String, Vec<PathBuf>> {
     map
 }
 
+#[allow(dead_code)]
 fn backfill_missing_battle_screenshots(root: &mut HistoryRoot) {
-    let mut candidates_by_date = collect_screenshot_candidates_by_date();
+    let candidates_by_date = collect_screenshot_candidates_by_date();
     let mut used_by_date: HashMap<String, HashSet<String>> = HashMap::new();
     let mut used_global: HashSet<String> = HashSet::new();
 
@@ -1943,7 +1949,7 @@ fn backfill_missing_battle_screenshots(root: &mut HistoryRoot) {
 
     for record in &mut root.matches {
         let date = record.game_date.clone().unwrap_or_default();
-        let mut local_candidates: Vec<PathBuf> = date
+        let local_candidates: Vec<PathBuf> = date
             .is_empty()
             .then(Vec::new)
             .unwrap_or_else(|| candidates_by_date.get(&date).cloned().unwrap_or_default());
@@ -2101,6 +2107,7 @@ fn history_build_lineup_from_visual(
         .collect()
 }
 
+#[allow(dead_code)]
 fn backfill_visual_lineups_from_screenshots(root: &mut HistoryRoot) {
     let model_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("resources")

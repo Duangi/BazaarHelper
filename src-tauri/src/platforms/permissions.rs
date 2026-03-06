@@ -41,14 +41,24 @@ fn open_privacy_pane(anchor: &str) {
 }
 
 #[cfg(not(target_os = "macos"))]
+#[allow(dead_code)]
 fn open_privacy_pane(_anchor: &str) {}
 
 pub fn ensure_macos_permissions_on_startup() -> MacPermissionStatus {
     ensure_macos_permissions(false)
 }
 
-fn ensure_macos_permissions(force_prompt: bool) -> MacPermissionStatus {
+fn ensure_macos_permissions(
+    #[cfg_attr(not(target_os = "macos"), allow(unused_variables))] force_prompt: bool,
+) -> MacPermissionStatus {
+    #[cfg(not(target_os = "macos"))]
+    {
+        return check_macos_permissions();
+    }
+
+    #[cfg(target_os = "macos")]
     let mut status = check_macos_permissions();
+
     #[cfg(target_os = "macos")]
     {
         let mut persisted = crate::load_state();
@@ -79,6 +89,8 @@ fn ensure_macos_permissions(force_prompt: bool) -> MacPermissionStatus {
         crate::save_state(&persisted);
         status = check_macos_permissions();
     }
+
+    #[cfg(target_os = "macos")]
     status
 }
 

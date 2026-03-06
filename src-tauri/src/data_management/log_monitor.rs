@@ -82,6 +82,7 @@ fn set_hand_slot_mapping(
     hand_slot_to_iid.insert(slot, iid.to_string());
 }
 
+#[allow(dead_code)]
 fn build_lineup_cards_json_from_visual(
     cards: &[crate::monster_recognition::VisualLineupCard],
     items_db: &ItemDb,
