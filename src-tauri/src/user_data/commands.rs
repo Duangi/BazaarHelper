@@ -17,3 +17,17 @@ pub fn set_screenshot_capture_delay_ms(delay_ms: u64) -> Result<u64, String> {
     crate::save_state(&state);
     Ok(clamped)
 }
+
+#[tauri::command]
+pub fn get_upload_notice_suppressed() -> Result<bool, String> {
+    let state = crate::load_state();
+    Ok(state.suppress_upload_notice)
+}
+
+#[tauri::command]
+pub fn set_upload_notice_suppressed(suppressed: bool) -> Result<bool, String> {
+    let mut state = crate::load_state();
+    state.suppress_upload_notice = suppressed;
+    crate::save_state(&state);
+    Ok(state.suppress_upload_notice)
+}

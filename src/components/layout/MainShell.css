@@ -143,18 +143,19 @@
   height: 22px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: none !important;
-  opacity: 0.95;
+  filter: invert(78%) sepia(14%) saturate(278%) hue-rotate(358deg) brightness(90%) contrast(88%);
+  opacity: 0.92;
 }
 
 .sidebar-nav-btn:hover .sidebar-nav-icon,
-.sidebar-settings-btn:hover .sidebar-nav-icon {
-  filter: none !important;
+.sidebar-settings-btn:hover .sidebar-nav-icon,
+.sidebar-profile-btn:hover .sidebar-nav-icon {
+  filter: invert(92%) sepia(27%) saturate(997%) hue-rotate(344deg) brightness(96%) contrast(93%);
   opacity: 1;
 }
 
 .sidebar-nav-btn.active .sidebar-nav-icon {
-  filter: none !important;
+  filter: invert(84%) sepia(52%) saturate(1008%) hue-rotate(353deg) brightness(100%) contrast(92%);
   opacity: 1;
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import type { TabType } from '../../types';
 
-import iconHistory from '../../assets/icons/sidebar/history.svg';
 import iconSetting from '../../assets/icons/sidebar/setting.svg';
+import iconUser from '../../assets/icons/sidebar/user.svg';
 import { SIDEBAR_NAV_ITEMS } from './sidebarConfig';
 
 interface SidebarNavProps {
@@ -43,7 +43,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         <div className="sidebar-bottom-actions">
           {onOpenProfile ? (
             <button className="sidebar-profile-btn" onClick={onOpenProfile} title="个人页面">
-              <img src={iconHistory} alt="" className="sidebar-nav-icon" />
+              <img src={iconUser} alt="" className="sidebar-nav-icon" />
               <span className="sidebar-nav-label">个人页面</span>
             </button>
           ) : null}

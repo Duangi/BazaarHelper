@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { convertFileSrc, invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
 import type { MatchHistoryRecord } from '../types';
 import { getImg } from '../utils/helpers';
+import { openCommunityWithAutoLogin } from '../utils/communityAuth';
 import './HistoryView.css';
 
 interface HistoryViewProps {
@@ -29,6 +29,10 @@ interface MatchUploadProgress {
   skipped: number;
   failed: number;
 }
+
+type PendingUploadAction =
+  | { type: 'single'; record: MatchHistoryRecord }
+  | { type: 'all' };
 
 const HERO_AVATAR_MAP: Record<string, string> = {
   pygmalien: '/images/heroes/pygmalien.webp',
@@ -146,29 +150,30 @@ const buildBattleKey = (matchId: string, day: number, startTime: string, result:
   `${matchId}::${day}::${startTime || ''}::${result}`;
 
 const getDisplayDay = (record: MatchHistoryRecord): number => {
-  const maxBattleDay = (record.pvp_battles || []).reduce((max, b) => Math.max(max, Number(b.day) || 0), 0);
-  const fallbackDay = Math.max(1, Number(record.days) || 1);
-  if (maxBattleDay <= 0) return fallbackDay;
-  if (record.is_finished) return maxBattleDay;
-  return Math.max(maxBattleDay + 1, fallbackDay);
+  const totalBattles = Math.max(0, (record.pvp_battles || []).length);
+  if (totalBattles > 0) return totalBattles;
+  return Math.max(1, Number(record.days) || 1);
 };
 
 export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, onReload, showToast }) => {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showUploadNoticeModal, setShowUploadNoticeModal] = useState(false);
+  const [uploadNoticeRemember, setUploadNoticeRemember] = useState(false);
+  const [uploadNoticeSuppressed, setUploadNoticeSuppressed] = useState(false);
+  const [pendingUploadAction, setPendingUploadAction] = useState<PendingUploadAction | null>(null);
   const [battleSortDesc, setBattleSortDesc] = useState(true);
   const [captureDelayMs, setCaptureDelayMs] = useState(0);
   const [lineupThumbs, setLineupThumbs] = useState<Record<string, string>>({});
-  const [analyzingBattles, setAnalyzingBattles] = useState<Set<string>>(new Set());
   const [capturingBattles, setCapturingBattles] = useState<Set<string>>(new Set());
   const [screenshotVersions, setScreenshotVersions] = useState<Record<string, number>>({});
-  const [analyzeProgress, setAnalyzeProgress] = useState<Record<string, { phase: string; done: number; total: number }>>({});
-  const [uploadApiBase, setUploadApiBase] = useState<string>(() => {
+  const [uploadApiBase] = useState<string>(() => {
     if (typeof window === 'undefined') return DEFAULT_UPLOAD_API_BASE;
     const saved = localStorage.getItem(UPLOAD_API_BASE_KEY) || DEFAULT_UPLOAD_API_BASE;
     return normalizeApiBase(saved) || DEFAULT_UPLOAD_API_BASE;
   });
-  const [uploadPluginKey, setUploadPluginKey] = useState<string>(() => {
+  const [uploadPluginKey] = useState<string>(() => {
     if (typeof window === 'undefined') return '';
     return (localStorage.getItem(UPLOAD_PLUGIN_KEY) || '').trim();
   });
@@ -177,6 +182,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
   const [identity, setIdentity] = useState<GameIdentityInfo | null>(null);
+  const [openingCommunity, setOpeningCommunity] = useState(false);
 
   const battleKeyOf = (record: MatchHistoryRecord, battle: { day: number; start_time?: string }) =>
     `${record.match_id}::${battle.day}::${battle.start_time || ''}`;
@@ -188,20 +194,46 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(UPLOAD_API_BASE_KEY, uploadApiBase);
-  }, [uploadApiBase]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(UPLOAD_PLUGIN_KEY, uploadPluginKey);
-  }, [uploadPluginKey]);
+    let active = true;
+    invoke<boolean>('get_upload_notice_suppressed')
+      .then((suppressed) => {
+        if (active) setUploadNoticeSuppressed(Boolean(suppressed));
+      })
+      .catch(() => {
+        if (active) setUploadNoticeSuppressed(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const ensureIdentity = async (): Promise<GameIdentityInfo> => {
     if (identity?.account_id && identity?.username) return identity;
     const info = await invoke<GameIdentityInfo>('get_game_identity');
     setIdentity(info);
     return info;
+  };
+
+  const openUploadNotice = (action: PendingUploadAction) => {
+    setPendingUploadAction(action);
+    setUploadNoticeRemember(false);
+    setShowUploadNoticeModal(true);
+  };
+
+  const runUploadAction = async (action: PendingUploadAction) => {
+    if (action.type === 'single') {
+      await handleUploadSingleMatch(action.record);
+      return;
+    }
+    await handleUploadAllMatches();
+  };
+
+  const requestUploadAction = (action: PendingUploadAction) => {
+    if (uploadNoticeSuppressed) {
+      void runUploadAction(action);
+      return;
+    }
+    openUploadNotice(action);
   };
 
   const buildAuthHeaders = () => {
@@ -347,7 +379,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
             game_date: record.game_date || '',
             is_finished: !!record.is_finished,
             match_victory: !!record.victory,
-            match_days: getDisplayDay(record),
+            match_days: totalWins + totalLosses,
             match_total_wins: totalWins,
             match_total_losses: totalLosses,
             match_flow: matchFlow,
@@ -497,53 +529,38 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
     }
   };
 
-  const handleConfigureUpload = () => {
-    const nextBase = window.prompt('上传服务地址（例如 https://www.duang.work）', uploadApiBase);
-    if (nextBase === null) return;
-    const normalized = normalizeApiBase(nextBase);
-    if (!normalized) {
-      showToast('上传服务地址不能为空', 'warning');
+  const handleConfirmUploadNotice = async () => {
+    const action = pendingUploadAction;
+    if (!action) {
+      setShowUploadNoticeModal(false);
       return;
     }
-    const nextKey = window.prompt('插件密钥（可空）', uploadPluginKey);
-    if (nextKey === null) return;
-    setUploadApiBase(normalized);
-    setUploadPluginKey(nextKey.trim());
-    showToast('上传配置已保存', 'success');
+    if (uploadNoticeRemember) {
+      try {
+        await invoke('set_upload_notice_suppressed', { suppressed: true });
+        setUploadNoticeSuppressed(true);
+      } catch (error) {
+        const message = typeof error === 'string' ? error : String(error);
+        showToast(`保存提醒设置失败：${message}`, 'warning');
+      }
+    }
+    setShowUploadNoticeModal(false);
+    setPendingUploadAction(null);
+    await runUploadAction(action);
   };
 
-  useEffect(() => {
-    let disposed = false;
-    const unlisten = listen<{
-      match_id?: string;
-      battle_day?: number;
-      battle_start_time?: string;
-      phase?: string;
-      done?: number;
-      total?: number;
-    }>('manual-lineup-progress', (event) => {
-      if (disposed) return;
-      const payload = event.payload || {};
-      const matchId = `${payload.match_id || ''}`.trim();
-      const day = Number(payload.battle_day || 0);
-      const start = `${payload.battle_start_time || ''}`.trim();
-      if (!matchId || !day || !start) return;
-      const key = `${matchId}::${day}::${start}`;
-      setAnalyzeProgress((prev) => ({
-        ...prev,
-        [key]: {
-          phase: `${payload.phase || 'matching'}`,
-          done: Math.max(0, Number(payload.done || 0)),
-          total: Math.max(0, Number(payload.total || 0)),
-        },
-      }));
-    });
-
-    return () => {
-      disposed = true;
-      unlisten.then((fn) => fn()).catch(() => {});
-    };
-  }, []);
+  const handleOpenCommunity = async () => {
+    setOpeningCommunity(true);
+    try {
+      await openCommunityWithAutoLogin();
+      showToast('已打开网页并自动登录', 'success');
+    } catch (error) {
+      const message = typeof error === 'string' ? error : String(error);
+      showToast(`打开网页失败：${message}`, 'error');
+    } finally {
+      setOpeningCommunity(false);
+    }
+  };
 
   const normalizeItemSize = (raw?: string | null) => {
     const token = (raw || '').split(' / ')[0].trim().toLowerCase();
@@ -706,7 +723,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                 className="bulk-btn"
                 style={{ padding: '4px 10px', fontSize: 12 }}
                 disabled={uploading || bulkUploading}
-                onClick={() => void handleUploadSingleMatch(record)}
+                onClick={() => requestUploadAction({ type: 'single', record })}
               >
                 {uploading ? `上传中 ${uploadProgress?.done || 0}/${uploadProgress?.total || 0}` : '上传本局'}
               </button>
@@ -724,31 +741,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
             {sortedBattles.length === 0 && <div className="history-empty-row">无小局记录</div>}
             {sortedBattles.map((battle, battleIdx) => {
               const battleKey = battleKeyOf(record, battle);
+              const isCapturing = capturingBattles.has(battleKey);
+              const canManualRecapture = !record.is_finished && isLatestDateRecord && battle.day === latestBattleDay;
               return (
-              <div key={`${record.match_id}-${battleIdx}`} className="history-round-block">
-                {(() => {
-                  const isAnalyzing = analyzingBattles.has(battleKey);
-                  const isCapturing = capturingBattles.has(battleKey);
-                  const hasScreenshot = Boolean(battle.screenshot && `${battle.screenshot}`.trim().length > 0);
-                  const canManualRecapture = !record.is_finished && isLatestDateRecord && battle.day === latestBattleDay;
-                  const progress = analyzeProgress[battleKey];
-                  const progressPercent = (() => {
-                    if (!isAnalyzing) return 0;
-                    if (!progress) return 12;
-                    if (progress.phase === 'yolo') {
-                      const p = progress.total > 0 ? progress.done / progress.total : 0;
-                      return Math.max(8, Math.min(20, Math.round(p * 20)));
-                    }
-                    if (progress.phase === 'matching') {
-                      if (progress.total <= 0) return 40;
-                      const p = progress.done / progress.total;
-                      return Math.max(20, Math.min(96, Math.round(20 + p * 76)));
-                    }
-                    if (progress.phase === 'done') return 100;
-                    return 12;
-                  })();
-
-                  return (
+                <div key={`${record.match_id}-${battleIdx}`} className="history-round-block">
                 <div className="history-round-row">
                   <span className="history-round-day">DAY {battle.day}</span>
                   <span className={`history-round-result ${battle.victory ? 'win' : 'loss'}`}>
@@ -809,91 +805,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
                         {isCapturing ? '截图中...' : '重新截图'}
                       </button>
                     ) : null}
-
-                    <button
-                      className="history-round-analyze"
-                      disabled={!hasScreenshot || isAnalyzing}
-                      title={hasScreenshot ? '手动分析这场战斗截图中的卡牌' : '无截图可分析'}
-                      onClick={async (event) => {
-                        event.stopPropagation();
-                        if (!hasScreenshot || isAnalyzing) return;
-                        const screenshotPath = `${battle.screenshot || ''}`.trim();
-                        if (!screenshotPath) {
-                          showToast('该小局没有可分析的截图', 'warning');
-                          return;
-                        }
-                        if (!record.start_time || !battle.start_time) {
-                          showToast('缺少对局时间信息，无法分析该小局', 'warning');
-                          return;
-                        }
-
-                        setAnalyzingBattles((prev) => {
-                          const next = new Set(prev);
-                          next.add(battleKey);
-                          return next;
-                        });
-
-                        try {
-                          const result = await invoke<{ self_count?: number; enemy_count?: number }>('analyze_battle_lineup_from_screenshot', {
-                            req: {
-                              match_id: record.match_id,
-                              match_start_time: record.start_time,
-                              battle_day: battle.day,
-                              battle_start_time: battle.start_time,
-                              victory: battle.victory,
-                              duration: battle.duration ?? null,
-                              screenshot_path: screenshotPath,
-                            },
-                          });
-                          const selfCount = Number(result?.self_count || 0);
-                          const enemyCount = Number(result?.enemy_count || 0);
-                          if (selfCount + enemyCount > 0) {
-                            showToast(`分析完成：我方${selfCount}张，对方${enemyCount}张`, 'success');
-                          } else {
-                            showToast('分析完成，但未识别到可用卡牌', 'warning');
-                          }
-                        } catch (error) {
-                          console.warn('[History] analyze_battle_lineup_from_screenshot failed:', error);
-                          const message = typeof error === 'string' ? error : (error as any)?.toString?.() || '未知错误';
-                          showToast(`分析失败：${message}`, 'error');
-                        } finally {
-                          setAnalyzingBattles((prev) => {
-                            const next = new Set(prev);
-                            next.delete(battleKey);
-                            return next;
-                          });
-                          setTimeout(() => {
-                            setAnalyzeProgress((prev) => {
-                              const next = { ...prev };
-                              delete next[battleKey];
-                              return next;
-                            });
-                          }, 500);
-                        }
-                      }}
-                    >
-                      {isAnalyzing ? (
-                        <>
-                          <span
-                            className="history-progress-ring"
-                            style={{
-                              background: `conic-gradient(rgba(212,175,55,0.95) ${progressPercent}%, rgba(212,175,55,0.2) ${progressPercent}% 100%)`,
-                            }}
-                          >
-                            <span className="history-progress-hole" />
-                          </span>
-                          分析中 {progressPercent}%
-                        </>
-                      ) : hasScreenshot ? (
-                        '分析卡牌'
-                      ) : (
-                        '无截图'
-                      )}
-                    </button>
                   </div>
                 </div>
-                  );
-                })()}
                 {battle.screenshot ? (
                   <div className="history-round-shot-row">
                     <button
@@ -1023,6 +936,9 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
         
         <div className="history-toolbar">
           <div className="history-actions-group">
+            <button className="bulk-btn secondary" onClick={() => setShowHelpModal(true)}>
+              使用帮助
+            </button>
             <button className="bulk-btn" onClick={() => setBattleSortDesc((prev) => !prev)}>
               {battleSortDesc ? '排序: 新→旧' : '排序: 旧→新'}
             </button>
@@ -1031,10 +947,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
             </button>
           </div>
           <div className="history-actions-group">
-            <button className="bulk-btn secondary" onClick={handleConfigureUpload}>
-              配置上传
+            <button className="bulk-btn secondary" disabled={openingCommunity} onClick={() => void handleOpenCommunity()}>
+              {openingCommunity ? '打开中...' : '打开社区并登录'}
             </button>
-            <button className="bulk-btn primary" disabled={bulkUploading} onClick={() => void handleUploadAllMatches()}>
+            <button className="bulk-btn primary" disabled={bulkUploading} onClick={() => requestUploadAction({ type: 'all' })}>
               {bulkUploading ? `上传中 ${bulkProgress.done}/${bulkProgress.total}` : '一键上传全部'}
             </button>
           </div>
@@ -1070,6 +986,79 @@ export const HistoryView: React.FC<HistoryViewProps> = ({ records, isLoading, on
               ×
             </button>
             <img src={previewImage} alt="Battle Screenshot" />
+          </div>
+        </div>
+      ) : null}
+
+      {showHelpModal ? (
+        <div className="history-dialog-overlay" onClick={() => setShowHelpModal(false)}>
+          <div className="history-dialog" onClick={(event) => event.stopPropagation()}>
+            <div className="history-dialog-head">
+              <h3>如何使用</h3>
+              <button className="history-dialog-close" onClick={() => setShowHelpModal(false)}>×</button>
+            </div>
+            <div className="history-dialog-content">
+              <ol className="history-dialog-list">
+                <li>上传对局后，会在 duang.work 以游戏 id 自动注册账号，并可在网站查看已上传战绩。</li>
+                <li>截图会在日志检测到对局结束时自动截取；如果速度过快可设置“延迟截图”，也可手动点“重新截图”。</li>
+                <li>免责声明：点击上传即表示同意作者可能对上传的数据与图片进行分析，并用于阵容推荐等后续功能。</li>
+              </ol>
+            </div>
+            <div className="history-dialog-actions">
+              <button className="bulk-btn primary" onClick={() => setShowHelpModal(false)}>我知道了</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {showUploadNoticeModal ? (
+        <div
+          className="history-dialog-overlay"
+          onClick={() => {
+            setShowUploadNoticeModal(false);
+            setPendingUploadAction(null);
+          }}
+        >
+          <div className="history-dialog" onClick={(event) => event.stopPropagation()}>
+            <div className="history-dialog-head">
+              <h3>上传战绩须知</h3>
+              <button
+                className="history-dialog-close"
+                onClick={() => {
+                  setShowUploadNoticeModal(false);
+                  setPendingUploadAction(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="history-dialog-content">
+              <p>上传后会在 duang.work 以游戏 id 自动注册账号，并可在网页查看战绩。</p>
+              <p>截图由日志触发自动截取；若回合结束动画遮挡，可通过“延迟截图”或“重新截图”修正。</p>
+              <p>点击上传即表示同意作者可能对上传数据和截图做分析，并用于阵容推荐等功能。</p>
+              <label className="history-dialog-check">
+                <input
+                  type="checkbox"
+                  checked={uploadNoticeRemember}
+                  onChange={(event) => setUploadNoticeRemember(event.target.checked)}
+                />
+                <span>以后不再提醒</span>
+              </label>
+            </div>
+            <div className="history-dialog-actions">
+              <button
+                className="bulk-btn"
+                onClick={() => {
+                  setShowUploadNoticeModal(false);
+                  setPendingUploadAction(null);
+                }}
+              >
+                取消
+              </button>
+              <button className="bulk-btn primary" onClick={() => void handleConfirmUploadNotice()}>
+                同意并上传
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

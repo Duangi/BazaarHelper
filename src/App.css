@@ -734,6 +734,71 @@ html, body, #root {
   font-style: italic;
 }
 
+.profile-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-identity-card {
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 205, 25, 0.38);
+  background: linear-gradient(140deg, rgba(255, 205, 25, 0.18), rgba(255, 205, 25, 0.04));
+}
+
+.profile-identity-title {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.4px;
+}
+
+.profile-identity-name {
+  margin-top: 4px;
+  color: #ffcd19;
+  font-weight: 900;
+  font-size: calc(24px * var(--font-scale, 1));
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+.profile-identity-meta {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: calc(12px * var(--font-scale, 1));
+  word-break: break-all;
+}
+
+.profile-account-value {
+  margin-top: 4px;
+  color: #ffcd19;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.profile-login-key-box {
+  margin-top: 6px;
+  width: 100%;
+  min-height: 86px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 205, 25, 0.28);
+  background: rgba(14, 12, 10, 0.82);
+  color: #f0f0f0;
+  padding: 9px 11px;
+  font-size: calc(12px * var(--font-scale, 1));
+  line-height: 1.45;
+  word-break: break-all;
+  user-select: text;
+}
+
 .settings-announcement-text {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);

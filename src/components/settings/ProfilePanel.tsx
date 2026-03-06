@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { openCommunityWithAutoLogin } from '../../utils/communityAuth';
 
 interface ProfilePanelProps {
   visible: boolean;
@@ -31,6 +32,7 @@ export function ProfilePanel({ visible, inline = false, onClose, showToast }: Pr
   const [identity, setIdentity] = useState<GameIdentityInfo | null>(null);
   const [showAccountId, setShowAccountId] = useState(false);
   const [keyLoading, setKeyLoading] = useState(false);
+  const [openCommunityLoading, setOpenCommunityLoading] = useState(false);
   const [loginKey, setLoginKey] = useState('');
 
   const loadIdentity = useCallback(async () => {
@@ -83,6 +85,19 @@ export function ProfilePanel({ visible, inline = false, onClose, showToast }: Pr
     }
   }, [showToast]);
 
+  const handleOpenCommunity = useCallback(async () => {
+    setOpenCommunityLoading(true);
+    try {
+      await openCommunityWithAutoLogin();
+      showToast('已打开网页并自动登录', 'success');
+    } catch (error) {
+      const message = typeof error === 'string' ? error : String(error);
+      showToast(`打开网页失败：${message}`, 'error');
+    } finally {
+      setOpenCommunityLoading(false);
+    }
+  }, [showToast]);
+
   if (!visible) return null;
 
   return (
@@ -94,21 +109,25 @@ export function ProfilePanel({ visible, inline = false, onClose, showToast }: Pr
 
       <div className="settings-content" data-no-drag>
         <div className="setting-item">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="profile-row-header">
             <label>游戏账户名 Username</label>
             <button className="bulk-btn" style={{ padding: '4px 10px' }} onClick={() => void loadIdentity()}>
               {loading ? '读取中...' : '刷新'}
             </button>
           </div>
-          <div style={{ marginTop: 8, color: '#ffcd19', fontWeight: 700 }}>
-            {identity?.username || '--'}
+          <div className="profile-identity-card">
+            <div className="profile-identity-title">当前账户</div>
+            <div className="profile-identity-name">{identity?.username || '--'}</div>
+            <div className="profile-identity-meta">
+              AccountId: {accountText}
+            </div>
           </div>
         </div>
 
         <div className="setting-item">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="profile-row-header">
             <label>AccountId</label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="profile-btn-row">
               <button
                 className="bulk-btn"
                 style={{ padding: '4px 10px' }}
@@ -126,16 +145,16 @@ export function ProfilePanel({ visible, inline = false, onClose, showToast }: Pr
               </button>
             </div>
           </div>
-          <div style={{ marginTop: 8, color: '#ffcd19', fontWeight: 700, wordBreak: 'break-all' }}>
+          <div className="profile-account-value">
             {accountText}
           </div>
           <div className="setting-tip">默认掩码显示，点击眼睛图标可查看真实值。</div>
         </div>
 
         <div className="setting-item">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="profile-row-header">
             <label>登录密钥</label>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="profile-btn-row">
               <button className="bulk-btn" style={{ padding: '4px 10px' }} onClick={() => void handleGenerateKey()}>
                 {keyLoading ? '生成中...' : '生成密钥'}
               </button>
@@ -144,24 +163,20 @@ export function ProfilePanel({ visible, inline = false, onClose, showToast }: Pr
               </button>
             </div>
           </div>
-          <textarea
-            readOnly
-            value={loginKey}
-            placeholder="点击“生成密钥”后在这里显示"
-            style={{
-              marginTop: 8,
-              width: '100%',
-              minHeight: 80,
-              resize: 'vertical',
-              background: '#1e1b18',
-              border: '1px solid #48413a',
-              color: '#eee',
-              borderRadius: 6,
-              padding: '8px 10px',
-              fontSize: 12,
-            }}
-          />
+          <div className="profile-login-key-box">
+            {loginKey || '点击“生成密钥”后在这里显示'}
+          </div>
           <div className="setting-tip">该密钥为插件侧可逆编码，不是强安全认证凭证；建议服务端再叠加时效和签名校验。</div>
+        </div>
+
+        <div className="setting-item">
+          <div className="profile-row-header">
+            <label>社区联动</label>
+            <button className="bulk-btn" style={{ padding: '4px 12px' }} onClick={() => void handleOpenCommunity()}>
+              {openCommunityLoading ? '打开中...' : '打开社区并登录'}
+            </button>
+          </div>
+          <div className="setting-tip">会使用当前游戏账号生成一次性登录链接并打开 duang.work。</div>
         </div>
       </div>
     </div>

@@ -61,6 +61,7 @@ fn bazaar_log_paths() -> Vec<PathBuf> {
 fn latest_game_identity_from_logs() -> Option<GameIdentityInfo> {
     let re_profile = Regex::new(r"Username:\s*(?P<username>.+?)\s*-\s*AccountId:\s*(?P<account>[0-9a-fA-F-]{8,})").ok()?;
     let re_socket = Regex::new(r"AccountId:\s*\[(?P<account>[0-9a-fA-F-]{8,})\]").ok()?;
+    let re_uuid = Regex::new(r"(?i)[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}").ok()?;
     let re_steam = Regex::new(r"ID:\s*(?P<steam>\d{8,})").ok()?;
 
     let mut username: Option<String> = None;
@@ -86,7 +87,11 @@ fn latest_game_identity_from_logs() -> Option<GameIdentityInfo> {
                 if let Some(v) = cap.name("account") {
                     let s = v.as_str().trim();
                     if !s.is_empty() {
-                        account_id = Some(s.to_string());
+                        if let Some(m) = re_uuid.find(s) {
+                            account_id = Some(m.as_str().to_string());
+                        } else {
+                            account_id = Some(s.to_string());
+                        }
                     }
                 }
             }
@@ -94,7 +99,11 @@ fn latest_game_identity_from_logs() -> Option<GameIdentityInfo> {
                 if let Some(v) = cap.name("account") {
                     let s = v.as_str().trim();
                     if !s.is_empty() {
-                        account_id = Some(s.to_string());
+                        if let Some(m) = re_uuid.find(s) {
+                            account_id = Some(m.as_str().to_string());
+                        } else {
+                            account_id = Some(s.to_string());
+                        }
                     }
                 }
             }

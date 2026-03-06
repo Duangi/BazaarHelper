@@ -564,3 +564,94 @@
   border-color: rgba(255, 255, 255, 0.4);
   color: #fff;
 }
+
+.history-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(0, 0, 0, 0.66);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.history-dialog {
+  width: min(560px, 96vw);
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: linear-gradient(180deg, rgba(31, 26, 21, 0.98), rgba(20, 17, 14, 0.98));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.history-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.history-dialog-head h3 {
+  margin: 0;
+  font-size: 17px;
+  color: #f4d36f;
+}
+
+.history-dialog-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ddd;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.history-dialog-content {
+  padding: 14px;
+  color: rgba(255, 255, 255, 0.84);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 1.55;
+}
+
+.history-dialog-content p {
+  margin: 0;
+}
+
+.history-dialog-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-dialog-check {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: #f5deb0;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.history-dialog-check input[type='checkbox'] {
+  accent-color: #d4af37;
+}
+
+.history-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
