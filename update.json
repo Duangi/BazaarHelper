@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjRFZVpoaEZCdHBZcThKdlF5UFRCK01DUE1HTTgzREdHVXVhNHI3azdlMmJNQjlWd1ZXMElURmhoMFdIc2tnQzFJUFV0dmVFbWhWekxmVU5rcG1pZ1FNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNzA4NzE0CWZpbGU6QmF6YWFySGVscGVyXzEuNi4xX3g2NC1zZXR1cC5leGUKbldCTE4rQWZ6QWswNmJrQ21VUXZ2QVdaZjk3eHJTSFVsbUlhMUw0ZHovUVV4QUpOV0dUZnU3WFRERTBCVFNhN1FCYjlqUGNrVDM3cG5qNlg5VXhKQlE9PQo=",
-                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.6.1/BazaarHelper_1.6.1_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVScDBGRFRqTEtuNjdKWUNocWtscEFTbytkODBCbk5YbFAyTVFnZmdKY1pMeXo2R0U0ZVdHRHl4d2VwdCsvaFJxaE5FNnFybENNL3V0eE9maTA4NlBZUHcwZlhJQUQ4NVFjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNzk1MjgzCWZpbGU6QmF6YWFySGVscGVyXzEuNi4yX3g2NC1zZXR1cC5leGUKa1VjamVNWW1WMXdrK3JuMS9PL2E5TElWQ2VtVHMyejBEejhqeXpka29YcnZYS2JNdklXSGxmd0NvODJUUUFGYWFhVkNnWFh4Si8vUWhkcXRxVHdkRHc9PQo=",
+                                             "url":  "https://gh.llkk.cc/https://github.com/Duangi/BazaarHelper/releases/download/v1.6.2/BazaarHelper_1.6.2_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2026-03-05T11:05:14Z",
-    "version":  "1.6.1",
-    "notes":  "🎉 v1.6.1 1.新增了历史战绩功能 2.支持上传到网站"
+    "pub_date":  "2026-03-06T11:08:03Z",
+    "version":  "1.6.2",
+    "notes":  "🎉 v1.6.2 1.新增了历史战绩功能（如果截图不准可以在历史战绩页面手动截图或者 更改截图延时） 2.支持上传到网站. 3.注意：新版本只更新了文字内容。图片以及野怪信息暂时没更新。正在寻找快速的更新方案... 4.可能使用了加速mod的不兼容战绩功能"
 }
