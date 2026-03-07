@@ -1,11 +1,10 @@
-use std::io::Cursor;
 use std::sync::{OnceLock, RwLock};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use crate::monster_recognition::YoloDetection;
 
 static YOLO_SCAN_RESULTS: OnceLock<RwLock<Vec<YoloDetection>>> = OnceLock::new();
-static YOLO_SCAN_IMAGE: OnceLock<RwLock<Option<Vec<u8>>>> = OnceLock::new();
+static YOLO_SCAN_IMAGE: OnceLock<RwLock<Option<image::DynamicImage>>> = OnceLock::new();
 static YOLO_WINDOW_OFFSET: OnceLock<RwLock<(i32, i32)>> = OnceLock::new();
 static YOLO_CAPTURE_META: OnceLock<RwLock<YoloCaptureMeta>> = OnceLock::new();
 static YOLO_IMAGE_SEQ: AtomicU64 = AtomicU64::new(0);
@@ -37,18 +36,14 @@ pub fn get_yolo_scan_results() -> &'static RwLock<Vec<YoloDetection>> {
     YOLO_SCAN_RESULTS.get_or_init(|| RwLock::new(Vec::new()))
 }
 
-pub fn get_yolo_scan_image() -> &'static RwLock<Option<Vec<u8>>> {
+pub fn get_yolo_scan_image() -> &'static RwLock<Option<image::DynamicImage>> {
     YOLO_SCAN_IMAGE.get_or_init(|| RwLock::new(None))
 }
 
 pub fn store_scan_image(image: &image::DynamicImage) -> Result<u64, String> {
-    let mut encoded = Vec::new();
-    image
-        .write_to(&mut Cursor::new(&mut encoded), image::ImageFormat::Jpeg)
-        .map_err(|e| e.to_string())?;
     let seq = YOLO_IMAGE_SEQ.fetch_add(1, Ordering::Relaxed) + 1;
     let mut saved_img = get_yolo_scan_image().write().map_err(|e| e.to_string())?;
-    *saved_img = Some(encoded);
+    *saved_img = Some(image.clone());
     Ok(seq)
 }
 

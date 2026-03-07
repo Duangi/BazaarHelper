@@ -19,7 +19,7 @@ pub(crate) fn get_yolo_scan_results() -> &'static RwLock<Vec<YoloDetection>> {
     services::yolo_state::get_yolo_scan_results()
 }
 
-pub(crate) fn get_yolo_scan_image() -> &'static RwLock<Option<Vec<u8>>> {
+pub(crate) fn get_yolo_scan_image() -> &'static RwLock<Option<image::DynamicImage>> {
     services::yolo_state::get_yolo_scan_image()
 }
 

@@ -38,14 +38,6 @@ fn infer_card_size_by_ratio(aspect_ratio: f32) -> &'static str {
         .unwrap_or("Medium")
 }
 
-fn prioritized_card_sizes(primary: &str) -> [&'static str; 3] {
-    match primary {
-        "Small" => ["Small", "Medium", "Large"],
-        "Large" => ["Large", "Medium", "Small"],
-        _ => ["Medium", "Small", "Large"],
-    }
-}
-
 #[tauri::command]
 pub fn update_overlay_bounds(bounds: Vec<BoundsRect>, state: State<'_, OverlayState>) {
     let mut bounds_state = state.0.lock().unwrap();
@@ -59,12 +51,7 @@ pub async fn handle_overlay_right_click(
     y: i32,
 ) -> Result<Option<serde_json::Value>, String> {
     let detections = crate::get_yolo_scan_results().read().unwrap().clone();
-    let img_opt = {
-        let image_bytes = crate::get_yolo_scan_image().read().unwrap();
-        image_bytes
-            .as_ref()
-            .and_then(|bytes| image::load_from_memory(bytes).ok())
-    };
+    let img_opt = crate::get_yolo_scan_image().read().unwrap().clone();
 
     let meta = *crate::services::yolo_state::get_yolo_capture_meta()
         .read()
@@ -139,45 +126,43 @@ pub async fn handle_overlay_right_click(
             } else {
                 1.0
             };
-            let inferred_size = infer_card_size_by_ratio(aspect_ratio);
+            let card_size = infer_card_size_by_ratio(aspect_ratio);
 
             log::debug!(
                 "[YOLO Click] Card dimensions: {}x{}, aspect_ratio: {:.2}, inferred size: {}",
                 card_width,
                 card_height,
                 aspect_ratio,
-                inferred_size
+                card_size
             );
 
-            for card_size in prioritized_card_sizes(inferred_size) {
-                let match_result = monster_recognition::match_card_by_size(&scene_desc, card_size);
-                match match_result {
-                    Ok(Some(cards)) => {
-                        if let Some(card_list) = cards.as_array() {
-                            if !card_list.is_empty() {
-                                let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
-                                log::debug!("[YOLO Click] Card matched by {}: {}", card_size, card_id);
-                                let db_state = app.state::<DbState>();
-                                if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
-                                    return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
-                                }
-                                log::debug!(
-                                    "[YOLO Click] Card {} not found in DB after {} match",
-                                    card_id,
-                                    card_size
-                                );
+            let match_result = monster_recognition::match_card_by_size(&scene_desc, card_size);
+            match match_result {
+                Ok(Some(cards)) => {
+                    if let Some(card_list) = cards.as_array() {
+                        if !card_list.is_empty() {
+                            let card_id = card_list[0]["id"].as_str().unwrap_or("").to_string();
+                            log::debug!("[YOLO Click] Card matched by {}: {}", card_size, card_id);
+                            let db_state = app.state::<DbState>();
+                            if let Some(info) = get_item_info_internal(&db_state, card_id.clone()).await {
+                                return Ok(Some(serde_json::json!({ "type": "item", "data": info })));
                             }
+                            log::debug!(
+                                "[YOLO Click] Card {} not found in DB after {} match",
+                                card_id,
+                                card_size
+                            );
                         }
                     }
-                    Ok(None) => {
-                        log::debug!(
-                            "[YOLO Click] No card descriptors matched in {} category",
-                            card_size
-                        );
-                    }
-                    Err(e) => {
-                        log::debug!("[YOLO Click] Card matching error ({}): {}", card_size, e);
-                    }
+                }
+                Ok(None) => {
+                    log::debug!(
+                        "[YOLO Click] No card descriptors matched in {} category",
+                        card_size
+                    );
+                }
+                Err(e) => {
+                    log::debug!("[YOLO Click] Card matching error ({}): {}", card_size, e);
                 }
             }
 
@@ -280,46 +265,7 @@ pub async fn handle_detail_hotkey_click(
     x: i32,
     y: i32,
 ) -> Result<Option<serde_json::Value>, String> {
-    let primary = handle_overlay_right_click(app.clone(), x, y).await;
-    if let Ok(Some(value)) = primary {
-        return Ok(Some(value));
-    }
-
-    // Strict mode: detail popup is only triggered by YOLO-hit target under cursor.
-    // Do not fallback to ORB-only mouse recognition anymore.
-    let mut primary_err = primary.err();
-    let should_retry_with_rescan = matches!(
-        &primary_err,
-        Some(e)
-            if e.contains("暂无YOLO截图")
-                || e.contains("YOLO结果为空")
-                || e.contains("Invalid crop size")
-    );
-
-    if should_retry_with_rescan {
-        log::debug!("[Detail Hotkey] YOLO cache miss, triggering fresh scan and retrying click.");
-        match crate::services::commands::trigger_yolo_scan(app.clone(), true, Some(true)).await {
-            Ok(count) => log::debug!("[Detail Hotkey] Fresh YOLO scan done, detections={}", count),
-            Err(e) => log::debug!("[Detail Hotkey] Fresh YOLO scan failed: {}", e),
-        }
-
-        let retry = handle_overlay_right_click(app.clone(), x, y).await;
-        if let Ok(Some(value)) = retry {
-            return Ok(Some(value));
-        }
-        if let Ok(None) = retry {
-            return Ok(None);
-        }
-        if primary_err.is_none() {
-            primary_err = retry.err();
-        }
-    }
-
-    if let Some(err) = primary_err {
-        Err(err)
-    } else {
-        Ok(None)
-    }
+    handle_overlay_right_click(app, x, y).await
 }
 
 async fn get_item_info_internal(state: &DbState, id: String) -> Option<ItemData> {

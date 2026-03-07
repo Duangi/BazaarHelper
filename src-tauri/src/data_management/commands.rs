@@ -6,7 +6,6 @@ use std::path::PathBuf;
 use std::sync::{Mutex, OnceLock};
 
 use chrono::Local;
-use image::GenericImageView;
 use regex::Regex;
 use sysinfo::{Pid, ProcessesToUpdate, System};
 use tauri::{Emitter, Manager, State};
@@ -1301,16 +1300,13 @@ pub fn get_memory_breakdown(state: State<'_, DbState>) -> Result<MemoryBreakdown
     }
 
     if let Ok(image_opt) = crate::get_yolo_scan_image().read() {
-        let (bytes, note) = if let Some(encoded) = image_opt.as_ref() {
-            let dims = image::load_from_memory(encoded).ok().map(|img| img.dimensions());
-            let note = if let Some((w, h)) = dims {
-                Some(format!("jpeg:{} bytes, {}x{}", encoded.len(), w, h))
-            } else {
-                Some(format!("jpeg:{} bytes, decode_failed", encoded.len()))
-            };
+        let (bytes, note) = if let Some(img) = image_opt.as_ref() {
+            let rgba_bytes = (img.width() as u64)
+                .saturating_mul(img.height() as u64)
+                .saturating_mul(4);
             (
-                encoded.len() as u64,
-                note,
+                rgba_bytes,
+                Some(format!("rgba:{} bytes, {}x{}", rgba_bytes, img.width(), img.height())),
             )
         } else {
             (0, Some("empty".to_string()))
