@@ -1604,6 +1604,7 @@ fn canonical_screenshot_path_for_battle(record: &HistoryMatchRecord, battle_day:
         .join(format!("pvp_day{:02}.png", battle_day.max(1)))
 }
 
+#[allow(dead_code)]
 fn parse_hms_token_to_millis(token: &str) -> Option<i64> {
     let digits: String = token.chars().filter(|c| c.is_ascii_digit()).collect();
     if digits.len() < 6 {
@@ -1623,12 +1624,14 @@ fn parse_hms_token_to_millis(token: &str) -> Option<i64> {
     Some(((h * 3600 + m * 60 + s) * 1000) + ms)
 }
 
+#[allow(dead_code)]
 fn parse_start_folder_token_millis(folder_name: &str) -> Option<i64> {
     let rest = folder_name.strip_prefix("start")?;
     let token = rest.split('_').next().unwrap_or_default();
     parse_hms_token_to_millis(token)
 }
 
+#[allow(dead_code)]
 fn migrate_legacy_split_screenshots(
     root: &std::path::Path,
     canonical_folder_name: &str,
@@ -1743,23 +1746,17 @@ fn remap_battle_screenshots_strict(root: &mut HistoryRoot) {
         let canonical_folder_name = format!("start{}_{}", start_token, match_id);
         let match_folder = screenshot_root.join(&canonical_folder_name);
 
-        let has_missing = record
-            .pvp_battles
-            .iter()
-            .any(|battle| !match_folder.join(format!("pvp_day{:02}.png", battle.day.max(1))).exists());
-        if has_missing {
-            migrate_legacy_split_screenshots(
-                &screenshot_root,
-                &canonical_folder_name,
-                &match_folder,
-                &start_token,
-            );
-        }
-
         for battle in &mut record.pvp_battles {
             let canonical = match_folder.join(format!("pvp_day{:02}.png", battle.day.max(1)));
             if canonical.exists() {
                 battle.screenshot = Some(canonical.to_string_lossy().to_string());
+            } else if battle
+                .screenshot
+                .as_ref()
+                .map(|s| std::path::Path::new(s).exists())
+                .unwrap_or(false)
+            {
+                continue;
             } else {
                 battle.screenshot = None;
             }

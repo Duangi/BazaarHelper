@@ -27,6 +27,8 @@ export const useSearchPanelState = ({
   const pendingScrollRef = useRef<{ top: number; height: number } | null>(null);
   const searchResultsRef = useRef<SearchItemLite[]>([]);
   const lastQuerySignatureRef = useRef<string>('');
+  const lastPrefetchBucketRef = useRef<number>(-1);
+  const lastPrefetchAtRef = useRef<number>(0);
   const [searchQuery, setSearchQuery] = useState({
     keyword: '',
     item_type: 'all',
@@ -315,38 +317,59 @@ export const useSearchPanelState = ({
       0,
       Math.min(searchResults.length - 1, Math.floor(searchScrollTop / estimatedRowHeight)),
     );
+    const anchorBucket = Math.floor(anchorIndex / 8);
+    const now = Date.now();
+    if (lastPrefetchBucketRef.current === anchorBucket && now - lastPrefetchAtRef.current < 180) {
+      return;
+    }
+    lastPrefetchBucketRef.current = anchorBucket;
+    lastPrefetchAtRef.current = now;
 
     // Priority queue around current viewport anchor.
     // This is more robust than strict [start, end] slicing when users scroll fast.
     const candidateRadius = 240;
     const nearStart = Math.max(0, anchorIndex - candidateRadius);
     const nearEnd = Math.min(searchResults.length, anchorIndex + candidateRadius);
-    const nearCandidates = searchResults
-      .slice(nearStart, nearEnd)
-      .map((item, localIdx) => ({
-        item,
-        index: nearStart + localIdx,
-      }));
+    const pendingItems: SearchItemLite[] = [];
+    const pendingKeys = new Set<string>();
+    const pendingLimit = 96;
 
-    const farCandidates = searchResults
-      .map((item, idx) => ({ item, index: idx }))
-      .filter(({ index }) => index < nearStart || index >= nearEnd);
+    const pushIfMissing = (item: SearchItemLite) => {
+      if (pendingItems.length >= pendingLimit) return;
+      const key = item.uuid || item.name;
+      if (!key) return;
+      if (pendingKeys.has(key)) return;
+      if (item.displayImg) return;
+      if (imageCacheRef.current.has(key)) return;
+      if (imageLoadingRef.current.has(key)) return;
+      pendingKeys.add(key);
+      pendingItems.push(item);
+    };
 
-    const missing = [...nearCandidates, ...farCandidates]
-      .filter(({ item }) => {
-        const key = item.uuid || item.name;
-        if (item.displayImg) return false;
-        if (imageCacheRef.current.has(key)) return false;
-        if (imageLoadingRef.current.has(key)) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        const da = Math.abs(a.index - anchorIndex);
-        const db = Math.abs(b.index - anchorIndex);
-        return da - db;
-      });
+    for (let offset = 0; offset <= candidateRadius && pendingItems.length < pendingLimit; offset += 1) {
+      const right = anchorIndex + offset;
+      if (right >= nearStart && right < nearEnd && right < searchResults.length) {
+        pushIfMissing(searchResults[right]);
+      }
 
-    const pendingItems = missing.slice(0, 96).map(({ item }) => item);
+      if (offset === 0) continue;
+
+      const left = anchorIndex - offset;
+      if (left >= nearStart && left < nearEnd && left >= 0) {
+        pushIfMissing(searchResults[left]);
+      }
+    }
+
+    if (pendingItems.length < pendingLimit) {
+      const stride = 11;
+      for (let pass = 0; pass < stride && pendingItems.length < pendingLimit; pass += 1) {
+        for (let idx = pass; idx < searchResults.length && pendingItems.length < pendingLimit; idx += stride) {
+          if (idx >= nearStart && idx < nearEnd) continue;
+          pushIfMissing(searchResults[idx]);
+        }
+      }
+    }
+
     if (pendingItems.length === 0) return;
 
     let cancelled = false;

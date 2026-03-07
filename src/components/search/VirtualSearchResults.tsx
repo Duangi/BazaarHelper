@@ -79,9 +79,9 @@ export function VirtualSearchResults({
     };
   }, []);
 
-  const { startIndex, endIndex, topSpacerHeight, bottomSpacerHeight } = useMemo(() => {
+  const layout = useMemo(() => {
     if (items.length === 0) {
-      return { startIndex: 0, endIndex: -1, topSpacerHeight: 0, bottomSpacerHeight: 0 };
+      return { prefix: [0], totalHeight: 0 };
     }
 
     const prefix = new Array<number>(items.length + 1);
@@ -95,7 +95,18 @@ export function VirtualSearchResults({
       prefix[i + 1] = prefix[i] + (measured || estimated);
     }
 
-    const totalHeight = prefix[items.length];
+    return {
+      prefix,
+      totalHeight: prefix[items.length],
+    };
+  }, [items, isItemExpanded, measureVersion]);
+
+  const { startIndex, endIndex, topSpacerHeight, bottomSpacerHeight } = useMemo(() => {
+    if (items.length === 0) {
+      return { startIndex: 0, endIndex: -1, topSpacerHeight: 0, bottomSpacerHeight: 0 };
+    }
+
+    const { prefix, totalHeight } = layout;
     const viewHeight = viewportHeight > 0 ? viewportHeight : 900;
     const windowTop = Math.max(0, scrollTop - overscanPx);
     const windowBottom = Math.max(0, Math.min(totalHeight, scrollTop + viewHeight + overscanPx));
@@ -109,7 +120,7 @@ export function VirtualSearchResults({
       topSpacerHeight: prefix[start],
       bottomSpacerHeight: Math.max(0, totalHeight - prefix[end + 1]),
     };
-  }, [items, scrollTop, viewportHeight, overscanPx, isItemExpanded, measureVersion]);
+  }, [items, layout, scrollTop, viewportHeight, overscanPx]);
 
   if (items.length === 0) return null;
 

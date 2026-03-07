@@ -413,49 +413,19 @@ fn build_match_id_from_start_time(start_time: &str) -> String {
     format!("{:016x}", hasher.finish())
 }
 
-fn parse_hms_millis(raw: &str) -> Option<i64> {
-    let token = raw.trim();
-    if token.is_empty() {
-        return None;
-    }
-    let mut parts = token.split(':');
-    let h = parts.next()?.parse::<i64>().ok()?;
-    let m = parts.next()?.parse::<i64>().ok()?;
-    let sec_ms = parts.next()?;
-    if !(0..24).contains(&h) || !(0..60).contains(&m) {
-        return None;
-    }
-    let mut sec_parts = sec_ms.split('.');
-    let s = sec_parts.next()?.parse::<i64>().ok()?;
-    if !(0..60).contains(&s) {
-        return None;
-    }
-    let ms = sec_parts
-        .next()
-        .map(|v| {
-            let digits: String = v.chars().filter(|c| c.is_ascii_digit()).collect();
-            if digits.is_empty() {
-                0
-            } else if digits.len() >= 3 {
-                digits[0..3].parse::<i64>().unwrap_or(0)
-            } else {
-                let padded = format!("{:0<3}", digits);
-                padded[0..3].parse::<i64>().unwrap_or(0)
-            }
-        })
-        .unwrap_or(0);
-
-    Some(((h * 3600 + m * 60 + s) * 1000) + ms)
-}
-
 pub fn resolve_active_match_start_time(default_start_time: &str) -> Result<String, String> {
     ensure_user_data_files()?;
     let conn = open_history_db()?;
 
-    let mut unfinished: Vec<(String, i64)> = Vec::new();
+    let fallback = default_start_time.trim().to_string();
+    if fallback.is_empty() {
+        return Err("empty match_start_time".to_string());
+    }
+
+    let mut unfinished: Vec<String> = Vec::new();
     if let Ok(mut stmt) = conn.prepare(
         "
-            SELECT start_time, updated_at
+            SELECT start_time
             FROM matches
             WHERE is_finished = 0
               AND start_time IS NOT NULL
@@ -463,49 +433,25 @@ pub fn resolve_active_match_start_time(default_start_time: &str) -> Result<Strin
             ORDER BY updated_at DESC, start_time DESC
             ",
     ) {
-        if let Ok(rows) = stmt.query_map([], |row| {
-            Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1).unwrap_or(0)))
-        }) {
+        if let Ok(rows) = stmt.query_map([], |row| row.get::<_, String>(0)) {
             for row in rows.flatten() {
-                unfinished.push(row);
-            }
-        }
-    }
-
-    let latest_unfinished = unfinished
-        .iter()
-        .max_by_key(|(_, updated_at)| *updated_at)
-        .map(|(start, _)| start.clone());
-
-    let fallback = default_start_time.trim().to_string();
-    if fallback.is_empty() {
-        return Err("empty match_start_time".to_string());
-    }
-
-    // Prefer unfinished run whose start time is closest to current observed run start.
-    if let Some(fallback_ms) = parse_hms_millis(&fallback) {
-        let mut closest: Option<(i64, String)> = None;
-        for (candidate, _) in &unfinished {
-            let Some(candidate_ms) = parse_hms_millis(candidate) else {
-                continue;
-            };
-            let diff = (candidate_ms - fallback_ms).abs();
-            if diff > 30_000 {
-                continue;
-            }
-            match &closest {
-                Some((best_diff, _)) if *best_diff <= diff => {}
-                _ => {
-                    closest = Some((diff, candidate.clone()));
+                let start = row.trim().to_string();
+                if !start.is_empty() {
+                    unfinished.push(start);
                 }
             }
         }
-        if let Some((_, matched)) = closest {
-            return Ok(matched);
-        }
     }
 
-    Ok(latest_unfinished.unwrap_or(fallback))
+    if unfinished.iter().any(|start| start == &fallback) {
+        return Ok(fallback);
+    }
+
+    if unfinished.len() == 1 {
+        return Ok(unfinished[0].clone());
+    }
+
+    Ok(fallback)
 }
 
 pub fn infer_battle_day_for_match_start(
