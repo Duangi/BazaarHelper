@@ -31,3 +31,17 @@ pub fn set_upload_notice_suppressed(suppressed: bool) -> Result<bool, String> {
     crate::save_state(&state);
     Ok(state.suppress_upload_notice)
 }
+
+#[tauri::command]
+pub fn get_auto_collapse_to_island_enabled() -> Result<bool, String> {
+    let state = crate::load_state();
+    Ok(state.auto_collapse_to_island)
+}
+
+#[tauri::command]
+pub fn set_auto_collapse_to_island_enabled(enabled: bool) -> Result<bool, String> {
+    let mut state = crate::load_state();
+    state.auto_collapse_to_island = enabled;
+    crate::save_state(&state);
+    Ok(state.auto_collapse_to_island)
+}

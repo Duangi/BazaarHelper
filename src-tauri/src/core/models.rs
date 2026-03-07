@@ -71,6 +71,8 @@ pub struct PersistentState {
     pub screenshot_capture_delay_ms: u64,
     #[serde(default)]
     pub suppress_upload_notice: bool,
+    #[serde(default = "default_auto_collapse_to_island")]
+    pub auto_collapse_to_island: bool,
 }
 
 // 跨平台虚拟键常量
@@ -105,12 +107,14 @@ impl Default for PersistentState {
             macos_prompted_screen_recording: false,
             screenshot_capture_delay_ms: 0,
             suppress_upload_notice: false,
+            auto_collapse_to_island: false,
         }
     }
 }
 
 fn default_show_yolo_monitor() -> bool { false }
 fn default_enable_game_log_monitor() -> bool { true }
+fn default_auto_collapse_to_island() -> bool { false }
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RawSkill {
     pub en: Option<String>,

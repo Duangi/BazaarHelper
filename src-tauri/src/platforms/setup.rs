@@ -1,4 +1,4 @@
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 
 pub fn setup_app_shell(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     setup_system_tray(app)?;
@@ -85,10 +85,19 @@ fn setup_system_tray(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Err
     use tauri::menu::{Menu, MenuItem};
     use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 
-    let quit_i = MenuItem::with_id(app, "quit", "Exit BazaarHelper", true, None::<&str>)?;
-    let show_i = MenuItem::with_id(app, "show", "Show Main Window", true, None::<&str>)?;
-    let reset_i = MenuItem::with_id(app, "reset", "复位", true, None::<&str>)?;
-    let menu = Menu::with_items(app, &[&show_i, &reset_i, &quit_i])?;
+    let quit_i = MenuItem::with_id(app, "quit", "退出程序", true, None::<&str>)?;
+    let show_i = MenuItem::with_id(app, "show", "显示主窗口", true, None::<&str>)?;
+    let hide_i = MenuItem::with_id(app, "hide", "最小化到任务栏", true, None::<&str>)?;
+    let reset_i = MenuItem::with_id(app, "reset", "窗口复位", true, None::<&str>)?;
+    let menu = Menu::with_items(
+        app,
+        &[
+            &show_i,
+            &hide_i,
+            &reset_i,
+            &quit_i,
+        ],
+    )?;
 
     let icon = app.default_window_icon().cloned().expect("No default icon found");
 
@@ -107,6 +116,14 @@ fn setup_system_tray(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Err
                     crate::platforms::window_style::enforce_overlay_traits(&window, "main");
                     let _ = window.show();
                     let _ = window.set_focus();
+                }
+            }
+            "hide" => {
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.hide();
+                }
+                if let Some(window) = app.get_webview_window("main") {
+                    let _ = window.emit("tray-minimize-main", ());
                 }
             }
             "reset" => {

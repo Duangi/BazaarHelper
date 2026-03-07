@@ -241,6 +241,93 @@ html, body, #root {
   z-index: 700;
 }
 
+.main-shell-host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.main-shell-host.hidden {
+  display: none;
+}
+
+.top-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  min-height: 50px;
+  border-bottom: 1px solid rgba(255, 205, 25, 0.16);
+  background: linear-gradient(180deg, rgba(30, 27, 23, 0.96), rgba(24, 21, 18, 0.92));
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
+.top-action-title {
+  color: rgba(255, 205, 25, 0.96);
+  font-size: calc(12px * var(--font-scale, 1));
+  font-weight: 700;
+  min-width: 72px;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 205, 25, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 205, 25, 0.08);
+  text-align: center;
+}
+
+.top-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.top-action-toggle {
+  min-height: 30px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 205, 25, 0.28);
+  background: rgba(255, 205, 25, 0.06);
+  color: rgba(255, 255, 255, 0.86);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  -webkit-app-region: no-drag;
+}
+
+.top-action-toggle .checkmark {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 205, 25, 0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a160f;
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.top-action-toggle.active {
+  border-color: rgba(255, 205, 25, 0.75);
+  background: rgba(255, 205, 25, 0.16);
+  color: #fff7d4;
+}
+
+.top-action-toggle.active .checkmark {
+  background: rgba(255, 205, 25, 0.92);
+  border-color: rgba(255, 205, 25, 0.96);
+}
+
+.top-action-buttons .bulk-btn {
+  min-height: 30px;
+  padding: 6px 12px;
+  -webkit-app-region: no-drag;
+}
+
 .overlay.collapsed .window-drag-strip {
   left: 0;
   height: 100%;

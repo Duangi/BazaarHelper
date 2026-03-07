@@ -476,10 +476,20 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
                         }
                         Err(e) => {
                             log::debug!("[Right Click] Error handling click: {}", e);
+                            let denied = e.contains("0x80070005")
+                                || e.contains("Access is denied")
+                                || e.contains("拒绝访问")
+                                || e.contains("鎷掔粷璁块棶");
+                            let message = if denied {
+                                "详情识别失败：截图权限被拒绝，请用相同权限运行游戏和插件（都管理员或都普通）"
+                                    .to_string()
+                            } else {
+                                format!("详情识别失败: {} ({}ms)", e, started.elapsed().as_millis())
+                            };
                             let _ = handle_clone.emit(
                                 "island-status",
                                 serde_json::json!({
-                                    "message": format!("详情识别失败: {} ({}ms)", e, started.elapsed().as_millis()),
+                                    "message": message,
                                     "type": "error"
                                 }),
                             );

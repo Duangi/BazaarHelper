@@ -227,9 +227,6 @@ pub async fn trigger_yolo_scan(
                     log::warn!("[YOLO] Failed to store scan image cache: {}", e);
                 }
             }
-        } else {
-            let mut saved_img = crate::get_yolo_scan_image().write().unwrap();
-            *saved_img = None;
         }
         {
             let mut offset = crate::get_yolo_window_offset().write().unwrap();

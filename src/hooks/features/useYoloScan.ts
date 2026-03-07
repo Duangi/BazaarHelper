@@ -17,7 +17,6 @@ interface UseYoloScanOptions {
 export const useYoloScan = ({
   enabled = true,
   enableYoloAuto,
-  isCollapsed,
   yoloScanInterval,
   yoloHotkey,
   setErrorMessage,
@@ -43,7 +42,7 @@ export const useYoloScan = ({
     const onVisibilityChange = () => {
       const visible = document.visibilityState === 'visible';
       setIsPageVisible(visible);
-      if (!visible) {
+      if (!visible && !enableYoloAuto) {
         clearYoloCacheThrottled();
       }
     };
@@ -85,7 +84,7 @@ export const useYoloScan = ({
       }
       const count = await invoke<number>('trigger_yolo_scan', {
         useGpu: useGpuBool,
-        storeImage: source === 'manual',
+        storeImage: true,
       });
       const elapsedMs = Math.round(performance.now() - startedAt);
       console.log(`[YOLO Manual/Auto] Scan complete, detected ${count} objects`);
@@ -145,12 +144,6 @@ export const useYoloScan = ({
       console.log('[YOLO Auto] Timer stopped');
     };
   }, [enableYoloAuto, enabled, isPageVisible, yoloScanInterval, runYoloScan]);
-
-  useEffect(() => {
-    if (!enabled) return;
-    if (!isCollapsed) return;
-    clearYoloCacheThrottled();
-  }, [clearYoloCacheThrottled, enabled, isCollapsed]);
 
   useEffect(() => {
     if (!enabled) return;

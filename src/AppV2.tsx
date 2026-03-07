@@ -196,6 +196,8 @@ export default function AppV2() {
   );
   const [islandPinnedName, setIslandPinnedName] = useState<string | null>(null);
   const [islandRuntimeText, setIslandRuntimeText] = useState<string>(ISLAND_BASE_TEXT);
+  const [autoCollapseToIsland, setAutoCollapseToIsland] = useState(false);
+  const MANUAL_MINIMIZE_KEY = 'bh-window-manual-minimize';
   const readStoredStartupSize = () => {
     const width = Number(localStorage.getItem('startup-window-width')) || STARTUP_WIDTH;
     const height = Number(localStorage.getItem('startup-window-height')) || STARTUP_HEIGHT;
@@ -616,6 +618,9 @@ export default function AppV2() {
   );
 
   const shouldBlockAutoCollapse = useCallback(() => {
+    if (!autoCollapseToIsland) {
+      return true;
+    }
     const imeComposing = document.body.getAttribute('data-ime-composing') === '1';
     const searchInputActive = document.body.getAttribute('data-search-input-active') === '1';
     const inputFocusLock = document.body.getAttribute('data-input-focus-lock') === '1';
@@ -628,7 +633,18 @@ export default function AppV2() {
       && (tag === 'input' || tag === 'textarea' || active.isContentEditable),
     );
     return imeComposing || searchInputActive || inputFocusLock || withinNoCollapseWindow || isTypingElement;
-  }, []);
+  }, [autoCollapseToIsland]);
+
+  const handleToggleAutoCollapseToIsland = useCallback(async () => {
+    const next = !autoCollapseToIsland;
+    setAutoCollapseToIsland(next);
+    try {
+      await invoke('set_auto_collapse_to_island_enabled', { enabled: next });
+    } catch (error) {
+      console.warn('[AppV2] set_auto_collapse_to_island_enabled failed:', error);
+      setAutoCollapseToIsland((prev) => !prev);
+    }
+  }, [autoCollapseToIsland]);
 
   const scheduleEdgeCollapseCheck = useCallback(
     () => {
@@ -1342,6 +1358,35 @@ export default function AppV2() {
     localStorage.setItem('detail-display-hotkey', String(detailDisplayHotkey));
   }, [detailDisplayHotkey]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    void invoke<boolean>('get_auto_collapse_to_island_enabled')
+      .then((enabled) => {
+        if (!mounted) return;
+        setAutoCollapseToIsland(Boolean(enabled));
+      })
+      .catch((error) => {
+        console.warn('[AppV2] get_auto_collapse_to_island_enabled failed:', error);
+      });
+
+    const unlistenSettingPromise = listen<{ enabled?: boolean }>('tray-auto-collapse-updated', (event) => {
+      if (!mounted) return;
+      setAutoCollapseToIsland(Boolean(event.payload?.enabled));
+    });
+
+    const unlistenMinimizePromise = listen('tray-minimize-main', () => {
+      if (!mounted) return;
+      localStorage.setItem(MANUAL_MINIMIZE_KEY, '1');
+    });
+
+    return () => {
+      mounted = false;
+      void unlistenSettingPromise.then((fn) => fn()).catch(() => {});
+      void unlistenMinimizePromise.then((fn) => fn()).catch(() => {});
+    };
+  }, [MANUAL_MINIMIZE_KEY]);
+
   if (showVersionScreen) {
     return (
       <VersionGateScreen
@@ -1403,7 +1448,9 @@ export default function AppV2() {
           <span className={`dynamic-island-dot ${islandStatusType}`} />
           <span className="dynamic-island-text">{islandStatusText}</span>
         </div>
-      ) : (
+      ) : null}
+
+      <div className={`main-shell-host ${isCollapsed ? 'hidden' : ''}`}>
         <MainShell
           activeTab={activeTab}
           onTabChange={(tab) => {
@@ -1420,6 +1467,43 @@ export default function AppV2() {
             setShowSettings(true);
           }}
         >
+          <div className="top-action-bar" data-tauri-drag-region>
+            <div className="top-action-title">窗口操作</div>
+            <div className="top-action-buttons">
+              <button
+                className={`top-action-toggle ${autoCollapseToIsland ? 'active' : ''}`}
+                aria-pressed={autoCollapseToIsland}
+                title="自动收起为灵动岛"
+                onClick={() => {
+                  void handleToggleAutoCollapseToIsland();
+                }}
+              >
+                <span className="checkmark" aria-hidden="true">{autoCollapseToIsland ? '✓' : ''}</span>
+                <span>自动收起</span>
+              </button>
+              <button
+                className="bulk-btn"
+                onClick={() => {
+                  void applyCollapsedState(true);
+                }}
+              >
+                收起为灵动岛
+              </button>
+              <button
+                className="bulk-btn secondary"
+                onClick={async () => {
+                  localStorage.setItem(MANUAL_MINIMIZE_KEY, '1');
+                  try {
+                    await appWindow.hide();
+                  } catch (error) {
+                    console.warn('[AppV2] hide failed:', error);
+                  }
+                }}
+              >
+                最小化到任务栏
+              </button>
+            </div>
+          </div>
           {!showSettings && !showProfile && searchEnabled ? (
             <Suspense fallback={null}>
               <SearchFiltersPanelLazy
@@ -1663,7 +1747,7 @@ export default function AppV2() {
             </div>
           </div>
         </MainShell>
-      )}
+      </div>
       {!isCollapsed ? <ToastLayer toasts={toasts} onRemove={removeToast} /> : null}
     </div>
   );

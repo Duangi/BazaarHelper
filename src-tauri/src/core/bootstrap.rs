@@ -161,6 +161,8 @@ pub fn run() {
             user_data::commands::set_screenshot_capture_delay_ms,
             user_data::commands::get_upload_notice_suppressed,
             user_data::commands::set_upload_notice_suppressed,
+            user_data::commands::get_auto_collapse_to_island_enabled,
+            user_data::commands::set_auto_collapse_to_island_enabled,
             data_management::commands::rebuild_match_history,
             data_management::commands::analyze_battle_lineup_from_screenshot,
             data_management::commands::capture_battle_screenshot_manual,
