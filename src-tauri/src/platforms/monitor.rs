@@ -371,9 +371,10 @@ pub fn spawn_mouse_hotkey_monitor(handle_monitor: tauri::AppHandle) {
             }
 
             if detail_visible && trigger_active && !last_trigger_active {
-                // Unified close policy:
-                // - only left/right outside-click closes popup (handled above)
-                // - while popup is visible, ignore trigger hotkey to avoid accidental hide/re-recognition
+                if let Some(popup_window) = handle_monitor.get_webview_window("detail-popup") {
+                    log::debug!("[Hotkey Monitor] Detail popup already visible, toggling close.");
+                    let _ = popup_window.emit("hide-detail-popup", ());
+                }
                 last_trigger_active = true;
                 continue;
             }
